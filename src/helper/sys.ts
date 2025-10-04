@@ -1,429 +1,561 @@
-import type { game } from "..";
-import { log } from "./Debugger";
-import { create3DContext } from "./engine";
+import { game } from '../index';
+import { log } from './Debugger';
+import { create3DContext } from './engine';
+
+const _tmpCanvas1 = document.createElement('canvas');
+const _tmpCanvas2 = document.createElement('canvas');
+
+let _renderType = 0;
 
 /**
  * System variables
- * @namespace
- * @name sys
+ * @namespace sys
  */
-/**
- * English language code
- * @memberof sys
- * @name LANGUAGE_ENGLISH
- * @constant
- * @type {Number}
- */
-sys.LANGUAGE_ENGLISH = "en";
+const sys = {
+  /**
+   * English language code
+   * @memberof sys
+   * @name LANGUAGE_ENGLISH
+   * @constant
+   */
+  LANGUAGE_ENGLISH: 'en',
 
-/**
- * Chinese language code
- * @memberof sys
- * @name LANGUAGE_CHINESE
- * @constant
- * @type {Number}
- */
-sys.LANGUAGE_CHINESE = "zh";
+  /**
+   * Chinese language code
+   * @memberof sys
+   * @name LANGUAGE_CHINESE
+   * @constant
+   */
+  LANGUAGE_CHINESE: 'zh',
 
-/**
- * French language code
- * @memberof sys
- * @name LANGUAGE_FRENCH
- * @constant
- * @type {Number}
- */
-sys.LANGUAGE_FRENCH = "fr";
+  /**
+   * French language code
+   * @memberof sys
+   * @name LANGUAGE_FRENCH
+   * @constant
+   */
+  LANGUAGE_FRENCH: 'fr',
 
-/**
- * Italian language code
- * @memberof sys
- * @name LANGUAGE_ITALIAN
- * @constant
- * @type {Number}
- */
-sys.LANGUAGE_ITALIAN = "it";
+  /**
+   * Italian language code
+   * @memberof sys
+   * @name LANGUAGE_ITALIAN
+   * @constant
+   */
+  LANGUAGE_ITALIAN: 'it',
 
-/**
- * German language code
- * @memberof sys
- * @name LANGUAGE_GERMAN
- * @constant
- * @type {Number}
- */
-sys.LANGUAGE_GERMAN = "de";
+  /**
+   * German language code
+   * @memberof sys
+   * @name LANGUAGE_GERMAN
+   * @constant
+   */
+  LANGUAGE_GERMAN: 'de',
 
-/**
- * Spanish language code
- * @memberof sys
- * @name LANGUAGE_SPANISH
- * @constant
- * @type {Number}
- */
-sys.LANGUAGE_SPANISH = "es";
+  /**
+   * Spanish language code
+   * @memberof sys
+   * @name LANGUAGE_SPANISH
+   * @constant
+   */
+  LANGUAGE_SPANISH: 'es',
 
-/**
- * Spanish language code
- * @memberof sys
- * @name LANGUAGE_DUTCH
- * @constant
- * @type {Number}
- */
-sys.LANGUAGE_DUTCH = "du";
+  /**
+   * Dutch language code
+   * @memberof sys
+   * @name LANGUAGE_DUTCH
+   * @constant
+   */
+  LANGUAGE_DUTCH: 'du',
 
-/**
- * Russian language code
- * @memberof sys
- * @name LANGUAGE_RUSSIAN
- * @constant
- * @type {Number}
- */
-sys.LANGUAGE_RUSSIAN = "ru";
+  /**
+   * Russian language code
+   * @memberof sys
+   * @name LANGUAGE_RUSSIAN
+   * @constant
+   */
+  LANGUAGE_RUSSIAN: 'ru',
 
-/**
- * Korean language code
- * @memberof sys
- * @name LANGUAGE_KOREAN
- * @constant
- * @type {Number}
- */
-sys.LANGUAGE_KOREAN = "ko";
+  /**
+   * Korean language code
+   * @memberof sys
+   * @name LANGUAGE_KOREAN
+   * @constant
+   */
+  LANGUAGE_KOREAN: 'ko',
 
-/**
- * Japanese language code
- * @memberof sys
- * @name LANGUAGE_JAPANESE
- * @constant
- * @type {Number}
- */
-sys.LANGUAGE_JAPANESE = "ja";
+  /**
+   * Japanese language code
+   * @memberof sys
+   * @name LANGUAGE_JAPANESE
+   * @constant
+   */
+  LANGUAGE_JAPANESE: 'ja',
 
-/**
- * Hungarian language code
- * @memberof sys
- * @name LANGUAGE_HUNGARIAN
- * @constant
- * @type {Number}
- */
-sys.LANGUAGE_HUNGARIAN = "hu";
+  /**
+   * Hungarian language code
+   * @memberof sys
+   * @name LANGUAGE_HUNGARIAN
+   * @constant
+   */
+  LANGUAGE_HUNGARIAN: 'hu',
 
-/**
- * Portuguese language code
- * @memberof sys
- * @name LANGUAGE_PORTUGUESE
- * @constant
- * @type {Number}
- */
-sys.LANGUAGE_PORTUGUESE = "pt";
+  /**
+   * Portuguese language code
+   * @memberof sys
+   * @name LANGUAGE_PORTUGUESE
+   * @constant
+   */
+  LANGUAGE_PORTUGUESE: 'pt',
 
-/**
- * Arabic language code
- * @memberof sys
- * @name LANGUAGE_ARABIC
- * @constant
- * @type {Number}
- */
-sys.LANGUAGE_ARABIC = "ar";
+  /**
+   * Arabic language code
+   * @memberof sys
+   * @name LANGUAGE_ARABIC
+   * @constant
+   */
+  LANGUAGE_ARABIC: 'ar',
 
-/**
- * Norwegian language code
- * @memberof sys
- * @name LANGUAGE_NORWEGIAN
- * @constant
- * @type {Number}
- */
-sys.LANGUAGE_NORWEGIAN = "no";
+  /**
+   * Norwegian language code
+   * @memberof sys
+   * @name LANGUAGE_NORWEGIAN
+   * @constant
+   */
+  LANGUAGE_NORWEGIAN: 'no',
 
-/**
- * Polish language code
- * @memberof sys
- * @name LANGUAGE_POLISH
- * @constant
- * @type {Number}
- */
-sys.LANGUAGE_POLISH = "pl";
+  /**
+   * Polish language code
+   * @memberof sys
+   * @name LANGUAGE_POLISH
+   * @constant
+   */
+  LANGUAGE_POLISH: 'pl',
 
-/**
- * Unknown language code
- * @memberof sys
- * @name LANGUAGE_UNKNOWN
- * @constant
- * @type {Number}
- */
-sys.LANGUAGE_UNKNOWN = "unkonwn";
+  /**
+   * Unknown language code
+   * @memberof sys
+   * @name LANGUAGE_UNKNOWN
+   * @constant
+   */
+  LANGUAGE_UNKNOWN: 'unknown',
 
-/**
- * @memberof sys
- * @name OS_IOS
- * @constant
- * @type {string}
- */
-sys.OS_IOS = "iOS";
-/**
- * @memberof sys
- * @name OS_ANDROID
- * @constant
- * @type {string}
- */
-sys.OS_ANDROID = "Android";
-/**
- * @memberof sys
- * @name OS_WINDOWS
- * @constant
- * @type {string}
- */
-sys.OS_WINDOWS = "Windows";
-/**
- * @memberof sys
- * @name OS_MARMALADE
- * @constant
- * @type {string}
- */
-sys.OS_MARMALADE = "Marmalade";
-/**
- * @memberof sys
- * @name OS_LINUX
- * @constant
- * @type {string}
- */
-sys.OS_LINUX = "Linux";
-/**
- * @memberof sys
- * @name OS_BADA
- * @constant
- * @type {string}
- */
-sys.OS_BADA = "Bada";
-/**
- * @memberof sys
- * @name OS_BLACKBERRY
- * @constant
- * @type {string}
- */
-sys.OS_BLACKBERRY = "Blackberry";
-/**
- * @memberof sys
- * @name OS_OSX
- * @constant
- * @type {string}
- */
-sys.OS_OSX = "OS X";
-/**
- * @memberof sys
- * @name OS_WP8
- * @constant
- * @type {string}
- */
-sys.OS_WP8 = "WP8";
-/**
- * @memberof sys
- * @name OS_WINRT
- * @constant
- * @type {string}
- */
-sys.OS_WINRT = "WINRT";
-/**
- * @memberof sys
- * @name OS_UNKNOWN
- * @constant
- * @type {string}
- */
-sys.OS_UNKNOWN = "Unknown";
+  /**
+   * @memberof sys
+   * @name OS_IOS
+   * @constant
+   */
+  OS_IOS: 'iOS',
+  /**
+   * @memberof sys
+   * @name OS_ANDROID
+   * @constant
+   */
+  OS_ANDROID: 'Android',
+  /**
+   * @memberof sys
+   * @name OS_WINDOWS
+   * @constant
+   */
+  OS_WINDOWS: 'Windows',
+  /**
+   * @memberof sys
+   * @name OS_MARMALADE
+   * @constant
+   */
+  OS_MARMALADE: 'Marmalade',
+  /**
+   * @memberof sys
+   * @name OS_LINUX
+   * @constant
+   */
+  OS_LINUX: 'Linux',
+  /**
+   * @memberof sys
+   * @name OS_BADA
+   * @constant
+   */
+  OS_BADA: 'Bada',
+  /**
+   * @memberof sys
+   * @name OS_BLACKBERRY
+   * @constant
+   */
+  OS_BLACKBERRY: 'Blackberry',
+  /**
+   * @memberof sys
+   * @name OS_OSX
+   * @constant
+   */
+  OS_OSX: 'OS X',
+  /**
+   * @memberof sys
+   * @name OS_WP8
+   * @constant
+   */
+  OS_WP8: 'WP8',
+  /**
+   * @memberof sys
+   * @name OS_WINRT
+   * @constant
+   */
+  OS_WINRT: 'WINRT',
+  /**
+   * @memberof sys
+   * @name OS_UNKNOWN
+   * @constant
+   */
+  OS_UNKNOWN: 'Unknown',
 
-/**
- * @memberof sys
- * @name UNKNOWN
- * @constant
- * @default
- * @type {Number}
- */
-sys.UNKNOWN = -1;
-/**
- * @memberof sys
- * @name WIN32
- * @constant
- * @default
- * @type {Number}
- */
-sys.WIN32 = 0;
-/**
- * @memberof sys
- * @name LINUX
- * @constant
- * @default
- * @type {Number}
- */
-sys.LINUX = 1;
-/**
- * @memberof sys
- * @name MACOS
- * @constant
- * @default
- * @type {Number}
- */
-sys.MACOS = 2;
-/**
- * @memberof sys
- * @name ANDROID
- * @constant
- * @default
- * @type {Number}
- */
-sys.ANDROID = 3;
-/**
- * @memberof sys
- * @name IOS
- * @constant
- * @default
- * @type {Number}
- */
-sys.IPHONE = 4;
-/**
- * @memberof sys
- * @name IOS
- * @constant
- * @default
- * @type {Number}
- */
-sys.IPAD = 5;
-/**
- * @memberof sys
- * @name BLACKBERRY
- * @constant
- * @default
- * @type {Number}
- */
-sys.BLACKBERRY = 6;
-/**
- * @memberof sys
- * @name NACL
- * @constant
- * @default
- * @type {Number}
- */
-sys.NACL = 7;
-/**
- * @memberof sys
- * @name EMSCRIPTEN
- * @constant
- * @default
- * @type {Number}
- */
-sys.EMSCRIPTEN = 8;
-/**
- * @memberof sys
- * @name TIZEN
- * @constant
- * @default
- * @type {Number}
- */
-sys.TIZEN = 9;
-/**
- * @memberof sys
- * @name WINRT
- * @constant
- * @default
- * @type {Number}
- */
-sys.WINRT = 10;
-/**
- * @memberof sys
- * @name WP8
- * @constant
- * @default
- * @type {Number}
- */
-sys.WP8 = 11;
-/**
- * @memberof sys
- * @name MOBILE_BROWSER
- * @constant
- * @default
- * @type {Number}
- */
-sys.MOBILE_BROWSER = 100;
-/**
- * @memberof sys
- * @name DESKTOP_BROWSER
- * @constant
- * @default
- * @type {Number}
- */
-sys.DESKTOP_BROWSER = 101;
+  /**
+   * @memberof sys
+   * @name UNKNOWN
+   * @constant
+   * @default
+   */
+  UNKNOWN: -1,
+  /**
+   * @memberof sys
+   * @name WIN32
+   * @constant
+   * @default
+   */
+  WIN32: 0,
+  /**
+   * @memberof sys
+   * @name LINUX
+   * @constant
+   * @default
+   */
+  LINUX: 1,
+  /**
+   * @memberof sys
+   * @name MACOS
+   * @constant
+   * @default
+   */
+  MACOS: 2,
+  /**
+   * @memberof sys
+   * @name ANDROID
+   * @constant
+   * @default
+   */
+  ANDROID: 3,
+  /**
+   * @memberof sys
+   * @name IPHONE
+   * @constant
+   * @default
+   */
+  IPHONE: 4,
+  /**
+   * @memberof sys
+   * @name IPAD
+   * @constant
+   * @default
+   */
+  IPAD: 5,
+  /**
+   * @memberof sys
+   * @name BLACKBERRY
+   * @constant
+   * @default
+   */
+  BLACKBERRY: 6,
+  /**
+   * @memberof sys
+   * @name NACL
+   * @constant
+   * @default
+   */
+  NACL: 7,
+  /**
+   * @memberof sys
+   * @name EMSCRIPTEN
+   * @constant
+   * @default
+   */
+  EMSCRIPTEN: 8,
+  /**
+   * @memberof sys
+   * @name TIZEN
+   * @constant
+   * @default
+   */
+  TIZEN: 9,
+  /**
+   * @memberof sys
+   * @name WINRT
+   * @constant
+   * @default
+   */
+  WINRT: 10,
+  /**
+   * @memberof sys
+   * @name WP8
+   * @constant
+   * @default
+   */
+  WP8: 11,
+  /**
+   * @memberof sys
+   * @name MOBILE_BROWSER
+   * @constant
+   * @default
+   */
+  MOBILE_BROWSER: 100,
+  /**
+   * @memberof sys
+   * @name DESKTOP_BROWSER
+   * @constant
+   * @default
+   */
+  DESKTOP_BROWSER: 101,
 
-sys.BROWSER_TYPE_WECHAT = "wechat";
-sys.BROWSER_TYPE_ANDROID = "androidbrowser";
-sys.BROWSER_TYPE_IE = "ie";
-sys.BROWSER_TYPE_QQ_APP = "qq"; // QQ App
-sys.BROWSER_TYPE_QQ = "qqbrowser";
-sys.BROWSER_TYPE_MOBILE_QQ = "mqqbrowser";
-sys.BROWSER_TYPE_UC = "ucbrowser";
-sys.BROWSER_TYPE_360 = "360browser";
-sys.BROWSER_TYPE_BAIDU_APP = "baiduboxapp";
-sys.BROWSER_TYPE_BAIDU = "baidubrowser";
-sys.BROWSER_TYPE_MAXTHON = "maxthon";
-sys.BROWSER_TYPE_OPERA = "opera";
-sys.BROWSER_TYPE_OUPENG = "oupeng";
-sys.BROWSER_TYPE_MIUI = "miuibrowser";
-sys.BROWSER_TYPE_FIREFOX = "firefox";
-sys.BROWSER_TYPE_SAFARI = "safari";
-sys.BROWSER_TYPE_CHROME = "chrome";
-sys.BROWSER_TYPE_LIEBAO = "liebao";
-sys.BROWSER_TYPE_QZONE = "qzone";
-sys.BROWSER_TYPE_SOUGOU = "sogou";
-sys.BROWSER_TYPE_UNKNOWN = "unknown";
+  BROWSER_TYPE_WECHAT: 'wechat',
+  BROWSER_TYPE_ANDROID: 'androidbrowser',
+  BROWSER_TYPE_IE: 'ie',
+  BROWSER_TYPE_QQ_APP: 'qq', // QQ App
+  BROWSER_TYPE_QQ: 'qqbrowser',
+  BROWSER_TYPE_MOBILE_QQ: 'mqqbrowser',
+  BROWSER_TYPE_UC: 'ucbrowser',
+  BROWSER_TYPE_360: '360browser',
+  BROWSER_TYPE_BAIDU_APP: 'baiduboxapp',
+  BROWSER_TYPE_BAIDU: 'baidubrowser',
+  BROWSER_TYPE_MAXTHON: 'maxthon',
+  BROWSER_TYPE_OPERA: 'opera',
+  BROWSER_TYPE_OUPENG: 'oupeng',
+  BROWSER_TYPE_MIUI: 'miuibrowser',
+  BROWSER_TYPE_FIREFOX: 'firefox',
+  BROWSER_TYPE_SAFARI: 'safari',
+  BROWSER_TYPE_CHROME: 'chrome',
+  BROWSER_TYPE_LIEBAO: 'liebao',
+  BROWSER_TYPE_QZONE: 'qzone',
+  BROWSER_TYPE_SOUGOU: 'sogou',
+  BROWSER_TYPE_UNKNOWN: 'unknown',
 
-/**
- * Is native ? This is set to be true in jsb auto.
- * @memberof sys
- * @name isNative
- * @type {Boolean}
- */
-sys.isNative = false;
+  /**
+   * Is native ? This is set to be true in jsb auto.
+   * @memberof sys
+   * @name isNative
+   */
+  isNative: false,
 
-var win = window, nav = win.navigator, doc = document, docEle = doc.documentElement;
-var ua = nav.userAgent.toLowerCase();
+  /**
+   * Indicate whether system is mobile system
+   * @memberof sys
+   * @name isMobile
+   */
+  isMobile: false,
 
-/**
- * Indicate whether system is mobile system
- * @memberof sys
- * @name isMobile
- * @type {Boolean}
- */
+  /**
+   * Indicate the running platform
+   * @memberof sys
+   * @name platform
+   */
+  platform: 0,
+
+  /**
+   * Indicate the current language of the running system
+   * @memberof sys
+   * @name language
+   */
+  language: '',
+
+  /**
+   * Indicate the running os name
+   * @memberof sys
+   * @name os
+   */
+  os: '',
+  /**
+   * Indicate the running os version string
+   * @memberof sys
+   * @name osVersion
+   */
+  osVersion: '',
+  /**
+   * Indicate the running os main version number
+   * @memberof sys
+   * @name osMainVersion
+   */
+  osMainVersion: 0,
+
+  /**
+   * Indicate the running browser type
+   * @memberof sys
+   * @name browserType
+   */
+  browserType: '',
+
+  /**
+   * Indicate the running browser version
+   * @memberof sys
+   * @name browserVersion
+   */
+  browserVersion: '',
+
+  /**
+   * Indicate the real pixel resolution of the whole game window
+   * @memberof sys
+   * @name windowPixelResolution
+   */
+  windowPixelResolution: {
+    width: 0,
+    height: 0
+  },
+
+  _checkWebGLRenderMode() {
+    if (_renderType !== game.RENDER_TYPE_WEBGL) {
+      throw new Error('This feature supports WebGL render mode only.');
+    }
+  },
+
+  // Whether or not the Canvas BlendModes are supported.
+  _supportCanvasNewBlendModes: false,
+
+  /**
+   * The capabilities of the current platform
+   * @memberof sys
+   * @name capabilities
+   */
+  capabilities: {
+    canvas: false,
+    opengl: false,
+    touches: false,
+    mouse: false,
+    keyboard: false,
+    accelerometer: false,
+  },
+
+  /**
+   * Forces the garbage collection, only available in JSB
+   * @memberof sys
+   * @name garbageCollect
+   */
+  garbageCollect() {
+    // N/A in cocos2d-html5
+  },
+
+  /**
+   * Dumps rooted objects, only available in JSB
+   * @memberof sys
+   * @name dumpRoot
+   */
+  dumpRoot() {
+    // N/A in cocos2d-html5
+  },
+
+  /**
+   * Restart the JS VM, only available in JSB
+   * @memberof sys
+   * @name restartVM
+   */
+  restartVM() {
+    // N/A in cocos2d-html5
+  },
+
+  /**
+   * Clean a script in the JS VM, only available in JSB
+   * @memberof sys
+   * @name cleanScript
+   * @param jsfile
+   */
+  cleanScript(jsfile: string) {
+    // N/A in cocos2d-html5
+  },
+
+  /**
+   * Check whether an object is valid,
+   * In web engine, it will return true if the object exist
+   * In native engine, it will return true if the JS object and the correspond native object are both valid
+   * @memberof sys
+   * @name isObjectValid
+   * @param obj
+   * @return Validity of the object
+   */
+  isObjectValid(obj: any): boolean {
+    return !!obj;
+  },
+
+  /**
+   * Dump system informations
+   * @memberof sys
+   * @name dump
+   */
+  dump() {
+    let str = '';
+    str += `isMobile : ${this.isMobile}\r\n`;
+    str += `language : ${this.language}\r\n`;
+    str += `browserType : ${this.browserType}\r\n`;
+    str += `browserVersion : ${this.browserVersion}\r\n`;
+    str += `capabilities : ${JSON.stringify(this.capabilities)}\r\n`;
+    str += `os : ${this.os}\r\n`;
+    str += `osVersion : ${this.osVersion}\r\n`;
+    str += `platform : ${this.platform}\r\n`;
+    str += `Using ${_renderType === game.RENDER_TYPE_WEBGL ? 'WEBGL' : 'CANVAS'} renderer.\r\n`;
+    log(str);
+  },
+
+  /**
+   * Open a url in browser
+   * @memberof sys
+   * @name openURL
+   * @param url
+   */
+  openURL(url: string) {
+    window.open(url);
+  },
+
+  /**
+   * Get the number of milliseconds elapsed since 1 January 1970 00:00:00 UTC.
+   * @memberof sys
+   * @name now
+   * @return
+   */
+  now(): number {
+    if (Date.now) {
+      return Date.now();
+    }
+    else {
+      return +(new Date());
+    }
+  },
+
+  localStorage: window.localStorage,
+};
+
+const win = window;
+const nav = win.navigator;
+const doc = document;
+const docEle = doc.documentElement;
+const ua = nav.userAgent.toLowerCase();
+
 sys.isMobile = /mobile|android|iphone|ipad/.test(ua);
-
-/**
- * Indicate the running platform
- * @memberof sys
- * @name platform
- * @type {Number}
- */
 sys.platform = sys.isMobile ? sys.MOBILE_BROWSER : sys.DESKTOP_BROWSER;
 
-var currLanguage = nav.language;
-currLanguage = currLanguage ? currLanguage : nav.browserLanguage;
-currLanguage = currLanguage ? currLanguage.split("-")[0] : sys.LANGUAGE_ENGLISH;
-
-/**
- * Indicate the current language of the running system
- * @memberof sys
- * @name language
- * @type {String}
- */
+let currLanguage = nav.language;
+currLanguage = currLanguage ? currLanguage : (nav as any).browserLanguage;
+currLanguage = currLanguage ? currLanguage.split('-')[0] : sys.LANGUAGE_ENGLISH;
 sys.language = currLanguage;
 
 // Get the os of system
-var isAndroid = false, iOS = false, osVersion = '', osMainVersion = 0;
-var uaResult = /android (\d+(?:\.\d+)+)/i.exec(ua) || /android (\d+(?:\.\d+)+)/i.exec(nav.platform);
+let isAndroid = false;
+let iOS = false;
+let osVersion = '';
+let osMainVersion = 0;
+let uaResult = /android (\d+(?:\.\d+)+)/i.exec(ua) || /android (\d+(?:\.\d+)+)/i.exec(nav.platform);
 if (uaResult) {
   isAndroid = true;
   osVersion = uaResult[1] || '';
-  osMainVersion = parseInt(osVersion) || 0;
+  osMainVersion = parseInt(osVersion, 10) || 0;
 }
 uaResult = /(iPad|iPhone|iPod).*OS ((\d+_?){2,3})/i.exec(ua);
 if (uaResult) {
   iOS = true;
   osVersion = uaResult[2] || '';
-  osMainVersion = parseInt(osVersion) || 0;
+  osMainVersion = parseInt(osVersion, 10) || 0;
 }
 else if (/(iPhone|iPad|iPod)/.exec(nav.platform)) {
   iOS = true;
@@ -431,116 +563,70 @@ else if (/(iPhone|iPad|iPod)/.exec(nav.platform)) {
   osMainVersion = 0;
 }
 
-var osName = sys.OS_UNKNOWN;
-if (nav.appVersion.indexOf("Win") !== -1) osName = sys.OS_WINDOWS;
+let osName: string = sys.OS_UNKNOWN;
+if (nav.appVersion.indexOf('Win') !== -1) osName = sys.OS_WINDOWS;
 else if (iOS) osName = sys.OS_IOS;
-else if (nav.appVersion.indexOf("Mac") !== -1) osName = sys.OS_OSX;
-else if (nav.appVersion.indexOf("X11") !== -1 && nav.appVersion.indexOf("Linux") === -1) osName = sys.OS_UNIX;
+else if (nav.appVersion.indexOf('Mac') !== -1) osName = sys.OS_OSX;
+else if (nav.appVersion.indexOf('X11') !== -1 && nav.appVersion.indexOf('Linux') === -1) osName = (sys as any).OS_UNIX;
 else if (isAndroid) osName = sys.OS_ANDROID;
-else if (nav.appVersion.indexOf("Linux") !== -1) osName = sys.OS_LINUX;
+else if (nav.appVersion.indexOf('Linux') !== -1) osName = sys.OS_LINUX;
 
-/**
- * Indicate the running os name
- * @memberof sys
- * @name os
- * @type {String}
- */
 sys.os = osName;
-/**
- * Indicate the running os version string
- * @memberof sys
- * @name osVersion
- * @type {String}
- */
 sys.osVersion = osVersion;
-/**
- * Indicate the running os main version number
- * @memberof sys
- * @name osMainVersion
- * @type {Number}
- */
 sys.osMainVersion = osMainVersion;
 
-/**
- * Indicate the running browser type
- * @memberof sys
- * @name browserType
- * @type {String}
- */
-sys.browserType = sys.BROWSER_TYPE_UNKNOWN;
-/* Determine the browser type */
 (function () {
-  var typeReg1 = /micromessenger|mqqbrowser|sogou|qzone|liebao|ucbrowser|360 aphone|360browser|baiduboxapp|baidubrowser|maxthon|mxbrowser|trident|miuibrowser/i;
-  var typeReg2 = /qqbrowser|qq|chrome|safari|firefox|opr|oupeng|opera/i;
-  var browserTypes = typeReg1.exec(ua);
+  const typeReg1 = /micromessenger|mqqbrowser|sogou|qzone|liebao|ucbrowser|360 aphone|360browser|baiduboxapp|baidubrowser|maxthon|mxbrowser|trident|miuibrowser/i;
+  const typeReg2 = /qqbrowser|qq|chrome|safari|firefox|opr|oupeng|opera/i;
+  let browserTypes = typeReg1.exec(ua);
   if (!browserTypes) browserTypes = typeReg2.exec(ua);
-  var browserType = browserTypes ? browserTypes[0] : sys.BROWSER_TYPE_UNKNOWN;
-  if (browserType === 'micromessenger')
+  let browserType = browserTypes ? browserTypes[0] : sys.BROWSER_TYPE_UNKNOWN;
+  if (browserType === 'micromessenger') {
     browserType = sys.BROWSER_TYPE_WECHAT;
-  else if (browserType === "safari" && isAndroid)
+  } else if (browserType === 'safari' && isAndroid) {
     browserType = sys.BROWSER_TYPE_ANDROID;
-  else if (browserType === "trident")
+  } else if (browserType === 'trident') {
     browserType = sys.BROWSER_TYPE_IE;
-  else if (browserType === "360 aphone")
+  } else if (browserType === '360 aphone') {
     browserType = sys.BROWSER_TYPE_360;
-  else if (browserType === "mxbrowser")
+  } else if (browserType === 'mxbrowser') {
     browserType = sys.BROWSER_TYPE_MAXTHON;
-  else if (browserType === "opr")
+  } else if (browserType === 'opr') {
     browserType = sys.BROWSER_TYPE_OPERA;
+  }
 
   sys.browserType = browserType;
 })();
 
-/**
- * Indicate the running browser version
- * @memberof sys
- * @name browserVersion
- * @type {String}
- */
-sys.browserVersion = "";
-/* Determine the browser version number */
 (function () {
-  var versionReg1 = /(mqqbrowser|micromessenger|sogou|qzone|liebao|maxthon|mxbrowser|baidu)(mobile)?(browser)?\/?([\d.]+)/i;
-  var versionReg2 = /(msie |rv:|firefox|chrome|ucbrowser|qq|oupeng|opera|opr|safari|miui)(mobile)?(browser)?\/?([\d.]+)/i;
-  var tmp = ua.match(versionReg1);
-  if (!tmp) tmp = ua.match(versionReg2);
-  sys.browserVersion = tmp ? tmp[4] : "";
+  const versionReg1 = /(mqqbrowser|micromessenger|sogou|qzone|liebao|maxthon|mxbrowser|baidu)(mobile)?(browser)?\/?([\d.]+)/i;
+  const versionReg2 = /(msie |rv:|firefox|chrome|ucbrowser|qq|oupeng|opera|opr|safari|miui)(mobile)?(browser)?\/?([\d.]+)/i;
+  const tmp = ua.match(versionReg1) || ua.match(versionReg2);
+  sys.browserVersion = tmp ? tmp[4] : '';
 })();
 
-var w = window.innerWidth || document.documentElement.clientWidth;
-var h = window.innerHeight || document.documentElement.clientHeight;
-var ratio = window.devicePixelRatio || 1;
+const w = window.innerWidth || document.documentElement.clientWidth;
+const h = window.innerHeight || document.documentElement.clientHeight;
+const ratio = window.devicePixelRatio || 1;
 
-/**
- * Indicate the real pixel resolution of the whole game window
- * @memberof sys
- * @name windowPixelResolution
- * @type {Size}
- */
 sys.windowPixelResolution = {
   width: ratio * w,
   height: ratio * h
 };
 
-sys._checkWebGLRenderMode = function () {
-  if (_renderType !== game.RENDER_TYPE_WEBGL)
-    throw new Error("This feature supports WebGL render mode only.");
-};
-
-//Whether or not the Canvas BlendModes are supported.
-sys._supportCanvasNewBlendModes = (function () {
-  var canvas = _tmpCanvas1;
+sys._supportCanvasNewBlendModes = (() => {
+  const canvas = _tmpCanvas1;
   canvas.width = 1;
   canvas.height = 1;
-  var context = canvas.getContext('2d');
+  const context = canvas.getContext('2d')!;
   context.fillStyle = '#000';
   context.fillRect(0, 0, 1, 1);
   context.globalCompositeOperation = 'multiply';
 
-  var canvas2 = _tmpCanvas2;
+  const canvas2 = _tmpCanvas2;
   canvas2.width = 1;
   canvas2.height = 1;
-  var context2 = canvas2.getContext('2d');
+  const context2 = canvas2.getContext('2d')!;
   context2.fillStyle = '#fff';
   context2.fillRect(0, 0, 1, 1);
   context.drawImage(canvas2, 0, 0, 1, 1);
@@ -548,45 +634,37 @@ sys._supportCanvasNewBlendModes = (function () {
   return context.getImageData(0, 0, 1, 1).data[0] === 0;
 })();
 
-// Adjust mobile css settings
 if (sys.isMobile) {
-  var fontStyle = document.createElement("style");
-  fontStyle.type = "text/css";
+  const fontStyle = document.createElement('style');
+  fontStyle.type = 'text/css';
   document.body.appendChild(fontStyle);
 
-  fontStyle.textContent = "body,canvas,div{ -moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;-khtml-user-select: none;"
-    + "-webkit-tap-highlight-color:rgba(0,0,0,0);}";
+  fontStyle.textContent = 'body,canvas,div{ -moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;-khtml-user-select: none;}'
+    + '-webkit-tap-highlight-color:rgba(0,0,0,0);}';
 }
 
-/**
- * sys.localStorage is a local storage component.
- * @memberof sys
- * @name localStorage
- * @type {Object}
- */
 try {
-  var localStorage = sys.localStorage = win.localStorage;
-  localStorage.setItem("storage", "");
-  localStorage.removeItem("storage");
-  localStorage = null;
+  const localStorage = sys.localStorage = win.localStorage;
+  localStorage.setItem('storage', '');
+  localStorage.removeItem('storage');
 } catch (e) {
-  var warn = function () {
-    warn("Warning: localStorage isn't enabled. Please confirm browser cookie or privacy option");
+  const warn = () => {
+    log("Warning: localStorage isn't enabled. Please confirm browser cookie or privacy option");
   };
   sys.localStorage = {
     getItem: warn,
     setItem: warn,
     removeItem: warn,
-    clear: warn
-  };
+    clear: warn,
+  } as any;
 }
 
-var _supportCanvas = !!_tmpCanvas1.getContext("2d");
-var _supportWebGL = false;
+const _supportCanvas = !!_tmpCanvas1.getContext('2d');
+let _supportWebGL = false;
 if (win.WebGLRenderingContext) {
-  var tmpCanvas = document.createElement("CANVAS");
+  const tmpCanvas = document.createElement('CANVAS');
   try {
-    var context = create3DContext(tmpCanvas);
+    const context = create3DContext(tmpCanvas, {});
     if (context) {
       _supportWebGL = true;
     }
@@ -599,7 +677,7 @@ if (win.WebGLRenderingContext) {
     }
 
     if (_supportWebGL && sys.os === sys.OS_ANDROID) {
-      var browserVer = parseFloat(sys.browserVersion);
+      const browserVer = parseFloat(sys.browserVersion);
       switch (sys.browserType) {
         case sys.BROWSER_TYPE_MOBILE_QQ:
         case sys.BROWSER_TYPE_BAIDU:
@@ -635,126 +713,28 @@ if (win.WebGLRenderingContext) {
     }
   }
   catch (e) { }
-  tmpCanvas = null;
 }
 
-/**
- * The capabilities of the current platform
- * @memberof sys
- * @name capabilities
- * @type {Object}
- */
-var capabilities = sys.capabilities = {
-  "canvas": _supportCanvas,
-  "opengl": _supportWebGL
-};
-if (docEle['ontouchstart'] !== undefined || doc['ontouchstart'] !== undefined || nav.msPointerEnabled)
-  capabilities["touches"] = true;
-if (docEle['onmouseup'] !== undefined)
-  capabilities["mouse"] = true;
-if (docEle['onkeyup'] !== undefined)
-  capabilities["keyboard"] = true;
-if (win.DeviceMotionEvent || win.DeviceOrientationEvent)
-  capabilities["accelerometer"] = true;
-
-/**
- * Forces the garbage collection, only available in JSB
- * @memberof sys
- * @name garbageCollect
- * @function
- */
-sys.garbageCollect = function () {
-  // N/A in cocos2d-html5
+sys.capabilities = {
+  canvas: _supportCanvas,
+  opengl: _supportWebGL,
+  touches: false,
+  mouse: false,
+  keyboard: false,
+  accelerometer: false,
 };
 
-/**
- * Dumps rooted objects, only available in JSB
- * @memberof sys
- * @name dumpRoot
- * @function
- */
-sys.dumpRoot = function () {
-  // N/A in cocos2d-html5
-};
+if (docEle.ontouchstart !== undefined || (doc as any).ontouchstart !== undefined || nav.msPointerEnabled) {
+  sys.capabilities.touches = true;
+}
+if (docEle.onmouseup !== undefined) {
+  sys.capabilities.mouse = true;
+}
+if (docEle.onkeyup !== undefined) {
+  sys.capabilities.keyboard = true;
+}
+if (win.DeviceMotionEvent || win.DeviceOrientationEvent) {
+  sys.capabilities.accelerometer = true;
+}
 
-/**
- * Restart the JS VM, only available in JSB
- * @memberof sys
- * @name restartVM
- * @function
- */
-sys.restartVM = function () {
-  // N/A in cocos2d-html5
-};
-
-/**
- * Clean a script in the JS VM, only available in JSB
- * @memberof sys
- * @name cleanScript
- * @param {String} jsfile
- * @function
- */
-sys.cleanScript = function (jsfile) {
-  // N/A in cocos2d-html5
-};
-
-/**
- * Check whether an object is valid,
- * In web engine, it will return true if the object exist
- * In native engine, it will return true if the JS object and the correspond native object are both valid
- * @memberof sys
- * @name isObjectValid
- * @param {Object} obj
- * @return {boolean} Validity of the object
- * @function
- */
-sys.isObjectValid = function (obj) {
-  if (obj) return true;
-  else return false;
-};
-
-/**
- * Dump system informations
- * @memberof sys
- * @name dump
- * @function
- */
-sys.dump = function () {
-  var self = this;
-  var str = "";
-  str += "isMobile : " + self.isMobile + "\r\n";
-  str += "language : " + self.language + "\r\n";
-  str += "browserType : " + self.browserType + "\r\n";
-  str += "browserVersion : " + self.browserVersion + "\r\n";
-  str += "capabilities : " + JSON.stringify(self.capabilities) + "\r\n";
-  str += "os : " + self.os + "\r\n";
-  str += "osVersion : " + self.osVersion + "\r\n";
-  str += "platform : " + self.platform + "\r\n";
-  str += "Using " + (_renderType === game.RENDER_TYPE_WEBGL ? "WEBGL" : "CANVAS") + " renderer." + "\r\n";
-  log(str);
-};
-
-/**
- * Open a url in browser
- * @memberof sys
- * @name openURL
- * @param {String} url
- */
-sys.openURL = function (url) {
-  window.open(url);
-};
-
-/**
- * Get the number of milliseconds elapsed since 1 January 1970 00:00:00 UTC.
- * @memberof sys
- * @name now
- * @return {Number}
- */
-sys.now = function () {
-  if (Date.now) {
-    return Date.now();
-  }
-  else {
-    return +(new Date);
-  }
-};
+export { sys };

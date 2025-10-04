@@ -1,61 +1,50 @@
+import { EGLView } from "../EGLView";
+import { Size, Rect } from "../../../../types";
+import { game } from "../../../../globals";
 
-/**
- * <p>cc.ContentStrategy class is the root strategy class of content's scale strategy,
- * it controls the behavior of how to scale the scene and setup the viewport for the game</p>
- *
- * @class
- * @extends cc.Class
- */
-cc.ContentStrategy = cc.Class.extend(/** @lends cc.ContentStrategy# */{
+export class ContentStrategy {
+    public static EXACT_FIT = 0;
+    public static SHOW_ALL = 1;
+    public static NO_BORDER = 2;
+    public static FIXED_HEIGHT = 3;
+    public static FIXED_WIDTH = 4;
 
-  _result: {
-    scale: [1, 1],
-    viewport: null
-  },
+    protected _result: { scale: number[], viewport: Rect | null } = {
+        scale: [1, 1],
+        viewport: null
+    };
 
-  _buildResult: function (containerW, containerH, contentW, contentH, scaleX, scaleY) {
-    // Makes content fit better the canvas
-    Math.abs(containerW - contentW) < 2 && (contentW = containerW);
-    Math.abs(containerH - contentH) < 2 && (contentH = containerH);
+    protected _buildResult(containerW: number, containerH: number, contentW: number, contentH: number, scaleX: number, scaleY: number) {
+        // Makes content fit better the canvas
+        if (Math.abs(containerW - contentW) < 2) {
+            contentW = containerW;
+        }
+        if (Math.abs(containerH - contentH) < 2) {
+            contentH = containerH;
+        }
 
-    var viewport = cc.rect(Math.round((containerW - contentW) / 2),
-      Math.round((containerH - contentH) / 2),
-      contentW, contentH);
+        const viewport = new Rect(Math.round((containerW - contentW) / 2),
+            Math.round((containerH - contentH) / 2),
+            contentW, contentH);
 
-    // Translate the content
-    if (cc._renderType === cc.game.RENDER_TYPE_CANVAS) {
-      //TODO: modify something for setTransform
-      //cc._renderContext.translate(viewport.x, viewport.y + contentH);
+        // Translate the content
+        if (game.RENDER_TYPE_CANVAS) {
+            //TODO: modify something for setTransform
+            //(game._renderContext as any).translate(viewport.x, viewport.y + contentH);
+        }
+
+        this._result.scale = [scaleX, scaleY];
+        this._result.viewport = viewport;
+        return this._result;
     }
 
-    this._result.scale = [scaleX, scaleY];
-    this._result.viewport = viewport;
-    return this._result;
-  },
+    public preApply(view: EGLView) {
+    }
 
-  /**
-   * Manipulation before applying the strategy
-   * @param {cc.view} view The target view
-   */
-  preApply: function (view) {
-  },
+    public apply(view: EGLView, designedResolution: Size): { scale: number[], viewport: Rect | null } {
+        return { "scale": [1, 1], viewport: null };
+    }
 
-  /**
-   * Function to apply this strategy
-   * The return value is {scale: [scaleX, scaleY], viewport: {cc.Rect}},
-   * The target view can then apply these value to itself, it's preferred not to modify directly its private variables
-   * @param {cc.view} view
-   * @param {cc.Size} designedResolution
-   * @return {object} scaleAndViewportRect
-   */
-  apply: function (view, designedResolution) {
-    return { "scale": [1, 1] };
-  },
-
-  /**
-   * Manipulation after applying the strategy
-   * @param {cc.view} view The target view
-   */
-  postApply: function (view) {
-  }
-});
+    public postApply(view: EGLView) {
+    }
+}

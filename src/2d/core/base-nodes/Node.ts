@@ -2,13 +2,9 @@
  * Converted to ES Module and TypeScript by GitHub Copilot
  ****************************************************************************/
 
-import { cc } from '../Boot';
 import type { ActionManager } from '../ActionManager';
+import type { eventManager } from '../event-manager/EventManager';
 import type { Scheduler } from '../Scheduler';
-
-export interface Point { x: number; y: number }
-export interface Size { width: number; height: number }
-export interface Color { r: number; g: number; b: number; a: number }
 
 export class Node {
     // Properties
