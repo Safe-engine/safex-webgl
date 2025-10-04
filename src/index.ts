@@ -1,5 +1,8 @@
 import { Director } from "./2d/core/Director";
 import { DrawingPrimitiveWebGL } from "./2d/core/DrawingPrimitivesWebGL";
+import { eventManager } from "./2d/core/event-manager/EventManager";
+import { EGLView } from "./2d/core/platform/EGLView";
+import { inputManager } from "./2d/core/platform/InputManager";
 import { isUndefined } from "./helper/checkType";
 import { log } from "./helper/Debugger";
 import { global } from "./helper/global";

@@ -1,3 +1,6 @@
+import { director, game, view } from "../src"
+import { global } from "../src/helper/global"
+
 class BootScene extends Scene {
   constructor() {
     super()
