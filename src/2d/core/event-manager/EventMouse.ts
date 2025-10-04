@@ -1,137 +1,139 @@
+import { Event } from './Event';
+import { EGLView } from '../platform/EGLView';
 
 /**
  * The mouse event
  * @class
- * @extends cc.Event
+ * @extends Event
  */
-cc.EventMouse = cc.Event.extend(/** @lends cc.EventMouse# */{
-  _eventType: 0,
-  _button: 0,
-  _x: 0,
-  _y: 0,
-  _prevX: 0,
-  _prevY: 0,
-  _scrollX: 0,
-  _scrollY: 0,
+export class EventMouse extends Event {
+  _eventType = 0;
+  _button = 0;
+  _x = 0;
+  _y = 0;
+  _prevX = 0;
+  _prevY = 0;
+  _scrollX = 0;
+  _scrollY = 0;
 
-  ctor: function (eventType) {
-    cc.Event.prototype.ctor.call(this, cc.Event.MOUSE);
+  constructor(eventType) {
+    super(Event.MOUSE);
     this._eventType = eventType;
-  },
+  }
 
   /**
    * Sets scroll data
    * @param {number} scrollX
    * @param {number} scrollY
    */
-  setScrollData: function (scrollX, scrollY) {
+  setScrollData(scrollX, scrollY) {
     this._scrollX = scrollX;
     this._scrollY = scrollY;
-  },
+  }
 
   /**
    * Returns the x axis scroll value
    * @returns {number}
    */
-  getScrollX: function () {
+  getScrollX() {
     return this._scrollX;
-  },
+  }
 
   /**
    * Returns the y axis scroll value
    * @returns {number}
    */
-  getScrollY: function () {
+  getScrollY() {
     return this._scrollY;
-  },
+  }
 
   /**
    * Sets cursor location
    * @param {number} x
    * @param {number} y
    */
-  setLocation: function (x, y) {
+  setLocation(x, y) {
     this._x = x;
     this._y = y;
-  },
+  }
 
   /**
    * Returns cursor location
    * @return {cc.Point} location
    */
-  getLocation: function () {
+  getLocation() {
     return { x: this._x, y: this._y };
-  },
+  }
 
   /**
    * Returns the current cursor location in screen coordinates
    * @return {cc.Point}
    */
-  getLocationInView: function () {
-    return { x: this._x, y: cc.view._designResolutionSize.height - this._y };
-  },
+  getLocationInView() {
+    return { x: this._x, y: EGLView._getInstance().getDesignResolutionSize().height - this._y };
+  }
 
-  _setPrevCursor: function (x, y) {
+  _setPrevCursor(x, y) {
     this._prevX = x;
     this._prevY = y;
-  },
+  }
 
   /**
    * Returns the delta distance from the previous location to current location
    * @return {cc.Point}
    */
-  getDelta: function () {
+  getDelta() {
     return { x: this._x - this._prevX, y: this._y - this._prevY };
-  },
+  }
 
   /**
    * Returns the X axis delta distance from the previous location to current location
    * @return {Number}
    */
-  getDeltaX: function () {
+  getDeltaX() {
     return this._x - this._prevX;
-  },
+  }
 
   /**
    * Returns the Y axis delta distance from the previous location to current location
    * @return {Number}
    */
-  getDeltaY: function () {
+  getDeltaY() {
     return this._y - this._prevY;
-  },
+  }
 
   /**
    * Sets mouse button
    * @param {number} button
    */
-  setButton: function (button) {
+  setButton(button) {
     this._button = button;
-  },
+  }
 
   /**
    * Returns mouse button
    * @returns {number}
    */
-  getButton: function () {
+  getButton() {
     return this._button;
-  },
+  }
 
   /**
    * Returns location X axis data
    * @returns {number}
    */
-  getLocationX: function () {
+  getLocationX() {
     return this._x;
-  },
+  }
 
   /**
    * Returns location Y axis data
    * @returns {number}
    */
-  getLocationY: function () {
+  getLocationY() {
     return this._y;
   }
-});
+}
 
 //Different types of MouseEvent
 /**
@@ -139,84 +141,84 @@ cc.EventMouse = cc.Event.extend(/** @lends cc.EventMouse# */{
  * @constant
  * @type {number}
  */
-cc.EventMouse.NONE = 0;
+EventMouse.NONE = 0;
 /**
  * The event type code of mouse down event.
  * @constant
  * @type {number}
  */
-cc.EventMouse.DOWN = 1;
+EventMouse.DOWN = 1;
 /**
  * The event type code of mouse up event.
  * @constant
  * @type {number}
  */
-cc.EventMouse.UP = 2;
+EventMouse.UP = 2;
 /**
  * The event type code of mouse move event.
  * @constant
  * @type {number}
  */
-cc.EventMouse.MOVE = 3;
+EventMouse.MOVE = 3;
 /**
  * The event type code of mouse scroll event.
  * @constant
  * @type {number}
  */
-cc.EventMouse.SCROLL = 4;
+EventMouse.SCROLL = 4;
 
 /**
  * The tag of Mouse left button
  * @constant
  * @type {Number}
  */
-cc.EventMouse.BUTTON_LEFT = 0;
+EventMouse.BUTTON_LEFT = 0;
 
 /**
  * The tag of Mouse right button  (The right button number is 2 on browser)
  * @constant
  * @type {Number}
  */
-cc.EventMouse.BUTTON_RIGHT = 2;
+EventMouse.BUTTON_RIGHT = 2;
 
 /**
  * The tag of Mouse middle button  (The right button number is 1 on browser)
  * @constant
  * @type {Number}
  */
-cc.EventMouse.BUTTON_MIDDLE = 1;
+EventMouse.BUTTON_MIDDLE = 1;
 
 /**
  * The tag of Mouse button 4
  * @constant
  * @type {Number}
  */
-cc.EventMouse.BUTTON_4 = 3;
+EventMouse.BUTTON_4 = 3;
 
 /**
  * The tag of Mouse button 5
  * @constant
  * @type {Number}
  */
-cc.EventMouse.BUTTON_5 = 4;
+EventMouse.BUTTON_5 = 4;
 
 /**
  * The tag of Mouse button 6
  * @constant
  * @type {Number}
  */
-cc.EventMouse.BUTTON_6 = 5;
+EventMouse.BUTTON_6 = 5;
 
 /**
  * The tag of Mouse button 7
  * @constant
  * @type {Number}
  */
-cc.EventMouse.BUTTON_7 = 6;
+EventMouse.BUTTON_7 = 6;
 
 /**
  * The tag of Mouse button 8
  * @constant
  * @type {Number}
  */
-cc.EventMouse.BUTTON_8 = 7;
+EventMouse.BUTTON_8 = 7;

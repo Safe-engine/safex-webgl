@@ -1,8 +1,10 @@
+import { ResolutionPolicy } from './EGLView/ResolutionPolicy';
+
 /**
  * @ignore
  */
-declare var cc: any;
 declare var gl: any;
+
 cc.Touches = [];
 cc.TouchesIntergerDict = {};
 
@@ -156,11 +158,11 @@ export class EGLView {
     cc.visibleRect && cc.visibleRect.init(_t._visibleRect);
 
     // Setup system default resolution policies
-    _t._rpExactFit = new cc.ResolutionPolicy(_strategyer.EQUAL_TO_FRAME, _strategy.EXACT_FIT);
-    _t._rpShowAll = new cc.ResolutionPolicy(_strategyer.PROPORTION_TO_FRAME, _strategy.SHOW_ALL);
-    _t._rpNoBorder = new cc.ResolutionPolicy(_strategyer.EQUAL_TO_FRAME, _strategy.NO_BORDER);
-    _t._rpFixedHeight = new cc.ResolutionPolicy(_strategyer.EQUAL_TO_FRAME, _strategy.FIXED_HEIGHT);
-    _t._rpFixedWidth = new cc.ResolutionPolicy(_strategyer.EQUAL_TO_FRAME, _strategy.FIXED_WIDTH);
+    _t._rpExactFit = new ResolutionPolicy(_strategyer.EQUAL_TO_FRAME, _strategy.EXACT_FIT);
+    _t._rpShowAll = new ResolutionPolicy(_strategyer.PROPORTION_TO_FRAME, _strategy.SHOW_ALL);
+    _t._rpNoBorder = new ResolutionPolicy(_strategyer.EQUAL_TO_FRAME, _strategy.NO_BORDER);
+    _t._rpFixedHeight = new ResolutionPolicy(_strategyer.EQUAL_TO_FRAME, _strategy.FIXED_HEIGHT);
+    _t._rpFixedWidth = new ResolutionPolicy(_strategyer.EQUAL_TO_FRAME, _strategy.FIXED_WIDTH);
 
     _t._targetDensityDPI = cc.DENSITYDPI_HIGH;
 
@@ -606,8 +608,8 @@ export class EGLView {
 
   /**
    * Returns the current resolution policy
-   * @see cc.ResolutionPolicy
-   * @return {cc.ResolutionPolicy}
+   * @see ResolutionPolicy
+   * @return {ResolutionPolicy}
    */
   getResolutionPolicy() {
     return this._resolutionPolicy;
@@ -615,17 +617,17 @@ export class EGLView {
 
   /**
    * Sets the current resolution policy
-   * @see cc.ResolutionPolicy
-   * @param {cc.ResolutionPolicy|Number} resolutionPolicy
+   * @see ResolutionPolicy
+   * @param {ResolutionPolicy|Number} resolutionPolicy
    */
   setResolutionPolicy(resolutionPolicy) {
     var _t = this;
-    if (resolutionPolicy instanceof cc.ResolutionPolicy) {
+    if (resolutionPolicy instanceof ResolutionPolicy) {
       _t._resolutionPolicy = resolutionPolicy;
     }
     // Ensure compatibility with JSB
     else {
-      var _locPolicy = cc.ResolutionPolicy;
+      var _locPolicy = ResolutionPolicy;
       if (resolutionPolicy === _locPolicy.EXACT_FIT)
         _t._resolutionPolicy = _t._rpExactFit;
       if (resolutionPolicy === _locPolicy.SHOW_ALL)
@@ -647,10 +649,10 @@ export class EGLView {
    * [3] ResolutionShowAll        Full screen with black border: if the design resolution ratio of width to height is different from the screen resolution ratio, two black borders will be shown.<br/>
    * [4] ResolutionFixedHeight    Scale the content's height to screen's height and proportionally scale its width<br/>
    * [5] ResolutionFixedWidth     Scale the content's width to screen's width and proportionally scale its height<br/>
-   * [cc.ResolutionPolicy]        [Web only feature] Custom resolution policy, constructed by cc.ResolutionPolicy<br/>
+   * [ResolutionPolicy]        [Web only feature] Custom resolution policy, constructed by ResolutionPolicy<br/>
    * @param {Number} width Design resolution width.
    * @param {Number} height Design resolution height.
-   * @param {cc.ResolutionPolicy|Number} resolutionPolicy The resolution policy desired
+   * @param {ResolutionPolicy|Number} resolutionPolicy The resolution policy desired
    */
   setDesignResolutionSize(width, height, resolutionPolicy) {
     // Defensive code
@@ -747,7 +749,7 @@ export class EGLView {
    *     3. The resolution policy will be reset with designed view size in points.
    * @param {Number} width Design resolution width.
    * @param {Number} height Design resolution height.
-   * @param {cc.ResolutionPolicy|Number} resolutionPolicy The resolution policy desired
+   * @param {ResolutionPolicy|Number} resolutionPolicy The resolution policy desired
    */
   setRealPixelResolution(width, height, resolutionPolicy) {
     // Set viewport's width
@@ -924,7 +926,7 @@ export class EGLView {
   }
   static _getInstance() {
     if (!this._instance) {
-      this._instance = this._instance || new cc.EGLView();
+      this._instance = this._instance || new EGLView();
       this._instance.initialize();
     }
     return this._instance;

@@ -1,95 +1,76 @@
+import { Node } from '../base-nodes/Node';
+
 /**
- * Base class of all kinds of events.
- * @class
- * @extends cc.Class
+ * @brief Base class of all kinds of events.
  */
-export class Event  {
-    _type: 0,                                   //  Event type
-    _isStopped: false,                         //< whether the event has been stopped.
-    _currentTarget: null,                       //< Current target
+export class Event {
+    /**
+     * The type code of Touch event.
+     */
+    static readonly TOUCH = 0;
+    /**
+     * The type code of Keyboard event.
+     */
+    static readonly KEYBOARD = 1;
+    /**
+     * The type code of Acceleration event.
+     */
+    static readonly ACCELERATION = 2;
+    /**
+     * The type code of Mouse event.
+     */
+    static readonly MOUSE = 3;
+    /**
+     * The type code of UI focus event.
+     */
+    static readonly FOCUS = 4;
+    /**
+     * The type code of Custom event.
+     */
+    static readonly CUSTOM = 6;
 
-    _setCurrentTarget: function (target) {
-        this._currentTarget = target;
-    },
+    protected _type: number;
+    protected _isStopped = false;
+    protected _currentTarget: Node | null = null;
 
-    ctor: function (type) {
+    constructor(type: number) {
         this._type = type;
-    },
+    }
 
     /**
-     * Gets the event type
-     * @function
-     * @returns {Number}
+     * Gets the event type.
      */
-    getType: function () {
+    getType() {
         return this._type;
-    },
+    }
 
     /**
-     * Stops propagation for current event
-     * @function
+     * Stops propagation for current event.
      */
-    stopPropagation: function () {
+    stopPropagation() {
         this._isStopped = true;
-    },
+    }
 
     /**
-     * Checks whether the event has been stopped
-     * @function
-     * @returns {boolean}
+     * Checks whether the event has been stopped.
      */
-    isStopped: function () {
+    isStopped() {
         return this._isStopped;
-    },
+    }
 
     /**
-     * <p>
-     *     Gets current target of the event                                                            <br/>
-     *     note: It only be available when the event listener is associated with node.                <br/>
-     *          It returns 0 when the listener is associated with fixed priority.
-     * </p>
-     * @function
-     * @returns {cc.Node}  The target with which the event associates.
+     * Gets current target of the event.
+     * @note It only be available when the event listener is associated with node.
+     * It returns null when the listener is associated with fixed priority.
      */
-    getCurrentTarget: function () {
+    getCurrentTarget() {
         return this._currentTarget;
     }
-}
 
-//event type
-/**
- * The type code of Touch event.
- * @constant
- * @type {number}
- */
-cc.Event.TOUCH = 0;
-/**
- * The type code of Keyboard event.
- * @constant
- * @type {number}
- */
-cc.Event.KEYBOARD = 1;
-/**
- * The type code of Acceleration event.
- * @constant
- * @type {number}
- */
-cc.Event.ACCELERATION = 2;
-/**
- * The type code of Mouse event.
- * @constant
- * @type {number}
- */
-cc.Event.MOUSE = 3;
-/**
- * The type code of UI focus event.
- * @constant
- * @type {number}
- */
-cc.Event.FOCUS = 4;
-/**
- * The type code of Custom event.
- * @constant
- * @type {number}
- */
-cc.Event.CUSTOM = 6;
+    /**
+     * Sets current target of the event
+     */
+    _setCurrentTarget(target: Node | null) {
+        this._currentTarget = target;
+    }
+}
