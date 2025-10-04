@@ -1,5 +1,5 @@
-import { Event } from './Event';
 import { EGLView } from '../platform/EGLView';
+import { Event } from './Event';
 
 /**
  * The mouse event
@@ -70,7 +70,7 @@ export class EventMouse extends Event {
    * @return {cc.Point}
    */
   getLocationInView() {
-    return { x: this._x, y: EGLView._getInstance().getDesignResolutionSize().height - this._y };
+    return { x: this._x, y: EGLView.getInstance().getDesignResolutionSize().height - this._y };
   }
 
   _setPrevCursor(x, y) {
@@ -133,92 +133,93 @@ export class EventMouse extends Event {
   getLocationY() {
     return this._y;
   }
+
+  //Different types of MouseEvent
+  /**
+   * The none event code of  mouse event.
+   * @constant
+   * @type {number}
+   */
+  static NONE = 0;
+  /**
+   * The event type code of mouse down event.
+   * @constant
+   * @type {number}
+   */
+  static DOWN = 1;
+  /**
+   * The event type code of mouse up event.
+   * @constant
+   * @type {number}
+   */
+  static UP = 2;
+  /**
+   * The event type code of mouse move event.
+   * @constant
+   * @type {number}
+   */
+  static MOVE = 3;
+  /**
+   * The event type code of mouse scroll event.
+   * @constant
+   * @type {number}
+   */
+  static SCROLL = 4;
+
+  /**
+   * The tag of Mouse left button
+   * @constant
+   * @type {Number}
+   */
+  static BUTTON_LEFT = 0;
+
+  /**
+   * The tag of Mouse right button  (The right button number is 2 on browser)
+   * @constant
+   * @type {Number}
+   */
+  static BUTTON_RIGHT = 2;
+
+  /**
+   * The tag of Mouse middle button  (The right button number is 1 on browser)
+   * @constant
+   * @type {Number}
+   */
+  static BUTTON_MIDDLE = 1;
+
+  /**
+   * The tag of Mouse button 4
+   * @constant
+   * @type {Number}
+   */
+  static BUTTON_4 = 3;
+
+  /**
+   * The tag of Mouse button 5
+   * @constant
+   * @type {Number}
+   */
+  static BUTTON_5 = 4;
+
+  /**
+   * The tag of Mouse button 6
+   * @constant
+   * @type {Number}
+   */
+  static BUTTON_6 = 5;
+
+  /**
+   * The tag of Mouse button 7
+   * @constant
+   * @type {Number}
+   */
+  static BUTTON_7 = 6;
+
+  /**
+   * The tag of Mouse button 8
+   * @constant
+   * @type {Number}
+   */
+  static BUTTON_8 = 7;
+
 }
-
-//Different types of MouseEvent
-/**
- * The none event code of  mouse event.
- * @constant
- * @type {number}
- */
-EventMouse.NONE = 0;
-/**
- * The event type code of mouse down event.
- * @constant
- * @type {number}
- */
-EventMouse.DOWN = 1;
-/**
- * The event type code of mouse up event.
- * @constant
- * @type {number}
- */
-EventMouse.UP = 2;
-/**
- * The event type code of mouse move event.
- * @constant
- * @type {number}
- */
-EventMouse.MOVE = 3;
-/**
- * The event type code of mouse scroll event.
- * @constant
- * @type {number}
- */
-EventMouse.SCROLL = 4;
-
-/**
- * The tag of Mouse left button
- * @constant
- * @type {Number}
- */
-EventMouse.BUTTON_LEFT = 0;
-
-/**
- * The tag of Mouse right button  (The right button number is 2 on browser)
- * @constant
- * @type {Number}
- */
-EventMouse.BUTTON_RIGHT = 2;
-
-/**
- * The tag of Mouse middle button  (The right button number is 1 on browser)
- * @constant
- * @type {Number}
- */
-EventMouse.BUTTON_MIDDLE = 1;
-
-/**
- * The tag of Mouse button 4
- * @constant
- * @type {Number}
- */
-EventMouse.BUTTON_4 = 3;
-
-/**
- * The tag of Mouse button 5
- * @constant
- * @type {Number}
- */
-EventMouse.BUTTON_5 = 4;
-
-/**
- * The tag of Mouse button 6
- * @constant
- * @type {Number}
- */
-EventMouse.BUTTON_6 = 5;
-
-/**
- * The tag of Mouse button 7
- * @constant
- * @type {Number}
- */
-EventMouse.BUTTON_7 = 6;
-
-/**
- * The tag of Mouse button 8
- * @constant
- * @type {Number}
- */
-EventMouse.BUTTON_8 = 7;

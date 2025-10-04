@@ -219,6 +219,8 @@ export const _LogInfos = {
   RectWidth: "Rect width exceeds maximum margin: %s",
   RectHeight: "Rect height exceeds maximum margin: %s",
 
+  EventListenerKeyboard_checkAvailable: "_EventListenerKeyboard.checkAvailable(): Invalid EventListenerKeyboard!",
+
   EventManager__updateListeners: "If program goes here, there should be event in dispatch.",
   EventManager__updateListeners_2: "_inDispatch should be 1 here."
 };

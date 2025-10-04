@@ -93,7 +93,8 @@ class Game {
     frameRate: "frameRate",
     id: "id",
     renderMode: "renderMode",
-    jsList: "jsList"
+    jsList: "jsList",
+    registerSystemEvent: 'registerSystemEvent'
   };
 
   _paused = true;
