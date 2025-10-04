@@ -1,13 +1,12 @@
-/****************************************************************************
- * Converted to ES Module and TypeScript by GitHub Copilot
- ****************************************************************************/
-
-import { eventManager, game, renderer } from '../..';
+import { game, renderer } from '../..';
 import { ActionManager } from './ActionManager';
+import { Node } from './base-nodes/Node';
 import { Point, Size } from './cocoa/Geometry';
+import { EventCustom } from './event-manager/EventCustom';
+import { eventManager } from './event-manager/EventManager';
 import { Profiler } from './Profiler';
 import { Renderer } from './Renderer';
-import { Scene } from './Scene';
+import { Scene } from './scenes/Scene';
 import { Scheduler } from './Scheduler';
 
 export class DirectorDelegate { }

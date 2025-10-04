@@ -2,6 +2,7 @@ import { isFunction } from '../../../helper/checkType';
 import { _LogInfos, log } from '../../../helper/Debugger';
 import { sys } from '../../../helper/sys';
 import { p, Rect, rectContainsPoint } from '../cocoa/Geometry';
+import { EventAcceleration } from '../event-manager/EventExtension';
 import { eventManager } from '../event-manager/EventManager';
 import { EventMouse } from '../event-manager/EventMouse';
 import { Touch } from '../event-manager/Touch';

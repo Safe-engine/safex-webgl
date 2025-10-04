@@ -1,40 +1,35 @@
+import { Event } from "./Event";
 
-/**
- * The Custom event
- * @class
- * @extends cc.Event
- */
+export class EventCustom extends Event {
+  _eventName = null
+  _userData = null
 
-cc.EventCustom = cc.Event.extend(/** @lends cc.EventCustom# */{
-  _eventName: null,
-  _userData: null,                                 // User data
-
-  ctor: function (eventName) {
-    cc.Event.prototype.ctor.call(this, cc.Event.CUSTOM);
+  constructor(eventName: string) {
+    super(Event.CUSTOM);
     this._eventName = eventName;
-  },
+  }
 
   /**
    * Sets user data
    * @param {*} data
    */
-  setUserData: function (data) {
+  setUserData(data) {
     this._userData = data;
-  },
+  }
 
   /**
    * Gets user data
    * @returns {*}
    */
-  getUserData: function () {
+  getUserData() {
     return this._userData;
-  },
+  }
 
   /**
    * Gets event name
    * @returns {String}
    */
-  getEventName: function () {
+  getEventName() {
     return this._eventName;
   }
-});
+}

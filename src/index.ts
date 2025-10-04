@@ -34,6 +34,10 @@ declare global {
     msHidden?: boolean;
     webkitHidden?: boolean;
   }
+
+  interface Navigator{
+    msPointerEnabled?: boolean;
+  }
 }
 
 export let director: Director;
@@ -41,7 +45,7 @@ export let renderer: any;
 let rendererWebGL: any;
 let rendererCanvas: any;
 let _drawingUtil: any;
-let _canvas: HTMLCanvasElement | null = null;
+export let _canvas: HTMLCanvasElement;
 let _renderContext: any = null;
 let _renderType = 0;
 let _supportRender = true;
@@ -186,7 +190,7 @@ class Game {
 
       this._initRenderer(this.config[this.CONFIG_KEY.width], this.config[this.CONFIG_KEY.height]);
 
-      view = EGLView._getInstance();
+      view = EGLView.getInstance();
       director = Director._getInstance();
       if (director.setOpenGLView) {
         director.setOpenGLView(view);
