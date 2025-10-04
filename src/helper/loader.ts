@@ -9,6 +9,9 @@
  * @see loader
  */
 
+import { game } from "..";
+import { error, log } from "./Debugger";
+
 var imagePool = {
   _pool: new Array(10),
   _MAX: 10,
@@ -140,7 +143,7 @@ export const loader = (function () {
      * @param {array} jsList
      * @param {function} [cb]
      */
-    loadJsWithImg: function (baseDir, jsList, cb) {
+    loadJsWithImg: function (baseDir, jsList, cb?) {
       var self = this, jsLoadingImg = self._loadJsImg(),
         args = self._getArgs4Js(arguments);
       this.loadJs(args[0], args[1], function (err) {

@@ -1,11 +1,7 @@
-/****************************************************************************
- * Converted to ES Module and TypeScript by GitHub Copilot
- ****************************************************************************/
+import { director } from "../..";
+import { _LogInfos, assert, log } from "../../helper/Debugger";
 
 // You may need to adjust these imports to match your project structure
-import { cc } from './Boot';
-import type { Node } from './Node';
-import type { Action } from './Action';
 
 export class HashElement {
     actions: Action[] = [];
@@ -288,7 +284,3 @@ export class ActionManager {
         }
     }
 }
-
-// Optionally, attach to cc namespace for compatibility
-HashElement = HashElement;
-ActionManager

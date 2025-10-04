@@ -213,9 +213,9 @@ export const game = {
     if (this._paused) return;
     this._paused = true;
     // Pause audio engine
-    if (audioEngine) {
-      audioEngine._pausePlaying();
-    }
+    // if (audioEngine) {
+    //   audioEngine._pausePlaying();
+    // }
     // Pause main loop
     if (this._intervalId)
       window.cancelAnimationFrame(this._intervalId);
@@ -229,9 +229,9 @@ export const game = {
     if (!this._paused) return;
     this._paused = false;
     // Resume audio engine
-    if (audioEngine) {
-      audioEngine._resumePlaying();
-    }
+    // if (audioEngine) {
+    //   audioEngine._resumePlaying();
+    // }
     // Resume main loop
     this._runMainLoop();
   },
@@ -249,7 +249,7 @@ export const game = {
   restart: function () {
     director.popToSceneStackLevel(0);
     // Clean up audio
-    audioEngine && audioEngine.end();
+    // audioEngine && audioEngine.end();
 
     game.onStart();
   },
