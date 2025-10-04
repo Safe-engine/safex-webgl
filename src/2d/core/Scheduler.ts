@@ -1,8 +1,4 @@
-/****************************************************************************
- * Converted to ES Module and TypeScript by GitHub Copilot
- ****************************************************************************/
-
-import { cc } from './Boot';
+import { _LogInfos, assert, log } from "../../helper/Debugger";
 
 const MAX_POOL_SIZE = 20;
 

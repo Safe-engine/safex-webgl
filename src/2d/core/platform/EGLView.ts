@@ -1,21 +1,21 @@
-import { renderer } from '../../..';
-import { director, game, screen, view, visibleRect, winSize } from '../../../globals';
+import { director, game, renderer, view, winSize } from '../../..';
 import { log } from '../../../helper/Debugger';
 import { sys } from '../../../helper/sys';
-import { eventManager } from '../../event-manager/EventManager';
+import { rect, Rect, size, Size, Point as Vec2 } from '../cocoa/Geometry';
+import { eventManager } from '../event-manager/EventManager';
 import { ContainerStrategy } from './EGLView/ContainerStrategy';
 import { ContentStrategy } from './EGLView/ContentStrategy';
 import { ResolutionPolicy } from './EGLView/ResolutionPolicy';
 
-declare var gl: any;
+declare const gl: any;
 
 export const Touches: any[] = [];
 export const TouchesIntergerDict: any = {};
 
-export const DENSITYDPI_DEVICE = "device-dpi";
-export const DENSITYDPI_HIGH = "high-dpi";
-export const DENSITYDPI_MEDIUM = "medium-dpi";
-export const DENSITYDPI_LOW = "low-dpi";
+export const DENSITYDPI_DEVICE = 'device-dpi';
+export const DENSITYDPI_HIGH = 'high-dpi';
+export const DENSITYDPI_MEDIUM = 'medium-dpi';
+export const DENSITYDPI_LOW = 'low-dpi';
 
 export const ORIENTATION_LANDSCAPE = 0;
 export const ORIENTATION_PORTRAIT = 1;
@@ -39,12 +39,12 @@ const __BrowserGetter = {
       return frame.clientHeight;
   },
   meta: {
-    "width": "device-width"
+    'width': 'device-width'
   } as any,
   adaptationType: sys.browserType
 };
 
-if (window.navigator.userAgent.indexOf("OS 8_1_") > -1) //this mistake like MIUI, so use of MIUI treatment method
+if (window.navigator.userAgent.indexOf('OS 8_1_') > -1) //this mistake like MIUI, so use of MIUI treatment method
   __BrowserGetter.adaptationType = sys.BROWSER_TYPE_MIUI;
 
 if (sys.os === sys.OS_IOS) // All browsers are WebView
@@ -52,10 +52,10 @@ if (sys.os === sys.OS_IOS) // All browsers are WebView
 
 switch (__BrowserGetter.adaptationType) {
   case sys.BROWSER_TYPE_SAFARI:
-    __BrowserGetter.meta["minimal-ui"] = "true";
+    __BrowserGetter.meta['minimal-ui'] = 'true';
     break;
   case sys.BROWSER_TYPE_CHROME:
-    Object.defineProperty(__BrowserGetter, "target-densitydpi", {
+    Object.defineProperty(__BrowserGetter, 'target-densitydpi', {
       get: function () {
         return view._targetDensityDPI;
       }
@@ -70,42 +70,27 @@ switch (__BrowserGetter.adaptationType) {
           view._designResolutionSize.height,
           view._resolutionPolicy
         );
-        window.removeEventListener("resize", resize, false);
+        window.removeEventListener('resize', resize, false);
       };
-      window.addEventListener("resize", resize, false);
+      window.addEventListener('resize', resize, false);
     };
     break;
 }
 
 let _scissorRect: Rect | null = null;
 
-/**
- * cc.view is the singleton object which represents the game window.<br/>
- * It's main task include: <br/>
- *  - Apply the design resolution policy<br/>
- *  - Provide interaction with the window, like resize event on web, retina display support, etc...<br/>
- *  - Manage the game view port which can be different with the window<br/>
- *  - Manage the content scale and translation<br/>
- * <br/>
- * Since the cc.view is a singleton, you don't need to call any constructor or create functions,<br/>
- * the standard way to use it is by calling:<br/>
- *  - cc.view.methodName(); <br/>
- * @class
- * @name cc.view
- * @extend cc.Class
- */
 export class EGLView {
   // fields
   _delegate: any = null;
   // Size of parent node that contains game.container and game.canvas
-  _frameSize: Size ;
+  _frameSize: Size;
   // resolution size, it is the size appropriate for the app resources.
-  _designResolutionSize: Size ;
-  _originalDesignResolutionSize: Size ;
+  _designResolutionSize: Size;
+  _originalDesignResolutionSize: Size;
   // Viewport is the container's rect related to content's coordinates in pixel
-  _viewPortRect: Rect ;
+  _viewPortRect: Rect;
   // The visible rect in content's coordinate in point
-  _visibleRect: Rect ;
+  _visibleRect: Rect;
   _retinaEnabled = false;
   _autoFullScreen = false;
   // The device's pixel ratio (for retina displays)
@@ -164,16 +149,16 @@ export class EGLView {
     this._viewPortRect = rect(0, 0, w, h);
     this._visibleRect = rect(0, 0, w, h);
     this._contentTranslateLeftTop = { left: 0, top: 0 };
-    this._viewName = "Cocos2dHTML5";
+    this._viewName = 'Cocos2dHTML5';
 
-    visibleRect && visibleRect.init(this._visibleRect);
+    visibleRect?.init(this._visibleRect);
 
     // Setup system default resolution policies
-    _t._rpExactFit = new ResolutionPolicy(_strategyer.EQUAL_TO_FRAME, _strategy.EXACT_FIT);
-    _t._rpShowAll = new ResolutionPolicy(_strategyer.PROPORTION_TO_FRAME, _strategy.SHOW_ALL);
-    _t._rpNoBorder = new ResolutionPolicy(_strategyer.EQUAL_TO_FRAME, _strategy.NO_BORDER);
-    _t._rpFixedHeight = new ResolutionPolicy(_strategyer.EQUAL_TO_FRAME, _strategy.FIXED_HEIGHT);
-    _t._rpFixedWidth = new ResolutionPolicy(_strategyer.EQUAL_TO_FRAME, _strategy.FIXED_WIDTH);
+    this._rpExactFit = new ResolutionPolicy(_strategyer.EQUAL_TO_FRAME, _strategy.EXACT_FIT);
+    this._rpShowAll = new ResolutionPolicy(_strategyer.PROPORTION_TO_FRAME, _strategy.SHOW_ALL);
+    this._rpNoBorder = new ResolutionPolicy(_strategyer.EQUAL_TO_FRAME, _strategy.NO_BORDER);
+    this._rpFixedHeight = new ResolutionPolicy(_strategyer.EQUAL_TO_FRAME, _strategy.FIXED_HEIGHT);
+    this._rpFixedWidth = new ResolutionPolicy(_strategyer.EQUAL_TO_FRAME, _strategy.FIXED_WIDTH);
 
     this._targetDensityDPI = DENSITYDPI_HIGH;
 
@@ -186,7 +171,7 @@ export class EGLView {
 
   // Resize helper functions
   _resizeEvent() {
-    let view: EGLView = this;
+    const view: EGLView = this;
     if (view._orientationChanging) {
       return;
     }
@@ -228,7 +213,7 @@ export class EGLView {
   _orientationChange() {
     view._orientationChanging = true;
     if (sys.isMobile) {
-      game.container!.style.display = "none";
+      game.container!.style.display = 'none';
     }
     setTimeout(function () {
       view._orientationChanging = false;
@@ -239,13 +224,13 @@ export class EGLView {
   /**
    * <p>
    * Sets view's target-densitydpi for android mobile browser. it can be set to:           <br/>
-   *   1. cc.DENSITYDPI_DEVICE, value is "device-dpi"                                      <br/>
-   *   2. cc.DENSITYDPI_HIGH, value is "high-dpi"  (default value)                         <br/>
-   *   3. cc.DENSITYDPI_MEDIUM, value is "medium-dpi" (browser's default value)            <br/>
-   *   4. cc.DENSITYDPI_LOW, value is "low-dpi"                                            <br/>
-   *   5. Custom value, e.g: "480"                                                         <br/>
+   *   1. DENSITYDPI_DEVICE, value is 'device-dpi'                                      <br/>
+   *   2. DENSITYDPI_HIGH, value is 'high-dpi'  (default value)                         <br/>
+   *   3. DENSITYDPI_MEDIUM, value is 'medium-dpi' (browser's default value)            <br/>
+   *   4. DENSITYDPI_LOW, value is 'low-dpi'                                            <br/>
+   *   5. Custom value, e.g: '480'                                                         <br/>
    * </p>
-   * @param {String} densityDPI
+   * @param densityDPI
    */
   setTargetDensityDPI(densityDPI: string) {
     this._targetDensityDPI = densityDPI;
@@ -281,10 +266,10 @@ export class EGLView {
   /**
    * Sets the orientation of the game, it can be landscape, portrait or auto.
    * When set it to landscape or portrait, and screen w/h ratio doesn't fit,
-   * cc.view will automatically rotate the game canvas using CSS.
+   * view will automatically rotate the game canvas using CSS.
    * Note that this function doesn't have any effect in native,
    * in native, you need to set the application orientation in native project settings
-   * @param {Number} orientation - Possible values: cc.ORIENTATION_LANDSCAPE | cc.ORIENTATION_PORTRAIT | cc.ORIENTATION_AUTO
+   * @param orientation - Possible values: ORIENTATION_LANDSCAPE | ORIENTATION_PORTRAIT | ORIENTATION_AUTO
    */
   setOrientation(orientation: number) {
     orientation = orientation & ORIENTATION_AUTO;
@@ -300,11 +285,11 @@ export class EGLView {
 
   setDocumentPixelWidth(width: number) {
     // Set viewport's width
-    this._setViewportMeta({ "width": width }, true);
+    this._setViewportMeta({ width }, true);
 
     // Set body width to the exact pixel resolution
     document.documentElement.style.width = width + 'px';
-    document.body.style.width = "100%";
+    document.body.style.width = '100%';
 
     // Reset the resolution size and policy
     this.setDesignResolutionSize(this._designResolutionSize.width, this._designResolutionSize.height, this._resolutionPolicy);
@@ -345,30 +330,30 @@ export class EGLView {
   }
 
   _setViewportMeta(metas: any, overwrite: boolean) {
-    let vp = document.getElementById("cocosMetaElement");
+    let vp = document.getElementById('cocosMetaElement');
     if (vp && overwrite) {
       document.head.removeChild(vp);
     }
 
-    const elems = document.getElementsByName("viewport");
+    const elems = document.getElementsByName('viewport');
     const currentVP = elems ? elems[0] as HTMLMetaElement : null;
     let content: string;
     let key: string;
     let pattern: RegExp;
 
-    content = currentVP ? currentVP.content : "";
-    vp = vp || document.createElement("meta");
-    vp.id = "cocosMetaElement";
-    (vp as HTMLMetaElement).name = "viewport";
-    (vp as HTMLMetaElement).content = "";
+    content = currentVP ? currentVP.content : '';
+    vp = vp || document.createElement('meta');
+    vp.id = 'cocosMetaElement';
+    (vp as HTMLMetaElement).name = 'viewport';
+    (vp as HTMLMetaElement).content = '';
 
     for (key in metas) {
       if (content.indexOf(key) === -1) {
-        content += "," + key + "=" + metas[key];
+        content += ',' + key + '=' + metas[key];
       }
       else if (overwrite) {
-        pattern = new RegExp(key + "\\s*=\\s*[^,]+");
-        content = content.replace(pattern, key + "=" + metas[key]);
+        pattern = new RegExp(key + '\s*=\s*[^,]+');
+        content = content.replace(pattern, key + '=' + metas[key]);
       }
     }
     if (/^,/.test(content))
@@ -393,7 +378,7 @@ export class EGLView {
   // RenderTexture hacker
   _setScaleXYForRenderTexture() {
     //hack for RenderTexture on canvas mode when adapting multiple resolution resources
-    const scaleFactor = 1; //cc.contentScaleFactor();
+    const scaleFactor = 1; //contentScaleFactor();
     this._scaleX = scaleFactor;
     this._scaleY = scaleFactor;
   }
@@ -428,13 +413,13 @@ export class EGLView {
    * If enabled, the application will try automatically to enter full screen mode on mobile devices<br/>
    * You can pass true as parameter to enable it and disable it by passing false.<br/>
    * Only useful on web
-   * @param {Boolean} enabled  Enable or disable auto full screen on mobile devices
+   * @param enabled  Enable or disable auto full screen on mobile devices
    */
   enableAutoFullScreen(enabled: boolean) {
     if (enabled && enabled !== this._autoFullScreen && sys.isMobile && this._frame === document.documentElement) {
       // Automatically full screen when user touches on mobile version
       this._autoFullScreen = true;
-      screen.autoFullScreen(this._frame);
+      screen.autoFullScreen(this._frame as HTMLElement);
     }
     else {
       this._autoFullScreen = false;
@@ -481,7 +466,7 @@ export class EGLView {
    * Returns the canvas size of the view.<br/>
    * On native platforms, it returns the screen size since the view is a fullscreen view.<br/>
    * On web, it returns the size of the canvas element.
-   * @return {cc.Size}
+   * @return
    */
   getCanvasSize(): Size {
     return size(game.canvas!.width, game.canvas!.height);
@@ -494,15 +479,15 @@ export class EGLView {
   setFrameSize(width: number, height: number) {
     this._frameSize.width = width;
     this._frameSize.height = height;
-    this._frame!.style.width = width + "px";
-    this._frame!.style.height = height + "px";
+    this._frame!.style.width = width + 'px';
+    this._frame!.style.height = height + 'px';
     this._resizeEvent();
     director.setProjection(director.getProjection());
   }
 
   /**
    * Returns the visible area size of the view port.
-   * @return {cc.Size}
+   * @return
    */
   getVisibleSize(): Size {
     return size(this._visibleRect.width, this._visibleRect.height);
@@ -524,7 +509,7 @@ export class EGLView {
 
   /**
    * Returns whether developer can set content's scale factor.
-   * @return {Boolean}
+   * @return
    */
   canSetContentScaleFactor(): boolean {
     return true;
@@ -563,9 +548,9 @@ export class EGLView {
    * [4] ResolutionFixedHeight    Scale the content's height to screen's height and proportionally scale its width<br/>
    * [5] ResolutionFixedWidth     Scale the content's width to screen's width and proportionally scale its height<br/>
    * [ResolutionPolicy]        [Web only feature] Custom resolution policy, constructed by ResolutionPolicy<br/>
-   * @param {Number} width Design resolution width.
-   * @param {Number} height Design resolution height.
-   * @param {ResolutionPolicy|Number} resolutionPolicy The resolution policy desired
+   * @param width Design resolution width.
+   * @param height Design resolution height.
+   * @param resolutionPolicy The resolution policy desired
    */
   setDesignResolutionSize(width: number, height: number, resolutionPolicy: ResolutionPolicy | number) {
     // Defensive code
@@ -643,7 +628,7 @@ export class EGLView {
   /**
    * Returns the designed size for the view.
    * Default resolution size is the same as 'getFrameSize'.
-   * @return {cc.Size}
+   * @return
    */
   getDesignResolutionSize(): Size {
     return size(this._designResolutionSize.width, this._designResolutionSize.height);
@@ -651,13 +636,13 @@ export class EGLView {
 
   setRealPixelResolution(width: number, height: number, resolutionPolicy: ResolutionPolicy | number) {
     // Set viewport's width
-    this._setViewportMeta({ "width": width }, true);
+    this._setViewportMeta({ 'width': width }, true);
 
     // Set body width to the exact pixel resolution
-    document.documentElement.style.width = width + "px";
-    document.body.style.width = width + "px";
-    document.body.style.left = "0px";
-    document.body.style.top = "0px";
+    document.documentElement.style.width = width + 'px';
+    document.body.style.width = width + 'px';
+    document.body.style.left = '0px';
+    document.body.style.top = '0px';
 
     // Reset the resolution size and policy
     this.setDesignResolutionSize(width, height, resolutionPolicy);
@@ -665,10 +650,10 @@ export class EGLView {
 
   /**
    * Sets view port rectangle with points.
-   * @param {Number} x
-   * @param {Number} y
-   * @param {Number} w width
-   * @param {Number} h height
+   * @param x
+   * @param y
+   * @param w width
+   * @param h height
    */
   setViewPortInPoints(x: number, y: number, w: number, h: number) {
     const locFrameZoomFactor = this._frameZoomFactor;
@@ -705,7 +690,7 @@ export class EGLView {
 
   /**
    * Returns whether GL_SCISSOR_TEST is enable
-   * @return {Boolean}
+   * @return
    */
   isScissorEnabled(): boolean {
     return (cc._renderContext as any).isEnabled(gl.SCISSOR_TEST);
@@ -758,10 +743,10 @@ export class EGLView {
 
   /**
    * Returns the real location in view for a translation based on a related position
-   * @param {Number} tx The X axis translation
-   * @param {Number} ty The Y axis translation
-   * @param {Object} relatedPos The related position object including "left", "top", "width", "height" informations
-   * @return {cc.Point}
+   * @param tx The X axis translation
+   * @param ty The Y axis translation
+   * @param relatedPos The related position object including 'left', 'top', 'width', 'height' informations
+   * @return
    */
   convertToLocationInView(tx: number, ty: number, relatedPos: { left: number, top: number, width: number, height: number }): Vec2 {
     const x = this._devicePixelRatio * (tx - relatedPos.left);

@@ -16,5 +16,4 @@ Normalize and refactor all TypeScript files to follow modern ES module syntax an
    - Space after commas and around operators  
 7. Remove unused imports or variables.
 8. Ensure consistent class and method naming (PascalCase for classes, camelCase for functions).
-9. cc.p convert to Vec2
 10. use let const instead of var

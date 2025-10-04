@@ -1,50 +1,56 @@
+import { game } from "../../../..";
+import { Rect, Size } from "../../cocoa/Geometry";
 import { EGLView } from "../EGLView";
-import { Size, Rect } from "../../../../types";
-import { game } from "../../../../globals";
+import { ExactFit, FixedHeight, FixedWidth, NoBorder, ShowAll } from "./EGLInstance";
 
 export class ContentStrategy {
-    public static EXACT_FIT = 0;
-    public static SHOW_ALL = 1;
-    public static NO_BORDER = 2;
-    public static FIXED_HEIGHT = 3;
-    public static FIXED_WIDTH = 4;
+  static EXACT_FIT = new ExactFit();
+  // Alias: Strategy to scale the content's size proportionally to maximum size and keeps the whole content area to be visible
+  static SHOW_ALL = new ShowAll();
+  // Alias: Strategy to scale the content's size proportionally to fill the whole container area
+  static NO_BORDER = new NoBorder();
+  // Alias: Strategy to scale the content's height to container's height and proportionally scale its width
+  static FIXED_HEIGHT = new FixedHeight();
+  // Alias: Strategy to scale the content's width to container's width and proportionally scale its height
+  static FIXED_WIDTH = new FixedWidth();
 
-    protected _result: { scale: number[], viewport: Rect | null } = {
-        scale: [1, 1],
-        viewport: null
-    };
 
-    protected _buildResult(containerW: number, containerH: number, contentW: number, contentH: number, scaleX: number, scaleY: number) {
-        // Makes content fit better the canvas
-        if (Math.abs(containerW - contentW) < 2) {
-            contentW = containerW;
-        }
-        if (Math.abs(containerH - contentH) < 2) {
-            contentH = containerH;
-        }
+  protected _result: { scale: number[], viewport: Rect | null } = {
+    scale: [1, 1],
+    viewport: null
+  };
 
-        const viewport = new Rect(Math.round((containerW - contentW) / 2),
-            Math.round((containerH - contentH) / 2),
-            contentW, contentH);
-
-        // Translate the content
-        if (game.RENDER_TYPE_CANVAS) {
-            //TODO: modify something for setTransform
-            //(game._renderContext as any).translate(viewport.x, viewport.y + contentH);
-        }
-
-        this._result.scale = [scaleX, scaleY];
-        this._result.viewport = viewport;
-        return this._result;
+  protected _buildResult(containerW: number, containerH: number, contentW: number, contentH: number, scaleX: number, scaleY: number) {
+    // Makes content fit better the canvas
+    if (Math.abs(containerW - contentW) < 2) {
+      contentW = containerW;
+    }
+    if (Math.abs(containerH - contentH) < 2) {
+      contentH = containerH;
     }
 
-    public preApply(view: EGLView) {
+    const viewport = new Rect(Math.round((containerW - contentW) / 2),
+      Math.round((containerH - contentH) / 2),
+      contentW, contentH);
+
+    // Translate the content
+    if (game.RENDER_TYPE_CANVAS) {
+      //TODO: modify something for setTransform
+      //(game._renderContext as any).translate(viewport.x, viewport.y + contentH);
     }
 
-    public apply(view: EGLView, designedResolution: Size): { scale: number[], viewport: Rect | null } {
-        return { "scale": [1, 1], viewport: null };
-    }
+    this._result.scale = [scaleX, scaleY];
+    this._result.viewport = viewport;
+    return this._result;
+  }
 
-    public postApply(view: EGLView) {
-    }
+  public preApply(view: EGLView) {
+  }
+
+  public apply(view: EGLView, designedResolution: Size): { scale: number[], viewport: Rect | null } {
+    return { "scale": [1, 1], viewport: null };
+  }
+
+  public postApply(view: EGLView) {
+  }
 }

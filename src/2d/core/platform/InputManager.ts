@@ -1,7 +1,4 @@
-import { p } from '../../core/platform/index';
-import { EventAcceleration } from '../event-manager/Event';
-import { Touch } from '../event-manager/EventTouch';
-import { EventTouch } from '../event-manager/EventTouch';
+import { p } from '../cocoa/Geometry';
 import { EventMouse } from '../event-manager/EventMouse';
 import { EGLView } from './EGLView';
 
