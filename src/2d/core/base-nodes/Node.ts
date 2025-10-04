@@ -1,8 +1,10 @@
 import { renderer, game } from "../../..";
 import { isFunction } from "../../../helper/checkType";
 import type { log, _LogInfos, assert } from "../../../helper/Debugger";
+import { affineTransformMakeIdentity, _rectApplyAffineTransformIn, affineTransformConcat, affineTransformInvert, pointApplyAffineTransform, affineTransformConcatIn, rectApplyAffineTransform } from "../cocoa/AffineTransform";
 import type { p, size, rectUnion } from "../cocoa/Geometry";
 import type { eventManager } from "../event-manager/EventManager";
+import type { color } from "../platform/Color";
 import { pSub, pAdd } from "../support/PointExtension";
 
 export const NODE_TAG_INVALID = -1;

@@ -4,15 +4,14 @@ import { Node } from './base-nodes/Node';
 import { Point, Size } from './cocoa/Geometry';
 import { EventCustom } from './event-manager/EventCustom';
 import { eventManager } from './event-manager/EventManager';
-import { Profiler } from './Profiler';
-import { Renderer } from './Renderer';
 import { Scene } from './scenes/Scene';
 import { Scheduler } from './Scheduler';
 
-export class DirectorDelegate { }
+export class DirectorDelegate {
+  updateProjection(): void { }
+}
 
 export class Director {
-
   // Static and constants
   static EVENT_PROJECTION_CHANGED = "director_projection_changed";
   static EVENT_AFTER_UPDATE = "director_after_update";
