@@ -267,9 +267,9 @@ const locLog = _logToWebPage;
 export const error = function (...args: any[]) {
   locLog("ERROR :  " + formatStr(...args));
 };
-export const assert = function (cond, msg) {
+export const assert = function (cond, msg, url?) {
   if (!cond && msg) {
-    for (var i = 2; i < arguments.length; i++)
+    for (let i = 2; i < arguments.length; i++)
       msg = msg.replace(/(%s)|(%d)/, _formatString(arguments[i]));
     locLog("Assert: " + msg);
   }

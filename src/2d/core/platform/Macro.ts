@@ -1,46 +1,53 @@
+import { director } from "../../..";
+import { isObject, isUndefined } from "../../../helper/checkType";
+import { _LogInfos, log } from "../../../helper/Debugger";
+import { global } from "../../../helper/global";
+import { sys } from "../../../helper/sys";
+import { p, rect, size } from "../cocoa/Geometry";
+
 /**
  * @constant
  * @type Number
  */
-cc.INVALID_INDEX = -1;
+export const INVALID_INDEX = -1;
 
 /**
  * PI is the ratio of a circle's circumference to its diameter.
  * @constant
  * @type Number
  */
-cc.PI = Math.PI;
+export const PI = Math.PI;
 
 /**
  * @constant
  * @type Number
  */
-cc.FLT_MAX = parseFloat('3.402823466e+38F');
+export const FLT_MAX = parseFloat('3.402823466e+38F');
 
 /**
  * @constant
  * @type Number
  */
-cc.FLT_MIN = parseFloat("1.175494351e-38F");
+export const FLT_MIN = parseFloat("1.175494351e-38F");
 
 /**
  * @constant
  * @type Number
  */
-cc.RAD = cc.PI / 180;
+export const RAD = PI / 180;
 
 /**
  * @constant
  * @type Number
  */
-cc.DEG = 180 / cc.PI;
+export const DEG = 180 / PI;
 
 /**
  * maximum unsigned int value
  * @constant
  * @type Number
  */
-cc.UINT_MAX = 0xffffffff;
+export const UINT_MAX = 0xffffffff;
 
 /**
  * <p>
@@ -54,13 +61,13 @@ cc.UINT_MAX = 0xffffffff;
  * @function
  * @deprecated since v3.0
  */
-cc.swap = function (x, y, ref) {
-    if (cc.isObject(ref) && !cc.isUndefined(ref.x) && !cc.isUndefined(ref.y)) {
-        var tmp = ref[x];
-        ref[x] = ref[y];
-        ref[y] = tmp;
-    } else
-        cc.log(cc._LogInfos.swap);
+export const swap = function (x, y, ref) {
+  if (isObject(ref) && !isUndefined(ref.x) && !isUndefined(ref.y)) {
+    var tmp = ref[x];
+    ref[x] = ref[y];
+    ref[y] = tmp;
+  } else
+    log(_LogInfos.swap);
 };
 
 /**
@@ -72,11 +79,11 @@ cc.swap = function (x, y, ref) {
  * @param {Number} r ratio between 0 and 1
  * @function
  * @example
- * cc.lerp(2,10,0.5)//returns 6<br/>
- * cc.lerp(2,10,0.2)//returns 3.6
+ * lerp(2,10,0.5)//returns 6<br/>
+ * lerp(2,10,0.2)//returns 3.6
  */
-cc.lerp = function (a, b, r) {
-    return a + (b - a) * r;
+export const lerp = function (a, b, r) {
+  return a + (b - a) * r;
 };
 
 /**
@@ -84,8 +91,8 @@ cc.lerp = function (a, b, r) {
  * @function
  * @returns {number}
  */
-cc.rand = function () {
-	return Math.random() * 0xffffff;
+export const rand = function () {
+  return Math.random() * 0xffffff;
 };
 
 /**
@@ -93,8 +100,8 @@ cc.rand = function () {
  * @return {Number}
  * @function
  */
-cc.randomMinus1To1 = function () {
-    return (Math.random() - 0.5) * 2;
+export const randomMinus1To1 = function () {
+  return (Math.random() - 0.5) * 2;
 };
 
 /**
@@ -102,7 +109,7 @@ cc.randomMinus1To1 = function () {
  * @return {Number}
  * @function
  */
-cc.random0To1 = Math.random;
+export const random0To1 = Math.random;
 
 /**
  * converts degrees to radians
@@ -110,8 +117,8 @@ cc.random0To1 = Math.random;
  * @return {Number}
  * @function
  */
-cc.degreesToRadians = function (angle) {
-    return angle * cc.RAD;
+export const degreesToRadians = function (angle) {
+  return angle * RAD;
 };
 
 /**
@@ -120,8 +127,8 @@ cc.degreesToRadians = function (angle) {
  * @return {Number}
  * @function
  */
-cc.radiansToDegrees = function (angle) {
-    return angle * cc.DEG;
+export const radiansToDegrees = function (angle) {
+  return angle * DEG;
 };
 /**
  * converts radians to degrees
@@ -129,29 +136,29 @@ cc.radiansToDegrees = function (angle) {
  * @return {Number}
  * @function
  */
-cc.radiansToDegress = function (angle) {
-    cc.log(cc._LogInfos.radiansToDegress);
-    return angle * cc.DEG;
+export const radiansToDegress = function (angle) {
+  export const log(_LogInfos.radiansToDegress);
+  return angle * DEG;
 };
 
 /**
  * @constant
  * @type Number
  */
-cc.REPEAT_FOREVER = Number.MAX_VALUE - 1;
+export const REPEAT_FOREVER = Number.MAX_VALUE - 1;
 
 /**
  * Helpful macro that setups the GL server state, the correct GL program and sets the Model View Projection matrix
- * @param {cc.Node} node setup node
+ * @param {export const Node} node setup node
  * @function
  */
-cc.nodeDrawSetup = function (node) {
-    //cc.glEnable(node._glServerState);
-    if (node._shaderProgram) {
-        //cc._renderContext.useProgram(node._shaderProgram._programObj);
-        node._glProgramState.apply();
-        node._shaderProgram.setUniformForModelViewAndProjectionMatrixWithMat4();
-    }
+export const nodeDrawSetup = function (node) {
+  //export const glEnable(node._glServerState);
+  if (node._shaderProgram) {
+    //export const _renderContext.useProgram(node._shaderProgram._programObj);
+    node._glProgramState.apply();
+    node._shaderProgram.setUniformForModelViewAndProjectionMatrixWithMat4();
+  }
 };
 
 /**
@@ -164,13 +171,13 @@ cc.nodeDrawSetup = function (node) {
  * </p>
  * @function
  */
-cc.enableDefaultGLStates = function () {
-    //TODO OPENGL STUFF
-    /*
-     glEnableClientState(GL_VERTEX_ARRAY);
-     glEnableClientState(GL_COLOR_ARRAY);
-     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-     glEnable(GL_TEXTURE_2D);*/
+export const enableDefaultGLStates = function () {
+  //TODO OPENGL STUFF
+  /*
+   glEnableClientState(GL_VERTEX_ARRAY);
+   glEnableClientState(GL_COLOR_ARRAY);
+   glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+   glEnable(GL_TEXTURE_2D);*/
 };
 
 /**
@@ -182,14 +189,14 @@ cc.enableDefaultGLStates = function () {
  * </p>
  * @function
  */
-cc.disableDefaultGLStates = function () {
-    //TODO OPENGL
-    /*
-     glDisable(GL_TEXTURE_2D);
-     glDisableClientState(GL_COLOR_ARRAY);
-     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-     glDisableClientState(GL_VERTEX_ARRAY);
-     */
+export const disableDefaultGLStates = function () {
+  //TODO OPENGL
+  /*
+   glDisable(GL_TEXTURE_2D);
+   glDisableClientState(GL_COLOR_ARRAY);
+   glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+   glDisableClientState(GL_VERTEX_ARRAY);
+   */
 };
 
 /**
@@ -200,15 +207,15 @@ cc.disableDefaultGLStates = function () {
  * @param {Number} addNumber
  * @function
  */
-cc.incrementGLDraws = function (addNumber) {
-    cc.g_NumberOfDraws += addNumber;
+export const incrementGLDraws = function (addNumber) {
+  global.g_NumberOfDraws += addNumber;
 };
 
 /**
  * @constant
  * @type Number
  */
-cc.FLT_EPSILON = 0.0000001192092896;
+export const FLT_EPSILON = 0.0000001192092896;
 
 /**
  * <p>
@@ -218,88 +225,88 @@ cc.FLT_EPSILON = 0.0000001192092896;
  * @return {Number}
  * @function
  */
-cc.contentScaleFactor = function () {
-    return cc.director._contentScaleFactor;
+export const contentScaleFactor = function () {
+  return director._contentScaleFactor;
 };
 
 /**
  * Converts a Point in points to pixels
- * @param {cc.Point} points
- * @return {cc.Point}
+ * @param {export const Point} points
+ * @return {export const Point}
  * @function
  */
-cc.pointPointsToPixels = function (points) {
-    var scale = cc.contentScaleFactor();
-    return cc.p(points.x * scale, points.y * scale);
+export const pointPointsToPixels = function (points) {
+  var scale = contentScaleFactor();
+  return p(points.x * scale, points.y * scale);
 };
 
 /**
  * Converts a Point in pixels to points
- * @param {cc.Rect} pixels
- * @return {cc.Point}
+ * @param {export const Rect} pixels
+ * @return {export const Point}
  * @function
  */
-cc.pointPixelsToPoints = function (pixels) {
-	var scale = cc.contentScaleFactor();
-	return cc.p(pixels.x / scale, pixels.y / scale);
+export const pointPixelsToPoints = function (pixels) {
+  var scale = contentScaleFactor();
+  return p(pixels.x / scale, pixels.y / scale);
 };
 
-cc._pointPixelsToPointsOut = function(pixels, outPoint){
-	var scale = cc.contentScaleFactor();
-	outPoint.x = pixels.x / scale;
-	outPoint.y = pixels.y / scale;
+export const _pointPixelsToPointsOut = function (pixels, outPoint) {
+  var scale = contentScaleFactor();
+  outPoint.x = pixels.x / scale;
+  outPoint.y = pixels.y / scale;
 };
 
 /**
  * Converts a Size in points to pixels
- * @param {cc.Size} sizeInPoints
- * @return {cc.Size}
+ * @param {export const Size} sizeInPoints
+ * @return {export const Size}
  * @function
  */
-cc.sizePointsToPixels = function (sizeInPoints) {
-    var scale = cc.contentScaleFactor();
-    return cc.size(sizeInPoints.width * scale, sizeInPoints.height * scale);
+export const sizePointsToPixels = function (sizeInPoints) {
+  var scale = contentScaleFactor();
+  return size(sizeInPoints.width * scale, sizeInPoints.height * scale);
 };
 
 /**
  * Converts a size in pixels to points
- * @param {cc.Size} sizeInPixels
- * @return {cc.Size}
+ * @param {export const Size} sizeInPixels
+ * @return {export const Size}
  * @function
  */
-cc.sizePixelsToPoints = function (sizeInPixels) {
-    var scale = cc.contentScaleFactor();
-    return cc.size(sizeInPixels.width / scale, sizeInPixels.height / scale);
+export const sizePixelsToPoints = function (sizeInPixels) {
+  var scale = contentScaleFactor();
+  return size(sizeInPixels.width / scale, sizeInPixels.height / scale);
 };
 
-cc._sizePixelsToPointsOut = function (sizeInPixels, outSize) {
-    var scale = cc.contentScaleFactor();
-    outSize.width = sizeInPixels.width / scale;
-    outSize.height = sizeInPixels.height / scale;
+export const _sizePixelsToPointsOut = function (sizeInPixels, outSize) {
+  var scale = contentScaleFactor();
+  outSize.width = sizeInPixels.width / scale;
+  outSize.height = sizeInPixels.height / scale;
 };
 
 /**
  * Converts a rect in pixels to points
- * @param {cc.Rect} pixel
- * @return {cc.Rect}
+ * @param {export const Rect} pixel
+ * @return {export const Rect}
  * @function
  */
-cc.rectPixelsToPoints = function (pixel) {
-    var scale = cc.contentScaleFactor();
-    return cc.rect(pixel.x / scale, pixel.y / scale,
-        pixel.width / scale, pixel.height / scale);
+export const rectPixelsToPoints = function (pixel) {
+  var scale = contentScaleFactor();
+  return rect(pixel.x / scale, pixel.y / scale,
+    pixel.width / scale, pixel.height / scale);
 };
 
 /**
  * Converts a rect in points to pixels
- * @param {cc.Rect} point
- * @return {cc.Rect}
+ * @param {export const Rect} point
+ * @return {export const Rect}
  * @function
  */
-cc.rectPointsToPixels = function (point) {
-   var scale = cc.contentScaleFactor();
-    return cc.rect(point.x * scale, point.y * scale,
-        point.width * scale, point.height * scale);
+export const rectPointsToPixels = function (point) {
+  var scale = contentScaleFactor();
+  return rect(point.x * scale, point.y * scale,
+    point.width * scale, point.height * scale);
 };
 
 //some gl constant variable
@@ -307,120 +314,120 @@ cc.rectPointsToPixels = function (point) {
  * @constant
  * @type Number
  */
-cc.ONE = 1;
+export const ONE = 1;
 
 /**
  * @constant
  * @type Number
  */
-cc.ZERO = 0;
+export const ZERO = 0;
 
 /**
  * @constant
  * @type Number
  */
-cc.SRC_ALPHA = 0x0302;
+export const SRC_ALPHA = 0x0302;
 
 /**
  * @constant
  * @type Number
  */
-cc.SRC_ALPHA_SATURATE = 0x308;
+export const SRC_ALPHA_SATURATE = 0x308;
 
 /**
  * @constant
  * @type Number
  */
-cc.SRC_COLOR = 0x300;
+export const SRC_COLOR = 0x300;
 
 /**
  * @constant
  * @type Number
  */
-cc.DST_ALPHA = 0x304;
+export const DST_ALPHA = 0x304;
 
 /**
  * @constant
  * @type Number
  */
-cc.DST_COLOR = 0x306;
+export const DST_COLOR = 0x306;
 
 /**
  * @constant
  * @type Number
  */
-cc.ONE_MINUS_SRC_ALPHA = 0x0303;
+export const ONE_MINUS_SRC_ALPHA = 0x0303;
 
 /**
  * @constant
  * @type Number
  */
-cc.ONE_MINUS_SRC_COLOR = 0x301;
+export const ONE_MINUS_SRC_COLOR = 0x301;
 
 /**
  * @constant
  * @type Number
  */
-cc.ONE_MINUS_DST_ALPHA = 0x305;
+export const ONE_MINUS_DST_ALPHA = 0x305;
 
 /**
  * @constant
  * @type Number
  */
-cc.ONE_MINUS_DST_COLOR = 0x0307;
+export const ONE_MINUS_DST_COLOR = 0x0307;
 
 /**
  * @constant
  * @type Number
  */
-cc.ONE_MINUS_CONSTANT_ALPHA	= 0x8004;
+export const ONE_MINUS_CONSTANT_ALPHA = 0x8004;
 
 /**
  * @constant
  * @type Number
  */
-cc.ONE_MINUS_CONSTANT_COLOR	= 0x8002;
+export const ONE_MINUS_CONSTANT_COLOR = 0x8002;
 
 /**
  * the constant variable equals gl.LINEAR for texture
  * @constant
  * @type Number
  */
-cc.LINEAR	= 0x2601;
+export const LINEAR = 0x2601;
 
 /**
  * the constant variable equals gl.REPEAT for texture
  * @constant
  * @type Number
  */
-cc.REPEAT	= 0x2901;
+export const REPEAT = 0x2901;
 
 /**
  * the constant variable equals gl.CLAMP_TO_EDGE for texture
  * @constant
  * @type Number
  */
-cc.CLAMP_TO_EDGE	= 0x812f;
+export const CLAMP_TO_EDGE = 0x812f;
 
 /**
  * the constant variable equals gl.MIRRORED_REPEAT for texture
  * @constant
  * @type Number
  */
-cc.MIRRORED_REPEAT   = 0x8370;
+export const MIRRORED_REPEAT = 0x8370;
 
 /**
  * default gl blend src function. Compatible with premultiplied alpha images.
  * @constant
- * @name cc.BLEND_SRC
+ * @name export const BLEND_SRC
  * @type Number
  */
-cc.BLEND_SRC = cc.SRC_ALPHA;
-cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
-    if (cc._renderType === cc.game.RENDER_TYPE_WEBGL
-         && cc.OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA) {
-        cc.BLEND_SRC = cc.ONE;
-    }
+export const BLEND_SRC = SRC_ALPHA;
+export const game.addEventListener(game.EVENT_RENDERER_INITED, function () {
+  if (_renderType === game.RENDER_TYPE_WEBGL
+    && OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA) {
+    BLEND_SRC = ONE;
+  }
 });
 
 /**
@@ -428,19 +435,19 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
  * @constant
  * @type Number
  */
-cc.BLEND_DST = cc.ONE_MINUS_SRC_ALPHA;
+export const BLEND_DST = ONE_MINUS_SRC_ALPHA;
 
 /**
  * Check webgl error.Error will be shown in console if exists.
  * @function
  */
-cc.checkGLErrorDebug = function () {
-    if (cc.renderMode === cc.game.RENDER_TYPE_WEBGL) {
-        var _error = cc._renderContext.getError();
-        if (_error) {
-            cc.log(cc._LogInfos.checkGLErrorDebug, _error);
-        }
+export const checkGLErrorDebug = function () {
+  if (renderMode === game.RENDER_TYPE_WEBGL) {
+    var _error = _renderContext.getError();
+    if (_error) {
+      log(_LogInfos.checkGLErrorDebug, _error);
     }
+  }
 };
 
 //Possible device orientations
@@ -449,21 +456,21 @@ cc.checkGLErrorDebug = function () {
  * @constant
  * @type Number
  */
-cc.ORIENTATION_PORTRAIT = 1;
+export const ORIENTATION_PORTRAIT = 1;
 
 /**
  * Device oriented horizontally, home button on the right (UIDeviceOrientationLandscapeLeft)
  * @constant
  * @type Number
  */
-cc.ORIENTATION_LANDSCAPE = 2;
+export const ORIENTATION_LANDSCAPE = 2;
 
 /**
  * Device oriented vertically, home button on the top (UIDeviceOrientationPortraitUpsideDown)
  * @constant
  * @type Number
  */
-cc.ORIENTATION_AUTO = 3;
+export const ORIENTATION_AUTO = 3;
 
 /**
  * The limit count for concurrency http request, useful in some mobile browsers
@@ -471,14 +478,14 @@ cc.ORIENTATION_AUTO = 3;
  * @constant
  * @type Number
  */
-cc.CONCURRENCY_HTTP_REQUEST_COUNT = cc.sys.isMobile ? 20 : 0;
+export const CONCURRENCY_HTTP_REQUEST_COUNT = sys.isMobile ? 20 : 0;
 
 /**
  * The maximum vertex count for a single batched draw call.
  * @constant
  * @type Number
  */
-cc.BATCH_VERTEX_COUNT = 2000;
+export const BATCH_VERTEX_COUNT = 2000;
 
 
 // ------------------- vertex attrib flags -----------------------------
@@ -486,234 +493,234 @@ cc.BATCH_VERTEX_COUNT = 2000;
  * @constant
  * @type {Number}
  */
-cc.VERTEX_ATTRIB_FLAG_NONE = 0;
+export const VERTEX_ATTRIB_FLAG_NONE = 0;
 /**
  * @constant
  * @type {Number}
  */
-cc.VERTEX_ATTRIB_FLAG_POSITION = 1 << 0;
+export const VERTEX_ATTRIB_FLAG_POSITION = 1 << 0;
 /**
  * @constant
  * @type {Number}
  */
-cc.VERTEX_ATTRIB_FLAG_COLOR = 1 << 1;
+export const VERTEX_ATTRIB_FLAG_COLOR = 1 << 1;
 /**
  * @constant
  * @type {Number}
  */
-cc.VERTEX_ATTRIB_FLAG_TEX_COORDS = 1 << 2;
+export const VERTEX_ATTRIB_FLAG_TEX_COORDS = 1 << 2;
 /**
  * @constant
  * @type {Number}
  */
-cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX = ( cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_COLOR | cc.VERTEX_ATTRIB_FLAG_TEX_COORDS );
+export const VERTEX_ATTRIB_FLAG_POS_COLOR_TEX = (VERTEX_ATTRIB_FLAG_POSITION | VERTEX_ATTRIB_FLAG_COLOR | VERTEX_ATTRIB_FLAG_TEX_COORDS);
 
 /**
  * GL server side states
  * @constant
  * @type {Number}
  */
-cc.GL_ALL = 0;
+export const GL_ALL = 0;
 
 //-------------Vertex Attributes-----------
 /**
  * @constant
  * @type {Number}
  */
-cc.VERTEX_ATTRIB_POSITION = 0;
+export const VERTEX_ATTRIB_POSITION = 0;
 /**
  * @constant
  * @type {Number}
  */
-cc.VERTEX_ATTRIB_COLOR = 1;
+export const VERTEX_ATTRIB_COLOR = 1;
 /**
  * @constant
  * @type {Number}
  */
-cc.VERTEX_ATTRIB_TEX_COORDS = 2;
+export const VERTEX_ATTRIB_TEX_COORDS = 2;
 /**
  * @constant
  * @type {Number}
  */
-cc.VERTEX_ATTRIB_MAX = 7;
+export const VERTEX_ATTRIB_MAX = 7;
 
 //------------Uniforms------------------
 /**
  * @constant
  * @type {Number}
  */
-cc.UNIFORM_PMATRIX = 0;
+export const UNIFORM_PMATRIX = 0;
 /**
  * @constant
  * @type {Number}
  */
-cc.UNIFORM_MVMATRIX = 1;
+export const UNIFORM_MVMATRIX = 1;
 /**
  * @constant
  * @type {Number}
  */
-cc.UNIFORM_MVPMATRIX = 2;
+export const UNIFORM_MVPMATRIX = 2;
 /**
  * @constant
  * @type {Number}
  */
-cc.UNIFORM_TIME = 3;
+export const UNIFORM_TIME = 3;
 /**
  * @constant
  * @type {Number}
  */
-cc.UNIFORM_SINTIME = 4;
+export const UNIFORM_SINTIME = 4;
 /**
  * @constant
  * @type {Number}
  */
-cc.UNIFORM_COSTIME = 5;
+export const UNIFORM_COSTIME = 5;
 /**
  * @constant
  * @type {Number}
  */
-cc.UNIFORM_RANDOM01 = 6;
+export const UNIFORM_RANDOM01 = 6;
 /**
  * @constant
  * @type {Number}
  */
-cc.UNIFORM_SAMPLER = 7;
+export const UNIFORM_SAMPLER = 7;
 /**
  * @constant
  * @type {Number}
  */
-cc.UNIFORM_MAX = 8;
+export const UNIFORM_MAX = 8;
 
 //------------Shader Name---------------
 /**
  * @constant
  * @type {String}
  */
-cc.SHADER_POSITION_TEXTURECOLOR = "ShaderPositionTextureColor";
+export const SHADER_POSITION_TEXTURECOLOR = "ShaderPositionTextureColor";
 /**
  * @constant
  * @type {String}
  */
-cc.SHADER_SPRITE_POSITION_TEXTURECOLOR = "ShaderSpritePositionTextureColor";
+export const SHADER_SPRITE_POSITION_TEXTURECOLOR = "ShaderSpritePositionTextureColor";
 /**
  * @constant
  * @type {String}
  */
-cc.SHADER_SPRITE_POSITION_TEXTURECOLOR_GRAY = "ShaderSpritePositionTextureColorGray";
+export const SHADER_SPRITE_POSITION_TEXTURECOLOR_GRAY = "ShaderSpritePositionTextureColorGray";
 /**
  * @constant
  * @type {String}
  */
-cc.SHADER_POSITION_TEXTURECOLORALPHATEST = "ShaderPositionTextureColorAlphaTest";
+export const SHADER_POSITION_TEXTURECOLORALPHATEST = "ShaderPositionTextureColorAlphaTest";
 /**
  * @constant
  * @type {String}
  */
-cc.SHADER_SPRITE_POSITION_TEXTURECOLORALPHATEST = "ShaderSpritePositionTextureColorAlphaTest";
+export const SHADER_SPRITE_POSITION_TEXTURECOLORALPHATEST = "ShaderSpritePositionTextureColorAlphaTest";
 /**
  * @constant
  * @type {String}
  */
-cc.SHADER_POSITION_COLOR = "ShaderPositionColor";
+export const SHADER_POSITION_COLOR = "ShaderPositionColor";
 /**
  * @constant
  * @type {String}
  */
-cc.SHADER_SPRITE_POSITION_COLOR = "ShaderSpritePositionColor";
+export const SHADER_SPRITE_POSITION_COLOR = "ShaderSpritePositionColor";
 /**
  * @constant
  * @type {String}
  */
-cc.SHADER_POSITION_TEXTURE = "ShaderPositionTexture";
+export const SHADER_POSITION_TEXTURE = "ShaderPositionTexture";
 /**
  * @constant
  * @type {String}
  */
-cc.SHADER_POSITION_TEXTURE_UCOLOR = "ShaderPositionTextureUColor";
+export const SHADER_POSITION_TEXTURE_UCOLOR = "ShaderPositionTextureUColor";
 /**
  * @constant
  * @type {String}
  */
-cc.SHADER_POSITION_TEXTUREA8COLOR = "ShaderPositionTextureA8Color";
+export const SHADER_POSITION_TEXTUREA8COLOR = "ShaderPositionTextureA8Color";
 /**
  * @constant
  * @type {String}
  */
-cc.SHADER_POSITION_UCOLOR = "ShaderPositionUColor";
+export const SHADER_POSITION_UCOLOR = "ShaderPositionUColor";
 /**
  * @constant
  * @type {String}
  */
-cc.SHADER_POSITION_LENGTHTEXTURECOLOR = "ShaderPositionLengthTextureColor";
+export const SHADER_POSITION_LENGTHTEXTURECOLOR = "ShaderPositionLengthTextureColor";
 
 //------------uniform names----------------
 /**
  * @constant
  * @type {String}
  */
-cc.UNIFORM_PMATRIX_S = "CC_PMatrix";
+export const UNIFORM_PMATRIX_S = "CC_PMatrix";
 /**
  * @constant
  * @type {String}
  */
-cc.UNIFORM_MVMATRIX_S = "CC_MVMatrix";
+export const UNIFORM_MVMATRIX_S = "CC_MVMatrix";
 /**
  * @constant
  * @type {String}
  */
-cc.UNIFORM_MVPMATRIX_S = "CC_MVPMatrix";
+export const UNIFORM_MVPMATRIX_S = "CC_MVPMatrix";
 /**
  * @constant
  * @type {String}
  */
-cc.UNIFORM_TIME_S = "CC_Time";
+export const UNIFORM_TIME_S = "CC_Time";
 /**
  * @constant
  * @type {String}
  */
-cc.UNIFORM_SINTIME_S = "CC_SinTime";
+export const UNIFORM_SINTIME_S = "CC_SinTime";
 /**
  * @constant
  * @type {String}
  */
-cc.UNIFORM_COSTIME_S = "CC_CosTime";
+export const UNIFORM_COSTIME_S = "CC_CosTime";
 /**
  * @constant
  * @type {String}
  */
-cc.UNIFORM_RANDOM01_S = "CC_Random01";
+export const UNIFORM_RANDOM01_S = "CC_Random01";
 /**
  * @constant
  * @type {String}
  */
-cc.UNIFORM_SAMPLER_S = "CC_Texture0";
+export const UNIFORM_SAMPLER_S = "CC_Texture0";
 /**
  * @constant
  * @type {String}
  */
-cc.UNIFORM_ALPHA_TEST_VALUE_S = "CC_alpha_value";
+export const UNIFORM_ALPHA_TEST_VALUE_S = "CC_alpha_value";
 
 //------------Attribute names--------------
 /**
  * @constant
  * @type {String}
  */
-cc.ATTRIBUTE_NAME_COLOR = "a_color";
+export const ATTRIBUTE_NAME_COLOR = "a_color";
 /**
  * @constant
  * @type {String}
  */
-cc.ATTRIBUTE_NAME_POSITION = "a_position";
+export const ATTRIBUTE_NAME_POSITION = "a_position";
 /**
  * @constant
  * @type {String}
  */
-cc.ATTRIBUTE_NAME_TEX_COORD = "a_texCoord";
+export const ATTRIBUTE_NAME_TEX_COORD = "a_texCoord";
 /**
  * @constant
  * @type {String}
  */
-cc.ATTRIBUTE_NAME_MVMAT = "a_mvMatrix";
+export const ATTRIBUTE_NAME_MVMAT = "a_mvMatrix";
 
 
 /**
@@ -721,40 +728,40 @@ cc.ATTRIBUTE_NAME_MVMAT = "a_mvMatrix";
  * @constant
  * @type Number
  */
-cc.ITEM_SIZE = 32;
+export const ITEM_SIZE = 32;
 
 /**
  * default tag for current item
  * @constant
  * @type Number
  */
-cc.CURRENT_ITEM = 0xc0c05001;
+export const CURRENT_ITEM = 0xc0c05001;
 /**
  * default tag for zoom action tag
  * @constant
  * @type Number
  */
-cc.ZOOM_ACTION_TAG = 0xc0c05002;
+export const ZOOM_ACTION_TAG = 0xc0c05002;
 /**
  * default tag for normal
  * @constant
  * @type Number
  */
-cc.NORMAL_TAG = 8801;
+export const NORMAL_TAG = 8801;
 
 /**
  * default selected tag
  * @constant
  * @type Number
  */
-cc.SELECTED_TAG = 8802;
+export const SELECTED_TAG = 8802;
 
 /**
  * default disabled tag
  * @constant
  * @type Number
  */
-cc.DISABLE_TAG = 8803;
+export const DISABLE_TAG = 8803;
 
 
 // Array utils
@@ -766,16 +773,16 @@ cc.DISABLE_TAG = 8803;
  * @return {Boolean}
  * @function
  */
-cc.arrayVerifyType = function (arr, type) {
-    if (arr && arr.length > 0) {
-        for (var i = 0; i < arr.length; i++) {
-            if (!(arr[i] instanceof  type)) {
-                cc.log("element type is wrong!");
-                return false;
-            }
-        }
+export const arrayVerifyType = function (arr, type) {
+  if (arr && arr.length > 0) {
+    for (var i = 0; i < arr.length; i++) {
+      if (!(arr[i] instanceof type)) {
+        log("element type is wrong!");
+        return false;
+      }
     }
-    return true;
+  }
+  return true;
 };
 
 /**
@@ -784,13 +791,13 @@ cc.arrayVerifyType = function (arr, type) {
  * @param {Array} arr Source Array
  * @param {*} delObj  remove object
  */
-cc.arrayRemoveObject = function (arr, delObj) {
-    for (var i = 0, l = arr.length; i < l; i++) {
-        if (arr[i] === delObj) {
-            arr.splice(i, 1);
-            break;
-        }
+export const arrayRemoveObject = function (arr, delObj) {
+  for (var i = 0, l = arr.length; i < l; i++) {
+    if (arr[i] === delObj) {
+      arr.splice(i, 1);
+      break;
     }
+  }
 };
 
 /**
@@ -799,10 +806,10 @@ cc.arrayRemoveObject = function (arr, delObj) {
  * @param {Array} arr Source Array
  * @param {Array} minusArr minus Array
  */
-cc.arrayRemoveArray = function (arr, minusArr) {
-    for (var i = 0, l = minusArr.length; i < l; i++) {
-        cc.arrayRemoveObject(arr, minusArr[i]);
-    }
+export const arrayRemoveArray = function (arr, minusArr) {
+  for (var i = 0, l = minusArr.length; i < l; i++) {
+    arrayRemoveObject(arr, minusArr[i]);
+  }
 };
 
 /**
@@ -813,9 +820,9 @@ cc.arrayRemoveArray = function (arr, minusArr) {
  * @param {Number} index
  * @return {Array}
  */
-cc.arrayAppendObjectsToIndex = function(arr, addObjs,index){
-    arr.splice.apply(arr, [index, 0].concat(addObjs));
-    return arr;
+export const arrayAppendObjectsToIndex = function (arr, addObjs, index) {
+  arr.splice.apply(arr, [index, 0].concat(addObjs));
+  return arr;
 };
 
 /**
@@ -823,9 +830,9 @@ cc.arrayAppendObjectsToIndex = function(arr, addObjs,index){
  * @param {Array} arr
  * @return {Array}
  */
-cc.copyArray = function(arr){
-    var i, len = arr.length, arr_clone = new Array(len);
-    for (i = 0; i < len; i += 1)
-        arr_clone[i] = arr[i];
-    return arr_clone;
+export const copyArray = function (arr) {
+  var i, len = arr.length, arr_clone = new Array(len);
+  for (i = 0; i < len; i += 1)
+    arr_clone[i] = arr[i];
+  return arr_clone;
 };

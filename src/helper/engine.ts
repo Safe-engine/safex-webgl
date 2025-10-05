@@ -1,7 +1,11 @@
-import type { game } from "..";
+import { game } from "..";
+import { ENGINE_VERSION } from "../2d/core/platform/Config";
+import { path } from "./path";
+import { sys } from "./sys";
 
-let _tmpCanvas1 = document.createElement("canvas"),
-  _tmpCanvas2 = document.createElement("canvas");
+
+export let _renderType = 0;
+export let _supportRender = true;
 
 export const create3DContext = function (canvas, opt_attribs) {
   var names = ["webgl", "experimental-webgl", "webkit-3d", "moz-webgl"];
@@ -18,16 +22,13 @@ export const create3DContext = function (canvas, opt_attribs) {
   return context;
 };
 
-_tmpCanvas1 = null;
-_tmpCanvas2 = null;
-
 var _config = null,
   //cache for js and module that has added into jsList to be loaded.
   _jsAddedCache = {},
   _engineInitCalled = false,
   _engineLoadedCallback = null;
 
-_engineLoaded = false;
+let _engineLoaded = false;
 
 function _determineRenderType(config) {
   var CONFIG_KEY = game.CONFIG_KEY,
@@ -82,8 +83,8 @@ function _getJsListOfModule(moduleMap, moduleName, dir) {
 }
 
 function _afterEngineLoaded(config) {
-  if (_initDebugSetting)
-    _initDebugSetting(config[game.CONFIG_KEY.debugMode]);
+  // if (_initDebugSetting)
+  //   _initDebugSetting(config[game.CONFIG_KEY.debugMode]);
   _engineLoaded = true;
   console.log(ENGINE_VERSION);
   if (_engineLoadedCallback) _engineLoadedCallback();
@@ -93,7 +94,7 @@ function _load(config) {
   var self = this;
   var CONFIG_KEY = game.CONFIG_KEY, engineDir = config[CONFIG_KEY.engineDir], loader = loader;
 
-  if (Class) {
+  if (_engineLoaded) {
     // Single file loaded
     _afterEngineLoaded(config);
   } else {
@@ -147,7 +148,8 @@ export const initEngine = function (config, cb) {
 
   _determineRenderType(config);
 
-  document.body ? _load(config) : _addEventListener(window, 'load', _windowLoaded, false);
+  _load(config)
+  // document.body ? _load(config) : _addEventListener(window, 'load', _windowLoaded, false);
   _engineInitCalled = true;
 };
 

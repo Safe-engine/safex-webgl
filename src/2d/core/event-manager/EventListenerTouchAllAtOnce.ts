@@ -1,35 +1,37 @@
+import { _LogInfos, log } from "../../../helper/Debugger";
+import { EventListener } from "./EventListener";
 
-cc._EventListenerTouchAllAtOnce = cc.EventListener.extend({
-  onTouchesBegan: null,
-  onTouchesMoved: null,
-  onTouchesEnded: null,
-  onTouchesCancelled: null,
+export class EventListenerTouchAllAtOnce extends EventListener {
+  public onTouchesBegan: any = null;
+  public onTouchesMoved: any = null;
+  public onTouchesEnded: any = null;
+  public onTouchesCancelled: any = null;
 
-  ctor: function () {
-    cc.EventListener.prototype.ctor.call(this, cc.EventListener.TOUCH_ALL_AT_ONCE, cc._EventListenerTouchAllAtOnce.LISTENER_ID, null);
-  },
+  static LISTENER_ID = "__cc_touch_all_at_once";
 
-  clone: function () {
-    var eventListener = new cc._EventListenerTouchAllAtOnce();
+  constructor() {
+    super(EventListener.TOUCH_ALL_AT_ONCE, EventListenerTouchAllAtOnce.LISTENER_ID, null);
+  }
+
+  clone() {
+    const eventListener = new EventListenerTouchAllAtOnce();
     eventListener.onTouchesBegan = this.onTouchesBegan;
     eventListener.onTouchesMoved = this.onTouchesMoved;
     eventListener.onTouchesEnded = this.onTouchesEnded;
     eventListener.onTouchesCancelled = this.onTouchesCancelled;
     return eventListener;
-  },
+  }
 
-  checkAvailable: function () {
+  checkAvailable() {
     if (this.onTouchesBegan === null && this.onTouchesMoved === null
       && this.onTouchesEnded === null && this.onTouchesCancelled === null) {
-      cc.log(cc._LogInfos._EventListenerTouchAllAtOnce_checkAvailable);
+      log(_LogInfos._EventListenerTouchAllAtOnce_checkAvailable);
       return false;
     }
     return true;
   }
-});
 
-cc._EventListenerTouchAllAtOnce.LISTENER_ID = "__cc_touch_all_at_once";
-
-cc._EventListenerTouchAllAtOnce.create = function () {
-  return new cc._EventListenerTouchAllAtOnce();
-};
+  static create() {
+    return new EventListenerTouchAllAtOnce();
+  }
+}

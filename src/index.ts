@@ -1,11 +1,13 @@
 import { Director } from "./2d/core/Director";
 import { DrawingPrimitiveWebGL } from "./2d/core/DrawingPrimitivesWebGL";
 import { EventCustom } from "./2d/core/event-manager/EventCustom";
+import { EventHelper } from "./2d/core/event-manager/EventHelper";
 import { eventManager } from "./2d/core/event-manager/EventManager";
 import { EGLView } from "./2d/core/platform/EGLView";
 import { inputManager } from "./2d/core/platform/InputManager";
 import { isUndefined } from "./helper/checkType";
 import { log } from "./helper/Debugger";
+import { _renderType, _supportRender } from "./helper/engine";
 import { global } from "./helper/global";
 import { loader } from "./helper/loader";
 
@@ -46,14 +48,12 @@ let rendererWebGL: any;
 let rendererCanvas: any;
 let _drawingUtil: any;
 export let _canvas: HTMLCanvasElement;
-let _renderContext: any = null;
-let _renderType = 0;
-let _supportRender = true;
+export let _renderContext: any = null;
 let webglContext: WebGLRenderingContext | null = null;
 let glExt: any = {};
 export let view: any;
 export let winSize: any;
-let container: HTMLElement | null = null;
+export let container: HTMLElement | null = null;
 let _gameDiv: HTMLElement | null = null;
 let _engineLoaded = false;
 
@@ -65,7 +65,7 @@ declare const path: any;
 declare const $: any;
 declare const CanvasContextWrapper: any;
 
-class Game {
+class Game extends EventHelper {
   DEBUG_MODE_NONE = 0;
   DEBUG_MODE_INFO = 1;
   DEBUG_MODE_WARN = 2;
@@ -427,10 +427,10 @@ class Game {
       glExt.instanced_arrays = window.gl.getExtension("ANGLE_instanced_arrays");
       glExt.element_uint = window.gl.getExtension("OES_element_index_uint");
     } else {
-      _renderType = this.RENDER_TYPE_CANVAS;
-      renderer = rendererCanvas;
-      this._renderContext = _renderContext = new CanvasContextWrapper(localCanvas.getContext("2d"));
-      _drawingUtil = DrawingPrimitiveCanvas ? new DrawingPrimitiveCanvas(this._renderContext) : null;
+      // _renderType = this.RENDER_TYPE_CANVAS;
+      // renderer = rendererCanvas;
+      // this._renderContext = _renderContext = new CanvasContextWrapper(localCanvas.getContext("2d"));
+      // _drawingUtil = DrawingPrimitiveCanvas ? new DrawingPrimitiveCanvas(this._renderContext) : null;
     }
 
     _gameDiv = localContainer;

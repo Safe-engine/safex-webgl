@@ -1,46 +1,48 @@
+import { _LogInfos, log } from "../../../helper/Debugger";
+import { EventListener } from "./EventListener";
 
-cc._EventListenerTouchOneByOne = cc.EventListener.extend({
-  _claimedTouches: null,
-  swallowTouches: false,
-  onTouchBegan: null,
-  onTouchMoved: null,
-  onTouchEnded: null,
-  onTouchCancelled: null,
+export class EventListenerTouchOneByOne extends EventListener {
+  public _claimedTouches: any[] = [];
+  public swallowTouches: boolean = false;
+  public onTouchBegan: any = null;
+  public onTouchMoved: any = null;
+  public onTouchEnded: any = null;
+  public onTouchCancelled: any = null;
 
-  ctor: function () {
-    cc.EventListener.prototype.ctor.call(this, cc.EventListener.TOUCH_ONE_BY_ONE, cc._EventListenerTouchOneByOne.LISTENER_ID, null);
+  static LISTENER_ID = "__cc_touch_one_by_one";
+
+  constructor() {
+    super(EventListener.TOUCH_ONE_BY_ONE, EventListenerTouchOneByOne.LISTENER_ID, null);
     this._claimedTouches = [];
-  },
+  }
 
-  setSwallowTouches: function (needSwallow) {
+  setSwallowTouches(needSwallow: boolean) {
     this.swallowTouches = needSwallow;
-  },
+  }
 
-  isSwallowTouches: function () {
+  isSwallowTouches() {
     return this.swallowTouches;
-  },
+  }
 
-  clone: function () {
-    var eventListener = new cc._EventListenerTouchOneByOne();
+  clone() {
+    const eventListener = new EventListenerTouchOneByOne();
     eventListener.onTouchBegan = this.onTouchBegan;
     eventListener.onTouchMoved = this.onTouchMoved;
     eventListener.onTouchEnded = this.onTouchEnded;
     eventListener.onTouchCancelled = this.onTouchCancelled;
     eventListener.swallowTouches = this.swallowTouches;
     return eventListener;
-  },
+  }
 
-  checkAvailable: function () {
+  checkAvailable() {
     if (!this.onTouchBegan) {
-      cc.log(cc._LogInfos._EventListenerTouchOneByOne_checkAvailable);
+      log(_LogInfos._EventListenerTouchOneByOne_checkAvailable);
       return false;
     }
     return true;
   }
-});
 
-cc._EventListenerTouchOneByOne.LISTENER_ID = "__cc_touch_one_by_one";
-
-cc._EventListenerTouchOneByOne.create = function () {
-  return new cc._EventListenerTouchOneByOne();
-};
+  static create() {
+    return new EventListenerTouchOneByOne();
+  }
+}

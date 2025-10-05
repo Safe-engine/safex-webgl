@@ -1,26 +1,29 @@
+import { log } from "../../../helper/Debugger";
+import { EventListener } from "./EventListener";
 
-cc._EventListenerFocus = cc.EventListener.extend({
-  clone: function () {
-    var listener = new cc._EventListenerFocus();
+export class EventListenerFocus extends EventListener {
+  static LISTENER_ID = "__cc_focus_event";
+  onFocusChanged
+
+  clone() {
+    var listener = new EventListenerFocus();
     listener.onFocusChanged = this.onFocusChanged;
     return listener;
-  },
-  checkAvailable: function () {
+  }
+  checkAvailable() {
     if (!this.onFocusChanged) {
-      cc.log("Invalid EventListenerFocus!");
+      log("Invalid EventListenerFocus!");
       return false;
     }
     return true;
-  },
-  onFocusChanged: null,
-  ctor: function () {
-    cc.EventListener.prototype.ctor.call(this, cc.EventListener.FOCUS, cc._EventListenerFocus.LISTENER_ID, this._callback);
-  },
-  _callback: function (event) {
+  }
+  constructor() {
+    super(EventListener.FOCUS, EventListenerFocus.LISTENER_ID);
+    this._onEvent = this._callback.bind(this);
+  }
+  _callback(event) {
     if (this.onFocusChanged) {
       this.onFocusChanged(event._widgetLoseFocus, event._widgetGetFocus);
     }
   }
-});
-
-cc._EventListenerFocus.LISTENER_ID = "__cc_focus_event";
+}

@@ -1,7 +1,9 @@
-import { _canvas, game, renderer, view } from '../..';
+import { _canvas, _renderContext, _renderType, director, game, renderer, view } from '../..';
 import { _LogInfos, log } from '../../helper/Debugger';
+import { Node } from './base-nodes/Node';
 import { Director } from './Director';
 import { eventManager } from './event-manager/EventManager';
+import { BLEND_DST, BLEND_SRC } from './platform/Macro';
 
 export function installWebGLDirectorExtensions() {
   // Only apply for WebGL render type
@@ -24,7 +26,6 @@ export function installWebGLDirectorExtensions() {
   }
 
   eventManager.addCustomListener(Director.EVENT_PROJECTION_CHANGED, () => {
-    const director = director;
     const stack = director._scenesStack;
     for (let i = 0; i < stack.length; i++) {
       recursiveChild(stack[i]);

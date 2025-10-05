@@ -2,21 +2,31 @@ import { director, game } from "../../..";
 import { isNumber } from "../../../helper/checkType";
 import { _LogInfos, assert, log } from "../../../helper/Debugger";
 import { Node } from "../base-nodes/Node";
+import { arrayRemoveObject, copyArray } from "../platform/Macro";
+import { Event } from "./Event";
 import { EventCustom } from "./EventCustom";
+import { EventListenerAcceleration, EventListenerKeyboard } from "./EventExtension";
 import { EventListener } from "./EventListener";
+import { EventListenerCustom } from "./EventListenerCustom";
+import { EventListenerFocus } from "./EventListenerFocus";
+import { EventListenerMouse } from "./EventListenerMouse";
+import { EventListenerTouchAllAtOnce } from "./EventListenerTouchAllAtOnce";
+import { EventListenerTouchOneByOne } from "./EventListenerTouchOneByOne";
+import { EventListenerVector } from "./EventListenerVector";
+import { EventTouch } from "./EventTouch";
 
 function __getListenerID(event) {
   var eventType = Event, getType = event._type;
   if (getType === eventType.ACCELERATION)
-    return _EventListenerAcceleration.LISTENER_ID;
+    return EventListenerAcceleration.LISTENER_ID;
   if (getType === eventType.CUSTOM)
     return event._eventName;
   if (getType === eventType.KEYBOARD)
-    return _EventListenerKeyboard.LISTENER_ID;
+    return EventListenerKeyboard.LISTENER_ID;
   if (getType === eventType.MOUSE)
-    return _EventListenerMouse.LISTENER_ID;
+    return EventListenerMouse.LISTENER_ID;
   if (getType === eventType.FOCUS)
-    return _EventListenerFocus.LISTENER_ID;
+    return EventListenerFocus.LISTENER_ID;
   if (getType === eventType.TOUCH) {
     // Touch listener is very special, it contains two kinds of listeners, EventListenerTouchOneByOne and EventListenerTouchAllAtOnce.
     // return UNKNOWN instead.
@@ -113,7 +123,7 @@ export const eventManager = /** @lends eventManager# */{
     var listenerID = listener._getListenerID();
     var listeners = this._listenersMap[listenerID];
     if (!listeners) {
-      listeners = new _EventListenerVector();
+      listeners = new EventListenerVector();
       this._listenersMap[listenerID] = listeners;
     }
     listeners.push(listener);
@@ -346,11 +356,11 @@ export const eventManager = /** @lends eventManager# */{
       return;
 
     var listeners;
-    listeners = this._listenersMap[_EventListenerTouchOneByOne.LISTENER_ID];
+    listeners = this._listenersMap[EventListenerTouchOneByOne.LISTENER_ID];
     if (listeners) {
       this._onUpdateListeners(listeners);
     }
-    listeners = this._listenersMap[_EventListenerTouchAllAtOnce.LISTENER_ID];
+    listeners = this._listenersMap[EventListenerTouchAllAtOnce.LISTENER_ID];
     if (listeners) {
       this._onUpdateListeners(listeners);
     }
@@ -445,11 +455,11 @@ export const eventManager = /** @lends eventManager# */{
   },
 
   _dispatchTouchEvent: function (event) {
-    this._sortEventListeners(_EventListenerTouchOneByOne.LISTENER_ID);
-    this._sortEventListeners(_EventListenerTouchAllAtOnce.LISTENER_ID);
+    this._sortEventListeners(EventListenerTouchOneByOne.LISTENER_ID);
+    this._sortEventListeners(EventListenerTouchAllAtOnce.LISTENER_ID);
 
-    var oneByOneListeners = this._getListeners(_EventListenerTouchOneByOne.LISTENER_ID);
-    var allAtOnceListeners = this._getListeners(_EventListenerTouchAllAtOnce.LISTENER_ID);
+    var oneByOneListeners = this._getListeners(EventListenerTouchOneByOne.LISTENER_ID);
+    var allAtOnceListeners = this._getListeners(EventListenerTouchAllAtOnce.LISTENER_ID);
 
     // If there aren't any touch listeners, return directly.
     if (null === oneByOneListeners && null === allAtOnceListeners)
@@ -682,7 +692,7 @@ export const eventManager = /** @lends eventManager# */{
    * @return {EventListener} the generated event. Needed in order to remove the event from the dispatcher
    */
   addCustomListener: function (eventName, callback, target?) {
-    var listener = new _EventListenerCustom(eventName, callback, target);
+    var listener = new EventListenerCustom(eventName, callback, target);
     this.addListener(listener, 1);
     return listener;
   },
@@ -819,15 +829,15 @@ export const eventManager = /** @lends eventManager# */{
       }
     } else {
       if (listenerType === EventListener.TOUCH_ONE_BY_ONE)
-        _t._removeListenersForListenerID(_EventListenerTouchOneByOne.LISTENER_ID);
+        _t._removeListenersForListenerID(EventListenerTouchOneByOne.LISTENER_ID);
       else if (listenerType === EventListener.TOUCH_ALL_AT_ONCE)
-        _t._removeListenersForListenerID(_EventListenerTouchAllAtOnce.LISTENER_ID);
+        _t._removeListenersForListenerID(EventListenerTouchAllAtOnce.LISTENER_ID);
       else if (listenerType === EventListener.MOUSE)
-        _t._removeListenersForListenerID(_EventListenerMouse.LISTENER_ID);
+        _t._removeListenersForListenerID(EventListenerMouse.LISTENER_ID);
       else if (listenerType === EventListener.ACCELERATION)
-        _t._removeListenersForListenerID(_EventListenerAcceleration.LISTENER_ID);
+        _t._removeListenersForListenerID(EventListenerAcceleration.LISTENER_ID);
       else if (listenerType === EventListener.KEYBOARD)
-        _t._removeListenersForListenerID(_EventListenerKeyboard.LISTENER_ID);
+        _t._removeListenersForListenerID(EventListenerKeyboard.LISTENER_ID);
       else
         log(_LogInfos.eventManager_removeListeners);
     }

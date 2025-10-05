@@ -1,11 +1,10 @@
-/**
- * The base class of event listener.
- * Subclasses should call `this.ctor(...)` to initialize the base part when they are created using legacy patterns.
- */
-
 import { _LogInfos, assert } from "../../../helper/Debugger";
 import { EventListenerAcceleration, EventListenerKeyboard } from "./EventExtension";
 import { EventListenerCustom } from "./EventListenerCustom";
+import { EventListenerFocus } from "./EventListenerFocus";
+import { EventListenerMouse } from "./EventListenerMouse";
+import { EventListenerTouchAllAtOnce } from "./EventListenerTouchAllAtOnce";
+import { EventListenerTouchOneByOne } from "./EventListenerTouchOneByOne";
 
 export class EventListener {
   // Event callback function

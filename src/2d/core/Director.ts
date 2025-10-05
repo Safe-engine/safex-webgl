@@ -1,11 +1,16 @@
-import { game, renderer } from '../..';
+import { _renderContext, game, renderer, view } from '../..';
+import { global } from '../../helper/global';
 import { ActionManager } from './ActionManager';
 import { Node } from './base-nodes/Node';
 import { Point, Size } from './cocoa/Geometry';
 import { EventCustom } from './event-manager/EventCustom';
 import { eventManager } from './event-manager/EventManager';
+import { checkGLErrorDebug } from './platform/Macro';
 import { Scene } from './scenes/Scene';
 import { Scheduler } from './Scheduler';
+import { animationCache } from './sprites/AnimationCache';
+import { spriteFrameCache } from './sprites/SpriteFrameCache';
+import { profiler } from './utils/Profiler';
 
 export class DirectorDelegate {
   updateProjection(): void { }
@@ -43,7 +48,7 @@ export class Director {
   private _animationInterval = 0.0;
   private _oldAnimationInterval = 0.0;
   private _projection = Director.PROJECTION_DEFAULT;
-  private _contentScaleFactor = 1.0;
+  public _contentScaleFactor = 1.0;
 
   private _deltaTime = 0.0;
 
@@ -53,7 +58,7 @@ export class Director {
   private _nextScene: Scene | null = null;
   private _notificationNode: Node | null = null;
   private _openGLView: any = null;
-  private _scenesStack: Scene[] = [];
+  public _scenesStack: Scene[] = [];
   private _projectionDelegate: DirectorDelegate | null = null;
   private _runningScene: Scene | null = null;
 
@@ -147,7 +152,6 @@ export class Director {
    */
   public convertToGL(uiPoint: Point): Point {
     const docElem = document.documentElement;
-    const view = view;
     const box = docElem.getBoundingClientRect();
     const left = box.left + window.pageXOffset - docElem.clientLeft;
     const top = box.top + window.pageYOffset - docElem.clientTop;
@@ -163,7 +167,6 @@ export class Director {
    */
   public convertToUI(glPoint: Point): Point {
     const docElem = document.documentElement;
-    const view = view;
     const box = docElem.getBoundingClientRect();
     const left = box.left + window.pageXOffset - docElem.clientLeft;
     const top = box.top + window.pageYOffset - docElem.clientTop;
@@ -182,8 +185,6 @@ export class Director {
    * Draw the scene. This method is called every frame. Don't call it manually.
    */
   public drawScene(): void {
-    const renderer: Renderer = renderer;
-
     this.calculateDeltaTime();
 
     if (!this._paused) {
@@ -213,7 +214,7 @@ export class Director {
       this._notificationNode.visit();
 
     eventManager.dispatchEvent(this._eventAfterVisit);
-    g_NumberOfDraws = 0;
+    global.g_NumberOfDraws = 0;
 
     renderer.rendering(_renderContext);
     this._totalFrames++;
@@ -349,10 +350,10 @@ export class Director {
 
   public setNextScene(): void {
     let runningIsTransition = false, newIsTransition = false;
-    if ((cc as any).TransitionScene) {
-      runningIsTransition = this._runningScene ? this._runningScene instanceof (cc as any).TransitionScene : false;
-      newIsTransition = this._nextScene ? this._nextScene instanceof (cc as any).TransitionScene : false;
-    }
+    // if (TransitionScene) {
+    //   runningIsTransition = this._runningScene ? this._runningScene instanceof TransitionScene : false;
+    //   newIsTransition = this._nextScene ? this._nextScene instanceof TransitionScene : false;
+    // }
 
     if (!newIsTransition) {
       const locRunningScene = this._runningScene;
@@ -414,12 +415,12 @@ export class Director {
   }
 
   public isDisplayStats(): boolean {
-    return Profiler ? Profiler.isShowingStats() : false;
+    return profiler ? profiler.isShowingStats() : false;
   }
 
   public setDisplayStats(displayStats: boolean): void {
-    if (Profiler) {
-      displayStats ? Profiler.showStats() : Profiler.hideStats();
+    if (profiler) {
+      displayStats ? profiler.showStats() : profiler.hideStats();
     }
   }
 

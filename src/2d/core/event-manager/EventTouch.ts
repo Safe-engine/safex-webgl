@@ -1,48 +1,45 @@
 
 /**
  * The touch event
- * @class
- * @extends cc.Event
  */
-cc.EventTouch = cc.Event.extend(/** @lends cc.EventTouch# */{
-  _eventCode: 0,
-  _touches: null,
+import { Event } from "./Event";
 
-  ctor: function (arr) {
-    cc.Event.prototype.ctor.call(this, cc.Event.TOUCH);
+export class EventTouch extends Event {
+  private _eventCode: number = 0;
+  private _touches: any[] = [];
+
+  static MAX_TOUCHES: number = 5;
+  static EventCode = { BEGAN: 0, MOVED: 1, ENDED: 2, CANCELLED: 3 };
+
+  constructor(arr?: any[]) {
+    super(Event.TOUCH);
     this._touches = arr || [];
-  },
+  }
 
   /**
    * Returns event code
-   * @returns {number}
    */
-  getEventCode: function () {
+  getEventCode() {
     return this._eventCode;
-  },
+  }
 
   /**
    * Returns touches of event
-   * @returns {Array}
    */
-  getTouches: function () {
+  getTouches() {
     return this._touches;
-  },
+  }
 
-  _setEventCode: function (eventCode) {
+  _setEventCode(eventCode: number) {
     this._eventCode = eventCode;
-  },
+  }
 
-  _setTouches: function (touches) {
+  _setTouches(touches: any[]) {
     this._touches = touches;
   }
-});
+}
 
-/**
- * The maximum touch numbers
- * @constant
- * @type {Number}
- */
-cc.EventTouch.MAX_TOUCHES = 5;
+// The maximum touch numbers
+EventTouch.MAX_TOUCHES = 5;
 
-cc.EventTouch.EventCode = { BEGAN: 0, MOVED: 1, ENDED: 2, CANCELLED: 3 };
+EventTouch.EventCode = { BEGAN: 0, MOVED: 1, ENDED: 2, CANCELLED: 3 };
