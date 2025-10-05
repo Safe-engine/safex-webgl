@@ -1,35 +1,41 @@
+import { director, game } from "../../..";
+import { isNumber } from "../../../helper/checkType";
+import { _LogInfos, assert, log } from "../../../helper/Debugger";
+import { Node } from "../base-nodes/Node";
+import { EventCustom } from "./EventCustom";
+import { EventListener } from "./EventListener";
 
 function __getListenerID(event) {
-  var eventType = cc.Event, getType = event._type;
+  var eventType = Event, getType = event._type;
   if (getType === eventType.ACCELERATION)
-    return cc._EventListenerAcceleration.LISTENER_ID;
+    return _EventListenerAcceleration.LISTENER_ID;
   if (getType === eventType.CUSTOM)
     return event._eventName;
   if (getType === eventType.KEYBOARD)
-    return cc._EventListenerKeyboard.LISTENER_ID;
+    return _EventListenerKeyboard.LISTENER_ID;
   if (getType === eventType.MOUSE)
-    return cc._EventListenerMouse.LISTENER_ID;
+    return _EventListenerMouse.LISTENER_ID;
   if (getType === eventType.FOCUS)
-    return cc._EventListenerFocus.LISTENER_ID;
+    return _EventListenerFocus.LISTENER_ID;
   if (getType === eventType.TOUCH) {
     // Touch listener is very special, it contains two kinds of listeners, EventListenerTouchOneByOne and EventListenerTouchAllAtOnce.
     // return UNKNOWN instead.
-    cc.log(cc._LogInfos.__getListenerID);
+    log(_LogInfos.__getListenerID);
   }
   return "";
 }
 
 /**
  * <p>
- *  cc.eventManager is a singleton object which manages event listener subscriptions and event dispatching. <br/>
+ *  eventManager is a singleton object which manages event listener subscriptions and event dispatching. <br/>
  *                                                                                                              <br/>
  *  The EventListener list is managed in such way so that event listeners can be added and removed          <br/>
  *  while events are being dispatched.
  * </p>
  * @class
- * @name cc.eventManager
+ * @name eventManager
  */
-export const eventManager = /** @lends cc.eventManager# */{
+export const eventManager = /** @lends eventManager# */{
   //Priority dirty flag
   DIRTY_NONE: 0,
   DIRTY_FIXED_PRIORITY: 1 << 0,
@@ -48,7 +54,7 @@ export const eventManager = /** @lends cc.eventManager# */{
   _isEnabled: false,
   _nodePriorityIndex: 0,
 
-  _internalCustomListenerIDs: [cc.game.EVENT_HIDE, cc.game.EVENT_SHOW],
+  _internalCustomListenerIDs: [game.EVENT_HIDE, game.EVENT_SHOW],
 
   _setDirtyForNode: function (node) {
     // Mark the node dirty only when there is an event listener associated with it.
@@ -61,10 +67,10 @@ export const eventManager = /** @lends cc.eventManager# */{
 
   /**
    * Pauses all listeners which are associated the specified target.
-   * @param {cc.Node} node
+   * @param {Node} node
    * @param {Boolean} [recursive=false]
    */
-  pauseTarget: function (node, recursive) {
+  pauseTarget: function (node, recursive?) {
     var listeners = this._nodeListenersMap[node.__instanceId], i, len;
     if (listeners) {
       for (i = 0, len = listeners.length; i < len; i++)
@@ -79,10 +85,10 @@ export const eventManager = /** @lends cc.eventManager# */{
 
   /**
    * Resumes all listeners which are associated the specified target.
-   * @param {cc.Node} node
+   * @param {Node} node
    * @param {Boolean} [recursive=false]
    */
-  resumeTarget: function (node, recursive) {
+  resumeTarget: function (node, recursive?) {
     var listeners = this._nodeListenersMap[node.__instanceId], i, len;
     if (listeners) {
       for (i = 0, len = listeners.length; i < len; i++)
@@ -107,7 +113,7 @@ export const eventManager = /** @lends cc.eventManager# */{
     var listenerID = listener._getListenerID();
     var listeners = this._listenersMap[listenerID];
     if (!listeners) {
-      listeners = new cc._EventListenerVector();
+      listeners = new _EventListenerVector();
       this._listenersMap[listenerID] = listeners;
     }
     listeners.push(listener);
@@ -117,7 +123,7 @@ export const eventManager = /** @lends cc.eventManager# */{
 
       var node = listener._getSceneGraphPriority();
       if (node === null)
-        cc.log(cc._LogInfos.eventManager__forceAddEventListener);
+        log(_LogInfos.eventManager__forceAddEventListener);
 
       this._associateNodeAndEventListener(node, listener);
       if (node.isRunning())
@@ -161,7 +167,7 @@ export const eventManager = /** @lends cc.eventManager# */{
       }
 
       if (this._inDispatch === 0)
-        cc.arrayRemoveObject(listenerVector, selListener);
+        arrayRemoveObject(listenerVector, selListener);
       else
         ++i;
     }
@@ -190,7 +196,7 @@ export const eventManager = /** @lends cc.eventManager# */{
     for (i = 0; i < locToAddedListeners.length;) {
       listener = locToAddedListeners[i];
       if (listener && listener._getListenerID() === listenerID)
-        cc.arrayRemoveObject(locToAddedListeners, listener);
+        arrayRemoveObject(locToAddedListeners, listener);
       else
         ++i;
     }
@@ -209,7 +215,7 @@ export const eventManager = /** @lends cc.eventManager# */{
         this._sortListenersOfFixedPriority(listenerID);
 
       if (dirtyFlag & this.DIRTY_SCENE_GRAPH_PRIORITY) {
-        var rootNode = cc.director.getRunningScene();
+        var rootNode = director.getRunningScene();
         if (rootNode)
           this._sortListenersOfSceneGraphPriority(listenerID, rootNode);
         else
@@ -238,7 +244,7 @@ export const eventManager = /** @lends cc.eventManager# */{
   },
 
   _sortEventListenersOfSceneGraphPriorityDes: function (l1, l2) {
-    var locNodePriorityMap = cc.eventManager._nodePriorityMap, node1 = l1._getSceneGraphPriority(),
+    var locNodePriorityMap = eventManager._nodePriorityMap, node1 = l1._getSceneGraphPriority(),
       node2 = l2._getSceneGraphPriority();
     if (!l2 || !node2 || !locNodePriorityMap[node2.__instanceId])
       return -1;
@@ -281,7 +287,7 @@ export const eventManager = /** @lends cc.eventManager# */{
       for (i = 0; i < sceneGraphPriorityListeners.length;) {
         selListener = sceneGraphPriorityListeners[i];
         if (!selListener._isRegistered()) {
-          cc.arrayRemoveObject(sceneGraphPriorityListeners, selListener);
+          arrayRemoveObject(sceneGraphPriorityListeners, selListener);
           // if item in toRemove list, remove it from the list
           idx = toRemovedListeners.indexOf(selListener);
           if (idx !== -1)
@@ -295,7 +301,7 @@ export const eventManager = /** @lends cc.eventManager# */{
       for (i = 0; i < fixedPriorityListeners.length;) {
         selListener = fixedPriorityListeners[i];
         if (!selListener._isRegistered()) {
-          cc.arrayRemoveObject(fixedPriorityListeners, selListener);
+          arrayRemoveObject(fixedPriorityListeners, selListener);
           // if item in toRemove list, remove it from the list
           idx = toRemovedListeners.indexOf(selListener);
           if (idx !== -1)
@@ -334,22 +340,22 @@ export const eventManager = /** @lends cc.eventManager# */{
 
   _updateTouchListeners: function (event) {
     var locInDispatch = this._inDispatch;
-    cc.assert(locInDispatch > 0, cc._LogInfos.EventManager__updateListeners);
+    assert(locInDispatch > 0, _LogInfos.EventManager__updateListeners);
 
     if (locInDispatch > 1)
       return;
 
     var listeners;
-    listeners = this._listenersMap[cc._EventListenerTouchOneByOne.LISTENER_ID];
+    listeners = this._listenersMap[_EventListenerTouchOneByOne.LISTENER_ID];
     if (listeners) {
       this._onUpdateListeners(listeners);
     }
-    listeners = this._listenersMap[cc._EventListenerTouchAllAtOnce.LISTENER_ID];
+    listeners = this._listenersMap[_EventListenerTouchAllAtOnce.LISTENER_ID];
     if (listeners) {
       this._onUpdateListeners(listeners);
     }
 
-    cc.assert(locInDispatch === 1, cc._LogInfos.EventManager__updateListeners_2);
+    assert(locInDispatch === 1, _LogInfos.EventManager__updateListeners_2);
 
     var locToAddedListeners = this._toAddedListeners;
     if (locToAddedListeners.length !== 0) {
@@ -399,7 +405,7 @@ export const eventManager = /** @lends cc.eventManager# */{
     event._setCurrentTarget(listener._node);
 
     var isClaimed = false, removedIdx;
-    var getCode = event.getEventCode(), eventCode = cc.EventTouch.EventCode;
+    var getCode = event.getEventCode(), eventCode = EventTouch.EventCode;
     if (getCode === eventCode.BEGAN) {
       if (listener.onTouchBegan) {
         isClaimed = listener.onTouchBegan(selTouch, event);
@@ -426,7 +432,7 @@ export const eventManager = /** @lends cc.eventManager# */{
 
     // If the event was stopped, return directly.
     if (event.isStopped()) {
-      cc.eventManager._updateTouchListeners(event);
+      eventManager._updateTouchListeners(event);
       return true;
     }
 
@@ -439,17 +445,17 @@ export const eventManager = /** @lends cc.eventManager# */{
   },
 
   _dispatchTouchEvent: function (event) {
-    this._sortEventListeners(cc._EventListenerTouchOneByOne.LISTENER_ID);
-    this._sortEventListeners(cc._EventListenerTouchAllAtOnce.LISTENER_ID);
+    this._sortEventListeners(_EventListenerTouchOneByOne.LISTENER_ID);
+    this._sortEventListeners(_EventListenerTouchAllAtOnce.LISTENER_ID);
 
-    var oneByOneListeners = this._getListeners(cc._EventListenerTouchOneByOne.LISTENER_ID);
-    var allAtOnceListeners = this._getListeners(cc._EventListenerTouchAllAtOnce.LISTENER_ID);
+    var oneByOneListeners = this._getListeners(_EventListenerTouchOneByOne.LISTENER_ID);
+    var allAtOnceListeners = this._getListeners(_EventListenerTouchAllAtOnce.LISTENER_ID);
 
     // If there aren't any touch listeners, return directly.
     if (null === oneByOneListeners && null === allAtOnceListeners)
       return;
 
-    var originalTouches = event.getTouches(), mutableTouches = cc.copyArray(originalTouches);
+    var originalTouches = event.getTouches(), mutableTouches = copyArray(originalTouches);
     var oneByOneArgsObj = { event: event, needsMutableSet: (oneByOneListeners && allAtOnceListeners), touches: mutableTouches, selTouch: null };
 
     //
@@ -480,7 +486,7 @@ export const eventManager = /** @lends cc.eventManager# */{
     if (!listener._registered)
       return false;
 
-    var eventCode = cc.EventTouch.EventCode, event = callbackParams.event, touches = callbackParams.touches, getCode = event.getEventCode();
+    var eventCode = EventTouch.EventCode, event = callbackParams.event, touches = callbackParams.touches, getCode = event.getEventCode();
     event._setCurrentTarget(listener._node);
     if (getCode === eventCode.BEGAN && listener.onTouchesBegan)
       listener.onTouchesBegan(touches, event);
@@ -493,7 +499,7 @@ export const eventManager = /** @lends cc.eventManager# */{
 
     // If the event was stopped, return directly.
     if (event.isStopped()) {
-      cc.eventManager._updateTouchListeners(event);
+      eventManager._updateTouchListeners(event);
       return true;
     }
     return false;
@@ -511,7 +517,7 @@ export const eventManager = /** @lends cc.eventManager# */{
   _dissociateNodeAndEventListener: function (node, listener) {
     var listeners = this._nodeListenersMap[node.__instanceId];
     if (listeners) {
-      cc.arrayRemoveObject(listeners, listener);
+      arrayRemoveObject(listeners, listener);
       if (listeners.length === 0)
         delete this._nodeListenersMap[node.__instanceId];
     }
@@ -625,22 +631,22 @@ export const eventManager = /** @lends cc.eventManager# */{
    * if the parameter "nodeOrPriority" is a node, it means to add a event listener for a specified event with the priority of scene graph.                   <br/>
    * if the parameter "nodeOrPriority" is a Number, it means to add a event listener for a specified event with the fixed priority.                          <br/>
    * </p>
-   * @param {cc.EventListener|Object} listener The listener of a specified event or a object of some event parameters.
-   * @param {cc.Node|Number} nodeOrPriority The priority of the listener is based on the draw order of this node or fixedPriority The fixed priority of the listener.
+   * @param {EventListener|Object} listener The listener of a specified event or a object of some event parameters.
+   * @param {Node|Number} nodeOrPriority The priority of the listener is based on the draw order of this node or fixedPriority The fixed priority of the listener.
    * @note  The priority of scene graph will be fixed value 0. So the order of listener item in the vector will be ' <0, scene graph (0 priority), >0'.
    *         A lower priority will be called before the ones that have a higher value. 0 priority is forbidden for fixed priority since it's used for scene graph based priority.
-   *         The listener must be a cc.EventListener object when adding a fixed priority listener, because we can't remove a fixed priority listener without the listener handler,
+   *         The listener must be a EventListener object when adding a fixed priority listener, because we can't remove a fixed priority listener without the listener handler,
    *         except calls removeAllListeners().
-   * @return {cc.EventListener} Return the listener. Needed in order to remove the event from the dispatcher.
+   * @return {EventListener} Return the listener. Needed in order to remove the event from the dispatcher.
    */
   addListener: function (listener, nodeOrPriority) {
-    cc.assert(listener && nodeOrPriority, cc._LogInfos.eventManager_addListener_2);
-    if (!(listener instanceof cc.EventListener)) {
-      cc.assert(!cc.isNumber(nodeOrPriority), cc._LogInfos.eventManager_addListener_3);
-      listener = cc.EventListener.create(listener);
+    assert(listener && nodeOrPriority, _LogInfos.eventManager_addListener_2);
+    if (!(listener instanceof EventListener)) {
+      assert(!isNumber(nodeOrPriority), _LogInfos.eventManager_addListener_3);
+      listener = EventListener.create(listener);
     } else {
       if (listener._isRegistered()) {
-        cc.log(cc._LogInfos.eventManager_addListener_4);
+        log(_LogInfos.eventManager_addListener_4);
         return;
       }
     }
@@ -648,9 +654,9 @@ export const eventManager = /** @lends cc.eventManager# */{
     if (!listener.checkAvailable())
       return;
 
-    if (cc.isNumber(nodeOrPriority)) {
+    if (isNumber(nodeOrPriority)) {
       if (nodeOrPriority === 0) {
-        cc.log(cc._LogInfos.eventManager_addListener);
+        log(_LogInfos.eventManager_addListener);
         return;
       }
 
@@ -673,17 +679,17 @@ export const eventManager = /** @lends cc.eventManager# */{
    * Adds a Custom event listener. It will use a fixed priority of 1.
    * @param {string} eventName
    * @param {function} callback
-   * @return {cc.EventListener} the generated event. Needed in order to remove the event from the dispatcher
+   * @return {EventListener} the generated event. Needed in order to remove the event from the dispatcher
    */
   addCustomListener: function (eventName, callback, target?) {
-    var listener = new cc._EventListenerCustom(eventName, callback, target);
+    var listener = new _EventListenerCustom(eventName, callback, target);
     this.addListener(listener, 1);
     return listener;
   },
 
   /**
    * Remove a listener
-   * @param {cc.EventListener} listener an event listener or a registered node target
+   * @param {EventListener} listener an event listener or a registered node target
    */
   removeListener: function (listener) {
     if (listener == null)
@@ -718,7 +724,7 @@ export const eventManager = /** @lends cc.eventManager# */{
       for (var i = 0, len = locToAddedListeners.length; i < len; i++) {
         var selListener = locToAddedListeners[i];
         if (selListener === listener) {
-          cc.arrayRemoveObject(locToAddedListeners, selListener);
+          arrayRemoveObject(locToAddedListeners, selListener);
           selListener._setRegistered(false);
           break;
         }
@@ -740,7 +746,7 @@ export const eventManager = /** @lends cc.eventManager# */{
         }
 
         if (this._inDispatch === 0)
-          cc.arrayRemoveObject(listeners, selListener);
+          arrayRemoveObject(listeners, selListener);
         return true;
       }
     }
@@ -761,7 +767,7 @@ export const eventManager = /** @lends cc.eventManager# */{
         }
 
         if (this._inDispatch === 0)
-          cc.arrayRemoveObject(listeners, selListener);
+          arrayRemoveObject(listeners, selListener);
         else
           this._toRemovedListeners.push(selListener);
         return true;
@@ -772,19 +778,19 @@ export const eventManager = /** @lends cc.eventManager# */{
 
   /**
    * Removes all listeners with the same event listener type or removes all listeners of a node
-   * @param {Number|cc.Node} listenerType listenerType or a node
+   * @param {Number|Node} listenerType listenerType or a node
    * @param {Boolean} [recursive=false]
    */
-  removeListeners: function (listenerType, recursive) {
+  removeListeners: function (listenerType, recursive?) {
     var _t = this;
-    if (listenerType instanceof cc.Node) {
+    if (listenerType instanceof Node) {
       // Ensure the node is removed from these immediately also.
       // Don't want any dangling pointers or the possibility of dealing with deleted objects..
       delete _t._nodePriorityMap[listenerType.__instanceId];
-      cc.arrayRemoveObject(_t._dirtyNodes, listenerType);
+      arrayRemoveObject(_t._dirtyNodes, listenerType);
       var listeners = _t._nodeListenersMap[listenerType.__instanceId], i;
       if (listeners) {
-        var listenersCopy = cc.copyArray(listeners);
+        var listenersCopy = copyArray(listeners);
         for (i = 0; i < listenersCopy.length; i++)
           _t.removeListener(listenersCopy[i]);
         listenersCopy.length = 0;
@@ -812,18 +818,18 @@ export const eventManager = /** @lends cc.eventManager# */{
           _t.removeListeners(locChildren[i], true);
       }
     } else {
-      if (listenerType === cc.EventListener.TOUCH_ONE_BY_ONE)
-        _t._removeListenersForListenerID(cc._EventListenerTouchOneByOne.LISTENER_ID);
-      else if (listenerType === cc.EventListener.TOUCH_ALL_AT_ONCE)
-        _t._removeListenersForListenerID(cc._EventListenerTouchAllAtOnce.LISTENER_ID);
-      else if (listenerType === cc.EventListener.MOUSE)
-        _t._removeListenersForListenerID(cc._EventListenerMouse.LISTENER_ID);
-      else if (listenerType === cc.EventListener.ACCELERATION)
-        _t._removeListenersForListenerID(cc._EventListenerAcceleration.LISTENER_ID);
-      else if (listenerType === cc.EventListener.KEYBOARD)
-        _t._removeListenersForListenerID(cc._EventListenerKeyboard.LISTENER_ID);
+      if (listenerType === EventListener.TOUCH_ONE_BY_ONE)
+        _t._removeListenersForListenerID(_EventListenerTouchOneByOne.LISTENER_ID);
+      else if (listenerType === EventListener.TOUCH_ALL_AT_ONCE)
+        _t._removeListenersForListenerID(_EventListenerTouchAllAtOnce.LISTENER_ID);
+      else if (listenerType === EventListener.MOUSE)
+        _t._removeListenersForListenerID(_EventListenerMouse.LISTENER_ID);
+      else if (listenerType === EventListener.ACCELERATION)
+        _t._removeListenersForListenerID(_EventListenerAcceleration.LISTENER_ID);
+      else if (listenerType === EventListener.KEYBOARD)
+        _t._removeListenersForListenerID(_EventListenerKeyboard.LISTENER_ID);
       else
-        cc.log(cc._LogInfos.eventManager_removeListeners);
+        log(_LogInfos.eventManager_removeListeners);
     }
   },
 
@@ -848,7 +854,7 @@ export const eventManager = /** @lends cc.eventManager# */{
 
   /**
    * Sets listener's priority with fixed value.
-   * @param {cc.EventListener} listener
+   * @param {EventListener} listener
    * @param {Number} fixedPriority
    */
   setPriority: function (listener, fixedPriority) {
@@ -863,7 +869,7 @@ export const eventManager = /** @lends cc.eventManager# */{
         var found = fixedPriorityListeners.indexOf(listener);
         if (found !== -1) {
           if (listener._getSceneGraphPriority() != null)
-            cc.log(cc._LogInfos.eventManager_setPriority);
+            log(_LogInfos.eventManager_setPriority);
           if (listener._getFixedPriority() !== fixedPriority) {
             listener._setFixedPriority(fixedPriority);
             this._setDirty(listener._getListenerID(), this.DIRTY_FIXED_PRIORITY);
@@ -892,7 +898,7 @@ export const eventManager = /** @lends cc.eventManager# */{
 
   /**
    * Dispatches the event, also removes all EventListeners marked for deletion from the event dispatcher list.
-   * @param {cc.Event} event
+   * @param {Event} event
    */
   dispatchEvent: function (event) {
     if (!this._isEnabled)
@@ -902,7 +908,7 @@ export const eventManager = /** @lends cc.eventManager# */{
     this._inDispatch++;
     if (!event || !event.getType)
       throw new Error("event is undefined");
-    if (event._type === cc.Event.TOUCH) {
+    if (event._type === Event.TOUCH) {
       this._dispatchTouchEvent(event);
       this._inDispatch--;
       return;
@@ -931,7 +937,7 @@ export const eventManager = /** @lends cc.eventManager# */{
    * @param {*} optionalUserData
    */
   dispatchCustomEvent: function (eventName, optionalUserData) {
-    var ev = new cc.EventCustom(eventName);
+    var ev = new EventCustom(eventName);
     ev.setUserData(optionalUserData);
     this.dispatchEvent(ev);
   }

@@ -47,7 +47,7 @@ export const affineTransformMake = function (a, b, c, d, tx, ty) {
  * @param {AffineTransform} t transform matrix or y
  * @return {Point}
  */
-export const pointApplyAffineTransform = function (point, transOrY, t) {
+export const pointApplyAffineTransform = function (point, transOrY, t?) {
   var x, y;
   if (t === undefined) {
     t = transOrY;
@@ -58,10 +58,6 @@ export const pointApplyAffineTransform = function (point, transOrY, t) {
     y = transOrY;
   }
   return { x: t.a * x + t.c * y + t.tx, y: t.b * x + t.d * y + t.ty };
-};
-
-export const _pointApplyAffineTransform = function (x, y, t) {   //it will remove.
-  return pointApplyAffineTransform(x, y, t);
 };
 
 /**
@@ -129,7 +125,7 @@ export const rectApplyAffineTransform = function (rect, anAffineTransform) {
   return rect(minX, minY, (maxX - minX), (maxY - minY));
 };
 
-export const _rectApplyAffineTransformIn = function (rect, anAffineTransform) {
+export const rectApplyAffineTransformIn = function (rect, anAffineTransform) {
   var top = rectGetMinY(rect);
   var left = rectGetMinX(rect);
   var right = rectGetMaxX(rect);

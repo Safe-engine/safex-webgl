@@ -159,14 +159,3 @@ export class EventListener {
   };
 
 }
-
-// attach to global `cc` for backward compatibility
-
-
-// Keep compatibility for mouse helper if exists
-if (EventListenerMouse) {
-  EventListenerMouse.LISTENER_ID = "__cc_mouse";
-  EventListenerMouse.create = function () {
-    return new EventListenerMouse();
-  };
-}

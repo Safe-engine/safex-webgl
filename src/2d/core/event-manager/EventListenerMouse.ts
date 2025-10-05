@@ -1,16 +1,19 @@
+import { EventListener } from "./EventListener";
+import { EventMouse } from "./EventMouse";
 
-cc._EventListenerMouse = cc.EventListener.extend({
-  onMouseDown: null,
-  onMouseUp: null,
-  onMouseMove: null,
-  onMouseScroll: null,
+export class EventListenerMouse extends EventListener {
+  onMouseDown
+  onMouseUp
+  onMouseMove
+  onMouseScroll
 
-  ctor: function () {
-    cc.EventListener.prototype.ctor.call(this, cc.EventListener.MOUSE, cc._EventListenerMouse.LISTENER_ID, this._callback);
-  },
+  constructor() {
+    super(EventListener.MOUSE, EventListenerMouse.LISTENER_ID);
+    this._onEvent = this._callback.bind(this);
+  }
 
-  _callback: function (event) {
-    var eventType = cc.EventMouse;
+  _callback(event) {
+    var eventType = EventMouse;
     switch (event._eventType) {
       case eventType.DOWN:
         if (this.onMouseDown)
@@ -31,18 +34,23 @@ cc._EventListenerMouse = cc.EventListener.extend({
       default:
         break;
     }
-  },
+  }
 
-  clone: function () {
-    var eventListener = new cc._EventListenerMouse();
+  clone() {
+    var eventListener = new EventListenerMouse();
     eventListener.onMouseDown = this.onMouseDown;
     eventListener.onMouseUp = this.onMouseUp;
     eventListener.onMouseMove = this.onMouseMove;
     eventListener.onMouseScroll = this.onMouseScroll;
     return eventListener;
-  },
+  }
 
-  checkAvailable: function () {
+  checkAvailable() {
     return true;
   }
+  // Keep compatibility for mouse helper if exists
+  static LISTENER_ID = "__cc_mouse";
+  static create = function () {
+    return new EventListenerMouse();
+  };
 }
