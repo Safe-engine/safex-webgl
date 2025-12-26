@@ -1,11 +1,13 @@
-import { director, game, renderer, view, winSize } from '../../..';
+import { _renderContext, container, director, game, renderer, view, winSize } from '../../..';
 import { log } from '../../../helper/Debugger';
+import { _renderType } from '../../../helper/engine';
 import { sys } from '../../../helper/sys';
 import { rect, Rect, size, Size, Point as Vec2 } from '../cocoa/Geometry';
 import { eventManager } from '../event-manager/EventManager';
 import { ContainerStrategy } from './EGLView/ContainerStrategy';
 import { ContentStrategy } from './EGLView/ContentStrategy';
 import { ResolutionPolicy } from './EGLView/ResolutionPolicy';
+import { visibleRect } from './VisibleRect';
 
 declare const gl: any;
 
@@ -306,17 +308,17 @@ export class EGLView {
       (!isLandscape && this._orientation & ORIENTATION_PORTRAIT)) {
       locFrameSize.width = w;
       locFrameSize.height = h;
-      cc.container.style['-webkit-transform'] = 'rotate(0deg)';
-      cc.container.style.transform = 'rotate(0deg)';
+      container.style['-webkit-transform'] = 'rotate(0deg)';
+      container.style.transform = 'rotate(0deg)';
       this._isRotated = false;
     }
     else {
       locFrameSize.width = h;
       locFrameSize.height = w;
-      cc.container.style['-webkit-transform'] = 'rotate(90deg)';
-      cc.container.style.transform = 'rotate(90deg)';
-      cc.container.style['-webkit-transform-origin'] = '0px 0px 0px';
-      cc.container.style.transformOrigin = '0px 0px 0px';
+      container.style['-webkit-transform'] = 'rotate(90deg)';
+      container.style.transform = 'rotate(90deg)';
+      container.style['-webkit-transform-origin'] = '0px 0px 0px';
+      container.style.transformOrigin = '0px 0px 0px';
       this._isRotated = true;
     }
   }
@@ -600,9 +602,9 @@ export class EGLView {
 
       vb.x = -vp.x / this._scaleX;
       vb.y = -vp.y / this._scaleY;
-      vb.width = cc._canvas!.width / this._scaleX;
-      vb.height = cc._canvas!.height / this._scaleY;
-      (cc._renderContext as any).setOffset && (cc._renderContext as any).setOffset(vp.x, -vp.y);
+      vb.width = game.canvas!.width / this._scaleX;
+      vb.height = game.canvas!.height / this._scaleY;
+      (_renderContext as any).setOffset && (_renderContext as any).setOffset(vp.x, -vp.y);
     }
 
     // reset director's member variables to fit visible rect
@@ -612,11 +614,11 @@ export class EGLView {
     winSize.width = director._winSizeInPoints.width;
     winSize.height = director._winSizeInPoints.height;
 
-    if (cc._renderType === game.RENDER_TYPE_WEBGL) {
+    if (_renderType === game.RENDER_TYPE_WEBGL) {
       // reset director's member variables to fit visible rect
       director.setGLDefaultValues();
     }
-    else if (cc._renderType === game.RENDER_TYPE_CANVAS) {
+    else if (_renderType === game.RENDER_TYPE_CANVAS) {
       renderer._allNeedDraw = true;
     }
 
@@ -659,7 +661,7 @@ export class EGLView {
     const locFrameZoomFactor = this._frameZoomFactor;
     const locScaleX = this._scaleX;
     const locScaleY = this._scaleY;
-    (cc._renderContext as any).viewport((x * locScaleX * locFrameZoomFactor + this._viewPortRect.x * locFrameZoomFactor),
+    (_renderContext as any).viewport((x * locScaleX * locFrameZoomFactor + this._viewPortRect.x * locFrameZoomFactor),
       (y * locScaleY * locFrameZoomFactor + this._viewPortRect.y * locFrameZoomFactor),
       (w * locScaleX * locFrameZoomFactor),
       (h * locScaleY * locFrameZoomFactor));
@@ -684,7 +686,7 @@ export class EGLView {
       _scissorRect.y = sy;
       _scissorRect.width = sw;
       _scissorRect.height = sh;
-      (cc._renderContext as any).scissor(sx, sy, sw, sh);
+      (_renderContext as any).scissor(sx, sy, sw, sh);
     }
   }
 
@@ -693,7 +695,7 @@ export class EGLView {
    * @return
    */
   isScissorEnabled(): boolean {
-    return (cc._renderContext as any).isEnabled(gl.SCISSOR_TEST);
+    return (_renderContext as any).isEnabled(gl.SCISSOR_TEST);
   }
 
   getScissorRect(): Rect {

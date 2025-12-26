@@ -1,3 +1,4 @@
+import type { Size } from "./2d/core/cocoa/Geometry";
 import { Director } from "./2d/core/Director";
 import { DrawingPrimitiveWebGL } from "./2d/core/DrawingPrimitivesWebGL";
 import { EventCustom } from "./2d/core/event-manager/EventCustom";
@@ -5,10 +6,13 @@ import { EventHelper } from "./2d/core/event-manager/EventHelper";
 import { eventManager } from "./2d/core/event-manager/EventManager";
 import { EGLView } from "./2d/core/platform/EGLView";
 import { inputManager } from "./2d/core/platform/InputManager";
+import { $ } from "./2d/core/platform/miniFramework";
+import { rendererWebGL } from "./2d/core/renderer/RendererWebGL";
 import { Texture2D } from "./2d/textures/Texture2D";
+import { textureCache } from "./2d/textures/TextureCache";
 import { isFunction, isUndefined } from "./helper/checkType";
 import { _LogInfos, assert, log } from "./helper/Debugger";
-import { _renderType, _supportRender, initEngine } from "./helper/engine";
+import { _engineLoaded, _renderType, _supportRender, create3DContext, initEngine } from "./helper/engine";
 import { _tmp, global } from "./helper/global";
 import { loader } from "./helper/loader";
 
@@ -30,6 +34,7 @@ declare global {
     mozCancelAnimationFrame?: (handle: number) => void;
     webkitCancelAnimationFrame?: (handle: number) => void;
     oCancelAnimationFrame?: (handle: number) => void;
+    ENABLE_IMAGE_POOL: Boolean
   }
   interface Document {
     ccConfig?: any;
@@ -45,26 +50,14 @@ declare global {
 
 export let director: Director;
 export let renderer: any;
-let rendererWebGL: any;
-let rendererCanvas: any;
-let _drawingUtil: any;
-// export let _canvas: HTMLCanvasElement;
+export let _drawingUtil: any;
 export let _renderContext: any = null;
-let webglContext: WebGLRenderingContext | null = null;
 let glExt: any = {};
-export let view: any;
-export let winSize: any;
+export let view: EGLView;
+export let winSize: Size;
 export let container: HTMLElement | null = null;
-let _gameDiv: HTMLElement | null = null;
-let _engineLoaded = false;
 
-declare const textureCache: any;
-declare const create3DContext: any;
-declare const DrawingPrimitiveCanvas: any;
-// declare const initEngine: any;
 declare const path: any;
-declare const $: any;
-declare const CanvasContextWrapper: any;
 
 class Game extends EventHelper {
   DEBUG_MODE_NONE = 0;
@@ -170,6 +163,7 @@ class Game extends EventHelper {
   }
 
   prepare(cb?: () => void) {
+    console.log("game prepare", this._configLoaded, this._prepared, this._prepareCalled, _engineLoaded)
     if (!this._configLoaded) {
       this._loadConfig(() => {
         this.prepare(cb);
@@ -223,7 +217,7 @@ class Game extends EventHelper {
   }
 
   run(config?: any, onStart?: () => void) {
-    console.log("game run")
+    console.log("game run", config, onStart)
     if (typeof config === 'function') {
       this.onStart = config;
     } else {
@@ -413,7 +407,7 @@ class Game extends EventHelper {
     localCanvas.setAttribute("tabindex", "99");
 
     if (_renderType === this.RENDER_TYPE_WEBGL) {
-      this._renderContext = _renderContext = webglContext = create3DContext(localCanvas, {
+      this._renderContext = _renderContext = create3DContext(localCanvas, {
         'stencil': true,
         'alpha': false
       });
@@ -435,7 +429,7 @@ class Game extends EventHelper {
       // _drawingUtil = DrawingPrimitiveCanvas ? new DrawingPrimitiveCanvas(this._renderContext) : null;
     }
 
-    _gameDiv = localContainer;
+    // _gameDiv = localContainer;
     if (this.canvas) {
       this.canvas.oncontextmenu = () => {
         if (!global._isContextMenuEnable) return false;

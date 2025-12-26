@@ -247,4 +247,4 @@ export const ENABLE_STACKABLE_ACTIONS = 1;
  * @constant
  * @type {Number}
  */
-export const ENABLE_GL_STATE_CACHE = 1;
+export let ENABLE_GL_STATE_CACHE = 1;

@@ -1,11 +1,18 @@
-import { _renderContext, game, renderer, view } from '../..';
+import { _renderContext, director, game, renderer, view } from '../..';
+import { _LogInfos, log } from '../../helper/Debugger';
 import { global } from '../../helper/global';
+import { glBlendFunc, setProjectionMatrixDirty } from '../shaders/GLStateCache';
+import { textureCache } from '../textures/TextureCache';
 import { ActionManager } from './ActionManager';
 import { Node } from './base-nodes/Node';
 import { Point, Size } from './cocoa/Geometry';
+import { configuration } from './Configuration';
 import { EventCustom } from './event-manager/EventCustom';
 import { eventManager } from './event-manager/EventManager';
-import { checkGLErrorDebug } from './platform/Macro';
+import { KM_GL_MODELVIEW, KM_GL_PROJECTION, kmGLLoadIdentity, kmGLMatrixMode, kmGLMultMatrix } from './kazmath/gl/matrix';
+import { Matrix4 } from './kazmath/mat4';
+import { Vec3 } from './kazmath/vec3';
+import { BLEND_DST, BLEND_SRC, checkGLErrorDebug } from './platform/Macro';
 import { Scene } from './scenes/Scene';
 import { Scheduler } from './Scheduler';
 import { animationCache } from './sprites/AnimationCache';
@@ -47,7 +54,7 @@ export class Director {
   private _sendCleanupToScene = false;
   private _animationInterval = 0.0;
   private _oldAnimationInterval = 0.0;
-  private _projection = Director.PROJECTION_DEFAULT;
+  _projection = Director.PROJECTION_DEFAULT;
   public _contentScaleFactor = 1.0;
 
   private _deltaTime = 0.0;
@@ -57,9 +64,9 @@ export class Director {
   private _lastUpdate: number = Date.now();
   private _nextScene: Scene | null = null;
   private _notificationNode: Node | null = null;
-  private _openGLView: any = null;
+  _openGLView: any = null;
   public _scenesStack: Scene[] = [];
-  private _projectionDelegate: DirectorDelegate | null = null;
+  _projectionDelegate: DirectorDelegate | null = null;
   private _runningScene: Scene | null = null;
 
   private _totalFrames = 0;
@@ -69,7 +76,7 @@ export class Director {
 
   private _scheduler: Scheduler;
   private _actionManager: ActionManager | null = null;
-  private _eventProjectionChanged: EventCustom;
+  _eventProjectionChanged: EventCustom;
   private _eventAfterUpdate: EventCustom;
   private _eventAfterVisit: EventCustom;
   private _eventAfterDraw: EventCustom;
@@ -251,9 +258,9 @@ export class Director {
     };
   }
 
-  public getVisibleSize: (() => Size) | null = null;
-  public getVisibleOrigin: (() => Point) | null = null;
-  public getZEye: (() => number) | null = null;
+  // public getVisibleSize: (() => Size) | null = null;
+  // public getVisibleOrigin: (() => Point) | null = null;
+  // public getZEye: (() => number) | null = null;
 
   public pause(): void {
     if (this._paused) return;
@@ -339,8 +346,8 @@ export class Director {
     }
   }
 
-  public setDepthTest: ((on: boolean) => void) | null = null;
-  public setClearColor: ((clearColor: any) => void) | null = null;
+  // public setDepthTest: ((on: boolean) => void) | null = null;
+  // public setClearColor: ((clearColor: any) => void) | null = null;
 
   public setDefaultValues(): void { }
 
@@ -395,12 +402,12 @@ export class Director {
     this._projectionDelegate = delegate;
   }
 
-  public setOpenGLView: ((openGLView: any) => void) | null = null;
-  public setProjection: ((projection: number) => void) | null = null;
-  public setViewport: (() => void) | null = null;
-  public getOpenGLView: (() => any) | null = null;
-  public getProjection: (() => number) | null = null;
-  public setAlphaBlending: ((on: boolean) => void) | null = null;
+  // public setOpenGLView: ((openGLView: any) => void) | null = null;
+  // public setProjection: ((projection: number) => void) | null = null;
+  // public setViewport: (() => void) | null = null;
+  // public getOpenGLView: (() => any) | null = null;
+  // public getProjection: (() => number) | null = null;
+  // public setAlphaBlending: ((on: boolean) => void) | null = null;
 
   public isSendCleanupToScene(): boolean {
     return this._sendCleanupToScene;
@@ -503,6 +510,135 @@ export class Director {
     this._animationInterval = value;
   }
 
+  setProjection(projection: number) {
+    const _t = this as Director;
+    const size = _t._winSizeInPoints;
+
+    _t.setViewport();
+
+    const view = _t._openGLView;
+    const ox = view._viewPortRect.x / view._scaleX;
+    const oy = view._viewPortRect.y / view._scaleY;
+
+    switch (projection) {
+      case Director.PROJECTION_2D:
+        kmGLMatrixMode(KM_GL_PROJECTION);
+        kmGLLoadIdentity();
+        const orthoMatrix = Matrix4.createOrthographicProjection(
+          0,
+          size.width,
+          0,
+          size.height,
+          -1024, 1024
+        );
+        kmGLMultMatrix(orthoMatrix);
+        kmGLMatrixMode(KM_GL_MODELVIEW);
+        kmGLLoadIdentity();
+        break;
+      case Director.PROJECTION_3D:
+        const zeye = _t.getZEye();
+        let matrixPerspective = Matrix4.createPerspectiveProjection(60, size.width / size.height, 0.1, zeye * 2);
+        kmGLMatrixMode(KM_GL_PROJECTION);
+        kmGLLoadIdentity();
+        kmGLMultMatrix(matrixPerspective);
+
+        const eye = new Vec3(-ox + size.width / 2, -oy + size.height / 2, zeye);
+        const center = new Vec3(-ox + size.width / 2, -oy + size.height / 2, 0.0);
+        const up = new Vec3(0.0, 1.0, 0.0);
+        const matrixLookup = new Matrix4();
+        matrixLookup.lookAt(eye, center, up);
+        kmGLMultMatrix(matrixLookup);
+
+        kmGLMatrixMode(KM_GL_MODELVIEW);
+        kmGLLoadIdentity();
+        break;
+      case Director.PROJECTION_CUSTOM:
+        if (_t._projectionDelegate)
+          _t._projectionDelegate.updateProjection();
+        break;
+      default:
+        log(_LogInfos.Director_setProjection);
+        break;
+    }
+    _t._projection = projection;
+    eventManager.dispatchEvent(_t._eventProjectionChanged);
+    setProjectionMatrixDirty();
+    renderer.childrenOrderDirty = true;
+  };
+
+  setDepthTest(on: boolean) {
+    renderer.setDepthTest(on);
+  };
+
+  setClearColor(clearColor: any) {
+    renderer._clearColor = clearColor;
+  };
+
+  setOpenGLView(openGLView: any) {
+    const _t = this as Director;
+    _t._winSizeInPoints.width = game.canvas.width;
+    _t._winSizeInPoints.height = game.canvas.height;
+    _t._openGLView = openGLView || view;
+
+    // Configuration. Gather GPU info
+    const conf = configuration;
+    conf.gatherGPUInfo();
+    conf.dumpInfo();
+
+    _t.setGLDefaultValues();
+
+    if (eventManager)
+      eventManager.setEnabled(true);
+  };
+
+  getVisibleSize() {
+    return this._openGLView.getVisibleSize();
+  };
+
+  getVisibleOrigin() {
+    return this._openGLView.getVisibleOrigin();
+  };
+
+  getZEye() {
+    return this._winSizeInPoints.height / 1.15469993750;
+  };
+
+  setViewport() {
+    const view = this._openGLView;
+    if (view) {
+      const locWinSizeInPoints = this._winSizeInPoints;
+      view.setViewPortInPoints(
+        -view._viewPortRect.x / view._scaleX,
+        -view._viewPortRect.y / view._scaleY,
+        locWinSizeInPoints.width,
+        locWinSizeInPoints.height
+      );
+    }
+  };
+
+  getOpenGLView() {
+    return this._openGLView;
+  };
+
+  getProjection() {
+    return this._projection;
+  };
+
+  setAlphaBlending(on: boolean) {
+    if (on)
+      glBlendFunc(BLEND_SRC, BLEND_DST);
+    else
+      glBlendFunc(_renderContext.ONE, _renderContext.ZERO);
+  };
+
+  setGLDefaultValues() {
+    const _t = this as Director;
+    _t.setAlphaBlending(true);
+    _t.setProjection(_t._projection);
+
+    // set other opengl default values
+    _renderContext.clearColor(0.0, 0.0, 0.0, 0.0);
+  };
 }
 
 export class DisplayLinkDirector extends Director {
@@ -533,7 +669,25 @@ export class DisplayLinkDirector extends Director {
       this.startAnimation();
     }
   }
+
 }
 
 // Default FPS
 export const defaultFPS = 60;
+
+function recursiveChild(node: any) {
+  if (node && node._renderCmd) {
+    node._renderCmd.setDirtyFlag(Node._dirtyFlags.transformDirty);
+    const children = node._children;
+    for (let i = 0; i < children.length; i++) {
+      recursiveChild(children[i]);
+    }
+  }
+}
+
+eventManager.addCustomListener(Director.EVENT_PROJECTION_CHANGED, () => {
+  const stack = director._scenesStack;
+  for (let i = 0; i < stack.length; i++) {
+    recursiveChild(stack[i]);
+  }
+});

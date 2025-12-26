@@ -1,23 +1,15 @@
 
-//+++++++++++++++++++++++++something about loader start+++++++++++++++++++++++++++
-/**
- * Resource loading management. Created by in CCBoot.js as a singleton
- * loader.
- * @name Loader
- * @class
- * @memberof cc
- * @see loader
- */
-
 import { game } from "..";
 import { CONCURRENCY_HTTP_REQUEST_COUNT } from "../2d/core/platform/Macro";
+import { async, AsyncPool } from "./async";
 import { error, log } from "./Debugger";
 import { _renderType } from "./engine";
 import { path } from "./path";
 import { sys } from "./sys";
 
 let _isNodeJs
-var imagePool = {
+window.ENABLE_IMAGE_POOL = true;
+const imagePool = {
   _pool: new Array(10),
   _MAX: 10,
   _smallImg: "data:image/gif;base64,R0lGODlhAQABAAAAACwAAAAAAQABAAA=",
@@ -93,7 +85,8 @@ export const loader = (function () {
     //@MODE_BEGIN DEV
 
     _getArgs4Js: function (args) {
-      var a0 = args[0], a1 = args[1], a2 = args[2], results = ["", null, null];
+      let a0 = args[0], a1 = args[1], a2 = args[2]
+      let results = ["", null, null];
 
       if (args.length === 1) {
         results[1] = a0 instanceof Array ? a0 : [a0];
@@ -127,10 +120,12 @@ export const loader = (function () {
      * @returns {*}
      */
     loadJs: function (baseDir, jsList, cb) {
-      var self = this,
+      let self = this,
         args = self._getArgs4Js(arguments);
 
-      var preDir = args[0], list = args[1], callback = args[2];
+      let preDir = args[0]
+      let list = args[1] || []
+      let callback = args[2];
       if (navigator.userAgent.indexOf("Trident/5") > -1) {
         self._loadJs4Dependency(preDir, list, 0, callback);
       } else {
@@ -196,8 +191,8 @@ export const loader = (function () {
       if (!jsLoadingImg) {
         jsLoadingImg = document.createElement('img');
 
-        if (_loadingImage)
-          jsLoadingImg.src = _loadingImage;
+        // if (_loadingImage)
+        //   jsLoadingImg.src = _loadingImage;
 
         var canvasNode = d.getElementById(game.config["id"]);
         canvasNode.style.backgroundColor = "transparent";
@@ -423,7 +418,7 @@ export const loader = (function () {
           delete _queue[url];
         }
 
-        if (window.ENABLE_IMAEG_POOL && _renderType === game.RENDER_TYPE_WEBGL) {
+        if (window.ENABLE_IMAGE_POOL && _renderType === game.RENDER_TYPE_WEBGL) {
           imagePool.put(img);
         }
       };

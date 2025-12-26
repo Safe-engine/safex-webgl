@@ -478,7 +478,7 @@ export class Texture2D {
 
       self._hasPremultipliedAlpha = premultiplied;
       self._hasMipmaps = false;
-      if ((window as any).ENABLE_IMAEG_POOL) {
+      if ((window as any).ENABLE_IMAGE_POOL) {
         self._htmlElementObj = null;
       }
 

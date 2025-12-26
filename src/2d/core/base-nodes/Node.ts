@@ -1,17 +1,21 @@
 import { director, game, renderer } from "../../..";
 import { _LogInfos, assert, log } from "../../../helper/Debugger";
-import type { ActionManager } from "../ActionManager";
-import { affineTransformConcat, affineTransformConcatIn, affineTransformInvert, affineTransformMakeIdentity, pointApplyAffineTransform, rectApplyAffineTransform, rectApplyAffineTransformIn } from "../cocoa/AffineTransform";
+import { _renderType } from "../../../helper/engine";
+import { GLProgramState } from "../../shaders/GLProgramState";
+import { ActionManager } from "../ActionManager";
+import { affineTransformConcat, affineTransformConcatIn, affineTransformInvert, affineTransformInvertOut, affineTransformMakeIdentity, pointApplyAffineTransform, rectApplyAffineTransform, rectApplyAffineTransformIn } from "../cocoa/AffineTransform";
 import { p, Point, rect, rectUnion, Size, size } from "../cocoa/Geometry";
 import { eventManager } from "../event-manager/EventManager";
 import { Color, color } from "../platform/Color";
-import type { Scheduler } from "../Scheduler";
+import { Scheduler } from "../Scheduler";
 import { pAdd, pSub } from "../support/PointExtension";
+import { NodeWebGLRenderCmd } from "./NodeWebGLRenderCmd";
 
 export const NODE_TAG_INVALID = -1;
 export let s_globalOrderOfArrival = 1;
 
 export class Node {
+  static RenderCmd: (renderable: any) => void;
   // Static members
   static create(): Node { return new Node(); }
   static _stateCallbackType: any = { onEnter: 1, onExit: 2, cleanup: 3, onEnterTransitionDidFinish: 4, onExitTransitionDidStart: 5, max: 6 };
@@ -574,7 +578,7 @@ export class Node {
   setOpacityModifyRGB(opacityValue: any) { }
   isOpacityModifyRGB() { return false; }
 
-  _createRenderCmd() { if (_renderType === game.RENDER_TYPE_CANVAS) return new (Node as any).CanvasRenderCmd(this); else return new (Node as any).WebGLRenderCmd(this); }
+  _createRenderCmd() { if (_renderType === game.RENDER_TYPE_CANVAS) return new (Node as any).CanvasRenderCmd(this); else return new NodeWebGLRenderCmd(this); }
 
   enumerateChildren(name: any, callback: any) {
     assert(name && name.length != 0, "Invalid name");
@@ -610,4 +614,499 @@ export class Node {
 declare const arrayRemoveObject: any;
 export const REPEAT_FOREVER = -1;
 export const ACTION_TAG_INVALID = -1;
-declare const _renderType: any;
+
+Node.RenderCmd = function (renderable) {
+  this._node = renderable;
+  this._anchorPointInPoints = { x: 0, y: 0 };
+  this._displayedColor = color(255, 255, 255, 255);
+};
+
+Node.RenderCmd.prototype = {
+  constructor: Node.RenderCmd,
+
+  _needDraw: false,
+  _dirtyFlag: 1,
+  _curLevel: -1,
+
+  _displayedOpacity: 255,
+  _cascadeColorEnabledDirty: false,
+  _cascadeOpacityEnabledDirty: false,
+
+  _transform: null,
+  _worldTransform: null,
+  _inverse: null,
+
+  needDraw: function () {
+    return this._needDraw;
+  },
+
+  getAnchorPointInPoints: function () {
+    return p(this._anchorPointInPoints);
+  },
+
+  getDisplayedColor: function () {
+    var tmpColor = this._displayedColor;
+    return color(tmpColor.r, tmpColor.g, tmpColor.b, tmpColor.a);
+  },
+
+  getDisplayedOpacity: function () {
+    return this._displayedOpacity;
+  },
+
+  setCascadeColorEnabledDirty: function () {
+    this._cascadeColorEnabledDirty = true;
+    this.setDirtyFlag(Node._dirtyFlags.colorDirty);
+  },
+
+  setCascadeOpacityEnabledDirty: function () {
+    this._cascadeOpacityEnabledDirty = true;
+    this.setDirtyFlag(Node._dirtyFlags.opacityDirty);
+  },
+
+  getParentToNodeTransform: function () {
+    if (!this._inverse) {
+      this._inverse = { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 };
+    }
+    if (this._dirtyFlag & Node._dirtyFlags.transformDirty) {
+      affineTransformInvertOut(this.getNodeToParentTransform(), this._inverse);
+    }
+    return this._inverse;
+  },
+
+  detachFromParent: function () {
+  },
+
+  _updateAnchorPointInPoint: function () {
+    var locAPP = this._anchorPointInPoints, locSize = this._node._contentSize, locAnchorPoint = this._node._anchorPoint;
+    locAPP.x = locSize.width * locAnchorPoint.x;
+    locAPP.y = locSize.height * locAnchorPoint.y;
+    this.setDirtyFlag(Node._dirtyFlags.transformDirty);
+  },
+
+  setDirtyFlag: function (dirtyFlag) {
+    if (this._dirtyFlag === 0 && dirtyFlag !== 0)
+      renderer.pushDirtyNode(this);
+    this._dirtyFlag |= dirtyFlag;
+  },
+
+  getParentRenderCmd: function () {
+    if (this._node && this._node._parent && this._node._parent._renderCmd)
+      return this._node._parent._renderCmd;
+    return null;
+  },
+
+  transform: function (parentCmd, recursive) {
+    if (!this._transform) {
+      this._transform = { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 };
+      this._worldTransform = { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 };
+    }
+
+    var node = this._node,
+      pt = parentCmd ? parentCmd._worldTransform : null,
+      t = this._transform,
+      wt = this._worldTransform;         //get the world transform
+
+    if (node._usingNormalizedPosition && node._parent) {
+      var conSize = node._parent._contentSize;
+      node._position.x = node._normalizedPosition.x * conSize.width;
+      node._position.y = node._normalizedPosition.y * conSize.height;
+      node._normalizedPositionDirty = false;
+    }
+
+    var hasRotation = node._rotationX || node._rotationY;
+    var hasSkew = node._skewX || node._skewY;
+    var sx = node._scaleX, sy = node._scaleY;
+    var appX = this._anchorPointInPoints.x, appY = this._anchorPointInPoints.y;
+    var a = 1, b = 0, c = 0, d = 1;
+    if (hasRotation || hasSkew) {
+      // position
+      t.tx = node._position.x;
+      t.ty = node._position.y;
+
+      // rotation
+      if (hasRotation) {
+        var rotationRadiansX = node._rotationX * ONE_DEGREE;
+        c = Math.sin(rotationRadiansX);
+        d = Math.cos(rotationRadiansX);
+        if (node._rotationY === node._rotationX) {
+          a = d;
+          b = -c;
+        }
+        else {
+          var rotationRadiansY = node._rotationY * ONE_DEGREE;
+          a = Math.cos(rotationRadiansY);
+          b = -Math.sin(rotationRadiansY);
+        }
+      }
+
+      // scale
+      t.a = a *= sx;
+      t.b = b *= sx;
+      t.c = c *= sy;
+      t.d = d *= sy;
+
+      // skew
+      if (hasSkew) {
+        var skx = Math.tan(node._skewX * ONE_DEGREE);
+        var sky = Math.tan(node._skewY * ONE_DEGREE);
+        if (skx === Infinity)
+          skx = 99999999;
+        if (sky === Infinity)
+          sky = 99999999;
+        t.a = a + c * sky;
+        t.b = b + d * sky;
+        t.c = c + a * skx;
+        t.d = d + b * skx;
+      }
+
+      if (appX || appY) {
+        t.tx -= t.a * appX + t.c * appY;
+        t.ty -= t.b * appX + t.d * appY;
+        // adjust anchorPoint
+        if (node._ignoreAnchorPointForPosition) {
+          t.tx += appX;
+          t.ty += appY;
+        }
+      }
+
+      if (node._additionalTransformDirty) {
+        affineTransformConcatIn(t, node._additionalTransform);
+      }
+
+      if (pt) {
+        // AffineTransformConcat is incorrect at get world transform
+        wt.a = t.a * pt.a + t.b * pt.c;                               //a
+        wt.b = t.a * pt.b + t.b * pt.d;                               //b
+        wt.c = t.c * pt.a + t.d * pt.c;                               //c
+        wt.d = t.c * pt.b + t.d * pt.d;                               //d
+        wt.tx = pt.a * t.tx + pt.c * t.ty + pt.tx;
+        wt.ty = pt.d * t.ty + pt.ty + pt.b * t.tx;
+      } else {
+        wt.a = t.a;
+        wt.b = t.b;
+        wt.c = t.c;
+        wt.d = t.d;
+        wt.tx = t.tx;
+        wt.ty = t.ty;
+      }
+    }
+    else {
+      t.a = sx;
+      t.b = 0;
+      t.c = 0;
+      t.d = sy;
+      t.tx = node._position.x;
+      t.ty = node._position.y;
+
+      if (appX || appY) {
+        t.tx -= t.a * appX;
+        t.ty -= t.d * appY;
+        // adjust anchorPoint
+        if (node._ignoreAnchorPointForPosition) {
+          t.tx += appX;
+          t.ty += appY;
+        }
+      }
+
+      if (node._additionalTransformDirty) {
+        affineTransformConcatIn(t, node._additionalTransform);
+      }
+
+      if (pt) {
+        wt.a = t.a * pt.a + t.b * pt.c;
+        wt.b = t.a * pt.b + t.b * pt.d;
+        wt.c = t.c * pt.a + t.d * pt.c;
+        wt.d = t.c * pt.b + t.d * pt.d;
+        wt.tx = t.tx * pt.a + t.ty * pt.c + pt.tx;
+        wt.ty = t.tx * pt.b + t.ty * pt.d + pt.ty;
+      } else {
+        wt.a = t.a;
+        wt.b = t.b;
+        wt.c = t.c;
+        wt.d = t.d;
+        wt.tx = t.tx;
+        wt.ty = t.ty;
+      }
+    }
+
+    if (this._updateCurrentRegions) {
+      this._updateCurrentRegions();
+      this._notifyRegionStatus && this._notifyRegionStatus(Node.CanvasRenderCmd.RegionStatus.DirtyDouble);
+    }
+
+    if (recursive) {
+      transformChildTree(node);
+    }
+
+    this._cacheDirty = true;
+  },
+
+  getNodeToParentTransform: function () {
+    if (!this._transform || this._dirtyFlag & Node._dirtyFlags.transformDirty) {
+      this.transform();
+    }
+    return this._transform;
+  },
+
+  visit: function (parentCmd) {
+    var node = this._node, renderer = renderer;
+
+    parentCmd = parentCmd || this.getParentRenderCmd();
+    if (parentCmd)
+      this._curLevel = parentCmd._curLevel + 1;
+
+    if (isNaN(node._customZ)) {
+      node._vertexZ = renderer.assignedZ;
+      renderer.assignedZ += renderer.assignedZStep;
+    }
+
+    this._syncStatus(parentCmd);
+  },
+
+  _updateDisplayColor: function (parentColor) {
+    var node = this._node;
+    var locDispColor = this._displayedColor, locRealColor = node._realColor;
+    var i, len, selChildren, item;
+    this._notifyRegionStatus && this._notifyRegionStatus(Node.CanvasRenderCmd.RegionStatus.Dirty);
+    if (this._cascadeColorEnabledDirty && !node._cascadeColorEnabled) {
+      locDispColor.r = locRealColor.r;
+      locDispColor.g = locRealColor.g;
+      locDispColor.b = locRealColor.b;
+      var whiteColor = new Color(255, 255, 255, 255);
+      selChildren = node._children;
+      for (i = 0, len = selChildren.length; i < len; i++) {
+        item = selChildren[i];
+        if (item && item._renderCmd)
+          item._renderCmd._updateDisplayColor(whiteColor);
+      }
+      this._cascadeColorEnabledDirty = false;
+    } else {
+      if (parentColor === undefined) {
+        var locParent = node._parent;
+        if (locParent && locParent._cascadeColorEnabled)
+          parentColor = locParent.getDisplayedColor();
+        else
+          parentColor = color.WHITE;
+      }
+      locDispColor.r = 0 | (locRealColor.r * parentColor.r / 255.0);
+      locDispColor.g = 0 | (locRealColor.g * parentColor.g / 255.0);
+      locDispColor.b = 0 | (locRealColor.b * parentColor.b / 255.0);
+      if (node._cascadeColorEnabled) {
+        selChildren = node._children;
+        for (i = 0, len = selChildren.length; i < len; i++) {
+          item = selChildren[i];
+          if (item && item._renderCmd) {
+            item._renderCmd._updateDisplayColor(locDispColor);
+            item._renderCmd._updateColor();
+          }
+        }
+      }
+    }
+    this._dirtyFlag &= ~dirtyFlags.colorDirty;
+  },
+
+  _updateDisplayOpacity: function (parentOpacity) {
+    var node = this._node;
+    var i, len, selChildren, item;
+    this._notifyRegionStatus && this._notifyRegionStatus(Node.CanvasRenderCmd.RegionStatus.Dirty);
+    if (this._cascadeOpacityEnabledDirty && !node._cascadeOpacityEnabled) {
+      this._displayedOpacity = node._realOpacity;
+      selChildren = node._children;
+      for (i = 0, len = selChildren.length; i < len; i++) {
+        item = selChildren[i];
+        if (item && item._renderCmd)
+          item._renderCmd._updateDisplayOpacity(255);
+      }
+      this._cascadeOpacityEnabledDirty = false;
+    } else {
+      if (parentOpacity === undefined) {
+        var locParent = node._parent;
+        parentOpacity = 255;
+        if (locParent && locParent._cascadeOpacityEnabled)
+          parentOpacity = locParent.getDisplayedOpacity();
+      }
+      this._displayedOpacity = node._realOpacity * parentOpacity / 255.0;
+      if (node._cascadeOpacityEnabled) {
+        selChildren = node._children;
+        for (i = 0, len = selChildren.length; i < len; i++) {
+          item = selChildren[i];
+          if (item && item._renderCmd) {
+            item._renderCmd._updateDisplayOpacity(this._displayedOpacity);
+            item._renderCmd._updateColor();
+          }
+        }
+      }
+    }
+    this._dirtyFlag &= ~dirtyFlags.opacityDirty;
+  },
+
+  _syncDisplayColor: function (parentColor) {
+    var node = this._node, locDispColor = this._displayedColor, locRealColor = node._realColor;
+    if (parentColor === undefined) {
+      var locParent = node._parent;
+      if (locParent && locParent._cascadeColorEnabled)
+        parentColor = locParent.getDisplayedColor();
+      else
+        parentColor = color.WHITE;
+    }
+    locDispColor.r = 0 | (locRealColor.r * parentColor.r / 255.0);
+    locDispColor.g = 0 | (locRealColor.g * parentColor.g / 255.0);
+    locDispColor.b = 0 | (locRealColor.b * parentColor.b / 255.0);
+  },
+
+  _syncDisplayOpacity: function (parentOpacity) {
+    var node = this._node;
+    if (parentOpacity === undefined) {
+      var locParent = node._parent;
+      parentOpacity = 255;
+      if (locParent && locParent._cascadeOpacityEnabled)
+        parentOpacity = locParent.getDisplayedOpacity();
+    }
+    this._displayedOpacity = node._realOpacity * parentOpacity / 255.0;
+  },
+
+  _updateColor: function () {
+  },
+
+  _propagateFlagsDown: function (parentCmd) {
+    var locFlag = this._dirtyFlag;
+    var parentNode = parentCmd ? parentCmd._node : null;
+
+    if (parentNode && parentNode._cascadeColorEnabled && (parentCmd._dirtyFlag & dirtyFlags.colorDirty))
+      locFlag |= dirtyFlags.colorDirty;
+
+    if (parentNode && parentNode._cascadeOpacityEnabled && (parentCmd._dirtyFlag & dirtyFlags.opacityDirty))
+      locFlag |= dirtyFlags.opacityDirty;
+
+    if (parentCmd && (parentCmd._dirtyFlag & dirtyFlags.transformDirty))
+      locFlag |= dirtyFlags.transformDirty;
+
+    this._dirtyFlag = locFlag;
+  },
+
+  updateStatus: function () {
+    var locFlag = this._dirtyFlag;
+    var colorDirty = locFlag & dirtyFlags.colorDirty,
+      opacityDirty = locFlag & dirtyFlags.opacityDirty;
+
+    if (locFlag & dirtyFlags.contentDirty) {
+      this._notifyRegionStatus && this._notifyRegionStatus(Node.CanvasRenderCmd.RegionStatus.Dirty);
+      this._dirtyFlag &= ~dirtyFlags.contentDirty;
+    }
+
+    if (colorDirty)
+      this._updateDisplayColor();
+
+    if (opacityDirty)
+      this._updateDisplayOpacity();
+
+    if (colorDirty || opacityDirty)
+      this._updateColor();
+
+    if (locFlag & dirtyFlags.transformDirty) {
+      //update the transform
+      this.transform(this.getParentRenderCmd(), true);
+      this._dirtyFlag &= ~dirtyFlags.transformDirty;
+    }
+
+    if (locFlag & dirtyFlags.orderDirty)
+      this._dirtyFlag &= ~dirtyFlags.orderDirty;
+  },
+
+  _syncStatus: function (parentCmd) {
+    //  In the visit logic does not restore the _dirtyFlag
+    //  Because child elements need parent's _dirtyFlag to change himself
+    var locFlag = this._dirtyFlag, parentNode = parentCmd ? parentCmd._node : null;
+
+    //  There is a possibility:
+    //    The parent element changed color, child element not change
+    //    This will cause the parent element changed color
+    //    But while the child element does not enter the circulation
+    //    Here will be reset state in last
+    //    In order the child elements get the parent state
+    if (parentNode && parentNode._cascadeColorEnabled && (parentCmd._dirtyFlag & dirtyFlags.colorDirty))
+      locFlag |= dirtyFlags.colorDirty;
+
+    if (parentNode && parentNode._cascadeOpacityEnabled && (parentCmd._dirtyFlag & dirtyFlags.opacityDirty))
+      locFlag |= dirtyFlags.opacityDirty;
+
+    if (parentCmd && (parentCmd._dirtyFlag & dirtyFlags.transformDirty))
+      locFlag |= dirtyFlags.transformDirty;
+
+    this._dirtyFlag = locFlag;
+
+    var colorDirty = locFlag & dirtyFlags.colorDirty,
+      opacityDirty = locFlag & dirtyFlags.opacityDirty;
+
+    if (colorDirty)
+      //update the color
+      this._syncDisplayColor();
+
+    if (opacityDirty)
+      //update the opacity
+      this._syncDisplayOpacity();
+
+    if (colorDirty || opacityDirty)
+      this._updateColor();
+
+    if (locFlag & dirtyFlags.transformDirty)
+      //update the transform
+      this.transform(parentCmd);
+
+    if (locFlag & dirtyFlags.orderDirty)
+      this._dirtyFlag &= ~dirtyFlags.orderDirty;
+  },
+
+  setShaderProgram: function (shaderProgram) {
+    //do nothing.
+  },
+
+  getShaderProgram: function () {
+    return null;
+  },
+
+  getGLProgramState: function () {
+    return null;
+  },
+
+  setGLProgramState: function (glProgramState) {
+    // do nothing
+  },
+};
+
+Node.RenderCmd.prototype.originTransform = Node.RenderCmd.prototype.transform;
+Node.RenderCmd.prototype.originUpdateStatus = Node.RenderCmd.prototype.updateStatus;
+Node.RenderCmd.prototype._originSyncStatus = Node.RenderCmd.prototype._syncStatus;
+
+var proto = NodeWebGLRenderCmd.prototype = Object.create(Node.RenderCmd.prototype);
+proto.constructor = NodeWebGLRenderCmd;
+proto._rootCtor = NodeWebGLRenderCmd;
+
+proto._updateColor = function () {
+};
+
+proto.setShaderProgram = function (shaderProgram) {
+  this._glProgramState = GLProgramState.getOrCreateWithGLProgram(shaderProgram);
+};
+
+proto.getShaderProgram = function () {
+  return this._glProgramState ? this._glProgramState.getGLProgram() : null;
+};
+
+proto.getGLProgramState = function () {
+  return this._glProgramState;
+};
+
+proto.setGLProgramState = function (glProgramState) {
+  this._glProgramState = glProgramState;
+};
+
+// Use a property getter/setter for backwards compatability, and
+// to ease the transition from using glPrograms directly, to
+// using glProgramStates.
+Object.defineProperty(proto, '_shaderProgram', {
+  set: function (value) { this.setShaderProgram(value); },
+  get: function () { return this.getShaderProgram(); }
+});
+/** @expose */
+// proto._shaderProgram;

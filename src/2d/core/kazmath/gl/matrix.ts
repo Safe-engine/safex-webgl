@@ -1,22 +1,23 @@
 import { director } from "../../../..";
 import { degreesToRadians } from "../../platform/Macro";
-import { math } from "../utility";
-
+import { Matrix4 } from "../mat4";
+import { Vec3 } from "../vec3";
+import { Matrix4Stack } from "./mat4stack";
 
 export const KM_GL_MODELVIEW = 0x1700;
 export const KM_GL_PROJECTION = 0x1701;
 export const KM_GL_TEXTURE = 0x1702;
 
-let modelview_matrix_stack = new math.Matrix4Stack();
-let projection_matrix_stack = new math.Matrix4Stack();
-let texture_matrix_stack = new math.Matrix4Stack();
+let modelview_matrix_stack = new Matrix4Stack();
+let projection_matrix_stack = new Matrix4Stack();
+let texture_matrix_stack = new Matrix4Stack();
 
 let current_stack = null;
 let initialized = false;
 
 export const lazyInitialize = function () {
   if (!initialized) {
-    var identity = new math.Matrix4(); //Temporary identity matrix
+    var identity = new Matrix4(); //Temporary identity matrix
 
     //Initialize all 3 stacks
     modelview_matrix_stack.initialize();
@@ -100,27 +101,27 @@ export const kmGLMultMatrix = function (pIn) {
   current_stack.top.multiply(pIn);
 };
 
-var tempMatrix = new math.Matrix4();    //an internal matrix
+var tempMatrix = new Matrix4();    //an internal matrix
 export const kmGLTranslatef = function (x, y, z) {
   //Create a rotation matrix using translation
-  var translation = math.Matrix4.createByTranslation(x, y, z, tempMatrix);
+  var translation = Matrix4.createByTranslation(x, y, z, tempMatrix);
 
   //Multiply the rotation matrix by the current matrix
   current_stack.top.multiply(translation);
 };
 
-var tempVector3 = new math.Vec3();
+var tempVector3 = new Vec3();
 export const kmGLRotatef = function (angle, x, y, z) {
   tempVector3.fill(x, y, z);
   //Create a rotation matrix using the axis and the angle
-  var rotation = math.Matrix4.createByAxisAndAngle(tempVector3, degreesToRadians(angle), tempMatrix);
+  var rotation = Matrix4.createByAxisAndAngle(tempVector3, degreesToRadians(angle), tempMatrix);
 
   //Multiply the rotation matrix by the current matrix
   current_stack.top.multiply(rotation);
 };
 
 export const kmGLScalef = function (x, y, z) {
-  var scaling = math.Matrix4.createByScale(x, y, z, tempMatrix);
+  var scaling = Matrix4.createByScale(x, y, z, tempMatrix);
   current_stack.top.multiply(scaling);
 };
 
