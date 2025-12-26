@@ -1,4 +1,3 @@
-import { _canvas } from "..";
 import { isObject } from "./checkType";
 import { formatStr } from "./string";
 
@@ -203,6 +202,7 @@ export const _LogInfos = {
 
 //+++++++++++++++++++++++++something about log start++++++++++++++++++++++++++++
 let logList;
+let _canvas;
 
 const _logToWebPage = function (msg) {
   if (!_canvas)

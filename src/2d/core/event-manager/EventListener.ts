@@ -1,10 +1,3 @@
-import { _LogInfos, assert } from "../../../helper/Debugger";
-import { EventListenerAcceleration, EventListenerKeyboard } from "./EventExtension";
-import { EventListenerCustom } from "./EventListenerCustom";
-import { EventListenerFocus } from "./EventListenerFocus";
-import { EventListenerMouse } from "./EventListenerMouse";
-import { EventListenerTouchAllAtOnce } from "./EventListenerTouchAllAtOnce";
-import { EventListenerTouchOneByOne } from "./EventListenerTouchOneByOne";
 
 export class EventListener {
   // Event callback function
@@ -125,36 +118,5 @@ export class EventListener {
    * Create a EventListener object by json object
    * @param argObj a json object
    */
-  static create = function (argObj: any) {
-    assert(argObj && argObj.event, _LogInfos.EventListener_create);
-
-    const listenerType = argObj.event;
-    delete argObj.event;
-
-    let listener: any = null;
-    if (listenerType === (EventListener as any).TOUCH_ONE_BY_ONE)
-      listener = new EventListenerTouchOneByOne();
-    else if (listenerType === (EventListener as any).TOUCH_ALL_AT_ONCE)
-      listener = new EventListenerTouchAllAtOnce();
-    else if (listenerType === (EventListener as any).MOUSE)
-      listener = new EventListenerMouse();
-    else if (listenerType === (EventListener as any).CUSTOM) {
-      listener = new EventListenerCustom(argObj.eventName, argObj.callback);
-      delete argObj.eventName;
-      delete argObj.callback;
-    } else if (listenerType === (EventListener as any).KEYBOARD)
-      listener = new EventListenerKeyboard();
-    else if (listenerType === (EventListener as any).ACCELERATION) {
-      listener = new EventListenerAcceleration(argObj.callback);
-      delete argObj.callback;
-    } else if (listenerType === (EventListener as any).FOCUS)
-      listener = new EventListenerFocus();
-
-    for (const key in argObj) {
-      listener[key] = argObj[key];
-    }
-
-    return listener;
-  };
-
+  static create : (argObj: any) => EventListener | null;
 }

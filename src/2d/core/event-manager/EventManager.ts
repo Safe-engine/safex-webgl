@@ -1,4 +1,4 @@
-import { director, game } from "../../..";
+import { director } from "../../..";
 import { isNumber } from "../../../helper/checkType";
 import { _LogInfos, assert, log } from "../../../helper/Debugger";
 import { Node } from "../base-nodes/Node";
@@ -64,7 +64,7 @@ export const eventManager = /** @lends eventManager# */{
   _isEnabled: false,
   _nodePriorityIndex: 0,
 
-  _internalCustomListenerIDs: [game.EVENT_HIDE, game.EVENT_SHOW],
+  _internalCustomListenerIDs: [],
 
   _setDirtyForNode: function (node) {
     // Mark the node dirty only when there is an event listener associated with it.
@@ -951,4 +951,36 @@ export const eventManager = /** @lends eventManager# */{
     ev.setUserData(optionalUserData);
     this.dispatchEvent(ev);
   }
+};
+
+EventListener.create = function (argObj: any) {
+  assert(argObj && argObj.event, _LogInfos.EventListener_create);
+
+  const listenerType = argObj.event;
+  delete argObj.event;
+
+  let listener: any = null;
+  if (listenerType === EventListener.TOUCH_ONE_BY_ONE)
+    listener = new EventListenerTouchOneByOne();
+  else if (listenerType === EventListener.TOUCH_ALL_AT_ONCE)
+    listener = new EventListenerTouchAllAtOnce();
+  else if (listenerType === EventListener.MOUSE)
+    listener = new EventListenerMouse();
+  else if (listenerType === EventListener.CUSTOM) {
+    listener = new EventListenerCustom(argObj.eventName, argObj.callback);
+    delete argObj.eventName;
+    delete argObj.callback;
+  } else if (listenerType === EventListener.KEYBOARD)
+    listener = new EventListenerKeyboard();
+  else if (listenerType === EventListener.ACCELERATION) {
+    listener = new EventListenerAcceleration(argObj.callback);
+    delete argObj.callback;
+  } else if (listenerType === EventListener.FOCUS)
+    listener = new EventListenerFocus();
+
+  for (const key in argObj) {
+    listener[key] = argObj[key];
+  }
+
+  return listener;
 };

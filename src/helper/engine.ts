@@ -3,7 +3,6 @@ import { ENGINE_VERSION } from "../2d/core/platform/Config";
 import { path } from "./path";
 import { sys } from "./sys";
 
-
 export let _renderType = 0;
 export let _supportRender = true;
 
@@ -92,7 +91,7 @@ function _afterEngineLoaded(config) {
 
 function _load(config) {
   var self = this;
-  var CONFIG_KEY = game.CONFIG_KEY, engineDir = config[CONFIG_KEY.engineDir], loader = loader;
+  var CONFIG_KEY = game.CONFIG_KEY, engineDir = config[CONFIG_KEY.engineDir];
 
   if (_engineLoaded) {
     // Single file loaded
@@ -100,22 +99,22 @@ function _load(config) {
   } else {
     // Load cocos modules
     var ccModulesPath = path.join(engineDir, "moduleConfig.json");
-    loader.loadJson(ccModulesPath, function (err, modulesJson) {
-      if (err) throw new Error(err);
-      var modules = config["modules"] || [];
-      var moduleMap = modulesJson["module"];
-      var jsList = [];
-      if (sys.capabilities["opengl"] && modules.indexOf("base4webgl") < 0) modules.splice(0, 0, "base4webgl");
-      else if (modules.indexOf("core") < 0) modules.splice(0, 0, "core");
-      for (var i = 0, li = modules.length; i < li; i++) {
-        var arr = _getJsListOfModule(moduleMap, modules[i], engineDir);
-        if (arr) jsList = jsList.concat(arr);
-      }
-      loader.loadJsWithImg(jsList, function (err) {
-        if (err) throw err;
-        _afterEngineLoaded(config);
-      });
-    });
+    // loader.loadJson(ccModulesPath, function (err, modulesJson) {
+    //   if (err) throw new Error(err);
+    //   var modules = config["modules"] || [];
+    //   var moduleMap = modulesJson["module"];
+    //   var jsList = [];
+    //   if (sys.capabilities["opengl"] && modules.indexOf("base4webgl") < 0) modules.splice(0, 0, "base4webgl");
+    //   else if (modules.indexOf("core") < 0) modules.splice(0, 0, "core");
+    //   for (var i = 0, li = modules.length; i < li; i++) {
+    //     var arr = _getJsListOfModule(moduleMap, modules[i], engineDir);
+    //     if (arr) jsList = jsList.concat(arr);
+    //   }
+    //   loader.loadJsWithImg(jsList, function (err) {
+    //     if (err) throw err;
+    //     _afterEngineLoaded(config);
+    //   });
+    // });
   }
 }
 

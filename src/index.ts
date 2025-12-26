@@ -5,10 +5,11 @@ import { EventHelper } from "./2d/core/event-manager/EventHelper";
 import { eventManager } from "./2d/core/event-manager/EventManager";
 import { EGLView } from "./2d/core/platform/EGLView";
 import { inputManager } from "./2d/core/platform/InputManager";
-import { isUndefined } from "./helper/checkType";
-import { log } from "./helper/Debugger";
-import { _renderType, _supportRender } from "./helper/engine";
-import { global } from "./helper/global";
+import { Texture2D } from "./2d/textures/Texture2D";
+import { isFunction, isUndefined } from "./helper/checkType";
+import { _LogInfos, assert, log } from "./helper/Debugger";
+import { _renderType, _supportRender, initEngine } from "./helper/engine";
+import { _tmp, global } from "./helper/global";
 import { loader } from "./helper/loader";
 
 declare global {
@@ -37,7 +38,7 @@ declare global {
     webkitHidden?: boolean;
   }
 
-  interface Navigator{
+  interface Navigator {
     msPointerEnabled?: boolean;
   }
 }
@@ -47,7 +48,7 @@ export let renderer: any;
 let rendererWebGL: any;
 let rendererCanvas: any;
 let _drawingUtil: any;
-export let _canvas: HTMLCanvasElement;
+// export let _canvas: HTMLCanvasElement;
 export let _renderContext: any = null;
 let webglContext: WebGLRenderingContext | null = null;
 let glExt: any = {};
@@ -60,7 +61,7 @@ let _engineLoaded = false;
 declare const textureCache: any;
 declare const create3DContext: any;
 declare const DrawingPrimitiveCanvas: any;
-declare const initEngine: any;
+// declare const initEngine: any;
 declare const path: any;
 declare const $: any;
 declare const CanvasContextWrapper: any;
@@ -222,6 +223,7 @@ class Game extends EventHelper {
   }
 
   run(config?: any, onStart?: () => void) {
+    console.log("game run")
     if (typeof config === 'function') {
       this.onStart = config;
     } else {
@@ -386,7 +388,7 @@ class Game extends EventHelper {
       width = width || element.width;
       height = height || element.height;
 
-      this.canvas = _canvas = localCanvas = element;
+      this.canvas = localCanvas = element;
       this.container = container = localContainer = document.createElement("DIV");
       if (localCanvas.parentNode) {
         localCanvas.parentNode.insertBefore(localContainer, localCanvas);
@@ -397,7 +399,7 @@ class Game extends EventHelper {
       }
       width = width || element.clientWidth;
       height = height || element.clientHeight;
-      this.canvas = _canvas = localCanvas = $(document.createElement("CANVAS"));
+      this.canvas = localCanvas = $(document.createElement("CANVAS"));
       this.container = container = localContainer = document.createElement("DIV");
       element.appendChild(localContainer);
     }
@@ -524,3 +526,95 @@ class Game extends EventHelper {
 }
 
 export const game = new Game();
+eventManager._internalCustomListenerIDs = [game.EVENT_HIDE, game.EVENT_SHOW]
+
+game.addEventListener(game.EVENT_RENDERER_INITED, function () {
+  if (_renderType === game.RENDER_TYPE_CANVAS) {
+
+    var _p = textureCache;
+
+    _p.handleLoadedTexture = function (url, img) {
+      var locTexs = this._textures;
+      //remove judge
+      var tex = locTexs[url];
+      if (!tex) {
+        tex = locTexs[url] = new Texture2D();
+        tex.url = url;
+      }
+      tex.initWithElement(img);
+      tex.handleLoadedTexture();
+      return tex;
+    };
+
+    /**
+     * <p>Returns a Texture2D object given an file image <br />
+     * If the file image was not previously loaded, it will create a new Texture2D <br />
+     *  object and it will return it. It will use the filename as a key.<br />
+     * Otherwise it will return a reference of a previously loaded image. <br />
+     * Supported image extensions: .png, .jpg, .gif</p>
+     * @param {String} url
+     * @param {Function} cb
+     * @param {Object} target
+     * @return {Texture2D}
+     * @example
+     * //example
+     * textureCache.addImage("hello.png");
+     */
+    _p.addImage = function (url, cb, target) {
+
+      assert(url, _LogInfos.Texture2D_addImage);
+
+      var locTexs = this._textures;
+      //remove judge
+      var tex = locTexs[url] || locTexs[loader._getAliase(url)];
+      if (tex) {
+        if (tex.isLoaded()) {
+          cb && cb.call(target, tex);
+          return tex;
+        }
+        else {
+          tex.addEventListener("load", function () {
+            cb && cb.call(target, tex);
+          }, target);
+          return tex;
+        }
+      }
+
+      tex = locTexs[url] = new Texture2D();
+      tex.url = url;
+      var basePath = loader.getBasePath ? loader.getBasePath() : loader.resPath;
+      loader.loadImg(path.join(basePath || "", url), function (err, img) {
+        if (err)
+          return cb && cb.call(target, err);
+
+        var texResult = textureCache.handleLoadedTexture(url, img);
+        cb && cb.call(target, texResult);
+      });
+
+      return tex;
+    };
+
+    _p.addImageAsync = _p.addImage;
+    _p = null;
+
+  } else if (_renderType === game.RENDER_TYPE_WEBGL) {
+    assert(isFunction(_tmp.WebGLTextureCache), _LogInfos.MissingFile, "TexturesWebGL.js");
+    _tmp.WebGLTextureCache();
+    delete _tmp.WebGLTextureCache;
+  }
+});
+
+game.addEventListener(game.EVENT_RENDERER_INITED, function () {
+  if (_renderType === game.RENDER_TYPE_CANVAS) {
+    var proto = {
+    }
+  } else if (_renderType === game.RENDER_TYPE_WEBGL) {
+    assert(isFunction(_tmp.WebGLTexture2D), _LogInfos.MissingFile, "TexturesWebGL.js");
+    _tmp.WebGLTexture2D();
+    delete _tmp.WebGLTexture2D;
+  }
+  // EventHelper.prototype.apply(Texture2D.prototype);
+  assert(isFunction(_tmp.PrototypeTexture2D), _LogInfos.MissingFile, "TexturesPropertyDefine.js");
+  _tmp.PrototypeTexture2D();
+  delete _tmp.PrototypeTexture2D;
+});

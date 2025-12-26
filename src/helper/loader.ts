@@ -10,8 +10,13 @@
  */
 
 import { game } from "..";
+import { CONCURRENCY_HTTP_REQUEST_COUNT } from "../2d/core/platform/Macro";
 import { error, log } from "./Debugger";
+import { _renderType } from "./engine";
+import { path } from "./path";
+import { sys } from "./sys";
 
+let _isNodeJs
 var imagePool = {
   _pool: new Array(10),
   _MAX: 10,
@@ -357,7 +362,6 @@ export const loader = (function () {
           }
           catch (e) {
             throw new Error("parse json [" + url + "] failed : " + e);
-            return;
           }
           cb(null, result);
         }

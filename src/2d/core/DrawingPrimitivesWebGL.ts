@@ -2,7 +2,8 @@
  * Converted to ES Module and TypeScript by GitHub Copilot
  ****************************************************************************/
 
-import { cc } from './Boot';
+import { _renderContext } from "../..";
+import { SHADER_POSITION_UCOLOR, VERTEX_ATTRIB_POSITION, contentScaleFactor, incrementGLDraws } from "./platform/Macro";
 
 type Point = { x: number; y: number };
 type Color = { r: number; g: number; b: number; a: number };

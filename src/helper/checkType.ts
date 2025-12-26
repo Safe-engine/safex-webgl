@@ -20,7 +20,7 @@ export const isObject = function (obj: any) {
 };
 export const isCrossOrigin = function (url: string): boolean {
   if (!url) {
-    export const log("invalid URL");
+    // export const log("invalid URL");
     return false;
   }
   const startIndex = url.indexOf("://");

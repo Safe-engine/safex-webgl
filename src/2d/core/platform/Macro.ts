@@ -1,4 +1,4 @@
-import { director } from "../../..";
+import { _renderContext, director } from "../../..";
 import { isObject, isUndefined } from "../../../helper/checkType";
 import { _LogInfos, log } from "../../../helper/Debugger";
 import { global } from "../../../helper/global";
@@ -137,7 +137,7 @@ export const radiansToDegrees = function (angle) {
  * @function
  */
 export const radiansToDegress = function (angle) {
-  export const log(_LogInfos.radiansToDegress);
+  // export const log(_LogInfos.radiansToDegress);
   return angle * DEG;
 };
 
@@ -423,12 +423,12 @@ export const MIRRORED_REPEAT = 0x8370;
  * @type Number
  */
 export const BLEND_SRC = SRC_ALPHA;
-export const game.addEventListener(game.EVENT_RENDERER_INITED, function () {
-  if (_renderType === game.RENDER_TYPE_WEBGL
-    && OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA) {
-    BLEND_SRC = ONE;
-  }
-});
+// export const game.addEventListener(game.EVENT_RENDERER_INITED, function () {
+//   if (_renderType === game.RENDER_TYPE_WEBGL
+//     && OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA) {
+//     BLEND_SRC = ONE;
+//   }
+// });
 
 /**
  * default gl blend dst function. Compatible with premultiplied alpha images.
@@ -442,12 +442,10 @@ export const BLEND_DST = ONE_MINUS_SRC_ALPHA;
  * @function
  */
 export const checkGLErrorDebug = function () {
-  if (renderMode === game.RENDER_TYPE_WEBGL) {
-    var _error = _renderContext.getError();
+    const _error = _renderContext.getError();
     if (_error) {
       log(_LogInfos.checkGLErrorDebug, _error);
     }
-  }
 };
 
 //Possible device orientations

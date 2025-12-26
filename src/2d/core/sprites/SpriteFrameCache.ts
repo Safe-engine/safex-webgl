@@ -1,3 +1,4 @@
+import { game } from "../../..";
 import { isString } from "../../../helper/checkType";
 import { _LogInfos, assert, log } from "../../../helper/Debugger";
 import { _renderType } from "../../../helper/engine";
@@ -6,7 +7,6 @@ import { path } from "../../../helper/path";
 import { Texture2D } from "../../textures/Texture2D";
 import { textureCache } from "../../textures/TextureCache";
 import { p, rect, size } from "../cocoa/Geometry";
-import { game } from "../platform/Macro";
 import { Sprite } from "./Sprite";
 import { SpriteFrame } from "./SpriteFrame";
 

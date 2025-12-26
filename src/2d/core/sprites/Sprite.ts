@@ -1,9 +1,14 @@
-import { _renderType } from "../../.."
+import { game } from "../../.."
 import { isFunction } from "../../../helper/checkType"
 import { _LogInfos, assert, log } from "../../../helper/Debugger"
+import { _renderType } from "../../../helper/engine"
+import { _tmp } from "../../../helper/global"
+import { Texture2D } from "../../textures/Texture2D"
+import { textureCache } from "../../textures/TextureCache"
 import { Node } from "../base-nodes/Node"
 import { p, rect, size } from "../cocoa/Geometry"
-import { BLEND_DST, BLEND_SRC, game, pointPointsToPixels, rectPointsToPixels, sizePointsToPixels } from "../platform/Macro"
+import { EventHelper } from "../event-manager/EventHelper"
+import { BLEND_DST, BLEND_SRC, pointPointsToPixels, rectPointsToPixels, sizePointsToPixels } from "../platform/Macro"
 import { animationCache } from "./AnimationCache"
 import { SpriteFrame } from "./SpriteFrame"
 import { spriteFrameCache } from "./SpriteFrameCache"
@@ -409,9 +414,10 @@ export class Sprite extends Node {
   static createWithSpriteFrame = Sprite.create;
 }
 
-EventHelper.prototype.apply(Sprite.prototype);
+// EventHelper.prototype.apply(Sprite.prototype);
+Object.assign(Sprite.prototype, EventHelper.prototype);
 assert(isFunction(_tmp.PrototypeSprite), _LogInfos.MissingFile, "SpritesPropertyDefine.js");
-_tmp.PrototypeSprite();
+// _tmp.PrototypeSprite();
 delete _tmp.PrototypeSprite;
 (function () {
   var manager = Sprite.LoadManager = function () {

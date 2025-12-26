@@ -262,5 +262,3 @@ export class SpriteFrame extends EventHelper {
     return spriteFrame;
   }
 }
-
-    this._originalSizeInPixels.height = originalSize.height;

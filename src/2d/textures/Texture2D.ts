@@ -1,8 +1,4 @@
-import { game } from "../..";
-import { isFunction } from "../../helper/checkType";
-import { _LogInfos, assert, log } from "../../helper/Debugger";
-import { _renderType } from "../../helper/engine";
-import { _tmp } from "../../helper/global";
+import { _LogInfos, log } from "../../helper/Debugger";
 import { loader } from "../../helper/loader";
 import { sys } from "../../helper/sys";
 import { rect, size } from "../core/cocoa/Geometry";
@@ -359,18 +355,3 @@ var renderToCache = function (image: any, cache: any[]) {
   }
   image.onload = null;
 };
-
-game.addEventListener(game.EVENT_RENDERER_INITED, function () {
-  if (_renderType === game.RENDER_TYPE_CANVAS) {
-    var proto = {
-    }
-  } else if (_renderType === game.RENDER_TYPE_WEBGL) {
-    assert(isFunction(_tmp.WebGLTexture2D), _LogInfos.MissingFile, "TexturesWebGL.js");
-    _tmp.WebGLTexture2D();
-    delete _tmp.WebGLTexture2D;
-  }
-  // EventHelper.prototype.apply(Texture2D.prototype);
-  assert(isFunction(_tmp.PrototypeTexture2D), _LogInfos.MissingFile, "TexturesPropertyDefine.js");
-  _tmp.PrototypeTexture2D();
-  delete _tmp.PrototypeTexture2D;
-});

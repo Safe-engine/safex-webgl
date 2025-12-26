@@ -1,4 +1,5 @@
-import { _renderType, container, director, game } from "../../..";
+import { container, director, game } from "../../..";
+import { _renderType } from "../../../helper/engine";
 import { global } from "../../../helper/global";
 import { Director } from "../Director";
 import { eventManager } from "../event-manager/EventManager";

@@ -1,16 +1,22 @@
 import { director, game, view } from "../src"
 import { ResolutionPolicy } from "../src/2d/core/platform/EGLView/ResolutionPolicy"
 import { Scene } from "../src/2d/core/scenes/Scene"
+import { Sprite } from "../src/2d/core/sprites/Sprite"
 import { global } from "../src/helper/global"
 import { sys } from "../src/helper/sys"
 
 class BootScene extends Scene {
   constructor() {
     super()
+    console.log("BootScene constructor")
     this.scheduleUpdate()
   }
   onEnter() {
     super.onEnter()
+    console.log("BootScene onEnter")
+    const sprite = new Sprite("res/button.png")
+    sprite.setPosition(view.getDesignResolutionSize().width / 2, view.getDesignResolutionSize().height / 2)
+    this.addChild(sprite)
   }
 
   update(dt) {
@@ -27,6 +33,7 @@ game.run(
     renderMode: 2,
   },
   function onStart() {
+    console.log("game onStart")
     // Pass true to enable retina display, disabled by default to improve performance
     view.enableRetina(sys.os === sys.OS_IOS)
     // Adjust viewport meta
