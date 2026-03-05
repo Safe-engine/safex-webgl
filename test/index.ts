@@ -15,6 +15,7 @@ class BootScene extends Scene {
     super.onEnter()
     console.log("BootScene onEnter")
     const sprite = new Sprite("res/button.png")
+    console.log("sprite onEnter", sprite)
     sprite.setPosition(view.getDesignResolutionSize().width / 2, view.getDesignResolutionSize().height / 2)
     this.addChild(sprite)
   }

@@ -1,14 +1,6 @@
-/**
- * Color class, please use color() to construct a color
- * @class Color
- * @param {Number} r
- * @param {Number} g
- * @param {Number} b
- * @param {Number} a
- * @see color
- */
 export class Color {
   _val: number;
+  static WHITE = new Color(255, 255, 255, 255);
 
   constructor(r?: number, g?: number, b?: number, a?: number) {
     r = r || 0;

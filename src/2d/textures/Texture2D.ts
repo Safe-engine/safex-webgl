@@ -18,6 +18,12 @@ export const ALIGN_TOP_LEFT = 0x11;
 export const PVRHaveAlphaPremultiplied_ = false;
 
 export class Texture2D extends EventHelper {
+  width(arg0: number, arg1: number, width: any, height: any): import("../core/cocoa/Geometry").Rect {
+    throw new Error("Method not implemented.");
+  }
+  height(arg0: number, arg1: number, width: any, height: any): import("../core/cocoa/Geometry").Rect {
+    throw new Error("Method not implemented.");
+  }
   _contentSize: any;
   _textureLoaded: boolean;
   _htmlElementObj: any;

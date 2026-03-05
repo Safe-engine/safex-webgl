@@ -1,3 +1,10 @@
+import { game } from "../..";
+import { _LogInfos, assert } from "../../helper/Debugger";
+import { _tmp } from "../../helper/global";
+import { loader } from "../../helper/loader";
+import { path } from "../../helper/path";
+import { Texture2D } from "./Texture2D";
+import { textureCache } from "./TextureCache";
 
 _tmp.WebGLTextureCache = function () {
   var _p = textureCache;

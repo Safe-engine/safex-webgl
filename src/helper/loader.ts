@@ -374,7 +374,7 @@ export const loader = (function () {
      * @param {function} callback
      * @returns {Image}
      */
-    loadImg: function (url, option, callback, img) {
+    loadImg: function (url, option, callback?, img?) {
       var opt = {
         isCrossOrigin: true
       };

@@ -1,17 +1,17 @@
-import { game } from "../../.."
 import { isFunction } from "../../../helper/checkType"
 import { _LogInfos, assert, log } from "../../../helper/Debugger"
-import { _renderType } from "../../../helper/engine"
 import { _tmp } from "../../../helper/global"
 import { Texture2D } from "../../textures/Texture2D"
 import { textureCache } from "../../textures/TextureCache"
 import { Node } from "../base-nodes/Node"
-import { p, rect, size } from "../cocoa/Geometry"
+import { p, Rect, rect, size } from "../cocoa/Geometry"
 import { EventHelper } from "../event-manager/EventHelper"
 import { BLEND_DST, BLEND_SRC, pointPointsToPixels, rectPointsToPixels, sizePointsToPixels } from "../platform/Macro"
 import { animationCache } from "./AnimationCache"
 import { SpriteFrame } from "./SpriteFrame"
 import { spriteFrameCache } from "./SpriteFrameCache"
+import { SpriteLoadManager } from "./SpriteLoadManager"
+import { SpriteWebGLRenderCmd } from "./SpriteWebGLRenderCmd"
 export class Sprite extends Node {
   dirty: boolean = false;
   atlasIndex: number = 0;
@@ -33,11 +33,13 @@ export class Sprite extends Node {
   _className: string = "Sprite";
   _blendFunc: any = { src: BLEND_SRC, dst: BLEND_DST };
   _loader: any = null;
+  anchorX: number = 0.5
+  anchorY: number = 0.5
 
   constructor(fileName?: any, rectArg?: any, rotated?: any) {
     super();
     this.setAnchorPoint(0.5, 0.5);
-    this._loader = new Sprite.LoadManager();
+    this._loader = new SpriteLoadManager();
     this._shouldBeHidden = false;
     this._offsetPosition = p(0, 0);
     this._unflippedOffsetPositionFromCenter = p(0, 0);
@@ -225,13 +227,13 @@ export class Sprite extends Node {
     this._renderCmd.updateBlendFunc(locBlendFunc);
   }
 
-  init() {
-    if (arguments.length > 0) return this.initWithFile(arguments[0], arguments[1]);
+  init(fileName?: string, rectArg?: Rect) {
+    if (arguments.length > 0) return this.initWithFile(fileName, rectArg);
     super.init();
     this.dirty = this._recursiveDirty = false;
     this._blendFunc.src = BLEND_SRC;
     this._blendFunc.dst = BLEND_DST;
-    (this as any).texture = null;
+    this.texture = null;
     this._flippedX = this._flippedY = false;
     this.anchorX = 0.5;
     this.anchorY = 0.5;
@@ -242,14 +244,14 @@ export class Sprite extends Node {
     return true;
   }
 
-  initWithFile(filename: string, rectArg?: any) {
+  initWithFile(filename: string, rectArg?: Rect) {
     assert(filename, _LogInfos.Sprite_initWithFile);
     let tex = textureCache.getTextureForKey(filename);
     if (!tex) tex = textureCache.addImage(filename);
     if (!tex.isLoaded()) {
       this._loader.clear();
       this._loader.once(tex, function () {
-        (this as any).initWithFile(filename, rectArg);
+        this.initWithFile(filename, rectArg);
         this.dispatchEvent("load");
       }, this);
       return false;
@@ -261,7 +263,7 @@ export class Sprite extends Node {
     return this.initWithTexture(tex, rectArg);
   }
 
-  initWithTexture(texture: any, rectArg: any, rotated?: any, counterclockwise?: any) {
+  initWithTexture(texture: Texture2D, rectArg?: Rect, rotated?: any, counterclockwise?: any) {
     assert(arguments.length !== 0, _LogInfos.CCSpriteBatchNode_initWithTexture);
     this._loader.clear();
     this._textureLoaded = texture.isLoaded();
@@ -400,12 +402,9 @@ export class Sprite extends Node {
   }
 
   _createRenderCmd() {
-    if (_renderType === game.RENDER_TYPE_CANVAS) return new (Sprite as any).CanvasRenderCmd(this);
-    else return new (Sprite as any).WebGLRenderCmd(this);
+   return new SpriteWebGLRenderCmd(this);
   }
 
-
-  static LoadManager: any;
   static create(fileName?: any, rect?: any, rotated?: any) {
     return new Sprite(fileName, rect, rotated);
   }
@@ -419,36 +418,3 @@ Object.assign(Sprite.prototype, EventHelper.prototype);
 assert(isFunction(_tmp.PrototypeSprite), _LogInfos.MissingFile, "SpritesPropertyDefine.js");
 // _tmp.PrototypeSprite();
 delete _tmp.PrototypeSprite;
-(function () {
-  var manager = Sprite.LoadManager = function () {
-    this.list = [];
-  };
-  manager.prototype.add = function (source, callback, target) {
-    if (!source || !source.addEventListener) return;
-    source.addEventListener('load', callback, target);
-    this.list.push({
-      source: source,
-      listener: callback,
-      target: target
-    });
-  };
-  manager.prototype.once = function (source, callback, target) {
-    if (!source || !source.addEventListener) return;
-    var tmpCallback = function (event) {
-      source.removeEventListener('load', tmpCallback, target);
-      callback.call(target, event);
-    };
-    source.addEventListener('load', tmpCallback, target);
-    this.list.push({
-      source: source,
-      listener: tmpCallback,
-      target: target
-    });
-  };
-  manager.prototype.clear = function () {
-    while (this.list.length > 0) {
-      var item = this.list.pop();
-      item.source.removeEventListener('load', item.listener, item.target);
-    }
-  };
-})();

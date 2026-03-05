@@ -51,7 +51,7 @@ declare global {
 export let director: Director;
 export let renderer: any;
 export let _drawingUtil: any;
-export let _renderContext: any = null;
+export let _renderContext: WebGLRenderingContext = null;
 let glExt: any = {};
 export let view: EGLView;
 export let winSize: Size;

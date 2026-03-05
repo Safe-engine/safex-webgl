@@ -1,13 +1,24 @@
 import { renderer } from "../../..";
 import { _LogInfos, error, log } from "../../../helper/Debugger";
+import { shaderCache } from "../../shaders/ShaderCache";
+import { NodeWebGLRenderCmd } from "../base-nodes/NodeWebGLRenderCmd";
 import { pointEqualToPoint, rect, rectEqualToRect } from "../cocoa/Geometry";
 import { FIX_ARTIFACTS_BY_STRECHING_TEXEL } from "../platform/Config";
 import { BLEND_DST, ONE, SHADER_SPRITE_POSITION_TEXTURECOLOR, SRC_ALPHA, rectPointsToPixels } from "../platform/Macro";
+import type { Sprite } from "./Sprite";
 
 //Sprite's WebGL render command
-(function () {
-  Sprite.WebGLRenderCmd = function (renderable) {
-    this._rootCtor(renderable);
+export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
+  _vertices: any[];
+  _color: Uint32Array;
+  _dirty: boolean;
+  _recursiveDirty: boolean;
+  _shaderProgram: any;
+  _spriteCmdCtor: typeof SpriteWebGLRenderCmd;
+
+  constructor(renderable: Sprite) {
+    super(renderable);
+    // this._rootCtor(renderable);
     this._needDraw = true;
 
     this._vertices = [
@@ -21,21 +32,18 @@ import { BLEND_DST, ONE, SHADER_SPRITE_POSITION_TEXTURECOLOR, SRC_ALPHA, rectPoi
     this._recursiveDirty = false;
 
     this._shaderProgram = shaderCache.programForKey(SHADER_SPRITE_POSITION_TEXTURECOLOR);
-  };
+    this._spriteCmdCtor = SpriteWebGLRenderCmd;
+  }
 
-  var proto = Sprite.WebGLRenderCmd.prototype = Object.create(Node.WebGLRenderCmd.prototype);
-  proto.constructor = Sprite.WebGLRenderCmd;
-  proto._spriteCmdCtor = Sprite.WebGLRenderCmd;
+  updateBlendFunc(blendFunc: any): void {
+  }
 
-  proto.updateBlendFunc = function (blendFunc) {
-  };
-
-  proto.setDirtyFlag = function (dirtyFlag) {
-    Node.WebGLRenderCmd.prototype.setDirtyFlag.call(this, dirtyFlag);
+  setDirtyFlag(dirtyFlag: any): void {
+    super.setDirtyFlag(dirtyFlag);
     this._dirty = true;
-  };
+  }
 
-  proto.setDirtyRecursively = function (value) {
+  setDirtyRecursively(value: boolean): void {
     this._recursiveDirty = value;
     this._dirty = value;
     // recursively set dirty
@@ -44,9 +52,9 @@ import { BLEND_DST, ONE, SHADER_SPRITE_POSITION_TEXTURECOLOR, SRC_ALPHA, rectPoi
       child = locChildren[i];
       (child instanceof Sprite) && child._renderCmd.setDirtyRecursively(value);
     }
-  };
+  }
 
-  proto._setBatchNodeForAddChild = function (child) {
+  _setBatchNodeForAddChild(child: any): boolean {
     var node = this._node;
     if (node._batchNode) {
       if (!(child instanceof Sprite)) {
@@ -62,19 +70,19 @@ import { BLEND_DST, ONE, SHADER_SPRITE_POSITION_TEXTURECOLOR, SRC_ALPHA, rectPoi
         node._setReorderChildDirtyRecursively();
     }
     return true;
-  };
+  }
 
-  proto._handleTextureForRotatedTexture = function (texture) {
+  _handleTextureForRotatedTexture(texture: any): any {
     return texture;
-  };
+  }
 
-  proto.isFrameDisplayed = function (frame) {
+  isFrameDisplayed(frame: any): boolean {
     var node = this._node;
     return (rectEqualToRect(frame.getRect(), node._rect) && frame.getTexture().getName() === node._texture.getName()
       && pointEqualToPoint(frame.getOffset(), node._unflippedOffsetPositionFromCenter));
-  };
+  }
 
-  proto._textureLoadedCallback = function (sender) {
+  _textureLoadedCallback(sender: any): void {
     if (this._textureLoaded)
       return;
 
@@ -97,9 +105,9 @@ import { BLEND_DST, ONE, SHADER_SPRITE_POSITION_TEXTURECOLOR, SRC_ALPHA, rectPoi
 
     // Force refresh the render command list
     renderer.childrenOrderDirty = true;
-  };
+  }
 
-  proto._setTextureCoords = function (rect, needConvert) {
+  _setTextureCoords(rect: any, needConvert?: boolean): void {
     if (needConvert === undefined)
       needConvert = true;
     if (needConvert)
@@ -182,12 +190,12 @@ import { BLEND_DST, ONE, SHADER_SPRITE_POSITION_TEXTURECOLOR, SRC_ALPHA, rectPoi
       uvs[3].u = right;  // br
       uvs[3].v = bottom; // br
     }
-  };
+  }
 
-  proto._setColorDirty = function () {
-  };
+  _setColorDirty(): void {
+  }
 
-  proto._updateBlendFunc = function () {
+  _updateBlendFunc(): void {
     if (this._batchNode) {
       log(_LogInfos.Sprite__updateBlendFunc);
       return;
@@ -207,9 +215,9 @@ import { BLEND_DST, ONE, SHADER_SPRITE_POSITION_TEXTURECOLOR, SRC_ALPHA, rectPoi
       }
       node.opacityModifyRGB = true;
     }
-  };
+  }
 
-  proto._setTexture = function (texture) {
+  _setTexture(texture: any): void {
     var node = this._node;
     if (node._texture !== texture) {
       node._textureLoaded = texture ? texture._textureLoaded : false;
@@ -218,8 +226,8 @@ import { BLEND_DST, ONE, SHADER_SPRITE_POSITION_TEXTURECOLOR, SRC_ALPHA, rectPoi
       // Update texture rect and blend func
       if (texture) {
         var texSize = texture._contentSize;
-        var rect = rect(0, 0, texSize.width, texSize.height);
-        node.setTextureRect(rect);
+        var rt = rect(0, 0, texSize.width, texSize.height);
+        node.setTextureRect(rt);
         this._updateBlendFunc();
       }
 
@@ -228,9 +236,9 @@ import { BLEND_DST, ONE, SHADER_SPRITE_POSITION_TEXTURECOLOR, SRC_ALPHA, rectPoi
         renderer.childrenOrderDirty = true;
       }
     }
-  };
+  }
 
-  proto._checkTextureBoundary = function (texture, rect, rotated) {
+  _checkTextureBoundary(texture: any, rect: any, rotated: boolean): void {
     if (texture && texture.url) {
       var _x, _y;
       if (rotated) {
@@ -247,9 +255,9 @@ import { BLEND_DST, ONE, SHADER_SPRITE_POSITION_TEXTURECOLOR, SRC_ALPHA, rectPoi
         error(_LogInfos.RectHeight, texture.url);
       }
     }
-  };
+  }
 
-  proto.transform = function (parentCmd, recursive) {
+  transform(parentCmd: any, recursive: any): void {
     this.originTransform(parentCmd, recursive);
 
     var node = this._node,
@@ -269,14 +277,14 @@ import { BLEND_DST, ONE, SHADER_SPRITE_POSITION_TEXTURECOLOR, SRC_ALPHA, rectPoi
     vertices[2].y = rxb + tyd + wty;
     vertices[3].x = rxa + byc + wtx; // br
     vertices[3].y = rxb + byd + wty;
-  };
+  }
 
-  proto.needDraw = function () {
+  needDraw(): boolean {
     var node = this._node, locTexture = node._texture;
     return (this._needDraw && locTexture);
-  };
+  }
 
-  proto.uploadData = function (f32buffer, ui32buffer, vertexDataOffset) {
+  uploadData(f32buffer: any, ui32buffer: any, vertexDataOffset: number): number {
     var node = this._node, locTexture = node._texture;
     if (!(locTexture && locTexture._textureLoaded && node._rect.width && node._rect.height) || !this._displayedOpacity)
       return 0;
@@ -309,5 +317,5 @@ import { BLEND_DST, ONE, SHADER_SPRITE_POSITION_TEXTURECOLOR, SRC_ALPHA, rectPoi
     }
 
     return len;
-  };
-})();
+  }
+}
