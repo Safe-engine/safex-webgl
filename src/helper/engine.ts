@@ -1,4 +1,4 @@
-import { game } from "..";
+import { Game, game } from "..";
 import { ENGINE_VERSION } from "../2d/core/platform/Config";
 import { loader } from "./loader";
 import { path } from "./path";
@@ -30,7 +30,7 @@ let _engineLoadedCallback = null;
 export let _engineLoaded = false;
 
 function _determineRenderType(config) {
-  var CONFIG_KEY = game.CONFIG_KEY,
+  var CONFIG_KEY = Game.CONFIG_KEY,
     userRenderMode = parseInt(config[CONFIG_KEY.renderMode]) || 0;
 
   // Adjust RenderType
@@ -91,7 +91,7 @@ function _afterEngineLoaded(config) {
 
 function _load(config) {
   // var self = this;
-  const CONFIG_KEY = game.CONFIG_KEY, engineDir = config[CONFIG_KEY.engineDir];
+  const CONFIG_KEY = Game.CONFIG_KEY, engineDir = config[CONFIG_KEY.engineDir];
 
   if (_engineLoaded) {
     // Single file loaded

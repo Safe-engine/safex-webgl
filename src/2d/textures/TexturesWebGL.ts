@@ -310,7 +310,6 @@ export class Texture2D extends EventHelper {
     self.shaderProgram = shaderCache.programForKey(SHADER_POSITION_TEXTURE);
 
     self._textureLoaded = true;
-    console.log("glBindTexture2DN", textureUnit, textureId);
 
     return true;
   }

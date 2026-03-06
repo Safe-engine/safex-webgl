@@ -63,7 +63,7 @@ export let winSize: Size;
 export let container: HTMLElement | null = null;
 
 PrototypeTexture2D()
-class Game extends EventHelper {
+export class Game extends EventHelper {
   DEBUG_MODE_NONE = 0;
   DEBUG_MODE_INFO = 1;
   DEBUG_MODE_WARN = 2;
@@ -75,7 +75,7 @@ class Game extends EventHelper {
   EVENT_HIDE = "game_on_hide";
   EVENT_SHOW = "game_on_show";
   EVENT_RESIZE = "game_on_resize";
-  EVENT_RENDERER_INITED = "renderer_inited";
+  static readonly EVENT_RENDERER_INITD = "renderer_inited";
 
   RENDER_TYPE_CANVAS = 0;
   RENDER_TYPE_WEBGL = 1;
@@ -84,7 +84,7 @@ class Game extends EventHelper {
   _eventHide: EventCustom | null = null;
   _eventShow: EventCustom | null = null;
 
-  CONFIG_KEY = {
+  static readonly CONFIG_KEY = {
     width: "width",
     height: "height",
     engineDir: "engineDir",
@@ -122,7 +122,7 @@ class Game extends EventHelper {
   onStop: (() => void) | null = null;
 
   setFrameRate(frameRate: number) {
-    this.config[this.CONFIG_KEY.frameRate] = frameRate;
+    this.config[Game.CONFIG_KEY.frameRate] = frameRate;
     if (this._intervalId) {
       window.cancelAnimationFrame(this._intervalId);
     }
@@ -187,7 +187,7 @@ class Game extends EventHelper {
     if (_engineLoaded) {
       this._prepareCalled = true;
 
-      this._initRenderer(this.config[this.CONFIG_KEY.width], this.config[this.CONFIG_KEY.height]);
+      this._initRenderer(this.config[Game.CONFIG_KEY.width], this.config[Game.CONFIG_KEY.height]);
 
       view = EGLView.getInstance();
       director = Director._getInstance();
@@ -201,7 +201,7 @@ class Game extends EventHelper {
       this._setAnimFrame();
       this._runMainLoop();
 
-      const jsList = this.config[this.CONFIG_KEY.jsList];
+      const jsList = this.config[Game.CONFIG_KEY.jsList];
       if (jsList) {
         loader.loadJsWithImg(jsList, (err: any) => {
           if (err) throw new Error(err);
@@ -228,7 +228,7 @@ class Game extends EventHelper {
       if (config) {
         if (typeof config === 'string') {
           if (!this.config) this._loadConfig();
-          this.config[this.CONFIG_KEY.id] = config;
+          this.config[Game.CONFIG_KEY.id] = config;
         } else {
           this.config = config;
         }
@@ -243,7 +243,7 @@ class Game extends EventHelper {
 
   _setAnimFrame() {
     this._lastTime = new Date();
-    const frameRate = this.config[this.CONFIG_KEY.frameRate];
+    const frameRate = this.config[Game.CONFIG_KEY.frameRate];
     this._frameTime = 1000 / frameRate;
     if (frameRate !== 60 && frameRate !== 30) {
       window.requestAnimFrame = this._stTime.bind(this);
@@ -283,7 +283,7 @@ class Game extends EventHelper {
 
   _runMainLoop() {
     const config = this.config;
-    const CONFIG_KEY = this.CONFIG_KEY;
+    const CONFIG_KEY = Game.CONFIG_KEY;
     let skip = true;
     const frameRate = config[CONFIG_KEY.frameRate];
 
@@ -343,7 +343,7 @@ class Game extends EventHelper {
   }
 
   _initConfig(config: any) {
-    const CONFIG_KEY = this.CONFIG_KEY;
+    const CONFIG_KEY = Game.CONFIG_KEY;
     const modules = config[CONFIG_KEY.modules];
 
     config[CONFIG_KEY.showFPS] = typeof config[CONFIG_KEY.showFPS] === 'undefined' ? true : config[CONFIG_KEY.showFPS];
@@ -374,10 +374,10 @@ class Game extends EventHelper {
     if (this._rendererInitialized) return;
 
     if (!_supportRender) {
-      throw new Error("The renderer doesn't support the renderMode " + this.config[this.CONFIG_KEY.renderMode]);
+      throw new Error("The renderer doesn't support the renderMode " + this.config[Game.CONFIG_KEY.renderMode]);
     }
 
-    const el = this.config[game.CONFIG_KEY.id];
+    const el = this.config[Game.CONFIG_KEY.id];
     const element = $(el) || $('#' + el);
     let localCanvas: HTMLCanvasElement;
     let localContainer: HTMLElement;
@@ -440,7 +440,7 @@ class Game extends EventHelper {
       };
     }
 
-    eventManager.dispatchEvent(new EventCustom(this.EVENT_RENDERER_INITED));
+    eventManager.dispatchEvent(new EventCustom(Game.EVENT_RENDERER_INITD));
 
     this._rendererInitialized = true;
   }
@@ -451,7 +451,7 @@ class Game extends EventHelper {
     this._eventShow = new EventCustom(this.EVENT_SHOW);
     this._eventShow.setUserData(this);
 
-    if (this.config[this.CONFIG_KEY.registerSystemEvent] && this.canvas) {
+    if (this.config[Game.CONFIG_KEY.registerSystemEvent] && this.canvas) {
       inputManager.registerSystemEvent(this.canvas);
     }
 
@@ -526,7 +526,7 @@ class Game extends EventHelper {
 export const game = new Game();
 eventManager._internalCustomListenerIDs = [game.EVENT_HIDE, game.EVENT_SHOW]
 
-game.addEventListener(game.EVENT_RENDERER_INITED, function () {
+game.addEventListener(Game.EVENT_RENDERER_INITD, function () {
   if (_renderType === game.RENDER_TYPE_CANVAS) {
 
     var _p = textureCache;
@@ -602,17 +602,17 @@ game.addEventListener(game.EVENT_RENDERER_INITED, function () {
   }
 });
 
-game.addEventListener(game.EVENT_RENDERER_INITED, function () {
-  if (_renderType === game.RENDER_TYPE_CANVAS) {
-    var proto = {
-    }
-  } else if (_renderType === game.RENDER_TYPE_WEBGL) {
-    assert(isFunction(_tmp.WebGLTexture2D), _LogInfos.MissingFile, "TexturesWebGL.js");
-    _tmp.WebGLTexture2D();
-    delete _tmp.WebGLTexture2D;
-  }
-  // EventHelper.prototype.apply(Texture2D.prototype);
-  assert(isFunction(_tmp.PrototypeTexture2D), _LogInfos.MissingFile, "TexturesPropertyDefine.js");
-  _tmp.PrototypeTexture2D();
-  delete _tmp.PrototypeTexture2D;
-});
+// game.addEventListener(Game.EVENT_RENDERER_INITD, function () {
+//   if (_renderType === game.RENDER_TYPE_CANVAS) {
+//     var proto = {
+//     }
+//   } else if (_renderType === game.RENDER_TYPE_WEBGL) {
+//     assert(isFunction(_tmp.WebGLTexture2D), _LogInfos.MissingFile, "TexturesWebGL.js");
+//     _tmp.WebGLTexture2D();
+//     delete _tmp.WebGLTexture2D;
+//   }
+//   // EventHelper.prototype.apply(Texture2D.prototype);
+//   assert(isFunction(_tmp.PrototypeTexture2D), _LogInfos.MissingFile, "TexturesPropertyDefine.js");
+//   _tmp.PrototypeTexture2D();
+//   delete _tmp.PrototypeTexture2D;
+// });

@@ -1,4 +1,4 @@
-import { _renderContext, director, game, renderer, view } from '../..';
+import { _renderContext, director, Game, game, renderer, view } from '../..';
 import { _LogInfos, log } from '../../helper/Debugger';
 import { global } from '../../helper/global';
 import { glBlendFunc, setProjectionMatrixDirty } from '../shaders/GLStateCache';
@@ -148,7 +148,7 @@ export class Director {
       this._deltaTime = (now - this._lastUpdate) / 1000;
     }
 
-    if ((game.config[game.CONFIG_KEY.debugMode] > 0) && (this._deltaTime > 0.2))
+    if ((game.config[Game.CONFIG_KEY.debugMode] > 0) && (this._deltaTime > 0.2))
       this._deltaTime = 1 / 60.0;
 
     this._lastUpdate = now;

@@ -1,7 +1,7 @@
-import  { _renderContext } from "../..";
+import { _renderContext } from "../..";
 import { _tmp, global } from "../../helper/global";
 import { TEXTURE_ATLAS_USE_TRIANGLE_STRIP } from "../core/platform/Config";
-import  { VERTEX_ATTRIB_POSITION, VERTEX_ATTRIB_COLOR, VERTEX_ATTRIB_TEX_COORDS } from "../core/platform/Macro";
+import { VERTEX_ATTRIB_COLOR, VERTEX_ATTRIB_POSITION, VERTEX_ATTRIB_TEX_COORDS } from "../core/platform/Macro";
 import { glBindTexture2D } from "../shaders/GLStateCache";
 
 _tmp.WebGLTextureAtlas = function () {
@@ -76,6 +76,4 @@ _tmp.WebGLTextureAtlas = function () {
     global.g_NumberOfDraws++;
     //checkGLErrorDebug();
   };
-  _tmp.WebGLTexture2D = function () {
-
-  };
+}

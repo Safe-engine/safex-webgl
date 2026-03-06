@@ -1,4 +1,4 @@
-import { _renderContext, director, game } from "../..";
+import { _renderContext, director, Game, game } from "../..";
 import { log } from "../../helper/Debugger";
 import { loader } from "../../helper/loader";
 import { KM_GL_MODELVIEW, KM_GL_PROJECTION, kmGLGetMatrix, modelview_matrix_stack, projection_matrix_stack } from "../core/kazmath/gl/matrix";
@@ -211,7 +211,7 @@ export class GLProgram {
     this._vertShader = null;
     this._fragShader = null;
 
-    if (game.config[game.CONFIG_KEY.debugMode]) {
+    if (game.config[Game.CONFIG_KEY.debugMode]) {
       var status = this._glContext.getProgramParameter(this._programObj, this._glContext.LINK_STATUS);
       if (!status) {
         log("cocos2d: ERROR: Failed to link program: " + this._glContext.getProgramInfoLog(this._programObj));
