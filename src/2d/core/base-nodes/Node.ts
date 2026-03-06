@@ -1,6 +1,5 @@
-import { director, game, renderer } from "../../..";
+import { director, renderer } from "../../..";
 import { _LogInfos, assert, log } from "../../../helper/Debugger";
-import { _renderType } from "../../../helper/engine";
 import { ActionManager } from "../ActionManager";
 import { affineTransformConcat, affineTransformConcatIn, affineTransformInvert, affineTransformMakeIdentity, pointApplyAffineTransform, rectApplyAffineTransform, rectApplyAffineTransformIn } from "../cocoa/AffineTransform";
 import { p, Point, rect, rectUnion, Size, size } from "../cocoa/Geometry";
@@ -25,7 +24,7 @@ export class Node extends EventHelper {
   static _dirtyFlags = { transformDirty: 1, colorDirty: 2, opacityDirty: 4, orderDirty: 8 };
 
   // instance id used by scheduler keys
-  __instanceId: any = Math.random().toString(36).slice(2);
+  __instanceId = Math.random().toString(36).slice(2);
 
   // fields (initialized to sensible defaults)
   _localZOrder = 0;
@@ -67,7 +66,7 @@ export class Node extends EventHelper {
   _realColor: Color = null;
   _cascadeColorEnabled = false;
   _cascadeOpacityEnabled = false;
-  _renderCmd: any = null;
+  _renderCmd: NodeWebGLRenderCmd = null;
 
   constructor() {
     super();
@@ -77,9 +76,9 @@ export class Node extends EventHelper {
     this._normalizedPosition = p(0, 0);
     this._children = [];
     this._additionalTransform = affineTransformMakeIdentity();
-    if ((globalThis as any).ComponentContainer) {
-      this._componentContainer = new (globalThis as any).ComponentContainer(this);
-    }
+    // if (globalThis.ComponentContainer) {
+    //   this._componentContainer = new globalThis.ComponentContainer(this);
+    // }
     this._realColor = color(255, 255, 255, 255);
     this._renderCmd = this._createRenderCmd();
   }
@@ -90,7 +89,7 @@ export class Node extends EventHelper {
 
   attr(attrs: any) {
     for (const key in attrs) {
-      (this as any)[key] = attrs[key];
+      this[key] = attrs[key];
     }
   }
 
@@ -580,7 +579,7 @@ export class Node extends EventHelper {
   setOpacityModifyRGB(opacityValue: any) { }
   isOpacityModifyRGB() { return false; }
 
-  _createRenderCmd() { if (_renderType === game.RENDER_TYPE_CANVAS) return new (Node as any).CanvasRenderCmd(this); else return new NodeWebGLRenderCmd(this); }
+  _createRenderCmd() { return new NodeWebGLRenderCmd(this); }
 
   enumerateChildren(name: any, callback: any) {
     assert(name && name.length != 0, "Invalid name");

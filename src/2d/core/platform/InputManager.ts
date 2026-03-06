@@ -5,6 +5,7 @@ import { p, Rect, rectContainsPoint } from '../cocoa/Geometry';
 import { EventAcceleration } from '../event-manager/EventExtension';
 import { eventManager } from '../event-manager/EventManager';
 import { EventMouse } from '../event-manager/EventMouse';
+import { EventTouch } from '../event-manager/EventTouch';
 import { Touch } from '../event-manager/Touch';
 import { EGLView } from './EGLView';
 

@@ -1,8 +1,8 @@
-import { _renderContext, game } from "../..";
+import { _renderContext, director, game } from "../..";
 import { log } from "../../helper/Debugger";
 import { loader } from "../../helper/loader";
-import { KM_GL_MODELVIEW, KM_GL_PROJECTION, kmGLGetMatrix } from "../core/kazmath/gl/matrix";
-import { getMat4MultiplyValue, kmMat4Multiply } from "../core/kazmath/mat4";
+import { KM_GL_MODELVIEW, KM_GL_PROJECTION, kmGLGetMatrix, modelview_matrix_stack, projection_matrix_stack } from "../core/kazmath/gl/matrix";
+import { getMat4MultiplyValue, kmMat4Multiply, Matrix4 } from "../core/kazmath/mat4";
 import { checkGLErrorDebug, UNIFORM_COSTIME_S, UNIFORM_MVMATRIX_S, UNIFORM_MVPMATRIX_S, UNIFORM_PMATRIX_S, UNIFORM_RANDOM01_S, UNIFORM_SAMPLER_S, UNIFORM_SINTIME_S, UNIFORM_TIME_S } from "../core/platform/Macro";
 import { glDeleteProgram, glUseProgram } from "./GLStateCache";
 
@@ -27,15 +27,15 @@ export class GLProgram {
   }
 
   // Uniform cache
-  _updateUniform(name: string): boolean {
+  _updateUniform(name: string, matrix?: Float32Array | Int32Array | number, v1?: number, v2?: number, v3?: number, v4?: number): boolean {
     if (!name)
       return false;
 
     var updated = false;
     var element = this._hashForUniforms[name];
     var args;
-    if (Array.isArray(arguments[1])) {
-      args = arguments[1];
+    if (Array.isArray(matrix)) {
+      args = matrix;
     } else {
       args = new Array(arguments.length - 1);
       for (var i = 1; i < arguments.length; i += 1) {
@@ -297,9 +297,9 @@ export class GLProgram {
    * @param {WebGLUniformLocation|String} location
    * @param {Number} i1
    */
-  setUniformLocationWith1i(location: any, i1: number): void {
-    var isString = typeof location === 'string';
-    var name = isString ? location : location && location._name;
+  setUniformLocationWith1i(location: any | string, i1: number): void {
+    const isString = typeof location === 'string';
+    const name = isString ? location : location?._name;
     if (name) {
       if (this._updateUniform(name, i1)) {
         if (isString) location = this.getUniformLocationForName(name);
@@ -592,6 +592,7 @@ export class GLProgram {
    * @param {Float32Array} matrixArray
    */
   setUniformLocationWithMatrix3fv(location: any, matrixArray: Float32Array): void {
+    console.log('setUniformLocationWithMatrix4fv', location, matrixArray);
     var isString = typeof location === 'string';
     var name = isString ? location : location && location._name;
     if (name) {
@@ -609,7 +610,8 @@ export class GLProgram {
    * @param {WebGLUniformLocation|String} location
    * @param {Float32Array} matrixArray
    */
-  setUniformLocationWithMatrix4fv(location: any, matrixArray: Float32Array): void {
+  setUniformLocationWithMatrix4fv(location: WebGLUniformLocation | string, matrixArray: Float32Array, v1?: number): void {
+    console.log('setUniformLocationWithMatrix4fv', location, matrixArray);
     var isString = typeof location === 'string';
     var name = isString ? location : location && location._name;
     if (name) {
@@ -646,9 +648,9 @@ export class GLProgram {
    * will update the builtin uniforms if they are different than the previous call for this same shader program.
    */
   setUniformsForBuiltins(): void {
-    var matrixP = new math.Matrix4();
-    var matrixMV = new math.Matrix4();
-    var matrixMVP = new math.Matrix4();
+    const matrixP = new Matrix4();
+    const matrixMV = new Matrix4();
+    const matrixMVP = new Matrix4();
 
     kmGLGetMatrix(KM_GL_PROJECTION, matrixP);
     kmGLGetMatrix(KM_GL_MODELVIEW, matrixMV);
@@ -660,7 +662,6 @@ export class GLProgram {
     this.setUniformLocationWithMatrix4fv(this._uniforms[UNIFORM_MVPMATRIX_S], matrixMVP.mat, 1);
 
     if (this._usesTime) {
-      var director = director;
       // This doesn't give the most accurate global time value.
       // Cocos2D doesn't store a high precision time value, so this will have to do.
       // Getting Mach time per frame per shader using time could be extremely expensive.
@@ -679,9 +680,9 @@ export class GLProgram {
     if (!node || !node._renderCmd)
       return;
 
-    var matrixP = new math.Matrix4();
+    var matrixP = new Matrix4();
     //var matrixMV = new kmMat4();
-    var matrixMVP = new math.Matrix4();
+    var matrixMVP = new Matrix4();
 
     kmGLGetMatrix(KM_GL_PROJECTION, matrixP);
     //kmGLGetMatrix(KM_GL_MODELVIEW, node._stackMatrix);

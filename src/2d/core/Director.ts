@@ -202,12 +202,11 @@ export class Director {
     if (this._nextScene) {
       this.setNextScene();
     }
-
     if (this._runningScene) {
       if (renderer.childrenOrderDirty) {
         renderer.clearRenderCommands();
         renderer.assignedZ = 0;
-        (this._runningScene as any)._renderCmd._curLevel = 0;
+        this._runningScene._renderCmd._curLevel = 0;
         this._runningScene.visit();
         renderer.resetFlag();
       } else if (renderer.transformDirty()) {

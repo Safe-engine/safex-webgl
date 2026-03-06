@@ -6,21 +6,28 @@ import { global } from "../src/helper/global"
 import { sys } from "../src/helper/sys"
 
 class BootScene extends Scene {
-  constructor() {
-    super()
-    console.log("BootScene constructor")
-    this.scheduleUpdate()
-  }
+  // constructor() {
+  //   super()
+  //   console.log("BootScene constructor")
+  //   this.scheduleUpdate()
+  // }
   onEnter() {
     super.onEnter()
     console.log("BootScene onEnter")
     const sprite = new Sprite("res/button.png")
+    const sprite2 = new Sprite("res/button.png")
+    const sprite3 = new Sprite("res/button.png")
     console.log("sprite onEnter", sprite)
     sprite.setPosition(view.getDesignResolutionSize().width / 2, view.getDesignResolutionSize().height / 2)
+    sprite2.setPosition(100, 200)
+    sprite3.setPosition(100, 200)
     this.addChild(sprite)
+    this.addChild(sprite3)
+    sprite.addChild(sprite2)
   }
 
   update(dt) {
+    console.log("BootScene update", dt)
   }
 }
 
@@ -34,7 +41,6 @@ game.run(
     renderMode: 2,
   },
   function onStart() {
-    console.log("game onStart")
     // Pass true to enable retina display, disabled by default to improve performance
     view.enableRetina(sys.os === sys.OS_IOS)
     // Adjust viewport meta

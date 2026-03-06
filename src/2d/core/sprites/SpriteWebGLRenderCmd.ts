@@ -5,7 +5,7 @@ import { NodeWebGLRenderCmd } from "../base-nodes/NodeWebGLRenderCmd";
 import { pointEqualToPoint, rect, rectEqualToRect } from "../cocoa/Geometry";
 import { FIX_ARTIFACTS_BY_STRECHING_TEXEL } from "../platform/Config";
 import { BLEND_DST, ONE, SHADER_SPRITE_POSITION_TEXTURECOLOR, SRC_ALPHA, rectPointsToPixels } from "../platform/Macro";
-import type { Sprite } from "./Sprite";
+import { Sprite } from "./Sprite";
 
 //Sprite's WebGL render command
 export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
@@ -13,7 +13,6 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
   _color: Uint32Array;
   _dirty: boolean;
   _recursiveDirty: boolean;
-  _shaderProgram: any;
   _spriteCmdCtor: typeof SpriteWebGLRenderCmd;
 
   constructor(renderable: Sprite) {

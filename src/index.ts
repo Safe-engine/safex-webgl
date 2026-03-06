@@ -36,6 +36,8 @@ declare global {
     oCancelAnimationFrame?: (handle: number) => void;
     ENABLE_IMAGE_POOL: Boolean
   }
+  const ActiveXObject: any
+
   interface Document {
     ccConfig?: any;
     mozHidden?: boolean;
@@ -49,7 +51,7 @@ declare global {
 }
 
 export let director: Director;
-export let renderer: any;
+export let renderer: typeof rendererWebGL;
 export let _drawingUtil: any;
 export let _renderContext: WebGLRenderingContext = null;
 let glExt: any = {};

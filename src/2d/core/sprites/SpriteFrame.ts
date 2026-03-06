@@ -1,6 +1,12 @@
-// @ts-nocheck
-import { rect } from "../cocoa/Geometry";
+import { game } from "../../..";
+import { _LogInfos, error } from "../../../helper/Debugger";
+import { _renderType } from "../../../helper/engine";
+import { Texture2D } from "../../textures/Texture2D";
+import { textureCache } from "../../textures/TextureCache";
+import { p, rect, size } from "../cocoa/Geometry";
 import { EventHelper } from "../event-manager/EventHelper";
+import { _pointPixelsToPointsOut, _sizePixelsToPointsOut, rectPixelsToPoints, rectPointsToPixels } from "../platform/Macro";
+import { Sprite } from "./Sprite";
 
 /**
  * <p>

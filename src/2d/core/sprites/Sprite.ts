@@ -22,6 +22,7 @@ export class Sprite extends Node {
   _shouldBeHidden: boolean = false;
   _transformToBatch: any = null;
   _texture: any = null;
+  texture: Texture2D
   _rect: any = null;
   _rectRotated: boolean = false;
   _offsetPosition: any = null;
@@ -275,7 +276,7 @@ export class Sprite extends Node {
       return false;
     }
     rotated = rotated || false;
-    texture = this._renderCmd._handleTextureForRotatedTexture(texture, rectArg, rotated, counterclockwise);
+    const textureIns = this._renderCmd._handleTextureForRotatedTexture(texture, rectArg, rotated, counterclockwise);
     if (!super.init()) return false;
     this._batchNode = null;
     this._recursiveDirty = false;
@@ -294,9 +295,9 @@ export class Sprite extends Node {
       this._rect.width = rectArg.width;
       this._rect.height = rectArg.height;
     }
-    if (!rectArg) rectArg = rect(0, 0, texture.width, texture.height);
-    this._renderCmd._checkTextureBoundary(texture, rectArg, rotated);
-    this.setTexture(texture);
+    if (!rectArg) rectArg = rect(0, 0, textureIns.width, textureIns.height);
+    this._renderCmd._checkTextureBoundary(textureIns, rectArg, rotated);
+    this.setTexture(textureIns);
     this.setTextureRect(rectArg, rotated);
     this.setBatchNode(null);
     return true;

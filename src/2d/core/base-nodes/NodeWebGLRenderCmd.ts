@@ -29,12 +29,12 @@ export class NodeWebGLRenderCmd extends NodeRenderCmd {
   setGLProgramState(glProgramState: any): void {
     this._glProgramState = glProgramState;
   }
-}
 
-// Use a property getter/setter for backwards compatability, and
-// to ease the transition from using glPrograms directly, to
-// using glProgramStates.
-Object.defineProperty(NodeWebGLRenderCmd.prototype, '_shaderProgram', {
-  set: function (value) { this.setShaderProgram(value); },
-  get: function () { return this.getShaderProgram(); }
-});
+  get _shaderProgram() {
+    return this.getShaderProgram();
+  }
+
+  set _shaderProgram(value) {
+    this.setShaderProgram(value);
+  }
+}

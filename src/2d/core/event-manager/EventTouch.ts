@@ -1,11 +1,7 @@
-
-/**
- * The touch event
- */
 import { Event } from "./Event";
 
 export class EventTouch extends Event {
-  private _eventCode: number = 0;
+  _eventCode: number = 0;
   private _touches: any[] = [];
 
   static MAX_TOUCHES: number = 5;

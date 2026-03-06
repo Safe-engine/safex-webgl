@@ -7,7 +7,7 @@ import { _renderType } from "./engine";
 import { path } from "./path";
 import { sys } from "./sys";
 
-let _isNodeJs
+let _isNodeJs = false;
 window.ENABLE_IMAGE_POOL = true;
 const imagePool = {
   _pool: new Array(10),
@@ -86,7 +86,7 @@ export const loader = (function () {
 
     _getArgs4Js: function (args) {
       let a0 = args[0], a1 = args[1], a2 = args[2]
-      let results = ["", null, null];
+      let results: any[] = ["", null, null];
 
       if (args.length === 1) {
         results[1] = a0 instanceof Array ? a0 : [a0];
@@ -158,15 +158,15 @@ export const loader = (function () {
       _jsCache[jsPath] = true;
       if (game.config["noCache"] && typeof jsPath === "string") {
         if (self._noCacheRex.test(jsPath))
-          s.src = jsPath + "&_t=" + (new Date() - 0);
+          s.src = jsPath + "&_t=" + Date.now();
         else
-          s.src = jsPath + "?_t=" + (new Date() - 0);
+          s.src = jsPath + "?_t=" + Date.now();
       } else {
         s.src = jsPath;
       }
       s.addEventListener('load', function () {
         s.parentNode.removeChild(s);
-        this.removeEventListener('load', arguments.callee, false);
+        this.removeEventListener('load', arguments.callee as any, false);
         cb();
       }, false);
       s.addEventListener('error', function () {
@@ -187,20 +187,20 @@ export const loader = (function () {
       });
     },
     _loadJsImg: function () {
-      var d = document, jsLoadingImg = d.getElementById("cocos2d_loadJsImg");
+      var d = document, jsLoadingImg = d.getElementById("cocos2d_loadJsImg") as HTMLImageElement;
       if (!jsLoadingImg) {
-        jsLoadingImg = document.createElement('img');
+        jsLoadingImg = document.createElement('img') as HTMLImageElement;
 
         // if (_loadingImage)
         //   jsLoadingImg.src = _loadingImage;
 
-        var canvasNode = d.getElementById(game.config["id"]);
+        const canvasNode = d.getElementById(game.config["id"]) as HTMLCanvasElement;
         canvasNode.style.backgroundColor = "transparent";
         canvasNode.parentNode.appendChild(jsLoadingImg);
-
-        var canvasStyle = getComputedStyle ? getComputedStyle(canvasNode) : canvasNode.currentStyle;
+        const currentStyle: any = { width: canvasNode.width, height: canvasNode.height }
+        let canvasStyle = getComputedStyle ? getComputedStyle(canvasNode) : currentStyle;
         if (!canvasStyle)
-          canvasStyle = { width: canvasNode.width, height: canvasNode.height };
+          canvasStyle = currentStyle;
         jsLoadingImg.style.left = canvasNode.offsetLeft + (parseFloat(canvasStyle.width) - jsLoadingImg.width) / 2 + "px";
         jsLoadingImg.style.top = canvasNode.offsetTop + (parseFloat(canvasStyle.height) - jsLoadingImg.height) / 2 + "px";
         jsLoadingImg.style.position = "absolute";
@@ -275,11 +275,11 @@ export const loader = (function () {
           }
         }
         xhr.send(null);
-      } else {
-        var fs = require("fs");
-        fs.readFile(url, function (err, data) {
-          err ? cb(err) : cb(null, data.toString());
-        });
+        // } else {
+        //   var fs = require("fs");
+        //   fs.readFile(url, function (err, data) {
+        //     err ? cb(err) : cb(null, data.toString());
+        //   });
       }
     },
 
@@ -501,9 +501,9 @@ export const loader = (function () {
 
       if (game.config["noCache"] && typeof realUrl === "string") {
         if (self._noCacheRex.test(realUrl))
-          realUrl += "&_t=" + (new Date() - 0);
+          realUrl += "&_t=" + Date.now();
         else
-          realUrl += "?_t=" + (new Date() - 0);
+          realUrl += "?_t=" + Date.now();
       }
       loader.load(realUrl, url, item, function (err, data) {
         if (err) {

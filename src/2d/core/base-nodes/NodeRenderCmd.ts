@@ -13,6 +13,47 @@ const dirtyFlags = {
   all: (1 << 10) - 1
 };
 
+function transformChildTree(root) {
+  var index = 1;
+  var children, child, curr, parentCmd, i, len;
+  var stack = Node._performStacks[Node._performing];
+  if (!stack) {
+    stack = [];
+    Node._performStacks.push(stack);
+  }
+  stack.length = 0;
+  Node._performing++;
+  stack[0] = root;
+  while (index) {
+    index--;
+    curr = stack[index];
+    // Avoid memory leak
+    stack[index] = null;
+    if (!curr) continue;
+    children = curr._children;
+    if (children && children.length > 0) {
+      parentCmd = curr._renderCmd;
+      for (i = 0, len = children.length; i < len; ++i) {
+        child = children[i];
+        stack[index] = child;
+        index++;
+        child._renderCmd.transform(parentCmd);
+      }
+    }
+    var pChildren = curr._protectedChildren;
+    if (pChildren && pChildren.length > 0) {
+      parentCmd = curr._renderCmd;
+      for (i = 0, len = pChildren.length; i < len; ++i) {
+        child = pChildren[i];
+        stack[index] = child;
+        index++;
+        child._renderCmd.transform(parentCmd);
+      }
+    }
+  }
+  Node._performing--;
+}
+
 class NodeRenderCmd {
   _node: any;
   _anchorPointInPoints: { x: number; y: number };

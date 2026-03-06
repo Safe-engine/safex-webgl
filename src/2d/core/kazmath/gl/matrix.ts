@@ -8,9 +8,9 @@ export const KM_GL_MODELVIEW = 0x1700;
 export const KM_GL_PROJECTION = 0x1701;
 export const KM_GL_TEXTURE = 0x1702;
 
-let modelview_matrix_stack = new Matrix4Stack();
-let projection_matrix_stack = new Matrix4Stack();
-let texture_matrix_stack = new Matrix4Stack();
+export let modelview_matrix_stack = new Matrix4Stack();
+export let projection_matrix_stack = new Matrix4Stack();
+export let texture_matrix_stack = new Matrix4Stack();
 
 let current_stack = null;
 let initialized = false;

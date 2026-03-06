@@ -413,7 +413,7 @@ export const rendererWebGL = (function () {
       _indexSize = 0;
     },
 
-    rendering: function (ctx: WebGLRenderingContext, cmds: any[]) {
+    rendering: function (ctx: WebGLRenderingContext, cmds?: any[]) {
       let locCmds = cmds || this._renderCmds,
         i, len, cmd,
         context = ctx || _renderContext;
