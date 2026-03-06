@@ -14,9 +14,9 @@ const dirtyFlags = {
 };
 
 function transformChildTree(root) {
-  var index = 1;
-  var children, child, curr, parentCmd, i, len;
-  var stack = Node._performStacks[Node._performing];
+  let index = 1;
+  let children, child, curr, parentCmd, i, len;
+  let stack = Node._performStacks[Node._performing];
   if (!stack) {
     stack = [];
     Node._performStacks.push(stack);

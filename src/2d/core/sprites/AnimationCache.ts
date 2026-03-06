@@ -3,17 +3,6 @@ import { loader } from "../../../helper/loader";
 import { REPEAT_FOREVER } from "../platform/Macro";
 import { spriteFrameCache } from "./SpriteFrameCache";
 
-/**
- * <p>
- *     animationCache is a singleton object that manages the Animations.<br/>
- *     It saves in a cache the animations. You should use this class if you want to save your animations in a cache.<br/>
- * <br/>
- * example<br/>
- * animationCache.addAnimation(animation,"animation1");<br/>
- * </p>
- * @class
- * @name animationCache
- */
 export const animationCache = {
   _animations: {},
 

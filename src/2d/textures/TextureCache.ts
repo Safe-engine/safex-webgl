@@ -14,11 +14,11 @@ export const textureCache = /** @lends textureCache# */{
   //handleLoadedTexture move to Canvas/WebGL
 
   _initializingRenderer: function () {
-    var selPath;
+    let selPath;
     //init texture from _loadedTexturesBefore
-    var locLoadedTexturesBefore = this._loadedTexturesBefore, locTextures = this._textures;
+    const locLoadedTexturesBefore = this._loadedTexturesBefore, locTextures = this._textures;
     for (selPath in locLoadedTexturesBefore) {
-      var tex2d = locLoadedTexturesBefore[selPath];
+      const tex2d = locLoadedTexturesBefore[selPath];
       tex2d.handleLoadedTexture();
       locTextures[selPath] = tex2d;
     }
@@ -68,7 +68,7 @@ export const textureCache = /** @lends textureCache# */{
    * @deprecated
    * @example
    * //example
-   * var key = textureCache.textureForKey("hello.png");
+   * const key = textureCache.textureForKey("hello.png");
    */
   textureForKey: function (textureKeyName) {
     log(_LogInfos.textureCache_textureForKey);
@@ -81,7 +81,7 @@ export const textureCache = /** @lends textureCache# */{
    * @return {Texture2D|Null}
    * @example
    * //example
-   * var key = textureCache.getTextureForKey("hello.png");
+   * const key = textureCache.getTextureForKey("hello.png");
    */
   getTextureForKey: function (textureKeyName) {
     return this._textures[textureKeyName] || this._textures[loader._getAliase(textureKeyName)];
@@ -92,10 +92,10 @@ export const textureCache = /** @lends textureCache# */{
    * @return {String|Null}
    * @example
    * //example
-   * var key = textureCache.getKeyByTexture(texture);
+   * const key = textureCache.getKeyByTexture(texture);
    */
   getKeyByTexture: function (texture) {
-    for (var key in this._textures) {
+    for (const key in this._textures) {
       if (this._textures[key] === texture) {
         return key;
       }
@@ -112,11 +112,11 @@ export const textureCache = /** @lends textureCache# */{
    * @return {Array}
    * @example
    * //example
-   * var cacheTextureForColor = textureCache.getTextureColors(texture);
+   * const cacheTextureForColor = textureCache.getTextureColors(texture);
    */
   getTextureColors: function (texture) {
-    var image = texture._htmlElementObj;
-    var key = this.getKeyByTexture(image);
+    const image = texture._htmlElementObj;
+    let key = this.getKeyByTexture(image);
     if (!key) {
       if (image instanceof HTMLImageElement)
         key = image.src;
@@ -151,8 +151,8 @@ export const textureCache = /** @lends textureCache# */{
    * textureCache.removeAllTextures();
    */
   removeAllTextures: function () {
-    var locTextures = this._textures;
-    for (var selKey in locTextures) {
+    const locTextures = this._textures;
+    for (const selKey in locTextures) {
       if (locTextures[selKey])
         locTextures[selKey].releaseTexture();
     }
@@ -170,8 +170,8 @@ export const textureCache = /** @lends textureCache# */{
     if (!texture)
       return;
 
-    var locTextures = this._textures;
-    for (var selKey in locTextures) {
+    const locTextures = this._textures;
+    for (const selKey in locTextures) {
       if (locTextures[selKey] === texture) {
         locTextures[selKey].releaseTexture();
         delete (locTextures[selKey]);
@@ -189,7 +189,7 @@ export const textureCache = /** @lends textureCache# */{
   removeTextureForKey: function (textureKeyName) {
     if (textureKeyName == null)
       return;
-    var tex = this._textures[textureKeyName];
+    const tex = this._textures[textureKeyName];
     if (tex) {
       tex.releaseTexture();
       delete (this._textures[textureKeyName]);
@@ -208,7 +208,7 @@ export const textureCache = /** @lends textureCache# */{
       this._textures[path] = texture;
       return;
     }
-    var texture2d = new Texture2D();
+    const texture2d = new Texture2D();
     texture2d.initWithElement(texture);
     texture2d.handleLoadedTexture();
     this._textures[path] = texture2d;
@@ -233,7 +233,7 @@ export const textureCache = /** @lends textureCache# */{
     }
 
     // prevents overloading the autorelease pool
-    var texture = new Texture2D();
+    const texture = new Texture2D();
     texture.initWithImage(image);
     if (key != null)
       this._textures[key] = texture;
@@ -247,11 +247,11 @@ export const textureCache = /** @lends textureCache# */{
    * This will attempt to calculate the size of each texture, and the total texture memory in use. </p>
    */
   dumpCachedTextureInfo: function () {
-    var count = 0;
-    var totalBytes = 0, locTextures = this._textures;
+    let count = 0;
+    let totalBytes = 0, locTextures = this._textures;
 
-    for (var key in locTextures) {
-      var selTexture = locTextures[key];
+    for (let key in locTextures) {
+      const selTexture = locTextures[key];
       count++;
       if (selTexture.getHtmlElementObj() instanceof HTMLImageElement)
         log(_LogInfos.textureCache_dumpCachedTextureInfo, key, selTexture.getHtmlElementObj().src, selTexture.getPixelsWide(), selTexture.getPixelsHigh());
@@ -261,11 +261,11 @@ export const textureCache = /** @lends textureCache# */{
       totalBytes += selTexture.getPixelsWide() * selTexture.getPixelsHigh() * 4;
     }
 
-    var locTextureColorsCache = this._textureColorsCache;
-    for (key in locTextureColorsCache) {
-      var selCanvasColorsArr = locTextureColorsCache[key];
-      for (var selCanvasKey in selCanvasColorsArr) {
-        var selCanvas = selCanvasColorsArr[selCanvasKey];
+    const locTextureColorsCache = this._textureColorsCache;
+    for (let key in locTextureColorsCache) {
+      const selCanvasColorsArr = locTextureColorsCache[key];
+      for (let selCanvasKey in selCanvasColorsArr) {
+        const selCanvas = selCanvasColorsArr[selCanvasKey];
         count++;
         log(_LogInfos.textureCache_dumpCachedTextureInfo_2, key, selCanvas.width, selCanvas.height);
         totalBytes += selCanvas.width * selCanvas.height * 4;
@@ -283,7 +283,7 @@ export const textureCache = /** @lends textureCache# */{
   },
 
   handleLoadedTexture : function (url, img) {
-    var locTexs = this._textures, tex, ext;
+    let locTexs = this._textures, tex, ext;
     //remove judge(webgl)
     if (!game._rendererInitialized) {
       locTexs = this._loadedTexturesBefore;
@@ -321,12 +321,12 @@ export const textureCache = /** @lends textureCache# */{
   addImage : function (url, cb?, target?) {
     assert(url, _LogInfos.Texture2D_addImage_2);
 
-    var locTexs = this._textures;
+    let locTexs = this._textures;
     //remove judge(webgl)
     if (!game._rendererInitialized) {
       locTexs = this._loadedTexturesBefore;
     }
-    var tex = locTexs[url] || locTexs[loader._getAliase(url)];
+    let tex = locTexs[url] || locTexs[loader._getAliase(url)];
     if (tex) {
       if (tex.isLoaded()) {
         cb && cb.call(target, tex);
@@ -342,12 +342,12 @@ export const textureCache = /** @lends textureCache# */{
 
     tex = locTexs[url] = new Texture2D();
     tex.url = url;
-    var basePath = loader.getBasePath ? loader.getBasePath() : loader.resPath;
+    const basePath =  loader.resPath;
     loader.loadImg(path.join(basePath || "", url), function (err, img) {
       if (err)
         return cb && cb.call(target, err);
 
-      var texResult = textureCache.handleLoadedTexture(url, img);
+      const texResult = textureCache.handleLoadedTexture(url, img);
       cb && cb.call(target, texResult);
     });
 

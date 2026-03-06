@@ -47,7 +47,7 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
     this._dirty = value;
     // recursively set dirty
     var locChildren = this._node._children, child, l = locChildren ? locChildren.length : 0;
-    for (var i = 0; i < l; i++) {
+    for (let i = 0; i < l; i++) {
       child = locChildren[i];
       (child instanceof Sprite) && child._renderCmd.setDirtyRecursively(value);
     }

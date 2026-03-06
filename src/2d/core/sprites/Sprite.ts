@@ -8,7 +8,6 @@ import { animationCache } from "./AnimationCache"
 import { SpriteFrame } from "./SpriteFrame"
 import { spriteFrameCache } from "./SpriteFrameCache"
 import { SpriteLoadManager } from "./SpriteLoadManager"
-import { PrototypeSprite } from "./SpritesPropertyDefine"
 import { SpriteWebGLRenderCmd } from "./SpriteWebGLRenderCmd"
 export class Sprite extends Node {
   dirty: boolean = false;
@@ -19,21 +18,21 @@ export class Sprite extends Node {
   _hasChildren: any = null;
   _shouldBeHidden: boolean = false;
   _transformToBatch: any = null;
-  _texture: any = null;
+  _texture: Texture2D = null;
   texture: Texture2D
-  _rect: any = null;
-  _rectRotated: boolean = false;
+  _rect: Rect = null;
+  _rectRotated = false;
   _offsetPosition: any = null;
   _unflippedOffsetPositionFromCenter: any = null;
-  _opacityModifyRGB: boolean = false;
-  _flippedX: boolean = false;
-  _flippedY: boolean = false;
-  _textureLoaded: boolean = false;
-  _className: string = "Sprite";
-  _blendFunc: any = { src: BLEND_SRC, dst: BLEND_DST };
+  _opacityModifyRGB = false;
+  _flippedX = false;
+  _flippedY = false;
+  _textureLoaded = false;
+  _className = "Sprite";
+  _blendFunc = { src: BLEND_SRC, dst: BLEND_DST };
   _loader: SpriteLoadManager = null;
-  anchorX: number = 0.5
-  anchorY: number = 0.5
+  anchorX = 0.5
+  anchorY = 0.5
 
   constructor(fileName?: any, rectArg?: any, rotated?: any) {
     super();
@@ -407,11 +406,11 @@ export class Sprite extends Node {
   static create(fileName?: any, rect?: any, rotated?: any) {
     return new Sprite(fileName, rect, rotated);
   }
-  static INDEX_NOT_INITIALIZED: number = -1;
+  static readonly INDEX_NOT_INITIALIZED = -1;
   static createWithSpriteFrameName = Sprite.create;
   static createWithSpriteFrame = Sprite.create;
 }
 
 // EventHelper.prototype.apply(Sprite.prototype);
 // Object.assign(Sprite.prototype, EventHelper.prototype);
-PrototypeSprite();
+// PrototypeSprite();

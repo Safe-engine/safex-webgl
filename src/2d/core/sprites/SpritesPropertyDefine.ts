@@ -5,7 +5,7 @@ export function defineGetterSetter(proto, prop, getter, setter?, getterName?, se
         getter && proto.__defineGetter__(prop, getter);
         setter && proto.__defineSetter__(prop, setter);
     } else if (Object.defineProperty) {
-        var desc = {enumerable: false, configurable: true};
+        var desc: any = {enumerable: false, configurable: true};
         getter && (desc.get = getter);
         setter && (desc.set = setter);
         Object.defineProperty(proto, prop, desc);

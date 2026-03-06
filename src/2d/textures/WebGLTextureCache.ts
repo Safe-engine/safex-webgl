@@ -3,8 +3,8 @@ import { _LogInfos, assert } from "../../helper/Debugger";
 import { _tmp } from "../../helper/global";
 import { loader } from "../../helper/loader";
 import { path } from "../../helper/path";
-import { Texture2D } from "./Texture2D";
 import { textureCache } from "./TextureCache";
+import { Texture2D } from "./TexturesWebGL";
 
 _tmp.WebGLTextureCache = function () {
   var _p = textureCache;
@@ -69,12 +69,12 @@ _tmp.WebGLTextureCache = function () {
 
     tex = locTexs[url] = new Texture2D();
     tex.url = url;
-    var basePath = loader.getBasePath ? loader.getBasePath() : loader.resPath;
+    const basePath = loader.resPath;
     loader.loadImg(path.join(basePath || "", url), function (err, img) {
       if (err)
         return cb && cb.call(target, err);
 
-      var texResult = textureCache.handleLoadedTexture(url, img);
+      const texResult = textureCache.handleLoadedTexture(url, img);
       cb && cb.call(target, texResult);
     });
 

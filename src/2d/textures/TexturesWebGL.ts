@@ -30,7 +30,170 @@ import { shaderCache } from "../shaders/ShaderCache";
  * @property {Number}           maxT            - Texture max T
  */
 //Original : Texture2DWebGL
+export let PVRHaveAlphaPremultiplied_ = false;
 export class Texture2D extends EventHelper {
+
+  /**
+   * <p>
+   *    treats (or not) PVR files as if they have alpha premultiplied.                                                <br/>
+   *    Since it is impossible to know at runtime if the PVR images have the alpha channel premultiplied, it is       <br/>
+   *    possible load them as if they have (or not) the alpha channel premultiplied.                                  <br/>
+   *                                                                                                                  <br/>
+   *    By default it is disabled.                                                                                    <br/>
+   * </p>
+   * @param haveAlphaPremultiplied
+   */
+  static PVRImagesHavePremultipliedAlpha = function (haveAlphaPremultiplied) {
+    PVRHaveAlphaPremultiplied_ = haveAlphaPremultiplied;
+  };
+
+  /**
+   * 32-bit texture: RGBA8888
+   * @memberOf Texture2D
+   * @name PIXEL_FORMAT_RGBA8888
+   * @static
+   * @constant
+   * @type {Number}
+   */
+  static PIXEL_FORMAT_RGBA8888 = 2;
+
+  /**
+   * 24-bit texture: RGBA888
+   * @memberOf Texture2D
+   * @name PIXEL_FORMAT_RGB888
+   * @static
+   * @constant
+   * @type {Number}
+   */
+  static PIXEL_FORMAT_RGB888 = 3;
+
+  /**
+   * 16-bit texture without Alpha channel
+   * @memberOf Texture2D
+   * @name PIXEL_FORMAT_RGB565
+   * @static
+   * @constant
+   * @type {Number}
+   */
+  static PIXEL_FORMAT_RGB565 = 4;
+
+  /**
+   * 8-bit textures used as masks
+   * @memberOf Texture2D
+   * @name PIXEL_FORMAT_A8
+   * @static
+   * @constant
+   * @type {Number}
+   */
+  static PIXEL_FORMAT_A8 = 5;
+
+  /**
+   * 8-bit intensity texture
+   * @memberOf Texture2D
+   * @name PIXEL_FORMAT_I8
+   * @static
+   * @constant
+   * @type {Number}
+   */
+  static PIXEL_FORMAT_I8 = 6;
+
+  /**
+   * 16-bit textures used as masks
+   * @memberOf Texture2D
+   * @name PIXEL_FORMAT_AI88
+   * @static
+   * @constant
+   * @type {Number}
+   */
+  static PIXEL_FORMAT_AI88 = 7;
+
+  /**
+   * 16-bit textures: RGBA4444
+   * @memberOf Texture2D
+   * @name PIXEL_FORMAT_RGBA4444
+   * @static
+   * @constant
+   * @type {Number}
+   */
+  static PIXEL_FORMAT_RGBA4444 = 8;
+
+  /**
+   * 16-bit textures: RGB5A1
+   * @memberOf Texture2D
+   * @name PIXEL_FORMAT_RGB5A1
+   * @static
+   * @constant
+   * @type {Number}
+   */
+  static PIXEL_FORMAT_RGB5A1 = 7;
+
+  /**
+   * 4-bit PVRTC-compressed texture: PVRTC4
+   * @memberOf Texture2D
+   * @name PIXEL_FORMAT_PVRTC4
+   * @static
+   * @constant
+   * @type {Number}
+   */
+  static PIXEL_FORMAT_PVRTC4 = 9;
+
+  /**
+   * 2-bit PVRTC-compressed texture: PVRTC2
+   * @memberOf Texture2D
+   * @name PIXEL_FORMAT_PVRTC2
+   * @static
+   * @constant
+   * @type {Number}
+   */
+  static PIXEL_FORMAT_PVRTC2 = 10;
+
+  /**
+   * Default texture format: RGBA8888
+   * @memberOf Texture2D
+   * @name PIXEL_FORMAT_DEFAULT
+   * @static
+   * @constant
+   * @type {Number}
+   */
+  static PIXEL_FORMAT_DEFAULT =   Texture2D.PIXEL_FORMAT_RGBA8888;
+
+  /**
+   * The default pixel format
+   * @memberOf Texture2D
+   * @name PIXEL_FORMAT_PVRTC2
+   * @static
+   * @type {Number}
+   */
+  static defaultPixelFormat =   Texture2D.PIXEL_FORMAT_DEFAULT;
+
+  static _M = {
+   [Texture2D.PIXEL_FORMAT_RGBA8888] : "RGBA8888",
+   [Texture2D.PIXEL_FORMAT_RGB888] : "RGB888",
+   [Texture2D.PIXEL_FORMAT_RGB565] : "RGB565",
+   [Texture2D.PIXEL_FORMAT_A8] : "A8",
+   [Texture2D.PIXEL_FORMAT_I8] : "I8",
+   [Texture2D.PIXEL_FORMAT_AI88] : "AI88",
+   [Texture2D.PIXEL_FORMAT_RGBA4444] : "RGBA4444",
+   [Texture2D.PIXEL_FORMAT_RGB5A1] : "RGB5A1",
+   [Texture2D.PIXEL_FORMAT_PVRTC4] : "PVRTC4",
+   [Texture2D.PIXEL_FORMAT_PVRTC2] : "PVRTC2",
+  };
+
+
+  static _B = {
+    [Texture2D.PIXEL_FORMAT_RGBA8888] : 32,
+    [Texture2D.PIXEL_FORMAT_RGB888] : 24,
+    [Texture2D.PIXEL_FORMAT_RGB565] : 16,
+    [Texture2D.PIXEL_FORMAT_A8] : 8,
+    [Texture2D.PIXEL_FORMAT_I8] : 8,
+    [Texture2D.PIXEL_FORMAT_AI88] : 16,
+    [Texture2D.PIXEL_FORMAT_RGBA4444] : 16,
+    [Texture2D.PIXEL_FORMAT_RGB5A1] : 16,
+    [Texture2D.PIXEL_FORMAT_PVRTC4] : 4,
+    [Texture2D.PIXEL_FORMAT_PVRTC2] : 3,
+};
+
+
   // By default PVR images are treated as if they don't have the alpha channel premultiplied
   _pVRHaveAlphaPremultiplied: boolean;
   _pixelFormat: any;
@@ -79,7 +242,7 @@ export class Texture2D extends EventHelper {
 
     // ctor behavior
     this._contentSize = size(0, 0);
-    this._pixelFormat = (this.constructor as any).defaultPixelFormat;
+    this._pixelFormat = Texture2D.defaultPixelFormat;
   }
 
   // release texture
@@ -241,11 +404,11 @@ export class Texture2D extends EventHelper {
    * @return {Boolean}
    */
   initWithData(data: any, pixelFormat: any, pixelsWide: number, pixelsHigh: number, contentSize: any) {
-    const self: any = this, tex2d = (this.constructor as any);
+    const self: any = this;
     const gl = _renderContext;
     let format: number = gl.RGBA, type: number = gl.UNSIGNED_BYTE;
 
-    const bitsPerPixel = (tex2d._B || [])[pixelFormat];
+    const bitsPerPixel = (Texture2D._B || [])[pixelFormat];
 
     const bytesPerRow = pixelsWide * bitsPerPixel / 8;
     if (bytesPerRow % 8 === 0) {
@@ -268,28 +431,28 @@ export class Texture2D extends EventHelper {
 
     // Specify OpenGL texture image
     switch (pixelFormat) {
-      case tex2d.PIXEL_FORMAT_RGBA8888:
+      case Texture2D.PIXEL_FORMAT_RGBA8888:
         format = gl.RGBA;
         break;
-      case tex2d.PIXEL_FORMAT_RGB888:
+      case Texture2D.PIXEL_FORMAT_RGB888:
         format = gl.RGB;
         break;
-      case tex2d.PIXEL_FORMAT_RGBA4444:
+      case Texture2D.PIXEL_FORMAT_RGBA4444:
         type = gl.UNSIGNED_SHORT_4_4_4_4;
         break;
-      case tex2d.PIXEL_FORMAT_RGB5A1:
+      case Texture2D.PIXEL_FORMAT_RGB5A1:
         type = gl.UNSIGNED_SHORT_5_5_5_1;
         break;
-      case tex2d.PIXEL_FORMAT_RGB565:
+      case Texture2D.PIXEL_FORMAT_RGB565:
         type = gl.UNSIGNED_SHORT_5_6_5;
         break;
-      case tex2d.PIXEL_FORMAT_AI88:
+      case Texture2D.PIXEL_FORMAT_AI88:
         format = gl.LUMINANCE_ALPHA;
         break;
-      case tex2d.PIXEL_FORMAT_A8:
+      case Texture2D.PIXEL_FORMAT_A8:
         format = gl.ALPHA;
         break;
-      case tex2d.PIXEL_FORMAT_I8:
+      case Texture2D.PIXEL_FORMAT_I8:
         format = gl.LUMINANCE;
         break;
       default:
@@ -531,8 +694,7 @@ export class Texture2D extends EventHelper {
   }
 
   setAntiAliasTexParameters() {
-    var gl: any = _renderContext;
-
+    var gl = _renderContext;
     glBindTexture2D(this);
     if (!this._hasMipmaps) gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     else gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_NEAREST);
@@ -549,7 +711,7 @@ export class Texture2D extends EventHelper {
   }
 
   generateMipmap() {
-    var _t: any = this;
+    var _t = this;
     assert(_t._pixelsWide === NextPOT(_t._pixelsWide) && _t._pixelsHigh === NextPOT(_t._pixelsHigh), "Mimpap texture only works in POT textures");
 
     glBindTexture2D(_t);

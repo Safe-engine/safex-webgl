@@ -47,7 +47,6 @@ export class Director {
     return Director.sharedDirector!;
   }
   // Variables
-  private _landscape = false;
   private _nextDeltaTimeZero = false;
   private _paused = false;
   _purgeDirectorInNextLoop = false;
@@ -71,8 +70,6 @@ export class Director {
 
   private _totalFrames = 0;
   private _secondsPerFrame = 0;
-
-  private _dirtyRegion: any = null;
 
   private _scheduler: Scheduler;
   private _actionManager: ActionManager | null = null;
