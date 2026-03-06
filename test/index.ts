@@ -2,7 +2,6 @@ import { director, game, view } from "../src"
 import { ResolutionPolicy } from "../src/2d/core/platform/EGLView/ResolutionPolicy"
 import { Scene } from "../src/2d/core/scenes/Scene"
 import { Sprite } from "../src/2d/core/sprites/Sprite"
-import { textureCache } from "../src/2d/textures/TextureCache"
 import { global } from "../src/helper/global"
 import { loader } from "../src/helper/loader"
 import { sys } from "../src/helper/sys"
@@ -15,17 +14,16 @@ class BootScene extends Scene {
   // }
   onEnter() {
     super.onEnter()
-    console.log("BootScene onEnter", textureCache.getTextureForKey("res/button.png"))
     loader.load(["res/button.png"], (err, img) => {
       if (err) {
         console.error("Failed to load image", err)
         return
       }
-      console.log("Image loaded", img)
+      // console.log("Image loaded", img)
       const sprite = new Sprite("res/button.png")
       const sprite2 = new Sprite("res/button.png")
       const sprite3 = new Sprite("res/button.png")
-      console.log("sprite onEnter", sprite.getTexture())
+      // console.log("sprite onEnter", sprite.getTexture())
       sprite.setPosition(view.getDesignResolutionSize().width / 2, view.getDesignResolutionSize().height / 2)
       sprite2.setPosition(100, 200)
       sprite3.setPosition(100, 200)
@@ -55,8 +53,8 @@ game.run(
     // Adjust viewport meta
     view.adjustViewPort(true)
     // Setup the resolution policy and design resolution size
-    const width = 750
-    const height = 1334
+    const width = 720
+    const height = 1280
     const policy = width > height ? ResolutionPolicy.FIXED_HEIGHT : ResolutionPolicy.FIXED_WIDTH
     view.setDesignResolutionSize(width, height, policy)
     // The game will be resized when browser size change

@@ -2,7 +2,7 @@ import { game } from "../..";
 import { _LogInfos, assert, log } from "../../helper/Debugger";
 import { loader } from "../../helper/loader";
 import { path } from "../../helper/path";
-import { Texture2D } from "./Texture2D";
+import { Texture2D } from "./TexturesWebGL";
 
 export const textureCache = /** @lends textureCache# */{
   _textures: {},

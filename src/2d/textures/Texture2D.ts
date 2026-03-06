@@ -5,6 +5,7 @@ import { rect, size } from "../core/cocoa/Geometry";
 import { EventHelper } from "../core/event-manager/EventHelper";
 import { contentScaleFactor, REPEAT } from "../core/platform/Macro";
 import { textureCache } from "./TextureCache";
+import { Texture2D } from "./TexturesWebGL";
 
 export const ALIGN_CENTER = 0x33;
 export const ALIGN_TOP = 0x13;
@@ -15,15 +16,8 @@ export const ALIGN_BOTTOM = 0x23;
 export const ALIGN_BOTTOM_LEFT = 0x21;
 export const ALIGN_LEFT = 0x31;
 export const ALIGN_TOP_LEFT = 0x11;
-export const PVRHaveAlphaPremultiplied_ = false;
 
-export class Texture2D extends EventHelper {
-  width(arg0: number, arg1: number, width: any, height: any): import("../core/cocoa/Geometry").Rect {
-    throw new Error("Method not implemented.");
-  }
-  height(arg0: number, arg1: number, width: any, height: any): import("../core/cocoa/Geometry").Rect {
-    throw new Error("Method not implemented.");
-  }
+export class Texture2DCanvas extends EventHelper {
   _contentSize: any;
   _textureLoaded: boolean;
   _htmlElementObj: any;

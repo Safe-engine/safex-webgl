@@ -9,13 +9,15 @@ import { inputManager } from "./2d/core/platform/InputManager";
 import './2d/core/platform/Loaders';
 import { $ } from "./2d/core/platform/miniFramework";
 import { rendererWebGL } from "./2d/core/renderer/RendererWebGL";
-import { Texture2D } from "./2d/textures/Texture2D";
 import { textureCache } from "./2d/textures/TextureCache";
+import { PrototypeTexture2D } from "./2d/textures/TexturesPropertyDefine";
+import { Texture2D } from "./2d/textures/TexturesWebGL";
 import { isFunction, isUndefined } from "./helper/checkType";
 import { _LogInfos, assert, log } from "./helper/Debugger";
 import { _engineLoaded, _renderType, _supportRender, create3DContext, initEngine } from "./helper/engine";
 import { _tmp, global } from "./helper/global";
 import { loader } from "./helper/loader";
+import { path } from "./helper/path";
 
 declare global {
   interface Window {
@@ -60,8 +62,7 @@ export let view: EGLView;
 export let winSize: Size;
 export let container: HTMLElement | null = null;
 
-declare const path: any;
-
+PrototypeTexture2D()
 class Game extends EventHelper {
   DEBUG_MODE_NONE = 0;
   DEBUG_MODE_INFO = 1;
@@ -104,7 +105,7 @@ class Game extends EventHelper {
   _prepared = false;
   _rendererInitialized = false;
 
-  _renderContext: any = null;
+  _renderContext: WebGLRenderingContext = null;
 
   _intervalId: number | null = null;
 

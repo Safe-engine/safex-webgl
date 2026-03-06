@@ -22,8 +22,8 @@ export const rendererWebGL = (function () {
   },
 
     _batchBroken = false,
-    _indexBuffer = null,
-    _vertexBuffer = null,
+    _indexBuffer: WebGLBuffer = null,
+    _vertexBuffer: WebGLBuffer = null,
     // Total vertex size
     _maxVertexSize = 0,
     // Current batching vertex size
@@ -37,7 +37,7 @@ export const rendererWebGL = (function () {
     _vertexDataSize = 0,
     _vertexDataF32 = null,
     _vertexDataUI32 = null,
-    _indexData = null,
+    _indexData: Uint16Array = null,
     _prevIndexSize = 0,
     _pureQuad = true,
     _IS_IOS = false;
@@ -425,6 +425,7 @@ export const rendererWebGL = (function () {
         cmd = locCmds[i];
         if (!cmd.needDraw()) continue;
 
+        // console.log('cmd', cmd)
         if (cmd.uploadData) {
           this._uploadBufferData(cmd);
         }

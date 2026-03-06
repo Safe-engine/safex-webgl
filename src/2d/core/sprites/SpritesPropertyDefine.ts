@@ -1,6 +1,6 @@
 import { Sprite } from "./Sprite";
 
- function defineGetterSetter(proto, prop, getter, setter?, getterName?, setterName?) {
+export function defineGetterSetter(proto, prop, getter, setter?, getterName?, setterName?) {
     if (proto.__defineGetter__) {
         getter && proto.__defineGetter__(prop, getter);
         setter && proto.__defineSetter__(prop, setter);

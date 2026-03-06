@@ -1,9 +1,8 @@
 import { _LogInfos, assert, log } from "../../../helper/Debugger"
-import { Texture2D } from "../../textures/Texture2D"
 import { textureCache } from "../../textures/TextureCache"
+import { Texture2D } from "../../textures/TexturesWebGL"
 import { Node } from "../base-nodes/Node"
 import { p, Rect, rect, size } from "../cocoa/Geometry"
-import { EventHelper } from "../event-manager/EventHelper"
 import { BLEND_DST, BLEND_SRC, pointPointsToPixels, rectPointsToPixels, sizePointsToPixels } from "../platform/Macro"
 import { animationCache } from "./AnimationCache"
 import { SpriteFrame } from "./SpriteFrame"
@@ -32,7 +31,7 @@ export class Sprite extends Node {
   _textureLoaded: boolean = false;
   _className: string = "Sprite";
   _blendFunc: any = { src: BLEND_SRC, dst: BLEND_DST };
-  _loader: any = null;
+  _loader: SpriteLoadManager = null;
   anchorX: number = 0.5
   anchorY: number = 0.5
 
@@ -269,7 +268,7 @@ export class Sprite extends Node {
     this._textureLoaded = texture.isLoaded();
     if (!this._textureLoaded) {
       this._loader.once(texture, function () {
-        (this as any).initWithTexture(texture, rectArg, rotated, counterclockwise);
+        this.initWithTexture(texture, rectArg, rotated, counterclockwise);
         this.dispatchEvent("load");
       }, this);
       return false;
@@ -337,7 +336,7 @@ export class Sprite extends Node {
     this._loader.clear();
     if (!this._textureLoaded) {
       this._loader.once(pNewTexture, function () {
-        (this as any).setSpriteFrame(newFrame);
+        this.setSpriteFrame(newFrame);
         this.dispatchEvent("load");
       }, this);
       return false;
@@ -384,7 +383,7 @@ export class Sprite extends Node {
     this._loader.clear();
     if (!texture._textureLoaded) {
       this._loader.once(texture, function () {
-        (this as any).setTexture(texture);
+        this.setTexture(texture);
         this.dispatchEvent("load");
       }, this);
       return false;
@@ -414,5 +413,5 @@ export class Sprite extends Node {
 }
 
 // EventHelper.prototype.apply(Sprite.prototype);
-Object.assign(Sprite.prototype, EventHelper.prototype);
+// Object.assign(Sprite.prototype, EventHelper.prototype);
 PrototypeSprite();
