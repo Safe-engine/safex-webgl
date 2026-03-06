@@ -1,6 +1,4 @@
-import { isFunction } from "../../../helper/checkType"
 import { _LogInfos, assert, log } from "../../../helper/Debugger"
-import { _tmp } from "../../../helper/global"
 import { Texture2D } from "../../textures/Texture2D"
 import { textureCache } from "../../textures/TextureCache"
 import { Node } from "../base-nodes/Node"
@@ -11,6 +9,7 @@ import { animationCache } from "./AnimationCache"
 import { SpriteFrame } from "./SpriteFrame"
 import { spriteFrameCache } from "./SpriteFrameCache"
 import { SpriteLoadManager } from "./SpriteLoadManager"
+import { PrototypeSprite } from "./SpritesPropertyDefine"
 import { SpriteWebGLRenderCmd } from "./SpriteWebGLRenderCmd"
 export class Sprite extends Node {
   dirty: boolean = false;
@@ -416,6 +415,4 @@ export class Sprite extends Node {
 
 // EventHelper.prototype.apply(Sprite.prototype);
 Object.assign(Sprite.prototype, EventHelper.prototype);
-assert(isFunction(_tmp.PrototypeSprite), _LogInfos.MissingFile, "SpritesPropertyDefine.js");
-// _tmp.PrototypeSprite();
-delete _tmp.PrototypeSprite;
+PrototypeSprite();

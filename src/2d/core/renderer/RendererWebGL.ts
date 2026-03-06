@@ -414,14 +414,13 @@ export const rendererWebGL = (function () {
     },
 
     rendering: function (ctx: WebGLRenderingContext, cmds?: any[]) {
-      let locCmds = cmds || this._renderCmds,
-        i, len, cmd,
-        context = ctx || _renderContext;
+      let locCmds = cmds || this._renderCmds
+      let i, len, cmd
+      let context = ctx || _renderContext;
 
       // Reset buffer for rendering
       const gl = _renderContext;
       context.bindBuffer(gl.ARRAY_BUFFER, null);
-
       for (i = 0, len = locCmds.length; i < len; ++i) {
         cmd = locCmds[i];
         if (!cmd.needDraw()) continue;

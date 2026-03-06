@@ -1,4 +1,4 @@
-import type { Size } from "./2d/core/cocoa/Geometry";
+import { Size } from "./2d/core/cocoa/Geometry";
 import { Director } from "./2d/core/Director";
 import { DrawingPrimitiveWebGL } from "./2d/core/DrawingPrimitivesWebGL";
 import { EventCustom } from "./2d/core/event-manager/EventCustom";
@@ -6,6 +6,7 @@ import { EventHelper } from "./2d/core/event-manager/EventHelper";
 import { eventManager } from "./2d/core/event-manager/EventManager";
 import { EGLView } from "./2d/core/platform/EGLView";
 import { inputManager } from "./2d/core/platform/InputManager";
+import './2d/core/platform/Loaders';
 import { $ } from "./2d/core/platform/miniFramework";
 import { rendererWebGL } from "./2d/core/renderer/RendererWebGL";
 import { Texture2D } from "./2d/textures/Texture2D";

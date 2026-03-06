@@ -263,7 +263,7 @@ export const _formatString = function (arg) {
  */
 
 //log to web page
-const locLog = _logToWebPage;
+const locLog = console.log;
 export const error = function (...args: any[]) {
   locLog("ERROR :  " + formatStr(...args));
 };

@@ -50,9 +50,9 @@ export class Director {
   private _landscape = false;
   private _nextDeltaTimeZero = false;
   private _paused = false;
-  private _purgeDirectorInNextLoop = false;
+  _purgeDirectorInNextLoop = false;
   private _sendCleanupToScene = false;
-  private _animationInterval = 0.0;
+  _animationInterval = 0.0;
   private _oldAnimationInterval = 0.0;
   _projection = Director.PROJECTION_DEFAULT;
   public _contentScaleFactor = 1.0;
@@ -647,8 +647,8 @@ export class DisplayLinkDirector extends Director {
   }
 
   public mainLoop(): void {
-    if ((this as any)._purgeDirectorInNextLoop) {
-      (this as any)._purgeDirectorInNextLoop = false;
+    if (this._purgeDirectorInNextLoop) {
+      this._purgeDirectorInNextLoop = false;
       this.purgeDirector();
     } else if (!this.invalid) {
       this.drawScene();
@@ -660,7 +660,7 @@ export class DisplayLinkDirector extends Director {
   }
 
   public setAnimationInterval(value: number): void {
-    (this as any)._animationInterval = value;
+    this._animationInterval = value;
     if (!this.invalid) {
       this.stopAnimation();
       this.startAnimation();

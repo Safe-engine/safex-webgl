@@ -482,10 +482,10 @@ export const loader = (function () {
         type = path.extname(url);
       }
 
-      var obj = self.getRes(url);
+      const obj = self.getRes(url);
       if (obj)
         return cb(null, obj);
-      var loader = null;
+      let loader = null;
       if (type) {
         loader = _register[type.toLowerCase()];
       }
@@ -526,7 +526,7 @@ export const loader = (function () {
      * @returns {*}
      */
     getUrl: function (basePath, url) {
-      var self = this, path = path;
+      var self = this;
       if (basePath !== undefined && url === undefined) {
         url = basePath;
         var type = path.extname(url);
@@ -554,8 +554,7 @@ export const loader = (function () {
      * @param {function|Object} [loadCallback]
      * @return {AsyncPool}
      */
-    load: function (resources, option, loadCallback) {
-      var self = this;
+    load: function (resources, option, loadCallback?) {
       var len = arguments.length;
       if (len === 0)
         throw new Error("arguments error!");
@@ -576,11 +575,11 @@ export const loader = (function () {
 
       if (!(resources instanceof Array))
         resources = [resources];
-      var asyncPool = new AsyncPool(
+      const asyncPool = new AsyncPool(
         resources, CONCURRENCY_HTTP_REQUEST_COUNT,
-        function (value, index, AsyncPoolCallback, aPool) {
-          self._loadResIterator(value, index, function (err) {
-            var arr = Array.prototype.slice.call(arguments, 1);
+        (value, index, AsyncPoolCallback, aPool) => {
+          this._loadResIterator(value, index, function (err) {
+            const arr = Array.prototype.slice.call(arguments, 1);
             if (option.trigger)
               option.trigger.call(option.triggerTarget, arr[0], aPool.size, aPool.finishedSize);   //call trigger
             AsyncPoolCallback(err, arr[0]);
@@ -592,7 +591,6 @@ export const loader = (function () {
     },
 
     _handleAliases: function (fileNames, cb) {
-      var self = this;
       var resList = [];
       for (var key in fileNames) {
         var value = fileNames[key];
@@ -602,35 +600,6 @@ export const loader = (function () {
       this.load(resList, cb);
     },
 
-    /**
-     * <p>
-     *     Loads alias map from the contents of a filename.                                        <br/>
-     *                                                                                                                 <br/>
-     *     @note The plist file name should follow the format below:                                                   <br/>
-     *     <?xml version="1.0" encoding="UTF-8"?>                                                                      <br/>
-     *         <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">  <br/>
-     *             <plist version="1.0">                                                                               <br/>
-     *                 <dict>                                                                                          <br/>
-     *                     <key>filenames</key>                                                                        <br/>
-     *                     <dict>                                                                                      <br/>
-     *                         <key>sounds/click.wav</key>                                                             <br/>
-     *                         <string>sounds/click.caf</string>                                                       <br/>
-     *                         <key>sounds/endgame.wav</key>                                                           <br/>
-     *                         <string>sounds/endgame.caf</string>                                                     <br/>
-     *                         <key>sounds/gem-0.wav</key>                                                             <br/>
-     *                         <string>sounds/gem-0.caf</string>                                                       <br/>
-     *                     </dict>                                                                                     <br/>
-     *                     <key>metadata</key>                                                                         <br/>
-     *                     <dict>                                                                                      <br/>
-     *                         <key>version</key>                                                                      <br/>
-     *                         <integer>1</integer>                                                                    <br/>
-     *                     </dict>                                                                                     <br/>
-     *                 </dict>                                                                                         <br/>
-     *              </plist>                                                                                           <br/>
-     * </p>
-     * @param {String} url  The plist file name.
-     * @param {Function} [callback]
-     */
     loadAliases: function (url, callback) {
       var self = this, dict = self.getRes(url);
       if (!dict) {
@@ -702,4 +671,3 @@ export const loader = (function () {
     }
   };
 })();
-//+++++++++++++++++++++++++something about loader end+++++++++++++++++++++++++++++
