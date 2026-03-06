@@ -55,7 +55,7 @@ function transformChildTree(root) {
 }
 
 class NodeRenderCmd {
-  _node: any;
+  _node: Node;
   _anchorPointInPoints: { x: number; y: number };
   _displayedColor: any;
 
@@ -75,7 +75,7 @@ class NodeRenderCmd {
   _notifyRegionStatus?: (status: any) => void;
   _cacheDirty?: boolean;
 
-  constructor(renderable: any) {
+  constructor(renderable: Node) {
     this._node = renderable;
     this._anchorPointInPoints = { x: 0, y: 0 };
     this._displayedColor = color(255, 255, 255, 255);

@@ -13,11 +13,11 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
   _color: Uint32Array;
   _dirty: boolean;
   _recursiveDirty: boolean;
-  _spriteCmdCtor: typeof SpriteWebGLRenderCmd;
+  _spriteCmdCtor: any;
 
   constructor(renderable: Sprite) {
     super(renderable);
-    // this._rootCtor(renderable);
+    new this._rootCtor(renderable);
     this._needDraw = true;
 
     this._vertices = [

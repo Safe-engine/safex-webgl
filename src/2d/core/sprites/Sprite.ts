@@ -126,7 +126,7 @@ export class Sprite extends Node {
     locRect.y = r.y;
     locRect.width = r.width;
     locRect.height = r.height;
-    this._renderCmd.setDirtyFlag((Node as any)._dirtyFlags.transformDirty);
+    this._renderCmd.setDirtyFlag(Node._dirtyFlags.transformDirty);
   }
 
   setFlippedX(flippedX: boolean) {

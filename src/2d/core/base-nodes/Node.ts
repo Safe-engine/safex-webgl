@@ -66,7 +66,7 @@ export class Node extends EventHelper {
   _realColor: Color = null;
   _cascadeColorEnabled = false;
   _cascadeOpacityEnabled = false;
-  _renderCmd: NodeWebGLRenderCmd = null;
+  _renderCmd: any = null;
 
   constructor() {
     super();

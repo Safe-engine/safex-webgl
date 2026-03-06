@@ -165,7 +165,7 @@ class Game extends EventHelper {
   }
 
   prepare(cb?: () => void) {
-    console.log("game prepare", this._configLoaded, this._prepared, this._prepareCalled, _engineLoaded)
+    // console.log("game prepare", this._configLoaded, this._prepared, this._prepareCalled, _engineLoaded)
     if (!this._configLoaded) {
       this._loadConfig(() => {
         this.prepare(cb);
@@ -219,7 +219,7 @@ class Game extends EventHelper {
   }
 
   run(config?: any, onStart?: () => void) {
-    console.log("game run", config, onStart)
+    // console.log("game run", config, onStart)
     if (typeof config === 'function') {
       this.onStart = config;
     } else {

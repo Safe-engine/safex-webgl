@@ -631,10 +631,8 @@ export class Director {
   };
 
   setGLDefaultValues() {
-    const _t = this as Director;
-    _t.setAlphaBlending(true);
-    _t.setProjection(_t._projection);
-
+    this.setAlphaBlending(true);
+    this.setProjection(this._projection);
     // set other opengl default values
     _renderContext.clearColor(0.0, 0.0, 0.0, 0.0);
   };

@@ -124,7 +124,7 @@ function _windowLoaded() {
 }
 
 export const initEngine = function (config, cb) {
-  console.log("initEngine", config, _engineInitCalled);
+  // console.log("initEngine", config, _engineInitCalled);
   if (_engineInitCalled) {
     var previousCallback = _engineLoadedCallback;
     _engineLoadedCallback = function () {
@@ -152,4 +152,3 @@ export const initEngine = function (config, cb) {
   // document.body ? _load(config) : _addEventListener(window, 'load', _windowLoaded, false);
   _engineInitCalled = true;
 };
-
