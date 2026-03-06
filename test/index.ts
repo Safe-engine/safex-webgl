@@ -21,11 +21,11 @@ class BootScene extends Scene {
       }
       // console.log("Image loaded", img)
       const sprite = new Sprite("res/button.png")
-      const sprite2 = new Sprite("res/button.png")
+      const sprite2 = new Sprite("res/button_plus.png")
       const sprite3 = new Sprite("res/button.png")
       // console.log("sprite onEnter", sprite.getTexture())
       sprite.setPosition(view.getDesignResolutionSize().width / 2, view.getDesignResolutionSize().height / 2)
-      sprite2.setPosition(100, 200)
+      sprite2.setPosition(85, 26)
       sprite3.setPosition(100, 200)
       this.addChild(sprite)
       this.addChild(sprite3)

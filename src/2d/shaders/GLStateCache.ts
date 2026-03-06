@@ -172,7 +172,6 @@ export const glBindTexture2DN = ENABLE_GL_STATE_CACHE ? function (textureUnit, t
   var ctx = _renderContext;
   ctx.activeTexture(ctx.TEXTURE0 + textureUnit);
   if (textureId) {
-    console.log("glBindTexture2DN", textureUnit, textureId);
     ctx.bindTexture(ctx.TEXTURE_2D, textureId._webTextureObj);
   }
   else
