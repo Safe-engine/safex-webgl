@@ -19,6 +19,7 @@ export default [
     rules: {
       '@typescript-eslint/no-inferrable-types': 'error',
       '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-unused-expressions': 'warn',
       'prettier/prettier': [
         'error',
         {
