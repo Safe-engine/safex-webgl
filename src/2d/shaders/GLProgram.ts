@@ -260,7 +260,7 @@ export class GLProgram {
   }
 
   _addUniformLocation(name: string): any {
-    const location = this._glContext.getUniformLocation(this._programObj, name)
+    const location: any = this._glContext.getUniformLocation(this._programObj, name)
     if (location) location._name = name
     this._uniforms[name] = location
     return location
@@ -616,8 +616,8 @@ export class GLProgram {
    * @param {WebGLUniformLocation|String} location
    * @param {Float32Array} matrixArray
    */
-  setUniformLocationWithMatrix4fv(location: WebGLUniformLocation | string, matrixArray: Float32Array, v1?: number): void {
-    console.log('setUniformLocationWithMatrix4fv', location, matrixArray)
+  setUniformLocationWithMatrix4fv(location: any | string, matrixArray: Float32Array, v1?: number): void {
+    // console.log('setUniformLocationWithMatrix4fv', location, matrixArray)
     const isString = typeof location === 'string'
     const name = isString ? location : location && location._name
     if (name) {

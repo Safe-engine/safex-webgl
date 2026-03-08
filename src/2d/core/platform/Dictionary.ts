@@ -1,28 +1,26 @@
-cc._Dictionary = cc.Class.extend({
-  _keyMapTb: null,
-  _valueMapTb: null,
-  __currId: 0,
+export class Dictionary {
+  private _keyMapTb: { [key: string]: any } = {}
+  private _valueMapTb: { [key: string]: any } = {}
+  private __currId = 0
 
-  ctor: function () {
-    this._keyMapTb = {}
-    this._valueMapTb = {}
+  constructor() {
     this.__currId = 2 << (0 | (Math.random() * 10))
-  },
+  }
 
-  __getKey: function () {
+  private __getKey(): string {
     this.__currId++
     return `key_${this.__currId}`
-  },
+  }
 
-  setObject: function (value, key) {
+  setObject(value: any, key: any): void {
     if (key == null) return
 
     const keyId = this.__getKey()
     this._keyMapTb[keyId] = key
     this._valueMapTb[keyId] = value
-  },
+  }
 
-  objectForKey: function (key) {
+  objectForKey(key: any): any {
     if (key == null) return null
 
     const locKeyMapTb = this._keyMapTb
@@ -30,13 +28,13 @@ cc._Dictionary = cc.Class.extend({
       if (locKeyMapTb[keyId] === key) return this._valueMapTb[keyId]
     }
     return null
-  },
+  }
 
-  valueForKey: function (key) {
+  valueForKey(key: any): any {
     return this.objectForKey(key)
-  },
+  }
 
-  removeObjectForKey: function (key) {
+  removeObjectForKey(key: any): void {
     if (key == null) return
 
     const locKeyMapTb = this._keyMapTb
@@ -47,27 +45,27 @@ cc._Dictionary = cc.Class.extend({
         return
       }
     }
-  },
+  }
 
-  removeObjectsForKeys: function (keys) {
+  removeObjectsForKeys(keys: any[]): void {
     if (keys == null) return
 
     for (let i = 0; i < keys.length; i++) this.removeObjectForKey(keys[i])
-  },
+  }
 
-  allKeys: function () {
-    const keyArr = [],
-      locKeyMapTb = this._keyMapTb
+  allKeys(): any[] {
+    const keyArr: any[] = []
+    const locKeyMapTb = this._keyMapTb
     for (const key in locKeyMapTb) keyArr.push(locKeyMapTb[key])
     return keyArr
-  },
+  }
 
-  removeAllObjects: function () {
+  removeAllObjects(): void {
     this._keyMapTb = {}
     this._valueMapTb = {}
-  },
+  }
 
-  count: function () {
+  count(): number {
     return this.allKeys().length
-  },
-})
+  }
+}

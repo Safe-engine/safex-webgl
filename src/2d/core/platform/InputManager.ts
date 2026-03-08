@@ -101,13 +101,13 @@ export const inputManager = {
    * @param {Array} touches
    */
   handleTouchesBegin: function (touches) {
-    let selTouch,
-      index,
-      curTouch,
-      touchID,
-      handleTouches = [],
-      locTouchIntDict = this._touchesIntegerDict,
-      now = sys.now()
+    let selTouch
+    let index
+    let curTouch
+    let touchID
+    const handleTouches = []
+    const locTouchIntDict = this._touchesIntegerDict
+    const now = sys.now()
     for (let i = 0, len = touches.length; i < len; i++) {
       selTouch = touches[i]
       touchID = selTouch.getID()
@@ -140,12 +140,12 @@ export const inputManager = {
    * @param {Array} touches
    */
   handleTouchesMove: function (touches) {
-    let selTouch,
-      index,
-      touchID,
-      handleTouches = [],
-      locTouches = this._touches,
-      now = sys.now()
+    let selTouch
+    let index
+    let touchID
+    const handleTouches = []
+    const locTouches = this._touches
+    const now = sys.now()
     for (let i = 0, len = touches.length; i < len; i++) {
       selTouch = touches[i]
       touchID = selTouch.getID()
@@ -204,12 +204,12 @@ export const inputManager = {
    * @returns {Array}
    */
   getSetOfTouchesEndOrCancel: function (touches) {
-    let selTouch,
-      index,
-      touchID,
-      handleTouches = [],
-      locTouches = this._touches,
-      locTouchesIntDict = this._touchesIntegerDict
+    let selTouch
+    let index
+    let touchID
+    const handleTouches = []
+    const locTouches = this._touches
+    const locTouchesIntDict = this._touchesIntegerDict
     for (let i = 0, len = touches.length; i < len; i++) {
       selTouch = touches[i]
       touchID = selTouch.getID()
@@ -237,7 +237,7 @@ export const inputManager = {
   getHTMLElementPosition: function (element) {
     const docElem = document.documentElement
     const win = window
-    let box = null
+    let box
     if (isFunction(element.getBoundingClientRect)) {
       box = element.getBoundingClientRect()
     } else {
@@ -367,7 +367,7 @@ export const inputManager = {
     for (let i = 0; i < length; i++) {
       touch_event = event.changedTouches[i]
       if (touch_event) {
-        var location
+        let location
         if (sys.BROWSER_TYPE_FIREFOX === sys.browserType)
           location = locView.convertToLocationInView(touch_event.pageX, touch_event.pageY, pos)
         else location = locView.convertToLocationInView(touch_event.clientX, touch_event.clientY, pos)
@@ -396,8 +396,7 @@ export const inputManager = {
   registerSystemEvent: function (element) {
     if (this._isRegisterEvent) return
 
-    const locView = (this._glView = EGLView.getInstance())
-    const selfPointer = this
+    this._glView = EGLView.getInstance()
     const supportMouse = 'mouse' in sys.capabilities,
       supportTouches = 'touches' in sys.capabilities
 
@@ -415,27 +414,27 @@ export const inputManager = {
     if (supportMouse) {
       window.addEventListener(
         'mousedown',
-        function () {
-          selfPointer._mousePressed = true
+        () => {
+          this._mousePressed = true
         },
         false,
       )
 
       window.addEventListener(
         'mouseup',
-        function (event) {
+        (event) => {
           if (prohibition) return
-          const savePressed = selfPointer._mousePressed
-          selfPointer._mousePressed = false
+          const savePressed = this._mousePressed
+          this._mousePressed = false
 
           if (!savePressed) return
 
-          const pos = selfPointer.getHTMLElementPosition(element)
-          const location = selfPointer.getPointByEvent(event, pos)
+          const pos = this.getHTMLElementPosition(element)
+          const location = this.getPointByEvent(event, pos)
           if (!rectContainsPoint(new Rect(pos.left, pos.top, pos.width, pos.height), location)) {
-            selfPointer.handleTouchesEnd([selfPointer.getTouchByXY(location.x, location.y, pos)])
+            this.handleTouchesEnd([this.getTouchByXY(location.x, location.y, pos)])
 
-            const mouseEvent = selfPointer.getMouseEvent(location, pos, EventMouse.UP)
+            const mouseEvent = this.getMouseEvent(location, pos, EventMouse.UP)
             mouseEvent.setButton(event.button)
             eventManager.dispatchEvent(mouseEvent)
           }
@@ -446,16 +445,16 @@ export const inputManager = {
       //register canvas mouse event
       element.addEventListener(
         'mousedown',
-        function (event) {
+        (event) => {
           if (prohibition) return
-          selfPointer._mousePressed = true
+          this._mousePressed = true
 
-          const pos = selfPointer.getHTMLElementPosition(element)
-          const location = selfPointer.getPointByEvent(event, pos)
+          const pos = this.getHTMLElementPosition(element)
+          const location = this.getPointByEvent(event, pos)
 
-          selfPointer.handleTouchesBegin([selfPointer.getTouchByXY(location.x, location.y, pos)])
+          this.handleTouchesBegin([this.getTouchByXY(location.x, location.y, pos)])
 
-          const mouseEvent = selfPointer.getMouseEvent(location, pos, EventMouse.DOWN)
+          const mouseEvent = this.getMouseEvent(location, pos, EventMouse.DOWN)
           mouseEvent.setButton(event.button)
           eventManager.dispatchEvent(mouseEvent)
 
@@ -468,16 +467,16 @@ export const inputManager = {
 
       element.addEventListener(
         'mouseup',
-        function (event) {
+        (event) => {
           if (prohibition) return
-          selfPointer._mousePressed = false
+          this._mousePressed = false
 
-          const pos = selfPointer.getHTMLElementPosition(element)
-          const location = selfPointer.getPointByEvent(event, pos)
+          const pos = this.getHTMLElementPosition(element)
+          const location = this.getPointByEvent(event, pos)
 
-          selfPointer.handleTouchesEnd([selfPointer.getTouchByXY(location.x, location.y, pos)])
+          this.handleTouchesEnd([this.getTouchByXY(location.x, location.y, pos)])
 
-          const mouseEvent = selfPointer.getMouseEvent(location, pos, EventMouse.UP)
+          const mouseEvent = this.getMouseEvent(location, pos, EventMouse.UP)
           mouseEvent.setButton(event.button)
           eventManager.dispatchEvent(mouseEvent)
 
@@ -489,16 +488,16 @@ export const inputManager = {
 
       element.addEventListener(
         'mousemove',
-        function (event) {
+        (event) => {
           if (prohibition) return
 
-          const pos = selfPointer.getHTMLElementPosition(element)
-          const location = selfPointer.getPointByEvent(event, pos)
+          const pos = this.getHTMLElementPosition(element)
+          const location = this.getPointByEvent(event, pos)
 
-          selfPointer.handleTouchesMove([selfPointer.getTouchByXY(location.x, location.y, pos)])
+          this.handleTouchesMove([this.getTouchByXY(location.x, location.y, pos)])
 
-          const mouseEvent = selfPointer.getMouseEvent(location, pos, EventMouse.MOVE)
-          if (selfPointer._mousePressed) mouseEvent.setButton(event.button)
+          const mouseEvent = this.getMouseEvent(location, pos, EventMouse.MOVE)
+          if (this._mousePressed) mouseEvent.setButton(event.button)
           else mouseEvent.setButton(null)
           eventManager.dispatchEvent(mouseEvent)
 
@@ -510,11 +509,11 @@ export const inputManager = {
 
       element.addEventListener(
         'mousewheel',
-        function (event) {
-          const pos = selfPointer.getHTMLElementPosition(element)
-          const location = selfPointer.getPointByEvent(event, pos)
+        (event) => {
+          const pos = this.getHTMLElementPosition(element)
+          const location = this.getPointByEvent(event, pos)
 
-          const mouseEvent = selfPointer.getMouseEvent(location, pos, EventMouse.SCROLL)
+          const mouseEvent = this.getMouseEvent(location, pos, EventMouse.SCROLL)
           mouseEvent.setButton(event.button)
           mouseEvent.setScrollData(0, event.wheelDelta)
           eventManager.dispatchEvent(mouseEvent)
@@ -528,11 +527,11 @@ export const inputManager = {
       /* firefox fix */
       element.addEventListener(
         'DOMMouseScroll',
-        function (event) {
-          const pos = selfPointer.getHTMLElementPosition(element)
-          const location = selfPointer.getPointByEvent(event, pos)
+        (event) => {
+          const pos = this.getHTMLElementPosition(element)
+          const location = this.getPointByEvent(event, pos)
 
-          const mouseEvent = selfPointer.getMouseEvent(location, pos, EventMouse.SCROLL)
+          const mouseEvent = this.getMouseEvent(location, pos, EventMouse.SCROLL)
           mouseEvent.setButton(event.button)
           mouseEvent.setScrollData(0, event.detail * -120)
           eventManager.dispatchEvent(mouseEvent)
@@ -546,22 +545,22 @@ export const inputManager = {
 
     if (window.navigator.msPointerEnabled) {
       const _pointerEventsMap = {
-        MSPointerDown: selfPointer.handleTouchesBegin,
-        MSPointerMove: selfPointer.handleTouchesMove,
-        MSPointerUp: selfPointer.handleTouchesEnd,
-        MSPointerCancel: selfPointer.handleTouchesCancel,
+        MSPointerDown: this.handleTouchesBegin,
+        MSPointerMove: this.handleTouchesMove,
+        MSPointerUp: this.handleTouchesEnd,
+        MSPointerCancel: this.handleTouchesCancel,
       }
 
       for (const eventName in _pointerEventsMap) {
         ;(function (_pointerEvent, _touchEvent) {
           element.addEventListener(
             _pointerEvent,
-            function (event) {
-              const pos = selfPointer.getHTMLElementPosition(element)
+            (event) => {
+              const pos = this.getHTMLElementPosition(element)
               pos.left -= document.documentElement.scrollLeft
               pos.top -= document.documentElement.scrollTop
 
-              _touchEvent.call(selfPointer, [selfPointer.getTouchByXY(event.clientX, event.clientY, pos)])
+              _touchEvent.call(this, [this.getTouchByXY(event.clientX, event.clientY, pos)])
               event.stopPropagation()
             },
             false,
@@ -574,13 +573,13 @@ export const inputManager = {
       //register canvas touch event
       element.addEventListener(
         'touchstart',
-        function (event) {
+        (event) => {
           if (!event.changedTouches) return
 
-          const pos = selfPointer.getHTMLElementPosition(element)
+          const pos = this.getHTMLElementPosition(element)
           pos.left -= document.body.scrollLeft
           pos.top -= document.body.scrollTop
-          selfPointer.handleTouchesBegin(selfPointer.getTouchesByEvent(event, pos))
+          this.handleTouchesBegin(this.getTouchesByEvent(event, pos))
           event.stopPropagation()
           event.preventDefault()
           element.focus()
@@ -590,13 +589,13 @@ export const inputManager = {
 
       element.addEventListener(
         'touchmove',
-        function (event) {
+        (event) => {
           if (!event.changedTouches) return
 
-          const pos = selfPointer.getHTMLElementPosition(element)
+          const pos = this.getHTMLElementPosition(element)
           pos.left -= document.body.scrollLeft
           pos.top -= document.body.scrollTop
-          selfPointer.handleTouchesMove(selfPointer.getTouchesByEvent(event, pos))
+          this.handleTouchesMove(this.getTouchesByEvent(event, pos))
           event.stopPropagation()
           event.preventDefault()
         },
@@ -605,13 +604,13 @@ export const inputManager = {
 
       element.addEventListener(
         'touchend',
-        function (event) {
+        (event) => {
           if (!event.changedTouches) return
 
-          const pos = selfPointer.getHTMLElementPosition(element)
+          const pos = this.getHTMLElementPosition(element)
           pos.left -= document.body.scrollLeft
           pos.top -= document.body.scrollTop
-          selfPointer.handleTouchesEnd(selfPointer.getTouchesByEvent(event, pos))
+          this.handleTouchesEnd(this.getTouchesByEvent(event, pos))
           event.stopPropagation()
           event.preventDefault()
         },
@@ -620,13 +619,13 @@ export const inputManager = {
 
       element.addEventListener(
         'touchcancel',
-        function (event) {
+        (event) => {
           if (!event.changedTouches) return
 
-          const pos = selfPointer.getHTMLElementPosition(element)
+          const pos = this.getHTMLElementPosition(element)
           pos.left -= document.body.scrollLeft
           pos.top -= document.body.scrollTop
-          selfPointer.handleTouchesCancel(selfPointer.getTouchesByEvent(event, pos))
+          this.handleTouchesCancel(this.getTouchesByEvent(event, pos))
           event.stopPropagation()
           event.preventDefault()
         },

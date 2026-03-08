@@ -17,12 +17,12 @@ const _jsonLoader = {
 }
 loader.register(['json', 'ExportJson'], _jsonLoader)
 
-const _jsLoader = {
-  load: function (realUrl, url, res, cb) {
-    loader.loadJs(realUrl, cb)
-  },
-}
-loader.register(['js'], _jsLoader)
+// const _jsLoader = {
+//   load: function (realUrl, url, res, cb) {
+//     loader.loadJs(realUrl, cb)
+//   },
+// }
+// loader.register(['js'], _jsLoader)
 
 const _imgLoader = {
   load: function (realUrl, url, res, cb) {
@@ -70,16 +70,15 @@ const _fontLoader = {
     '.svg': 'svg',
   },
   _loadFont: function (name, srcs, type) {
-    var doc = document,
-      path = path,
-      TYPE = this.TYPE,
-      fontStyle = document.createElement('style')
+    const doc = document
+    const TYPE = this.TYPE
+    const fontStyle = document.createElement('style')
     fontStyle.type = 'text/css'
     doc.body.appendChild(fontStyle)
 
     let fontStr = ''
     if (isNaN(name - 0)) fontStr += `@font-face { font-family:${name}; src:`
-    else fontStr += "@font-face { font-family:'" + name + "'; src:"
+    else fontStr += '@font-face { font-family:\'" + name + "\'; src:'
     if (srcs instanceof Array) {
       for (let i = 0, li = srcs.length; i < li; i++) {
         const src = srcs[i]
@@ -104,16 +103,15 @@ const _fontLoader = {
     doc.body.appendChild(preloadDiv)
   },
   load: function (realUrl, url, res, cb) {
-    const self = this
-    let type = res.type,
-      name = res.name,
-      srcs = res.srcs
+    // let type = res.type
+    let name = res.name
+    const srcs = res.srcs
     if (isString(res)) {
-      type = path.extname(res)
+      const type = path.extname(res)
       name = path.basename(res, type)
-      self._loadFont(name, res, type)
+      this._loadFont(name, res, type)
     } else {
-      self._loadFont(name, srcs)
+      this._loadFont(name, srcs)
     }
     if (document.fonts) {
       document.fonts.load(`1em ${name}`).then(
@@ -137,9 +135,9 @@ const _binaryLoader = {
   },
 }
 
-const _csbLoader = {
-  load: function (realUrl, url, res, cb) {
-    loader.loadCsb(realUrl, cb)
-  },
-}
-loader.register(['csb'], _csbLoader)
+// const _csbLoader = {
+//   load: function (realUrl, url, res, cb) {
+//     loader.loadCsb(realUrl, cb)
+//   },
+// }
+// loader.register(['csb'], _csbLoader)

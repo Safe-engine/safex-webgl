@@ -1,7 +1,7 @@
 import { director } from '../..'
 import { _LogInfos, assert, log } from '../../helper/Debugger'
-import { ACTION_TAG_INVALID, type Action } from '../actions/Action'
-import type { Node } from './base-nodes/Node'
+import { ACTION_TAG_INVALID, Action } from '../actions/Action'
+import { Node } from './base-nodes/Node'
 
 // You may need to adjust these imports to match your project structure
 

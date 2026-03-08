@@ -1,4 +1,5 @@
 import { _LogInfos, assert, log } from '../../helper/Debugger'
+import { REPEAT_FOREVER } from './platform/Macro'
 
 const MAX_POOL_SIZE = 20
 
@@ -336,8 +337,8 @@ export class Scheduler {
     }
 
     // Iterate over all the custom selectors
-    let elt: HashTimerEntry,
-      arr = this._arrayForTimers
+    let elt: HashTimerEntry
+    const arr = this._arrayForTimers
     for (i = 0; i < arr.length; i++) {
       elt = arr[i]
       this._currentTarget = elt
@@ -487,13 +488,9 @@ export class Scheduler {
       ppList = []
       ppList.push(listElement)
     } else {
-      let index2Insert = ppList.length - 1
       let i = 0
-      for (; i <= index2Insert; i++) {
-        if (priority < ppList[i].priority) {
-          index2Insert = i
-          break
-        }
+      for (; i < ppList.length; i++) {
+        if (priority < ppList[i].priority) break
       }
       ppList.splice(i, 0, listElement)
     }
@@ -613,15 +610,14 @@ export class Scheduler {
   }
 
   unscheduleAllWithMinPriority(minPriority: number) {
-    let i,
-      element,
-      arr = this._arrayForTimers
+    let i, element
+    const arr = this._arrayForTimers
     for (i = arr.length - 1; i >= 0; i--) {
       element = arr[i]
       this.unscheduleAllForTarget(element.target)
     }
     let entry
-    let temp_length = 0
+    let temp_length
     if (minPriority < 0) {
       for (i = 0; i < this._updatesNegList.length; ) {
         temp_length = this._updatesNegList.length
@@ -671,9 +667,8 @@ export class Scheduler {
 
   pauseAllTargetsWithMinPriority(minPriority: number): any[] {
     const idsWithSelectors: any[] = []
-    let self = this,
-      element,
-      locArrayForTimers = self._arrayForTimers
+    let element
+    const locArrayForTimers = this._arrayForTimers
     let i, li
     for (i = 0, li = locArrayForTimers.length; i < li; i++) {
       element = locArrayForTimers[i]
@@ -724,12 +719,11 @@ export class Scheduler {
 
   pauseTarget(target: any) {
     assert?.(target, _LogInfos?.Scheduler_pauseTarget)
-    const self = this,
-      element = self._hashForTimers[target.__instanceId]
+    const element = this._hashForTimers[target.__instanceId]
     if (element) {
       element.paused = true
     }
-    const elementUpdate = self._hashForUpdates[target.__instanceId]
+    const elementUpdate = this._hashForUpdates[target.__instanceId]
     if (elementUpdate) {
       elementUpdate.entry.paused = true
     }
@@ -737,12 +731,11 @@ export class Scheduler {
 
   resumeTarget(target: any) {
     assert?.(target, _LogInfos?.Scheduler_resumeTarget)
-    const self = this,
-      element = self._hashForTimers[target.__instanceId]
+    const element = this._hashForTimers[target.__instanceId]
     if (element) {
       element.paused = false
     }
-    const elementUpdate = self._hashForUpdates[target.__instanceId]
+    const elementUpdate = this._hashForUpdates[target.__instanceId]
     if (elementUpdate) {
       elementUpdate.entry.paused = false
     }

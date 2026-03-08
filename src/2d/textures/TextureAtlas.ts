@@ -1,9 +1,10 @@
-import { _renderContext, game } from '../..'
+import { _renderContext, Game, game } from '../..'
 import { isFunction, isString } from '../../helper/checkType'
 import { _LogInfos, assert, log } from '../../helper/Debugger'
 import { _renderType } from '../../helper/engine'
 import { _tmp } from '../../helper/global'
 import { TEXTURE_ATLAS_USE_TRIANGLE_STRIP } from '../core/platform/Config'
+import { V3F_C4B_T2F_Quad } from '../core/platform/Types'
 import { textureCache } from './TextureCache'
 import { Texture2D } from './TexturesWebGL'
 
@@ -442,9 +443,9 @@ export class TextureAtlas {
     // update capacity and totolQuads
     this._totalQuads = Math.min(this._totalQuads, newCapacity)
     this._capacity = 0 | newCapacity
-    let i,
-      capacity = this._capacity,
-      locTotalQuads = this._totalQuads
+    let i
+    const capacity = this._capacity
+    const locTotalQuads = this._totalQuads
 
     if (this._quads === null) {
       this._quads = []
@@ -452,9 +453,9 @@ export class TextureAtlas {
       this._quadsReader = new Uint8Array(this._quadsArrayBuffer)
       for (i = 0; i < capacity; i++) this._quads = new V3F_C4B_T2F_Quad(null, null, null, null, this._quadsArrayBuffer, i * quadSize)
     } else {
-      let newQuads,
-        newArrayBuffer,
-        quads = this._quads
+      let newQuads
+      let newArrayBuffer
+      const quads = this._quads
       if (capacity > oldCapacity) {
         newQuads = []
         newArrayBuffer = new ArrayBuffer(quadSize * capacity)
@@ -603,9 +604,8 @@ export class TextureAtlas {
 }
 
 // Assign to global cc
-TextureAtlas = TextureAtlas
 
-game.addEventListener(game.EVENT_RENDERER_INITED, function () {
+game.addEventListener(Game.EVENT_RENDERER_INITD, function () {
   if (_renderType === game.RENDER_TYPE_WEBGL) {
     assert(isFunction(_tmp.WebGLTextureAtlas), _LogInfos.MissingFile, 'TexturesWebGL.js')
     _tmp.WebGLTextureAtlas()

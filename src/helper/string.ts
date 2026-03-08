@@ -7,7 +7,7 @@ export const formatStr = function (...args: any[]): string {
     const arg = args[i]
     if (needToFormat) {
       while (true) {
-        let result = null
+        let result
         if (typeof arg === 'number') {
           result = str.match(/(%d)|(%s)/)
           if (result) {

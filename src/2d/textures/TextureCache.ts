@@ -240,8 +240,8 @@ export const textureCache = /** @lends textureCache# */ {
    */
   dumpCachedTextureInfo: function () {
     let count = 0
-    let totalBytes = 0,
-      locTextures = this._textures
+    let totalBytes = 0
+    const locTextures = this._textures
 
     for (const key in locTextures) {
       const selTexture = locTextures[key]
@@ -282,8 +282,7 @@ export const textureCache = /** @lends textureCache# */ {
 
   handleLoadedTexture: function (url, img) {
     let locTexs = this._textures,
-      tex,
-      ext
+      tex
     //remove judge(webgl)
     if (!game._rendererInitialized) {
       locTexs = this._loadedTexturesBefore
@@ -294,7 +293,7 @@ export const textureCache = /** @lends textureCache# */ {
       tex.url = url
     }
     tex.initWithElement(img)
-    ext = path.extname(url)
+    const ext = path.extname(url)
     if (ext === '.png') {
       tex.handleLoadedTexture(true)
     } else {

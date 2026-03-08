@@ -1,13 +1,10 @@
-import { game } from '../../..'
 import { isString } from '../../../helper/checkType'
 import { _LogInfos, assert, log } from '../../../helper/Debugger'
-import { _renderType } from '../../../helper/engine'
 import { loader } from '../../../helper/loader'
 import { path } from '../../../helper/path'
 import { textureCache } from '../../textures/TextureCache'
 import { Texture2D } from '../../textures/TexturesWebGL'
 import { p, rect, size } from '../cocoa/Geometry'
-import { Sprite } from './Sprite'
 import { SpriteFrame } from './SpriteFrame'
 
 /**
@@ -22,9 +19,8 @@ import { SpriteFrame } from './SpriteFrame'
  * @name spriteFrameCache
  */
 export const spriteFrameCache = {
-  _CCNS_REG1: /^\s*\{\s*([\-]?\d+[.]?\d*)\s*,\s*([\-]?\d+[.]?\d*)\s*\}\s*$/,
-  _CCNS_REG2:
-    /^\s*\{\s*\{\s*([\-]?\d+[.]?\d*)\s*,\s*([\-]?\d+[.]?\d*)\s*\}\s*,\s*\{\s*([\-]?\d+[.]?\d*)\s*,\s*([\-]?\d+[.]?\d*)\s*\}\s*\}\s*$/,
+  _CCNS_REG1: /^\s*\{\s*([-]?\d+[.]?\d*)\s*,\s*([-]?\d+[.]?\d*)\s*\}\s*$/,
+  _CCNS_REG2: /^\s*\{\s*\{\s*([-]?\d+[.]?\d*)\s*,\s*([-]?\d+[.]?\d*)\s*\}\s*,\s*\{\s*([-]?\d+[.]?\d*)\s*,\s*([-]?\d+[.]?\d*)\s*\}\s*\}\s*$/,
 
   _spriteFrames: {},
   _spriteFramesAliases: {},
@@ -69,10 +65,10 @@ export const spriteFrameCache = {
   },
 
   _parseFrameConfig: function (dict) {
-    const tempFrames = dict['frames'],
+    const tempFrames: any = dict['frames'],
       tempMeta = dict['metadata'] || dict['meta']
     const frames = {},
-      meta = {}
+      meta: any = {}
     let format = 0
     if (tempMeta) {
       //init meta
@@ -83,7 +79,7 @@ export const spriteFrameCache = {
     for (let key in tempFrames) {
       const frameDict = tempFrames[key]
       if (!frameDict) continue
-      const tempFrame = {}
+      const tempFrame: any = {}
 
       if (format == 0) {
         tempFrame.rect = rect(frameDict['x'], frameDict['y'], frameDict['width'], frameDict['height'])
@@ -173,22 +169,22 @@ export const spriteFrameCache = {
           }
         }
 
-        if (_renderType === game.RENDER_TYPE_CANVAS && spriteFrame.isRotated()) {
-          //clip to canvas
-          const locTexture = spriteFrame.getTexture()
-          if (locTexture.isLoaded()) {
-            let tempElement = spriteFrame.getTexture().getHtmlElementObj()
-            tempElement = Sprite.CanvasRenderCmd._cutRotateImageToCanvas(tempElement, spriteFrame.getRectInPixels())
-            const tempTexture = new Texture2D()
-            tempTexture.initWithElement(tempElement)
-            tempTexture.handleLoadedTexture()
-            spriteFrame.setTexture(tempTexture)
-            spriteFrame.setRotated(false)
+        // if (_renderType === game.RENDER_TYPE_CANVAS && spriteFrame.isRotated()) {
+        //   //clip to canvas
+        //   const locTexture = spriteFrame.getTexture()
+        //   if (locTexture.isLoaded()) {
+        //     let tempElement = spriteFrame.getTexture().getHtmlElementObj()
+        //     tempElement = Sprite.CanvasRenderCmd._cutRotateImageToCanvas(tempElement, spriteFrame.getRectInPixels())
+        //     const tempTexture = new Texture2D()
+        //     tempTexture.initWithElement(tempElement)
+        //     tempTexture.handleLoadedTexture()
+        //     spriteFrame.setTexture(tempTexture)
+        //     spriteFrame.setRotated(false)
 
-            var rect = spriteFrame._rect
-            spriteFrame.setRect(rect(0, 0, rect.width, rect.height))
-          }
-        }
+        //     const rect = spriteFrame._rect
+        //     spriteFrame.setRect(rect(0, 0, rect.width, rect.height))
+        //   }
+        // }
         spriteFrames[key] = spriteFrame
       }
     }
@@ -207,7 +203,7 @@ export const spriteFrameCache = {
    * spriteFrameCache.addSpriteFrames(s_grossiniPlist);
    * spriteFrameCache.addSpriteFrames(s_grossiniJson);
    */
-  addSpriteFrames: function (url, texture) {
+  addSpriteFrames: function (url, texture?) {
     assert(url, _LogInfos.spriteFrameCache_addSpriteFrames_2)
 
     //Is it a SpriteFrame plist?
@@ -285,10 +281,9 @@ export const spriteFrameCache = {
    * @param {String} url Plist filename
    */
   removeSpriteFramesFromFile: function (url) {
-    const self = this,
-      spriteFrames = self._spriteFrames,
-      aliases = self._spriteFramesAliases,
-      cfg = self._frameConfigCache[url]
+    const spriteFrames = this._spriteFrames,
+      aliases = this._spriteFramesAliases,
+      cfg = this._frameConfigCache[url]
     if (!cfg) return
     const frames = cfg.frames
     for (const key in frames) {
@@ -310,9 +305,8 @@ export const spriteFrameCache = {
    * @param {HTMLImageElement|HTMLCanvasElement|Texture2D} texture
    */
   removeSpriteFramesFromTexture: function (texture) {
-    const self = this,
-      spriteFrames = self._spriteFrames,
-      aliases = self._spriteFramesAliases
+    const spriteFrames = this._spriteFrames,
+      aliases = this._spriteFramesAliases
     for (const key in spriteFrames) {
       const frame = spriteFrames[key]
       if (frame && frame.getTexture() === texture) {
@@ -338,14 +332,13 @@ export const spriteFrameCache = {
    * var frame = spriteFrameCache.getSpriteFrame("grossini_dance_01.png");
    */
   getSpriteFrame: function (name) {
-    let self = this,
-      frame = self._spriteFrames[name]
+    let frame = this._spriteFrames[name]
     if (!frame) {
       // try alias dictionary
-      const key = self._spriteFramesAliases[name]
+      const key = this._spriteFramesAliases[name]
       if (key) {
-        frame = self._spriteFrames[key.toString()]
-        if (!frame) delete self._spriteFramesAliases[name]
+        frame = this._spriteFrames[key.toString()]
+        if (!frame) delete this._spriteFramesAliases[name]
       }
     }
     return frame

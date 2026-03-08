@@ -1,5 +1,6 @@
 import { _LogInfos, assert, log } from '../../../helper/Debugger'
 import { loader } from '../../../helper/loader'
+import { path } from '../../../helper/path'
 import { REPEAT_FOREVER } from '../platform/Macro'
 import { spriteFrameCache } from './SpriteFrameCache'
 
@@ -54,8 +55,6 @@ export const animationCache = {
     if (properties) {
       version = properties['format'] != null ? parseInt(properties['format']) : version
       const spritesheets = properties['spritesheets']
-      var spriteFrameCache = spriteFrameCache
-      var path = path
       for (let i = 0; i < spritesheets.length; i++) {
         spriteFrameCache.addSpriteFrames(path.changeBasename(plist, spritesheets[i]))
       }
@@ -101,7 +100,7 @@ export const animationCache = {
       const animationDict = animations[key]
       const frameNames = animationDict['frames']
       const delay = parseFloat(animationDict['delay']) || 0
-      let animation = null
+      // let animation = null
       if (!frameNames) {
         log(_LogInfos.animationCache__parseVersion1, key)
         continue
@@ -125,7 +124,7 @@ export const animationCache = {
       } else if (frames.length !== frameNames.length) {
         log(_LogInfos.animationCache__parseVersion1_4, key)
       }
-      animation = new Animation(frames, delay, 1)
+      const animation = new Animation(frames, delay, 1)
       animationCache.addAnimation(animation, key)
     }
   },

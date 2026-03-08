@@ -1,6 +1,5 @@
 import { _renderContext } from '../../..'
 import { global } from '../../../helper/global'
-import { sys } from '../../../helper/sys'
 import { glBindTexture2DN, glBlendFunc } from '../../shaders/GLStateCache'
 import { Matrix4 } from '../kazmath/mat4'
 import { color } from '../platform/Color'
@@ -15,17 +14,18 @@ import {
 export const rendererWebGL = (function () {
   // Internal variables
   // Batching general informations
-  let _batchedInfo = {
-      // The batched texture, all batching element should have the same texture
-      texture: null,
-      // The batched blend source, all batching element should have the same blend source
-      blendSrc: null,
-      // The batched blend destination, all batching element should have the same blend destination
-      blendDst: null,
-      // The batched gl program state, all batching element should have the same state
-      glProgramState: null,
-    },
-    _batchBroken = false,
+  const _batchedInfo = {
+    // The batched texture, all batching element should have the same texture
+    texture: null,
+    // The batched blend source, all batching element should have the same blend source
+    blendSrc: null,
+    // The batched blend destination, all batching element should have the same blend destination
+    blendDst: null,
+    // The batched gl program state, all batching element should have the same state
+    glProgramState: null,
+  }
+  const _sizePerVertex = 6
+  let _batchBroken = false,
     _indexBuffer: WebGLBuffer = null,
     _vertexBuffer: WebGLBuffer = null,
     // Total vertex size
@@ -35,7 +35,6 @@ export const rendererWebGL = (function () {
     // Current batching index size
     _indexSize = 0,
     // Float size per vertex
-    _sizePerVertex = 6,
     // buffer data and views
     _vertexData = null,
     _vertexDataSize = 0,
@@ -43,8 +42,8 @@ export const rendererWebGL = (function () {
     _vertexDataUI32 = null,
     _indexData: Uint16Array = null,
     _prevIndexSize = 0,
-    _pureQuad = true,
-    _IS_IOS = false
+    _pureQuad = true
+  // _IS_IOS = false
 
   // Inspired from @Heishe's gotta-batch-them-all branch
   // https://github.com/Talisca/cocos2d-html5/commit/de731f16414eb9bcaa20480006897ca6576d362c
@@ -126,9 +125,9 @@ export const rendererWebGL = (function () {
       this.mat4Identity = new Matrix4()
       this.mat4Identity.identity()
       initQuadBuffer(BATCH_VERTEX_COUNT)
-      if (sys.os === sys.OS_IOS) {
-        _IS_IOS = true
-      }
+      // if (sys.os === sys.OS_IOS) {
+      //   _IS_IOS = true
+      // }
     },
 
     getVertexSize: function () {
@@ -281,14 +280,15 @@ export const rendererWebGL = (function () {
             _indexData[_indexSize++] = curr + 2
           }
           break
-        case VertexType.CUSTOM:
+        case VertexType.CUSTOM: {
           // CUSTOM type increase the indices data
           _pureQuad = false
-          var len = indices.length
+          const len = indices.length
           for (i = 0; i < len; i++) {
             _indexData[_indexSize++] = _batchingSize + indices[i]
           }
           break
+        }
         default:
           return
       }

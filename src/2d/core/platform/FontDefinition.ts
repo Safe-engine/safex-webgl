@@ -1,58 +1,62 @@
+import { color } from './Color'
+import { TEXT_ALIGNMENT_CENTER, VERTICAL_TEXT_ALIGNMENT_TOP } from './Types'
+
 /**
  * Common usage:
  *
- * var fontDef = new cc.FontDefinition();
+ * var fontDef = new FontDefinition();
  * fontDef.fontName = "Arial";
  * fontDef.fontSize = 12;
  * ...
  *
  * OR using inline definition useful for constructor injection
  *
- * var fontDef = new cc.FontDefinition({
+ * var fontDef = new FontDefinition({
  *  fontName: "Arial",
  *  fontSize: 12
  * });
  *
  *
  *
- * @class cc.FontDefinition
+ * @class FontDefinition
  * @param {Object} properties - (OPTIONAL) Allow inline FontDefinition
  * @constructor
  */
-cc.FontDefinition = function (properties) {
-  const _t = this
-  _t.fontName = 'Arial'
-  _t.fontSize = 12
-  _t.textAlign = cc.TEXT_ALIGNMENT_CENTER
-  _t.verticalAlign = cc.VERTICAL_TEXT_ALIGNMENT_TOP
-  _t.fillStyle = cc.color(255, 255, 255, 255)
-  _t.boundingWidth = 0
-  _t.boundingHeight = 0
+export class FontDefinition {
+  fontName = 'Arial'
+  fontSize = 12
+  textAlign: any = TEXT_ALIGNMENT_CENTER
+  verticalAlign: any = VERTICAL_TEXT_ALIGNMENT_TOP
+  fillStyle: any = color(255, 255, 255, 255)
+  boundingWidth = 0
+  boundingHeight = 0
 
-  _t.strokeEnabled = false
-  _t.strokeStyle = cc.color(255, 255, 255, 255)
-  _t.lineWidth = 1
-  _t.lineHeight = 'normal'
-  _t.fontStyle = 'normal'
-  _t.fontWeight = 'normal'
+  strokeEnabled = false
+  strokeStyle: any = color(255, 255, 255, 255)
+  lineWidth = 1
+  lineHeight = 'normal'
+  fontStyle = 'normal'
+  fontWeight = 'normal'
 
-  _t.shadowEnabled = false
-  _t.shadowOffsetX = 0
-  _t.shadowOffsetY = 0
-  _t.shadowBlur = 0
-  _t.shadowOpacity = 1.0
+  shadowEnabled = false
+  shadowOffsetX = 0
+  shadowOffsetY = 0
+  shadowBlur = 0
+  shadowOpacity = 1.0
 
-  //properties mapping:
-  if (properties && properties instanceof Object) {
-    for (const key in properties) {
-      _t[key] = properties[key]
+  constructor(properties?: any) {
+    if (properties && typeof properties === 'object') {
+      for (const key in properties) {
+        ;(this as any)[key] = properties[key]
+      }
     }
   }
-}
-/**
- * Web ONLY
- * */
-cc.FontDefinition.prototype._getCanvasFontStr = function () {
-  const lineHeight = !this.lineHeight.charAt ? `${this.lineHeight}px` : this.lineHeight
-  return `${this.fontStyle} ${this.fontWeight} ${this.fontSize}px/${lineHeight} '${this.fontName}'`
+
+  /**
+   * Web ONLY
+   */
+  _getCanvasFontStr(): string {
+    const lineHeight = typeof this.lineHeight !== 'string' ? `${this.lineHeight}px` : this.lineHeight
+    return `${this.fontStyle} ${this.fontWeight} ${this.fontSize}px/${lineHeight} '${this.fontName}'`
+  }
 }

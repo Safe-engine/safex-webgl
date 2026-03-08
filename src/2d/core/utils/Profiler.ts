@@ -12,14 +12,14 @@ export const profiler = (function () {
     _frameRate = 0,
     _lastSPF = 0,
     _accumDt = 0
-  let _afterVisitListener = null,
-    _FPSLabel = document.createElement('div'),
-    _SPFLabel = document.createElement('div'),
-    _drawsLabel = document.createElement('div'),
-    _fps = document.createElement('div')
+  let _afterVisitListener = null
+  const _FPSLabel = document.createElement('div')
+  const _SPFLabel = document.createElement('div')
+  const _drawsLabel = document.createElement('div')
+  const _fps = document.createElement('div')
 
-  let LEVEL_DET_FACTOR = 0.6,
-    _levelDetCycle = 10
+  const LEVEL_DET_FACTOR = 0.6
+  let _levelDetCycle = 10
   const LEVELS = [0, 10, 20, 30]
   const _fpsCount = [0, 0, 0, 0]
   let _currLevel = 3,
@@ -47,10 +47,10 @@ export const profiler = (function () {
   }
 
   const analyseFPS = function (fps) {
-    let lastId = LEVELS.length - 1,
-      i = lastId,
-      ratio,
-      average = 0
+    const lastId = LEVELS.length - 1
+    let i = lastId
+    let ratio
+    // let average = 0
     _analyseCount++
     _totalFPS += fps
 
@@ -62,7 +62,7 @@ export const profiler = (function () {
     }
 
     if (_analyseCount >= _levelDetCycle) {
-      average = _totalFPS / _levelDetCycle
+      const average = _totalFPS / _levelDetCycle
       for (i = lastId; i > 0; i--) {
         ratio = _fpsCount[i] / _levelDetCycle
         // Determined level
@@ -109,7 +109,7 @@ export const profiler = (function () {
     }
   }
 
-  var profiler = {
+  const profiler = {
     onFrameRateChange: null,
 
     getSecondsPerFrame: function () {

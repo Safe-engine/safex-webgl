@@ -647,7 +647,7 @@ try {
   localStorage.removeItem('storage')
 } catch (e) {
   const warn = () => {
-    log("Warning: localStorage isn't enabled. Please confirm browser cookie or privacy option")
+    log('Warning: localStorage isnt enabled. Please confirm browser cookie or privacy option')
   }
   sys.localStorage = {
     getItem: warn,
@@ -661,54 +661,54 @@ const _supportCanvas = !!_tmpCanvas1.getContext('2d')
 let _supportWebGL = false
 if (win.WebGLRenderingContext) {
   const tmpCanvas = document.createElement('CANVAS')
-  try {
-    const context = create3DContext(tmpCanvas, {})
-    if (context) {
-      _supportWebGL = true
-    }
+  // try {
+  const context = create3DContext(tmpCanvas, {})
+  if (context) {
+    _supportWebGL = true
+  }
 
-    if (_supportWebGL && sys.os === sys.OS_IOS && sys.osMainVersion === 9) {
-      // Not activating WebGL in iOS 9 UIWebView because it may crash when entering background
-      if (!window.indexedDB) {
-        _supportWebGL = false
-      }
+  if (_supportWebGL && sys.os === sys.OS_IOS && sys.osMainVersion === 9) {
+    // Not activating WebGL in iOS 9 UIWebView because it may crash when entering background
+    if (!window.indexedDB) {
+      _supportWebGL = false
     }
+  }
 
-    if (_supportWebGL && sys.os === sys.OS_ANDROID) {
-      const browserVer = parseFloat(sys.browserVersion)
-      switch (sys.browserType) {
-        case sys.BROWSER_TYPE_MOBILE_QQ:
-        case sys.BROWSER_TYPE_BAIDU:
-        case sys.BROWSER_TYPE_BAIDU_APP:
-          // QQ & Baidu Brwoser 6.2+ (using blink kernel)
-          if (browserVer >= 6.2) {
-            _supportWebGL = true
-          } else {
-            _supportWebGL = false
-          }
-          break
-        case sys.BROWSER_TYPE_CHROME:
-          // Chrome on android supports WebGL from v.30
-          if (browserVer >= 30.0) {
-            _supportWebGL = true
-          } else {
-            _supportWebGL = false
-          }
-          break
-        case sys.BROWSER_TYPE_ANDROID:
-          // Android 5+ default browser
-          if (sys.osMainVersion && sys.osMainVersion >= 5) {
-            _supportWebGL = true
-          }
-          break
-        case sys.BROWSER_TYPE_UNKNOWN:
-        case sys.BROWSER_TYPE_360:
-        case sys.BROWSER_TYPE_MIUI:
-        case sys.BROWSER_TYPE_UC:
+  if (_supportWebGL && sys.os === sys.OS_ANDROID) {
+    const browserVer = parseFloat(sys.browserVersion)
+    switch (sys.browserType) {
+      case sys.BROWSER_TYPE_MOBILE_QQ:
+      case sys.BROWSER_TYPE_BAIDU:
+      case sys.BROWSER_TYPE_BAIDU_APP:
+        // QQ & Baidu Brwoser 6.2+ (using blink kernel)
+        if (browserVer >= 6.2) {
+          _supportWebGL = true
+        } else {
           _supportWebGL = false
-      }
+        }
+        break
+      case sys.BROWSER_TYPE_CHROME:
+        // Chrome on android supports WebGL from v.30
+        if (browserVer >= 30.0) {
+          _supportWebGL = true
+        } else {
+          _supportWebGL = false
+        }
+        break
+      case sys.BROWSER_TYPE_ANDROID:
+        // Android 5+ default browser
+        if (sys.osMainVersion && sys.osMainVersion >= 5) {
+          _supportWebGL = true
+        }
+        break
+      case sys.BROWSER_TYPE_UNKNOWN:
+      case sys.BROWSER_TYPE_360:
+      case sys.BROWSER_TYPE_MIUI:
+      case sys.BROWSER_TYPE_UC:
+        _supportWebGL = false
     }
-  } catch (e) {}
+  }
+  // } catch (e) {}
 }
 
 sys.capabilities = {

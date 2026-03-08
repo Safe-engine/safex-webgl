@@ -1,45 +1,62 @@
+import { ONE, ONE_MINUS_SRC_ALPHA, SRC_ALPHA, ZERO } from './Macro'
+
 /**
  * Blend Function used for textures
- * @Class cc.BlendFunc
+ * @Class BlendFunc
  * @Constructor
  * @param {Number} src1 source blend function
  * @param {Number} dst1 destination blend function
  */
-cc.BlendFunc = function (src1, dst1) {
-  this.src = src1
-  this.dst = dst1
+export class BlendFunc {
+  src: number
+  dst: number
+
+  constructor(src1: number, dst1: number) {
+    this.src = src1
+    this.dst = dst1
+  }
+
+  static _disable(): BlendFunc {
+    return new BlendFunc(ONE, ZERO)
+  }
+
+  static _alphaPremultiplied(): BlendFunc {
+    return new BlendFunc(ONE, ONE_MINUS_SRC_ALPHA)
+  }
+
+  static _alphaNonPremultiplied(): BlendFunc {
+    return new BlendFunc(SRC_ALPHA, ONE_MINUS_SRC_ALPHA)
+  }
+
+  static _additive(): BlendFunc {
+    return new BlendFunc(SRC_ALPHA, ONE)
+  }
+
+  /** @expose */
+  static get DISABLE(): BlendFunc {
+    return BlendFunc._disable()
+  }
+
+  /** @expose */
+  static get ALPHA_PREMULTIPLIED(): BlendFunc {
+    return BlendFunc._alphaPremultiplied()
+  }
+
+  /** @expose */
+  static get ALPHA_NON_PREMULTIPLIED(): BlendFunc {
+    return BlendFunc._alphaNonPremultiplied()
+  }
+
+  /** @expose */
+  static get ADDITIVE(): BlendFunc {
+    return BlendFunc._additive()
+  }
 }
 
 /**
  * @function
- * @returns {cc.BlendFunc}
+ * @returns {BlendFunc}
  */
-cc.blendFuncDisable = function () {
-  return new cc.BlendFunc(cc.ONE, cc.ZERO)
+export function blendFuncDisable(): BlendFunc {
+  return new BlendFunc(ONE, ZERO)
 }
-
-cc.BlendFunc._disable = function () {
-  return new cc.BlendFunc(cc.ONE, cc.ZERO)
-}
-cc.BlendFunc._alphaPremultiplied = function () {
-  return new cc.BlendFunc(cc.ONE, cc.ONE_MINUS_SRC_ALPHA)
-}
-cc.BlendFunc._alphaNonPremultiplied = function () {
-  return new cc.BlendFunc(cc.SRC_ALPHA, cc.ONE_MINUS_SRC_ALPHA)
-}
-cc.BlendFunc._additive = function () {
-  return new cc.BlendFunc(cc.SRC_ALPHA, cc.ONE)
-}
-
-/** @expose */
-cc.BlendFunc.DISABLE
-cc.defineGetterSetter(cc.BlendFunc, 'DISABLE', cc.BlendFunc._disable)
-/** @expose */
-cc.BlendFunc.ALPHA_PREMULTIPLIED
-cc.defineGetterSetter(cc.BlendFunc, 'ALPHA_PREMULTIPLIED', cc.BlendFunc._alphaPremultiplied)
-/** @expose */
-cc.BlendFunc.ALPHA_NON_PREMULTIPLIED
-cc.defineGetterSetter(cc.BlendFunc, 'ALPHA_NON_PREMULTIPLIED', cc.BlendFunc._alphaNonPremultiplied)
-/** @expose */
-cc.BlendFunc.ADDITIVE
-cc.defineGetterSetter(cc.BlendFunc, 'ADDITIVE', cc.BlendFunc._additive)

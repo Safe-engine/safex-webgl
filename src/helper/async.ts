@@ -1,105 +1,4 @@
-export const each = function (obj, iterator, context?) {
-  if (!obj) return
-  if (obj instanceof Array) {
-    for (let i = 0, li = obj.length; i < li; i++) {
-      if (iterator.call(context, obj[i], i) === false) return
-    }
-  } else {
-    for (const key in obj) {
-      if (iterator.call(context, obj[key], key) === false) return
-    }
-  }
-}
-
-export const AsyncPool = function (srcObj, limit, iterator, onEnd, target?) {
-  const self = this
-  self._finished = false
-  self._srcObj = srcObj
-  self._limit = limit
-  self._pool = []
-  self._iterator = iterator
-  self._iteratorTarget = target
-  self._onEnd = onEnd
-  self._onEndTarget = target
-  self._results = srcObj instanceof Array ? [] : {}
-  self._errors = srcObj instanceof Array ? [] : {}
-
-  each(srcObj, function (value, index) {
-    self._pool.push({ index: index, value: value })
-  })
-
-  self.size = self._pool.length
-  self.finishedSize = 0
-  self._workingSize = 0
-
-  self._limit = self._limit || self.size
-
-  self.onIterator = function (iterator, target) {
-    self._iterator = iterator
-    self._iteratorTarget = target
-  }
-
-  self.onEnd = function (endCb, endCbTarget) {
-    self._onEnd = endCb
-    self._onEndTarget = endCbTarget
-  }
-
-  self._handleItem = function () {
-    const self = this
-    if (self._pool.length === 0 || self._workingSize >= self._limit) return //return directly if the array's length = 0 or the working size great equal limit number
-
-    const item = self._pool.shift()
-    const value = item.value,
-      index = item.index
-    self._workingSize++
-    self._iterator.call(
-      self._iteratorTarget,
-      value,
-      index,
-      function (err, result) {
-        if (self._finished) {
-          return
-        }
-
-        if (err) {
-          self._errors[this.index] = err
-        } else {
-          self._results[this.index] = result
-        }
-
-        self.finishedSize++
-        self._workingSize--
-        if (self.finishedSize === self.size) {
-          const errors = self._errors.length === 0 ? null : self._errors
-          self.onEnd(errors, self._results)
-          return
-        }
-        self._handleItem()
-      }.bind(item),
-      self,
-    )
-  }
-
-  self.flow = function () {
-    const self = this
-    if (self._pool.length === 0) {
-      if (self._onEnd) self._onEnd.call(self._onEndTarget, null, [])
-      return
-    }
-    for (let i = 0; i < self._limit; i++) self._handleItem()
-  }
-
-  self.onEnd = function (errors, results) {
-    self._finished = true
-    if (self._onEnd) {
-      const selector = self._onEnd
-      const target = self._onEndTarget
-      self._onEnd = null
-      self._onEndTarget = null
-      selector.call(target, errors, results)
-    }
-  }
-}
+import { AsyncPool } from './AsyncPool'
 
 /**
  * @class
@@ -155,18 +54,20 @@ export const async = /** @lends async# */ {
    * @return {AsyncPool}
    */
   waterfall: function (tasks, cb, target) {
-    let args = []
+    const args = []
     let lastResults = [null] //the array to store the last results
     const asyncPool = new AsyncPool(
       tasks,
       1,
-      function (func, index, cb1) {
-        args.push(function (err) {
-          args = Array.prototype.slice.call(arguments, 1)
-          if (tasks.length - 1 === index) lastResults = lastResults.concat(args) //while the last task
-          cb1.apply(null, arguments)
-        })
-        func.apply(target, args)
+      (func, index, cb1) => {
+        const wrappedCb = (err, ...rest) => {
+          if (tasks.length - 1 === index) {
+            lastResults = lastResults.concat(rest)
+          }
+          cb1(err, ...rest)
+        }
+
+        func.call(target, ...args, wrappedCb)
       },
       function (err) {
         if (!cb) return
