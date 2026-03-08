@@ -94,7 +94,7 @@ export class Game extends EventHelper {
     frameRate: 'frameRate',
     id: 'id',
     renderMode: 'renderMode',
-    jsList: 'jsList',
+    // jsList: 'jsList',
     registerSystemEvent: 'registerSystemEvent',
   }
 
@@ -200,16 +200,16 @@ export class Game extends EventHelper {
       this._setAnimFrame()
       this._runMainLoop()
 
-      const jsList = this.config[Game.CONFIG_KEY.jsList]
-      if (jsList) {
-        loader.loadJsWithImg(jsList, (err: any) => {
-          if (err) throw new Error(err)
-          this._prepared = true
-          if (cb) cb()
-        })
-      } else {
-        if (cb) cb()
-      }
+      // const jsList = this.config[Game.CONFIG_KEY.jsList]
+      // if (jsList) {
+      //   loader.loadJsWithImg(jsList, (err: any) => {
+      //     if (err) throw new Error(err)
+      //     this._prepared = true
+      //     if (cb) cb()
+      //   })
+      // } else {
+      // }
+      if (cb) cb()
 
       return
     }

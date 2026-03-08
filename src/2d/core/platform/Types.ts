@@ -1,13 +1,18 @@
+import { Game, game } from '../../..'
+import { _renderType } from '../../../helper/engine'
+import { defineGetterSetter } from '../sprites/SpritesPropertyDefine'
+import { color } from './Color'
+
 /**
  * the device accelerometer reports values for each axis in units of g-force
- * @class cc.Acceleration
+ * @class Acceleration
  * @constructor
  * @param {Number} x
  * @param {Number} y
  * @param {Number} z
  * @param {Number} timestamp
  */
-cc.Acceleration = function (x, y, z, timestamp) {
+export const Acceleration = function (x, y, z, timestamp) {
   this.x = x || 0
   this.y = y || 0
   this.z = z || 0
@@ -15,15 +20,15 @@ cc.Acceleration = function (x, y, z, timestamp) {
 }
 
 /**
- * @class cc.Vertex2F
+ * @class Vertex2F
  * @param {Number} x
  * @param {Number}y
  * @param {Array} arrayBuffer
  * @param {Number}offset
  * @constructor
  */
-cc.Vertex2F = function (x, y, arrayBuffer, offset) {
-  this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.Vertex2F.BYTES_PER_ELEMENT)
+export const Vertex2F = function (x, y, arrayBuffer, offset) {
+  this._arrayBuffer = arrayBuffer || new ArrayBuffer(Vertex2F.BYTES_PER_ELEMENT)
   this._offset = offset || 0
 
   this._view = new Float32Array(this._arrayBuffer, this._offset, 2)
@@ -34,9 +39,9 @@ cc.Vertex2F = function (x, y, arrayBuffer, offset) {
  * @constant
  * @type {number}
  */
-cc.Vertex2F.BYTES_PER_ELEMENT = 8
+Vertex2F.BYTES_PER_ELEMENT = 8
 
-_p = cc.Vertex2F.prototype
+_p = Vertex2F.prototype
 _p._getX = function () {
   return this._view[0]
 }
@@ -51,13 +56,13 @@ _p._setY = function (yValue) {
 }
 /** @expose */
 _p.x
-cc.defineGetterSetter(_p, 'x', _p._getX, _p._setX)
+defineGetterSetter(_p, 'x', _p._getX, _p._setX)
 /** @expose */
 _p.y
-cc.defineGetterSetter(_p, 'y', _p._getY, _p._setY)
+defineGetterSetter(_p, 'y', _p._getY, _p._setY)
 
 /**
- * @class cc.Vertex3F
+ * @class Vertex3F
  * @param {Number} x
  * @param {Number} y
  * @param {Number}z
@@ -65,8 +70,8 @@ cc.defineGetterSetter(_p, 'y', _p._getY, _p._setY)
  * @param {Number} offset
  * @constructor
  */
-cc.Vertex3F = function (x, y, z, arrayBuffer, offset) {
-  this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.Vertex3F.BYTES_PER_ELEMENT)
+export const Vertex3F = function (x, y, z, arrayBuffer, offset) {
+  this._arrayBuffer = arrayBuffer || new ArrayBuffer(Vertex3F.BYTES_PER_ELEMENT)
   this._offset = offset || 0
 
   const locArrayBuffer = this._arrayBuffer,
@@ -80,9 +85,9 @@ cc.Vertex3F = function (x, y, z, arrayBuffer, offset) {
  * @constant
  * @type {number}
  */
-cc.Vertex3F.BYTES_PER_ELEMENT = 12
+Vertex3F.BYTES_PER_ELEMENT = 12
 
-_p = cc.Vertex3F.prototype
+_p = Vertex3F.prototype
 _p._getX = function () {
   return this._view[0]
 }
@@ -103,24 +108,24 @@ _p._setZ = function (zValue) {
 }
 /** @expose */
 _p.x
-cc.defineGetterSetter(_p, 'x', _p._getX, _p._setX)
+defineGetterSetter(_p, 'x', _p._getX, _p._setX)
 /** @expose */
 _p.y
-cc.defineGetterSetter(_p, 'y', _p._getY, _p._setY)
+defineGetterSetter(_p, 'y', _p._getY, _p._setY)
 /** @expose */
 _p.z
-cc.defineGetterSetter(_p, 'z', _p._getZ, _p._setZ)
+defineGetterSetter(_p, 'z', _p._getZ, _p._setZ)
 
 /**
- * @class cc.Tex2F
+ * @class Tex2F
  * @param {Number} u
  * @param {Number} v
  * @param {Array} arrayBuffer
  * @param {Number} offset
  * @constructor
  */
-cc.Tex2F = function (u, v, arrayBuffer, offset) {
-  this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.Tex2F.BYTES_PER_ELEMENT)
+Tex2F = function (u, v, arrayBuffer, offset) {
+  this._arrayBuffer = arrayBuffer || new ArrayBuffer(Tex2F.BYTES_PER_ELEMENT)
   this._offset = offset || 0
 
   this._view = new Float32Array(this._arrayBuffer, this._offset, 2)
@@ -131,9 +136,9 @@ cc.Tex2F = function (u, v, arrayBuffer, offset) {
  * @constants
  * @type {number}
  */
-cc.Tex2F.BYTES_PER_ELEMENT = 8
+Tex2F.BYTES_PER_ELEMENT = 8
 
-_p = cc.Tex2F.prototype
+_p = Tex2F.prototype
 _p._getU = function () {
   return this._view[0]
 }
@@ -148,43 +153,43 @@ _p._setV = function (yValue) {
 }
 /** @expose */
 _p.u
-cc.defineGetterSetter(_p, 'u', _p._getU, _p._setU)
+defineGetterSetter(_p, 'u', _p._getU, _p._setU)
 /** @expose */
 _p.v
-cc.defineGetterSetter(_p, 'v', _p._getV, _p._setV)
+defineGetterSetter(_p, 'v', _p._getV, _p._setV)
 
 /**
- * @class cc.Quad2
- * @param {cc.Vertex2F} tl
- * @param {cc.Vertex2F} tr
- * @param {cc.Vertex2F} bl
- * @param {cc.Vertex2F} br
+ * @class Quad2
+ * @param {Vertex2F} tl
+ * @param {Vertex2F} tr
+ * @param {Vertex2F} bl
+ * @param {Vertex2F} br
  * @param {Array} arrayBuffer
  * @param {Number} offset
  * @constructor
  */
-cc.Quad2 = function (tl, tr, bl, br, arrayBuffer, offset) {
-  this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.Quad2.BYTES_PER_ELEMENT)
+export const Quad2 = function (tl, tr, bl, br, arrayBuffer, offset) {
+  this._arrayBuffer = arrayBuffer || new ArrayBuffer(Quad2.BYTES_PER_ELEMENT)
   this._offset = offset || 0
 
   let locArrayBuffer = this._arrayBuffer,
     locOffset = this._offset,
-    locElementLen = cc.Vertex2F.BYTES_PER_ELEMENT
-  this._tl = tl ? new cc.Vertex2F(tl.x, tl.y, locArrayBuffer, locOffset) : new cc.Vertex2F(0, 0, locArrayBuffer, locOffset)
+    locElementLen = Vertex2F.BYTES_PER_ELEMENT
+  this._tl = tl ? new Vertex2F(tl.x, tl.y, locArrayBuffer, locOffset) : new Vertex2F(0, 0, locArrayBuffer, locOffset)
   locOffset += locElementLen
-  this._tr = tr ? new cc.Vertex2F(tr.x, tr.y, locArrayBuffer, locOffset) : new cc.Vertex2F(0, 0, locArrayBuffer, locOffset)
+  this._tr = tr ? new Vertex2F(tr.x, tr.y, locArrayBuffer, locOffset) : new Vertex2F(0, 0, locArrayBuffer, locOffset)
   locOffset += locElementLen
-  this._bl = bl ? new cc.Vertex2F(bl.x, bl.y, locArrayBuffer, locOffset) : new cc.Vertex2F(0, 0, locArrayBuffer, locOffset)
+  this._bl = bl ? new Vertex2F(bl.x, bl.y, locArrayBuffer, locOffset) : new Vertex2F(0, 0, locArrayBuffer, locOffset)
   locOffset += locElementLen
-  this._br = br ? new cc.Vertex2F(br.x, br.y, locArrayBuffer, locOffset) : new cc.Vertex2F(0, 0, locArrayBuffer, locOffset)
+  this._br = br ? new Vertex2F(br.x, br.y, locArrayBuffer, locOffset) : new Vertex2F(0, 0, locArrayBuffer, locOffset)
 }
 /**
  * @constant
  * @type {number}
  */
-cc.Quad2.BYTES_PER_ELEMENT = 32
+Quad2.BYTES_PER_ELEMENT = 32
 
-_p = cc.Quad2.prototype
+_p = Quad2.prototype
 _p._getTL = function () {
   return this._tl
 }
@@ -216,83 +221,81 @@ _p._setBR = function (brValue) {
 
 /** @expose */
 _p.tl
-cc.defineGetterSetter(_p, 'tl', _p._getTL, _p._setTL)
+defineGetterSetter(_p, 'tl', _p._getTL, _p._setTL)
 /** @expose */
 _p.tr
-cc.defineGetterSetter(_p, 'tr', _p._getTR, _p._setTR)
+defineGetterSetter(_p, 'tr', _p._getTR, _p._setTR)
 /** @expose */
 _p.bl
-cc.defineGetterSetter(_p, 'bl', _p._getBL, _p._setBL)
+defineGetterSetter(_p, 'bl', _p._getBL, _p._setBL)
 /** @expose */
 _p.br
-cc.defineGetterSetter(_p, 'br', _p._getBR, _p._setBR)
+defineGetterSetter(_p, 'br', _p._getBR, _p._setBR)
 
 /**
  * A 3D Quad. 4 * 3 floats
- * @Class cc.Quad3
+ * @Class Quad3
  * @Construct
- * @param {cc.Vertex3F} bl
- * @param {cc.Vertex3F} br
- * @param {cc.Vertex3F} tl
- * @param {cc.Vertex3F} tr
+ * @param {Vertex3F} bl
+ * @param {Vertex3F} br
+ * @param {Vertex3F} tl
+ * @param {Vertex3F} tr
  */
-cc.Quad3 = function (bl, br, tl, tr, arrayBuffer, offset) {
-  this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.Quad3.BYTES_PER_ELEMENT)
+export const Quad3 = function (bl, br, tl, tr, arrayBuffer, offset) {
+  this._arrayBuffer = arrayBuffer || new ArrayBuffer(Quad3.BYTES_PER_ELEMENT)
   this._offset = offset || 0
 
   let locArrayBuffer = this._arrayBuffer,
     locOffset = this._offset,
-    locElementLen = cc.Vertex3F.BYTES_PER_ELEMENT
-  this.bl = bl ? new cc.Vertex3F(bl.x, bl.y, bl.z, locArrayBuffer, locOffset) : new cc.Vertex3F(0, 0, 0, locArrayBuffer, locOffset)
+    locElementLen = Vertex3F.BYTES_PER_ELEMENT
+  this.bl = bl ? new Vertex3F(bl.x, bl.y, bl.z, locArrayBuffer, locOffset) : new Vertex3F(0, 0, 0, locArrayBuffer, locOffset)
   locOffset += locElementLen
-  this.br = br ? new cc.Vertex3F(br.x, br.y, br.z, locArrayBuffer, locOffset) : new cc.Vertex3F(0, 0, 0, locArrayBuffer, locOffset)
+  this.br = br ? new Vertex3F(br.x, br.y, br.z, locArrayBuffer, locOffset) : new Vertex3F(0, 0, 0, locArrayBuffer, locOffset)
   locOffset += locElementLen
-  this.tl = tl ? new cc.Vertex3F(tl.x, tl.y, tl.z, locArrayBuffer, locOffset) : new cc.Vertex3F(0, 0, 0, locArrayBuffer, locOffset)
+  this.tl = tl ? new Vertex3F(tl.x, tl.y, tl.z, locArrayBuffer, locOffset) : new Vertex3F(0, 0, 0, locArrayBuffer, locOffset)
   locOffset += locElementLen
-  this.tr = tr ? new cc.Vertex3F(tr.x, tr.y, tr.z, locArrayBuffer, locOffset) : new cc.Vertex3F(0, 0, 0, locArrayBuffer, locOffset)
+  this.tr = tr ? new Vertex3F(tr.x, tr.y, tr.z, locArrayBuffer, locOffset) : new Vertex3F(0, 0, 0, locArrayBuffer, locOffset)
 }
 /**
  * @constant
  * @type {number}
  */
-cc.Quad3.BYTES_PER_ELEMENT = 48
+Quad3.BYTES_PER_ELEMENT = 48
 
 /**
- * @class cc.V3F_C4B_T2F
- * @param {cc.Vertex3F} vertices
- * @param {cc.Color} colors
- * @param {cc.Tex2F} texCoords
+ * @class V3F_C4B_T2F
+ * @param {Vertex3F} vertices
+ * @param {Color} colors
+ * @param {Tex2F} texCoords
  * @param {Array} arrayBuffer
  * @param {Number} offset
  * @constructor
  */
-cc.V3F_C4B_T2F = function (vertices, colors, texCoords, arrayBuffer, offset) {
-  this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.V3F_C4B_T2F.BYTES_PER_ELEMENT)
+export const V3F_C4B_T2F = function (vertices, colors, texCoords, arrayBuffer, offset) {
+  this._arrayBuffer = arrayBuffer || new ArrayBuffer(V3F_C4B_T2F.BYTES_PER_ELEMENT)
   this._offset = offset || 0
 
   let locArrayBuffer = this._arrayBuffer,
     locOffset = this._offset
   this._vertices = vertices
-    ? new cc.Vertex3F(vertices.x, vertices.y, vertices.z, locArrayBuffer, locOffset)
-    : new cc.Vertex3F(0, 0, 0, locArrayBuffer, locOffset)
+    ? new Vertex3F(vertices.x, vertices.y, vertices.z, locArrayBuffer, locOffset)
+    : new Vertex3F(0, 0, 0, locArrayBuffer, locOffset)
 
-  locOffset += cc.Vertex3F.BYTES_PER_ELEMENT
+  locOffset += Vertex3F.BYTES_PER_ELEMENT
   this._colors = colors
-    ? new cc._WebGLColor(colors.r, colors.g, colors.b, colors.a, locArrayBuffer, locOffset)
-    : new cc._WebGLColor(0, 0, 0, 0, locArrayBuffer, locOffset)
+    ? new _WebGLColor(colors.r, colors.g, colors.b, colors.a, locArrayBuffer, locOffset)
+    : new _WebGLColor(0, 0, 0, 0, locArrayBuffer, locOffset)
 
-  locOffset += cc._WebGLColor.BYTES_PER_ELEMENT
-  this._texCoords = texCoords
-    ? new cc.Tex2F(texCoords.u, texCoords.v, locArrayBuffer, locOffset)
-    : new cc.Tex2F(0, 0, locArrayBuffer, locOffset)
+  locOffset += _WebGLColor.BYTES_PER_ELEMENT
+  this._texCoords = texCoords ? new Tex2F(texCoords.u, texCoords.v, locArrayBuffer, locOffset) : new Tex2F(0, 0, locArrayBuffer, locOffset)
 }
 /**
  * @constant
  * @type {number}
  */
-cc.V3F_C4B_T2F.BYTES_PER_ELEMENT = 24
+V3F_C4B_T2F.BYTES_PER_ELEMENT = 24
 
-_p = cc.V3F_C4B_T2F.prototype
+_p = V3F_C4B_T2F.prototype
 _p._getVertices = function () {
   return this._vertices
 }
@@ -321,53 +324,53 @@ _p._setTexCoords = function (texValue) {
 }
 /** @expose */
 _p.vertices
-cc.defineGetterSetter(_p, 'vertices', _p._getVertices, _p._setVertices)
+defineGetterSetter(_p, 'vertices', _p._getVertices, _p._setVertices)
 /** @expose */
 _p.colors
-cc.defineGetterSetter(_p, 'colors', _p._getColor, _p._setColor)
+defineGetterSetter(_p, 'colors', _p._getColor, _p._setColor)
 /** @expose */
 _p.texCoords
-cc.defineGetterSetter(_p, 'texCoords', _p._getTexCoords, _p._setTexCoords)
+defineGetterSetter(_p, 'texCoords', _p._getTexCoords, _p._setTexCoords)
 
 /**
- * @cc.class cc.V3F_C4B_T2F_Quad
- * @param {cc.V3F_C4B_T2F} tl
- * @param {cc.V3F_C4B_T2F} bl
- * @param {cc.V3F_C4B_T2F} tr
- * @param {cc.V3F_C4B_T2F} br
+ * @class V3F_C4B_T2F_Quad
+ * @param {V3F_C4B_T2F} tl
+ * @param {V3F_C4B_T2F} bl
+ * @param {V3F_C4B_T2F} tr
+ * @param {V3F_C4B_T2F} br
  * @param {Array} arrayBuffer
  * @param {Number} offset
  * @constructor
  */
-cc.V3F_C4B_T2F_Quad = function (tl, bl, tr, br, arrayBuffer, offset) {
-  this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT)
+V3F_C4B_T2F_Quad = function (tl, bl, tr, br, arrayBuffer, offset) {
+  this._arrayBuffer = arrayBuffer || new ArrayBuffer(V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT)
   this._offset = offset || 0
 
   let locArrayBuffer = this._arrayBuffer,
     locOffset = this._offset,
-    locElementLen = cc.V3F_C4B_T2F.BYTES_PER_ELEMENT
+    locElementLen = V3F_C4B_T2F.BYTES_PER_ELEMENT
   this._tl = tl
-    ? new cc.V3F_C4B_T2F(tl.vertices, tl.colors, tl.texCoords, locArrayBuffer, locOffset)
-    : new cc.V3F_C4B_T2F(null, null, null, locArrayBuffer, locOffset)
+    ? new V3F_C4B_T2F(tl.vertices, tl.colors, tl.texCoords, locArrayBuffer, locOffset)
+    : new V3F_C4B_T2F(null, null, null, locArrayBuffer, locOffset)
   locOffset += locElementLen
   this._bl = bl
-    ? new cc.V3F_C4B_T2F(bl.vertices, bl.colors, bl.texCoords, locArrayBuffer, locOffset)
-    : new cc.V3F_C4B_T2F(null, null, null, locArrayBuffer, locOffset)
+    ? new V3F_C4B_T2F(bl.vertices, bl.colors, bl.texCoords, locArrayBuffer, locOffset)
+    : new V3F_C4B_T2F(null, null, null, locArrayBuffer, locOffset)
   locOffset += locElementLen
   this._tr = tr
-    ? new cc.V3F_C4B_T2F(tr.vertices, tr.colors, tr.texCoords, locArrayBuffer, locOffset)
-    : new cc.V3F_C4B_T2F(null, null, null, locArrayBuffer, locOffset)
+    ? new V3F_C4B_T2F(tr.vertices, tr.colors, tr.texCoords, locArrayBuffer, locOffset)
+    : new V3F_C4B_T2F(null, null, null, locArrayBuffer, locOffset)
   locOffset += locElementLen
   this._br = br
-    ? new cc.V3F_C4B_T2F(br.vertices, br.colors, br.texCoords, locArrayBuffer, locOffset)
-    : new cc.V3F_C4B_T2F(null, null, null, locArrayBuffer, locOffset)
+    ? new V3F_C4B_T2F(br.vertices, br.colors, br.texCoords, locArrayBuffer, locOffset)
+    : new V3F_C4B_T2F(null, null, null, locArrayBuffer, locOffset)
 }
 /**
  * @constant
  * @type {number}
  */
-cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT = 96
-_p = cc.V3F_C4B_T2F_Quad.prototype
+V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT = 96
+_p = V3F_C4B_T2F_Quad.prototype
 _p._getTL = function () {
   return this._tl
 }
@@ -410,37 +413,37 @@ _p._getArrayBuffer = function () {
 
 /** @expose */
 _p.tl
-cc.defineGetterSetter(_p, 'tl', _p._getTL, _p._setTL)
+defineGetterSetter(_p, 'tl', _p._getTL, _p._setTL)
 /** @expose */
 _p.tr
-cc.defineGetterSetter(_p, 'tr', _p._getTR, _p._setTR)
+defineGetterSetter(_p, 'tr', _p._getTR, _p._setTR)
 /** @expose */
 _p.bl
-cc.defineGetterSetter(_p, 'bl', _p._getBL, _p._setBL)
+defineGetterSetter(_p, 'bl', _p._getBL, _p._setBL)
 /** @expose */
 _p.br
-cc.defineGetterSetter(_p, 'br', _p._getBR, _p._setBR)
+defineGetterSetter(_p, 'br', _p._getBR, _p._setBR)
 /** @expose */
 _p.arrayBuffer
-cc.defineGetterSetter(_p, 'arrayBuffer', _p._getArrayBuffer, null)
+defineGetterSetter(_p, 'arrayBuffer', _p._getArrayBuffer, null)
 
 /**
  * @function
- * @returns {cc.V3F_C4B_T2F_Quad}
+ * @returns {V3F_C4B_T2F_Quad}
  */
-cc.V3F_C4B_T2F_QuadZero = function () {
-  return new cc.V3F_C4B_T2F_Quad()
+V3F_C4B_T2F_QuadZero = function () {
+  return new V3F_C4B_T2F_Quad()
 }
 
 /**
  * @function
- * @param {cc.V3F_C4B_T2F_Quad} sourceQuad
- * @return {cc.V3F_C4B_T2F_Quad}
+ * @param {V3F_C4B_T2F_Quad} sourceQuad
+ * @return {V3F_C4B_T2F_Quad}
  */
-cc.V3F_C4B_T2F_QuadCopy = function (sourceQuad) {
-  if (!sourceQuad) return cc.V3F_C4B_T2F_QuadZero()
+V3F_C4B_T2F_QuadCopy = function (sourceQuad) {
+  if (!sourceQuad) return V3F_C4B_T2F_QuadZero()
 
-  //return new cc.V3F_C4B_T2F_Quad(sourceQuad,tl,sourceQuad,bl,sourceQuad.tr,sourceQuad.br,null,0);
+  //return new V3F_C4B_T2F_Quad(sourceQuad,tl,sourceQuad,bl,sourceQuad.tr,sourceQuad.br,null,0);
   const srcTL = sourceQuad.tl,
     srcBL = sourceQuad.bl,
     srcTR = sourceQuad.tr,
@@ -474,51 +477,49 @@ cc.V3F_C4B_T2F_QuadCopy = function (sourceQuad) {
  * @param {Array} sourceQuads
  * @returns {Array}
  */
-cc.V3F_C4B_T2F_QuadsCopy = function (sourceQuads) {
+V3F_C4B_T2F_QuadsCopy = function (sourceQuads) {
   if (!sourceQuads) return []
 
   const retArr = []
   for (let i = 0; i < sourceQuads.length; i++) {
-    retArr.push(cc.V3F_C4B_T2F_QuadCopy(sourceQuads[i]))
+    retArr.push(V3F_C4B_T2F_QuadCopy(sourceQuads[i]))
   }
   return retArr
 }
 
-//redefine cc.V2F_C4B_T2F
+//redefine V2F_C4B_T2F
 /**
- * @class cc.V2F_C4B_T2F
- * @param {cc.Vertex2F} vertices
- * @param {cc.Color} colors
- * @param {cc.Tex2F} texCoords
+ * @class V2F_C4B_T2F
+ * @param {Vertex2F} vertices
+ * @param {Color} colors
+ * @param {Tex2F} texCoords
  * @param {Array} arrayBuffer
  * @param {Number} offset
  * @constructor
  */
-cc.V2F_C4B_T2F = function (vertices, colors, texCoords, arrayBuffer, offset) {
-  this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.V2F_C4B_T2F.BYTES_PER_ELEMENT)
+V2F_C4B_T2F = function (vertices, colors, texCoords, arrayBuffer, offset) {
+  this._arrayBuffer = arrayBuffer || new ArrayBuffer(V2F_C4B_T2F.BYTES_PER_ELEMENT)
   this._offset = offset || 0
 
   let locArrayBuffer = this._arrayBuffer,
     locOffset = this._offset
   this._vertices = vertices
-    ? new cc.Vertex2F(vertices.x, vertices.y, locArrayBuffer, locOffset)
-    : new cc.Vertex2F(0, 0, locArrayBuffer, locOffset)
-  locOffset += cc.Vertex2F.BYTES_PER_ELEMENT
+    ? new Vertex2F(vertices.x, vertices.y, locArrayBuffer, locOffset)
+    : new Vertex2F(0, 0, locArrayBuffer, locOffset)
+  locOffset += Vertex2F.BYTES_PER_ELEMENT
   this._colors = colors
-    ? new cc._WebGLColor(colors.r, colors.g, colors.b, colors.a, locArrayBuffer, locOffset)
-    : new cc._WebGLColor(0, 0, 0, 0, locArrayBuffer, locOffset)
-  locOffset += cc._WebGLColor.BYTES_PER_ELEMENT
-  this._texCoords = texCoords
-    ? new cc.Tex2F(texCoords.u, texCoords.v, locArrayBuffer, locOffset)
-    : new cc.Tex2F(0, 0, locArrayBuffer, locOffset)
+    ? new _WebGLColor(colors.r, colors.g, colors.b, colors.a, locArrayBuffer, locOffset)
+    : new _WebGLColor(0, 0, 0, 0, locArrayBuffer, locOffset)
+  locOffset += _WebGLColor.BYTES_PER_ELEMENT
+  this._texCoords = texCoords ? new Tex2F(texCoords.u, texCoords.v, locArrayBuffer, locOffset) : new Tex2F(0, 0, locArrayBuffer, locOffset)
 }
 
 /**
  * @constant
  * @type {number}
  */
-cc.V2F_C4B_T2F.BYTES_PER_ELEMENT = 20
-_p = cc.V2F_C4B_T2F.prototype
+V2F_C4B_T2F.BYTES_PER_ELEMENT = 20
+_p = V2F_C4B_T2F.prototype
 _p._getVertices = function () {
   return this._vertices
 }
@@ -546,49 +547,49 @@ _p._setTexCoords = function (texValue) {
 
 /** @expose */
 _p.vertices
-cc.defineGetterSetter(_p, 'vertices', _p._getVertices, _p._setVertices)
+defineGetterSetter(_p, 'vertices', _p._getVertices, _p._setVertices)
 /** @expose */
 _p.colors
-cc.defineGetterSetter(_p, 'colors', _p._getColor, _p._setColor)
+defineGetterSetter(_p, 'colors', _p._getColor, _p._setColor)
 /** @expose */
 _p.texCoords
-cc.defineGetterSetter(_p, 'texCoords', _p._getTexCoords, _p._setTexCoords)
+defineGetterSetter(_p, 'texCoords', _p._getTexCoords, _p._setTexCoords)
 
-//redefine cc.V2F_C4B_T2F_Triangle
+//redefine V2F_C4B_T2F_Triangle
 /**
- * @class cc.V2F_C4B_T2F_Triangle
- * @param {cc.V2F_C4B_T2F} a
- * @param {cc.V2F_C4B_T2F} b
- * @param {cc.V2F_C4B_T2F} c
+ * @class V2F_C4B_T2F_Triangle
+ * @param {V2F_C4B_T2F} a
+ * @param {V2F_C4B_T2F} b
+ * @param {V2F_C4B_T2F} c
  * @param {Array} arrayBuffer
  * @param {Number} offset
  * @constructor
  */
-cc.V2F_C4B_T2F_Triangle = function (a, b, c, arrayBuffer, offset) {
-  this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.V2F_C4B_T2F_Triangle.BYTES_PER_ELEMENT)
+export const V2F_C4B_T2F_Triangle = function (a, b, c, arrayBuffer, offset) {
+  this._arrayBuffer = arrayBuffer || new ArrayBuffer(V2F_C4B_T2F_Triangle.BYTES_PER_ELEMENT)
   this._offset = offset || 0
 
   let locArrayBuffer = this._arrayBuffer,
     locOffset = this._offset,
-    locElementLen = cc.V2F_C4B_T2F.BYTES_PER_ELEMENT
+    locElementLen = V2F_C4B_T2F.BYTES_PER_ELEMENT
   this._a = a
-    ? new cc.V2F_C4B_T2F(a.vertices, a.colors, a.texCoords, locArrayBuffer, locOffset)
-    : new cc.V2F_C4B_T2F(null, null, null, locArrayBuffer, locOffset)
+    ? new V2F_C4B_T2F(a.vertices, a.colors, a.texCoords, locArrayBuffer, locOffset)
+    : new V2F_C4B_T2F(null, null, null, locArrayBuffer, locOffset)
   locOffset += locElementLen
   this._b = b
-    ? new cc.V2F_C4B_T2F(b.vertices, b.colors, b.texCoords, locArrayBuffer, locOffset)
-    : new cc.V2F_C4B_T2F(null, null, null, locArrayBuffer, locOffset)
+    ? new V2F_C4B_T2F(b.vertices, b.colors, b.texCoords, locArrayBuffer, locOffset)
+    : new V2F_C4B_T2F(null, null, null, locArrayBuffer, locOffset)
   locOffset += locElementLen
   this._c = c
-    ? new cc.V2F_C4B_T2F(c.vertices, c.colors, c.texCoords, locArrayBuffer, locOffset)
-    : new cc.V2F_C4B_T2F(null, null, null, locArrayBuffer, locOffset)
+    ? new V2F_C4B_T2F(c.vertices, c.colors, c.texCoords, locArrayBuffer, locOffset)
+    : new V2F_C4B_T2F(null, null, null, locArrayBuffer, locOffset)
 }
 /**
  * @constant
  * @type {number}
  */
-cc.V2F_C4B_T2F_Triangle.BYTES_PER_ELEMENT = 60
-_p = cc.V2F_C4B_T2F_Triangle.prototype
+V2F_C4B_T2F_Triangle.BYTES_PER_ELEMENT = 60
+_p = V2F_C4B_T2F_Triangle.prototype
 _p._getA = function () {
   return this._a
 }
@@ -612,30 +613,30 @@ _p._getC = function () {
 }
 _p._setC = function (cValue) {
   const locC = this._c
-  locC.vertices = cValue.vertices
-  locC.colors = cValue.colors
-  locC.texCoords = cValue.texCoords
+  lovertices = cValue.vertices
+  locolors = cValue.colors
+  lotexCoords = cValue.texCoords
 }
 
 /** @expose */
 _p.a
-cc.defineGetterSetter(_p, 'a', _p._getA, _p._setA)
+defineGetterSetter(_p, 'a', _p._getA, _p._setA)
 /** @expose */
 _p.b
-cc.defineGetterSetter(_p, 'b', _p._getB, _p._setB)
+defineGetterSetter(_p, 'b', _p._getB, _p._setB)
 /** @expose */
 _p.c
-cc.defineGetterSetter(_p, 'c', _p._getC, _p._setC)
+defineGetterSetter(_p, 'c', _p._getC, _p._setC)
 
 /**
  * Helper macro that creates an Vertex2F type composed of 2 floats: x, y
  * @function
  * @param {Number} x
  * @param {Number} y
- * @return {cc.Vertex2F}
+ * @return {Vertex2F}
  */
-cc.vertex2 = function (x, y) {
-  return new cc.Vertex2F(x, y)
+export const vertex2 = function (x, y) {
+  return new Vertex2F(x, y)
 }
 
 /**
@@ -644,10 +645,10 @@ cc.vertex2 = function (x, y) {
  * @param {Number} x
  * @param {Number} y
  * @param {Number} z
- * @return {cc.Vertex3F}
+ * @return {Vertex3F}
  */
-cc.vertex3 = function (x, y, z) {
-  return new cc.Vertex3F(x, y, z)
+export const vertex3 = function (x, y, z) {
+  return new Vertex3F(x, y, z)
 }
 
 /**
@@ -655,10 +656,10 @@ cc.vertex3 = function (x, y, z) {
  * @function
  * @param {Number} u
  * @param {Number} v
- * @return {cc.Tex2F}
+ * @return {Tex2F}
  */
-cc.tex2 = function (u, v) {
-  return new cc.Tex2F(u, v)
+export const tex2 = function (u, v) {
+  return new Tex2F(u, v)
 }
 
 /**
@@ -666,48 +667,48 @@ cc.tex2 = function (u, v) {
  * @constant
  * @type Number
  */
-cc.TEXT_ALIGNMENT_LEFT = 0
+export const TEXT_ALIGNMENT_LEFT = 0
 
 /**
  * text alignment : center
  * @constant
  * @type Number
  */
-cc.TEXT_ALIGNMENT_CENTER = 1
+export const TEXT_ALIGNMENT_CENTER = 1
 
 /**
  * text alignment : right
  * @constant
  * @type Number
  */
-cc.TEXT_ALIGNMENT_RIGHT = 2
+export const TEXT_ALIGNMENT_RIGHT = 2
 
 /**
  * text alignment : top
  * @constant
  * @type Number
  */
-cc.VERTICAL_TEXT_ALIGNMENT_TOP = 0
+export const VERTICAL_TEXT_ALIGNMENT_TOP = 0
 
 /**
  * text alignment : center
  * @constant
  * @type Number
  */
-cc.VERTICAL_TEXT_ALIGNMENT_CENTER = 1
+export const VERTICAL_TEXT_ALIGNMENT_CENTER = 1
 
 /**
  * text alignment : bottom
  * @constant
  * @type Number
  */
-cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM = 2
+export const VERTICAL_TEXT_ALIGNMENT_BOTTOM = 2
 
-cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
-  if (cc._renderType === cc.game.RENDER_TYPE_WEBGL) {
+game.addEventListener(Game.EVENT_RENDERER_INITD, function () {
+  if (_renderType === Game.RENDER_TYPE_WEBGL) {
     //redefine Color
-    cc._WebGLColor = function (r, g, b, a, arrayBuffer, offset) {
-      this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc._WebGLColor.BYTES_PER_ELEMENT)
+    _WebGLColor = function (r, g, b, a, arrayBuffer, offset) {
+      this._arrayBuffer = arrayBuffer || new ArrayBuffer(_WebGLColor.BYTES_PER_ELEMENT)
       this._offset = offset || 0
 
       const locArrayBuffer = this._arrayBuffer,
@@ -721,8 +722,8 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
 
       if (a === undefined) this.a_undefined = true
     }
-    cc._WebGLColor.BYTES_PER_ELEMENT = 4
-    _p = cc._WebGLColor.prototype
+    _WebGLColor.BYTES_PER_ELEMENT = 4
+    _p = _WebGLColor.prototype
     _p._getR = function () {
       return this._view[0]
     }
@@ -747,75 +748,75 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
     _p._setA = function (value) {
       this._view[3] = value < 0 ? 0 : value
     }
-    cc.defineGetterSetter(_p, 'r', _p._getR, _p._setR)
-    cc.defineGetterSetter(_p, 'g', _p._getG, _p._setG)
-    cc.defineGetterSetter(_p, 'b', _p._getB, _p._setB)
-    cc.defineGetterSetter(_p, 'a', _p._getA, _p._setA)
+    defineGetterSetter(_p, 'r', _p._getR, _p._setR)
+    defineGetterSetter(_p, 'g', _p._getG, _p._setG)
+    defineGetterSetter(_p, 'b', _p._getB, _p._setB)
+    defineGetterSetter(_p, 'a', _p._getA, _p._setA)
   }
 })
 
-_p = cc.color
+const _p = color
 /**
  * White color (255, 255, 255, 255)
- * @returns {cc.Color}
+ * @returns {Color}
  * @private
  */
 _p._getWhite = function () {
-  return cc.color(255, 255, 255)
+  return color(255, 255, 255)
 }
 
 /**
  *  Yellow color (255, 255, 0, 255)
- * @returns {cc.Color}
+ * @returns {Color}
  * @private
  */
 _p._getYellow = function () {
-  return cc.color(255, 255, 0)
+  return color(255, 255, 0)
 }
 
 /**
  *  Blue color (0, 0, 255, 255)
- * @type {cc.Color}
+ * @type {Color}
  * @private
  */
 _p._getBlue = function () {
-  return cc.color(0, 0, 255)
+  return color(0, 0, 255)
 }
 
 /**
  *  Green Color (0, 255, 0, 255)
- * @type {cc.Color}
+ * @type {Color}
  * @private
  */
 _p._getGreen = function () {
-  return cc.color(0, 255, 0)
+  return color(0, 255, 0)
 }
 
 /**
  *  Red Color (255, 0, 0, 255)
- * @type {cc.Color}
+ * @type {Color}
  * @private
  */
 _p._getRed = function () {
-  return cc.color(255, 0, 0)
+  return color(255, 0, 0)
 }
 
 /**
  *  Magenta Color (255, 0, 255, 255)
- * @type {cc.Color}
+ * @type {Color}
  * @private
  */
 _p._getMagenta = function () {
-  return cc.color(255, 0, 255)
+  return color(255, 0, 255)
 }
 
 /**
  *  Black Color (0, 0, 0, 255)
- * @type {cc.Color}
+ * @type {Color}
  * @private
  */
 _p._getBlack = function () {
-  return cc.color(0, 0, 0)
+  return color(0, 0, 0)
 }
 
 /**
@@ -824,7 +825,7 @@ _p._getBlack = function () {
  * @private
  */
 _p._getOrange = function () {
-  return cc.color(255, 127, 0)
+  return color(255, 127, 0)
 }
 
 /**
@@ -833,33 +834,33 @@ _p._getOrange = function () {
  * @private
  */
 _p._getGray = function () {
-  return cc.color(166, 166, 166)
+  return color(166, 166, 166)
 }
 
 /** @expose */
 _p.WHITE
-cc.defineGetterSetter(_p, 'WHITE', _p._getWhite)
+defineGetterSetter(_p, 'WHITE', _p._getWhite)
 /** @expose */
 _p.YELLOW
-cc.defineGetterSetter(_p, 'YELLOW', _p._getYellow)
+defineGetterSetter(_p, 'YELLOW', _p._getYellow)
 /** @expose */
 _p.BLUE
-cc.defineGetterSetter(_p, 'BLUE', _p._getBlue)
+defineGetterSetter(_p, 'BLUE', _p._getBlue)
 /** @expose */
 _p.GREEN
-cc.defineGetterSetter(_p, 'GREEN', _p._getGreen)
+defineGetterSetter(_p, 'GREEN', _p._getGreen)
 /** @expose */
 _p.RED
-cc.defineGetterSetter(_p, 'RED', _p._getRed)
+defineGetterSetter(_p, 'RED', _p._getRed)
 /** @expose */
 _p.MAGENTA
-cc.defineGetterSetter(_p, 'MAGENTA', _p._getMagenta)
+defineGetterSetter(_p, 'MAGENTA', _p._getMagenta)
 /** @expose */
 _p.BLACK
-cc.defineGetterSetter(_p, 'BLACK', _p._getBlack)
+defineGetterSetter(_p, 'BLACK', _p._getBlack)
 /** @expose */
 _p.ORANGE
-cc.defineGetterSetter(_p, 'ORANGE', _p._getOrange)
+defineGetterSetter(_p, 'ORANGE', _p._getOrange)
 /** @expose */
 _p.GRAY
-cc.defineGetterSetter(_p, 'GRAY', _p._getGray)
+defineGetterSetter(_p, 'GRAY', _p._getGray)

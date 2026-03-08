@@ -1,7 +1,7 @@
 import { square } from './utility'
 import { Vec4 } from './vec4'
 
-export const Vec3 = function (x, y, z) {
+export const Vec3 = function (x?, y?, z?) {
   if (x && y === undefined) {
     this.x = x.x
     this.y = x.y

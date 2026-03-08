@@ -192,11 +192,11 @@ export const configuration = /** @lends configuration# */ {
    * Dumps the current configuration on the console
    */
   dumpInfo: function () {
-    if (ENABLE_GL_STATE_CACHE === 0) {
-      log('')
-      log(_LogInfos.configuration_dumpInfo)
-      log('')
-    }
+    // if (ENABLE_GL_STATE_CACHE === 0) {
+    //   log('')
+    log(_LogInfos.configuration_dumpInfo)
+    //   log('')
+    // }
   },
 
   /**

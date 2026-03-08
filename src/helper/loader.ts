@@ -41,8 +41,7 @@ const imagePool = {
  * @memberof cc
  */
 export const loader = (function () {
-  const _jsCache = {}, //cache for js
-    _register = {}, //register of loaders
+  const _register = {}, //register of loaders
     _langPathCache = {}, //cache for lang path
     _aliases = {}, //aliases for res url
     _queue = {}, // Callback queue for resources already loading
@@ -101,7 +100,7 @@ export const loader = (function () {
               xhr.status === 200 || xhr.status === 0 ? cb(null, xhr.responseText) : cb({ status: xhr.status, errorMessage: errInfo }, null)
           }
         } else {
-          if (xhr.overrideMimeType) xhr.overrideMimeType('text\/plain; charset=utf-8')
+          if (xhr.overrideMimeType) xhr.overrideMimeType('text/plain; charset=utf-8')
           const loadCallback = function () {
             xhr.removeEventListener('load', loadCallback)
             xhr.removeEventListener('error', errorCallback)
@@ -152,61 +151,6 @@ export const loader = (function () {
         //   });
       }
     },
-
-    loadCsb: function (url, cb) {
-      const xhr = loader.getXMLHttpRequest(),
-        errInfo = `load ${url} failed!`
-      xhr.open('GET', url, true)
-      xhr.responseType = 'arraybuffer'
-
-      const loadCallback = function () {
-        xhr.removeEventListener('load', loadCallback)
-        xhr.removeEventListener('error', errorCallback)
-        if (xhr._timeoutId >= 0) {
-          clearTimeout(xhr._timeoutId)
-        } else {
-          xhr.removeEventListener('timeout', timeoutCallback)
-        }
-        const arrayBuffer = xhr.response // Note: not oReq.responseText
-        if (arrayBuffer) {
-          window.msg = arrayBuffer
-        }
-        if (xhr.readyState === 4) {
-          xhr.status === 200 || xhr.status === 0 ? cb(null, xhr.response) : cb({ status: xhr.status, errorMessage: errInfo }, null)
-        }
-      }
-      var errorCallback = function () {
-        xhr.removeEventListener('load', loadCallback)
-        xhr.removeEventListener('error', errorCallback)
-        if (xhr._timeoutId >= 0) {
-          clearTimeout(xhr._timeoutId)
-        } else {
-          xhr.removeEventListener('timeout', timeoutCallback)
-        }
-        cb({ status: xhr.status, errorMessage: errInfo }, null)
-      }
-      var timeoutCallback = function () {
-        xhr.removeEventListener('load', loadCallback)
-        xhr.removeEventListener('error', errorCallback)
-        if (xhr._timeoutId >= 0) {
-          clearTimeout(xhr._timeoutId)
-        } else {
-          xhr.removeEventListener('timeout', timeoutCallback)
-        }
-        cb({ status: xhr.status, errorMessage: `Request timeout: ${errInfo}` }, null)
-      }
-      xhr.addEventListener('load', loadCallback)
-      xhr.addEventListener('error', errorCallback)
-      if (xhr.ontimeout === undefined) {
-        xhr._timeoutId = setTimeout(function () {
-          timeoutCallback()
-        }, xhr.timeout)
-      } else {
-        xhr.addEventListener('timeout', timeoutCallback)
-      }
-      xhr.send(null)
-    },
-
     /**
      * Load a single resource as json.
      * @param {string} url
@@ -218,11 +162,11 @@ export const loader = (function () {
           cb(err)
         } else {
           try {
-            var result = JSON.parse(txt)
+            const result = JSON.parse(txt)
+            cb(null, result)
           } catch (e) {
-            throw new Error(`parse json [${url}] failed : ${e}`)
+            throw new Error(`parse json [${url}] failed :`, { cause: e })
           }
-          cb(null, result)
         }
       })
     },
@@ -283,14 +227,13 @@ export const loader = (function () {
         }
       }
 
-      const self = this
-      var errorCallback = function () {
+      const errorCallback = function () {
         this.removeEventListener('load', loadCallback, false)
         this.removeEventListener('error', errorCallback, false)
 
         if (window.location.protocol !== 'https:' && img.crossOrigin && img.crossOrigin.toLowerCase() === 'anonymous') {
           opt.isCrossOrigin = false
-          self.release(url)
+          this.release(url)
           loader.loadImg(url, opt, callback, img)
         } else {
           const queue = _queue[url]
@@ -332,8 +275,7 @@ export const loader = (function () {
      * @private
      */
     _loadResIterator: function (item, index, cb) {
-      let self = this,
-        url = null
+      let url = null
       let type = item.type
       if (type) {
         type = `.${type.toLowerCase()}`
@@ -343,7 +285,7 @@ export const loader = (function () {
         type = path.extname(url)
       }
 
-      const obj = self.getRes(url)
+      const obj = this.getRes(url)
       if (obj) return cb(null, obj)
       let loader = null
       if (type) {
@@ -355,22 +297,22 @@ export const loader = (function () {
       }
       let realUrl = url
       if (!_urlRegExp.test(url)) {
-        const basePath = loader.getBasePath ? loader.getBasePath() : self.resPath
-        realUrl = self.getUrl(basePath, url)
+        const basePath = loader.getBasePath ? loader.getBasePath() : this.resPath
+        realUrl = this.getUrl(basePath, url)
       }
 
       if (game.config['noCache'] && typeof realUrl === 'string') {
-        if (self._noCacheRex.test(realUrl)) realUrl += `&_t=${Date.now()}`
+        if (this._noCacheRex.test(realUrl)) realUrl += `&_t=${Date.now()}`
         else realUrl += `?_t=${Date.now()}`
       }
-      loader.load(realUrl, url, item, function (err, data) {
+      loader.load(realUrl, url, item, (err, data) => {
         if (err) {
           log(err)
-          self.cache[url] = null
-          delete self.cache[url]
+          this.cache[url] = null
+          delete this.cache[url]
           cb({ status: 520, errorMessage: err }, null)
         } else {
-          self.cache[url] = data
+          this.cache[url] = data
           cb(null, data)
         }
       })
@@ -384,17 +326,16 @@ export const loader = (function () {
      * @returns {*}
      */
     getUrl: function (basePath, url) {
-      const self = this
       if (basePath !== undefined && url === undefined) {
         url = basePath
         let type = path.extname(url)
         type = type ? type.toLowerCase() : ''
         const loader = _register[type]
-        if (!loader) basePath = self.resPath
-        else basePath = loader.getBasePath ? loader.getBasePath() : self.resPath
+        if (!loader) basePath = this.resPath
+        else basePath = loader.getBasePath ? loader.getBasePath() : this.resPath
       }
       url = path.join(basePath || '', url)
-      if (url.match(/[\/(\\\\)]lang[\/(\\\\)]/i)) {
+      if (url.match(/[/(\\\\)]lang[/(\\\\)]/i)) {
         if (_langPathCache[url]) return _langPathCache[url]
         const extname = path.extname(url) || ''
         url = _langPathCache[url] = `${url.substring(0, url.length - extname.length)}_${sys.language}${extname}`
@@ -409,35 +350,26 @@ export const loader = (function () {
      * @param {function|Object} [loadCallback]
      * @return {AsyncPool}
      */
-    load: function (resources, option, loadCallback?) {
-      const len = arguments.length
-      if (len === 0) throw new Error('arguments error!')
+    load(resources, option, loadCallback?) {
+      if (!Array.isArray(resources)) resources = [resources]
 
-      if (len === 3) {
-        if (typeof option === 'function') {
-          if (typeof loadCallback === 'function') option = { trigger: option, cb: loadCallback }
-          else option = { cb: option, cbTarget: loadCallback }
-        }
-      } else if (len === 2) {
-        if (typeof option === 'function') option = { cb: option }
-      } else if (len === 1) {
-        option = {}
+      if (typeof option === 'function') {
+        option = { cb: option }
       }
 
-      if (!(resources instanceof Array)) resources = [resources]
       const asyncPool = new AsyncPool(
         resources,
         CONCURRENCY_HTTP_REQUEST_COUNT,
-        (value, index, AsyncPoolCallback, aPool) => {
-          this._loadResIterator(value, index, function (err) {
-            const arr = Array.prototype.slice.call(arguments, 1)
-            if (option.trigger) option.trigger.call(option.triggerTarget, arr[0], aPool.size, aPool.finishedSize) //call trigger
-            AsyncPoolCallback(err, arr[0])
+        (value, index, done, pool) => {
+          this._loadResIterator(value, index, (err, result) => {
+            option.trigger?.call(option.triggerTarget, result, pool.size, pool.finishedSize)
+            done(err, result)
           })
         },
-        option.cb,
+        option.cb ?? loadCallback,
         option.cbTarget,
       )
+
       asyncPool.flow()
       return asyncPool
     },
@@ -453,13 +385,12 @@ export const loader = (function () {
     },
 
     loadAliases: function (url, callback) {
-      const self = this,
-        dict = self.getRes(url)
+      const dict = this.getRes(url)
       if (!dict) {
-        self.load(url, function (err, results) {
-          self._handleAliases(results[0]['filenames'], callback)
+        this.load(url, function (err, results) {
+          this._handleAliases(results[0]['filenames'], callback)
         })
-      } else self._handleAliases(dict['filenames'], callback)
+      } else this._handleAliases(dict['filenames'], callback)
     },
 
     /**
@@ -469,7 +400,6 @@ export const loader = (function () {
      */
     register: function (extNames, loader) {
       if (!extNames || !loader) return
-      const self = this
       if (typeof extNames === 'string') return (_register[extNames.trim().toLowerCase()] = loader)
       for (let i = 0, li = extNames.length; i < li; i++) {
         _register[`.${extNames[i].trim().toLowerCase()}`] = loader
@@ -515,8 +445,8 @@ export const loader = (function () {
      */
     releaseAll: function () {
       const locCache = this.cache
-      for (var key in locCache) delete locCache[key]
-      for (var key in _aliases) delete _aliases[key]
+      for (const key in locCache) delete locCache[key]
+      for (const key in _aliases) delete _aliases[key]
     },
   }
 })()
