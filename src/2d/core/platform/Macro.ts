@@ -1,53 +1,53 @@
-import { _renderContext, director } from "../../..";
-import { isObject, isUndefined } from "../../../helper/checkType";
-import { _LogInfos, log } from "../../../helper/Debugger";
-import { global } from "../../../helper/global";
-import { sys } from "../../../helper/sys";
-import { p, rect, size } from "../cocoa/Geometry";
+import { _renderContext, director } from '../../..'
+import { isObject, isUndefined } from '../../../helper/checkType'
+import { _LogInfos, log } from '../../../helper/Debugger'
+import { global } from '../../../helper/global'
+import { sys } from '../../../helper/sys'
+import { p, rect, size } from '../cocoa/Geometry'
 
 /**
  * @constant
  * @type Number
  */
-export const INVALID_INDEX = -1;
+export const INVALID_INDEX = -1
 
 /**
  * PI is the ratio of a circle's circumference to its diameter.
  * @constant
  * @type Number
  */
-export const PI = Math.PI;
+export const PI = Math.PI
 
 /**
  * @constant
  * @type Number
  */
-export const FLT_MAX = parseFloat('3.402823466e+38F');
+export const FLT_MAX = parseFloat('3.402823466e+38F')
 
 /**
  * @constant
  * @type Number
  */
-export const FLT_MIN = parseFloat("1.175494351e-38F");
+export const FLT_MIN = parseFloat('1.175494351e-38F')
 
 /**
  * @constant
  * @type Number
  */
-export const RAD = PI / 180;
+export const RAD = PI / 180
 
 /**
  * @constant
  * @type Number
  */
-export const DEG = 180 / PI;
+export const DEG = 180 / PI
 
 /**
  * maximum unsigned int value
  * @constant
  * @type Number
  */
-export const UINT_MAX = 0xffffffff;
+export const UINT_MAX = 0xffffffff
 
 /**
  * <p>
@@ -63,12 +63,11 @@ export const UINT_MAX = 0xffffffff;
  */
 export const swap = function (x, y, ref) {
   if (isObject(ref) && !isUndefined(ref.x) && !isUndefined(ref.y)) {
-    var tmp = ref[x];
-    ref[x] = ref[y];
-    ref[y] = tmp;
-  } else
-    log(_LogInfos.swap);
-};
+    const tmp = ref[x]
+    ref[x] = ref[y]
+    ref[y] = tmp
+  } else log(_LogInfos.swap)
+}
 
 /**
  * <p>
@@ -83,8 +82,8 @@ export const swap = function (x, y, ref) {
  * lerp(2,10,0.2)//returns 3.6
  */
 export const lerp = function (a, b, r) {
-  return a + (b - a) * r;
-};
+  return a + (b - a) * r
+}
 
 /**
  * get a random number from 0 to 0xffffff
@@ -92,8 +91,8 @@ export const lerp = function (a, b, r) {
  * @returns {number}
  */
 export const rand = function () {
-  return Math.random() * 0xffffff;
-};
+  return Math.random() * 0xffffff
+}
 
 /**
  * returns a random float between -1 and 1
@@ -101,15 +100,15 @@ export const rand = function () {
  * @function
  */
 export const randomMinus1To1 = function () {
-  return (Math.random() - 0.5) * 2;
-};
+  return (Math.random() - 0.5) * 2
+}
 
 /**
  * returns a random float between 0 and 1
  * @return {Number}
  * @function
  */
-export const random0To1 = Math.random;
+export const random0To1 = Math.random
 
 /**
  * converts degrees to radians
@@ -118,8 +117,8 @@ export const random0To1 = Math.random;
  * @function
  */
 export const degreesToRadians = function (angle) {
-  return angle * RAD;
-};
+  return angle * RAD
+}
 
 /**
  * converts radians to degrees
@@ -128,8 +127,8 @@ export const degreesToRadians = function (angle) {
  * @function
  */
 export const radiansToDegrees = function (angle) {
-  return angle * DEG;
-};
+  return angle * DEG
+}
 /**
  * converts radians to degrees
  * @param {Number} angle
@@ -138,14 +137,14 @@ export const radiansToDegrees = function (angle) {
  */
 export const radiansToDegress = function (angle) {
   // export const log(_LogInfos.radiansToDegress);
-  return angle * DEG;
-};
+  return angle * DEG
+}
 
 /**
  * @constant
  * @type Number
  */
-export const REPEAT_FOREVER = Number.MAX_VALUE - 1;
+export const REPEAT_FOREVER = Number.MAX_VALUE - 1
 
 /**
  * Helpful macro that setups the GL server state, the correct GL program and sets the Model View Projection matrix
@@ -156,10 +155,10 @@ export const nodeDrawSetup = function (node) {
   //export const glEnable(node._glServerState);
   if (node._shaderProgram) {
     //export const _renderContext.useProgram(node._shaderProgram._programObj);
-    node._glProgramState.apply();
-    node._shaderProgram.setUniformForModelViewAndProjectionMatrixWithMat4();
+    node._glProgramState.apply()
+    node._shaderProgram.setUniformForModelViewAndProjectionMatrixWithMat4()
   }
-};
+}
 
 /**
  * <p>
@@ -178,7 +177,7 @@ export const enableDefaultGLStates = function () {
    glEnableClientState(GL_COLOR_ARRAY);
    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
    glEnable(GL_TEXTURE_2D);*/
-};
+}
 
 /**
  * <p>
@@ -197,7 +196,7 @@ export const disableDefaultGLStates = function () {
    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
    glDisableClientState(GL_VERTEX_ARRAY);
    */
-};
+}
 
 /**
  * <p>
@@ -208,14 +207,14 @@ export const disableDefaultGLStates = function () {
  * @function
  */
 export const incrementGLDraws = function (addNumber) {
-  global.g_NumberOfDraws += addNumber;
-};
+  global.g_NumberOfDraws += addNumber
+}
 
 /**
  * @constant
  * @type Number
  */
-export const FLT_EPSILON = 0.0000001192092896;
+export const FLT_EPSILON = 0.0000001192092896
 
 /**
  * <p>
@@ -226,8 +225,8 @@ export const FLT_EPSILON = 0.0000001192092896;
  * @function
  */
 export const contentScaleFactor = function () {
-  return director._contentScaleFactor;
-};
+  return director._contentScaleFactor
+}
 
 /**
  * Converts a Point in points to pixels
@@ -236,9 +235,9 @@ export const contentScaleFactor = function () {
  * @function
  */
 export const pointPointsToPixels = function (points) {
-  var scale = contentScaleFactor();
-  return p(points.x * scale, points.y * scale);
-};
+  const scale = contentScaleFactor()
+  return p(points.x * scale, points.y * scale)
+}
 
 /**
  * Converts a Point in pixels to points
@@ -247,15 +246,15 @@ export const pointPointsToPixels = function (points) {
  * @function
  */
 export const pointPixelsToPoints = function (pixels) {
-  var scale = contentScaleFactor();
-  return p(pixels.x / scale, pixels.y / scale);
-};
+  const scale = contentScaleFactor()
+  return p(pixels.x / scale, pixels.y / scale)
+}
 
 export const _pointPixelsToPointsOut = function (pixels, outPoint) {
-  var scale = contentScaleFactor();
-  outPoint.x = pixels.x / scale;
-  outPoint.y = pixels.y / scale;
-};
+  const scale = contentScaleFactor()
+  outPoint.x = pixels.x / scale
+  outPoint.y = pixels.y / scale
+}
 
 /**
  * Converts a Size in points to pixels
@@ -264,9 +263,9 @@ export const _pointPixelsToPointsOut = function (pixels, outPoint) {
  * @function
  */
 export const sizePointsToPixels = function (sizeInPoints) {
-  var scale = contentScaleFactor();
-  return size(sizeInPoints.width * scale, sizeInPoints.height * scale);
-};
+  const scale = contentScaleFactor()
+  return size(sizeInPoints.width * scale, sizeInPoints.height * scale)
+}
 
 /**
  * Converts a size in pixels to points
@@ -275,15 +274,15 @@ export const sizePointsToPixels = function (sizeInPoints) {
  * @function
  */
 export const sizePixelsToPoints = function (sizeInPixels) {
-  var scale = contentScaleFactor();
-  return size(sizeInPixels.width / scale, sizeInPixels.height / scale);
-};
+  const scale = contentScaleFactor()
+  return size(sizeInPixels.width / scale, sizeInPixels.height / scale)
+}
 
 export const _sizePixelsToPointsOut = function (sizeInPixels, outSize) {
-  var scale = contentScaleFactor();
-  outSize.width = sizeInPixels.width / scale;
-  outSize.height = sizeInPixels.height / scale;
-};
+  const scale = contentScaleFactor()
+  outSize.width = sizeInPixels.width / scale
+  outSize.height = sizeInPixels.height / scale
+}
 
 /**
  * Converts a rect in pixels to points
@@ -292,10 +291,9 @@ export const _sizePixelsToPointsOut = function (sizeInPixels, outSize) {
  * @function
  */
 export const rectPixelsToPoints = function (pixel) {
-  var scale = contentScaleFactor();
-  return rect(pixel.x / scale, pixel.y / scale,
-    pixel.width / scale, pixel.height / scale);
-};
+  const scale = contentScaleFactor()
+  return rect(pixel.x / scale, pixel.y / scale, pixel.width / scale, pixel.height / scale)
+}
 
 /**
  * Converts a rect in points to pixels
@@ -304,117 +302,116 @@ export const rectPixelsToPoints = function (pixel) {
  * @function
  */
 export const rectPointsToPixels = function (point) {
-  var scale = contentScaleFactor();
-  return rect(point.x * scale, point.y * scale,
-    point.width * scale, point.height * scale);
-};
+  const scale = contentScaleFactor()
+  return rect(point.x * scale, point.y * scale, point.width * scale, point.height * scale)
+}
 
 //some gl constant variable
 /**
  * @constant
  * @type Number
  */
-export const ONE = 1;
+export const ONE = 1
 
 /**
  * @constant
  * @type Number
  */
-export const ZERO = 0;
+export const ZERO = 0
 
 /**
  * @constant
  * @type Number
  */
-export const SRC_ALPHA = 0x0302;
+export const SRC_ALPHA = 0x0302
 
 /**
  * @constant
  * @type Number
  */
-export const SRC_ALPHA_SATURATE = 0x308;
+export const SRC_ALPHA_SATURATE = 0x308
 
 /**
  * @constant
  * @type Number
  */
-export const SRC_COLOR = 0x300;
+export const SRC_COLOR = 0x300
 
 /**
  * @constant
  * @type Number
  */
-export const DST_ALPHA = 0x304;
+export const DST_ALPHA = 0x304
 
 /**
  * @constant
  * @type Number
  */
-export const DST_COLOR = 0x306;
+export const DST_COLOR = 0x306
 
 /**
  * @constant
  * @type Number
  */
-export const ONE_MINUS_SRC_ALPHA = 0x0303;
+export const ONE_MINUS_SRC_ALPHA = 0x0303
 
 /**
  * @constant
  * @type Number
  */
-export const ONE_MINUS_SRC_COLOR = 0x301;
+export const ONE_MINUS_SRC_COLOR = 0x301
 
 /**
  * @constant
  * @type Number
  */
-export const ONE_MINUS_DST_ALPHA = 0x305;
+export const ONE_MINUS_DST_ALPHA = 0x305
 
 /**
  * @constant
  * @type Number
  */
-export const ONE_MINUS_DST_COLOR = 0x0307;
+export const ONE_MINUS_DST_COLOR = 0x0307
 
 /**
  * @constant
  * @type Number
  */
-export const ONE_MINUS_CONSTANT_ALPHA = 0x8004;
+export const ONE_MINUS_CONSTANT_ALPHA = 0x8004
 
 /**
  * @constant
  * @type Number
  */
-export const ONE_MINUS_CONSTANT_COLOR = 0x8002;
+export const ONE_MINUS_CONSTANT_COLOR = 0x8002
 
 /**
  * the constant variable equals gl.LINEAR for texture
  * @constant
  * @type Number
  */
-export const LINEAR = 0x2601;
+export const LINEAR = 0x2601
 
 /**
  * the constant variable equals gl.REPEAT for texture
  * @constant
  * @type Number
  */
-export const REPEAT = 0x2901;
+export const REPEAT = 0x2901
 
 /**
  * the constant variable equals gl.CLAMP_TO_EDGE for texture
  * @constant
  * @type Number
  */
-export const CLAMP_TO_EDGE = 0x812f;
+export const CLAMP_TO_EDGE = 0x812f
 
 /**
  * the constant variable equals gl.MIRRORED_REPEAT for texture
  * @constant
  * @type Number
  */
-export const MIRRORED_REPEAT = 0x8370;
+export const MIRRORED_REPEAT = 0x8370
 
 /**
  * default gl blend src function. Compatible with premultiplied alpha images.
@@ -422,7 +419,7 @@ export const MIRRORED_REPEAT = 0x8370;
  * @name export const BLEND_SRC
  * @type Number
  */
-export const BLEND_SRC = SRC_ALPHA;
+export const BLEND_SRC = SRC_ALPHA
 // export const game.addEventListener(game.EVENT_RENDERER_INITED, function () {
 //   if (_renderType === game.RENDER_TYPE_WEBGL
 //     && OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA) {
@@ -435,18 +432,18 @@ export const BLEND_SRC = SRC_ALPHA;
  * @constant
  * @type Number
  */
-export const BLEND_DST = ONE_MINUS_SRC_ALPHA;
+export const BLEND_DST = ONE_MINUS_SRC_ALPHA
 
 /**
  * Check webgl error.Error will be shown in console if exists.
  * @function
  */
 export const checkGLErrorDebug = function () {
-    const _error = _renderContext.getError();
-    if (_error) {
-      log(_LogInfos.checkGLErrorDebug, _error);
-    }
-};
+  const _error = _renderContext.getError()
+  if (_error) {
+    log(_LogInfos.checkGLErrorDebug, _error)
+  }
+}
 
 //Possible device orientations
 /**
@@ -454,21 +451,21 @@ export const checkGLErrorDebug = function () {
  * @constant
  * @type Number
  */
-export const ORIENTATION_PORTRAIT = 1;
+export const ORIENTATION_PORTRAIT = 1
 
 /**
  * Device oriented horizontally, home button on the right (UIDeviceOrientationLandscapeLeft)
  * @constant
  * @type Number
  */
-export const ORIENTATION_LANDSCAPE = 2;
+export const ORIENTATION_LANDSCAPE = 2
 
 /**
  * Device oriented vertically, home button on the top (UIDeviceOrientationPortraitUpsideDown)
  * @constant
  * @type Number
  */
-export const ORIENTATION_AUTO = 3;
+export const ORIENTATION_AUTO = 3
 
 /**
  * The limit count for concurrency http request, useful in some mobile browsers
@@ -476,291 +473,288 @@ export const ORIENTATION_AUTO = 3;
  * @constant
  * @type Number
  */
-export const CONCURRENCY_HTTP_REQUEST_COUNT = sys.isMobile ? 20 : 0;
+export const CONCURRENCY_HTTP_REQUEST_COUNT = sys.isMobile ? 20 : 0
 
 /**
  * The maximum vertex count for a single batched draw call.
  * @constant
  * @type Number
  */
-export const BATCH_VERTEX_COUNT = 2000;
-
+export const BATCH_VERTEX_COUNT = 2000
 
 // ------------------- vertex attrib flags -----------------------------
 /**
  * @constant
  * @type {Number}
  */
-export const VERTEX_ATTRIB_FLAG_NONE = 0;
+export const VERTEX_ATTRIB_FLAG_NONE = 0
 /**
  * @constant
  * @type {Number}
  */
-export const VERTEX_ATTRIB_FLAG_POSITION = 1 << 0;
+export const VERTEX_ATTRIB_FLAG_POSITION = 1 << 0
 /**
  * @constant
  * @type {Number}
  */
-export const VERTEX_ATTRIB_FLAG_COLOR = 1 << 1;
+export const VERTEX_ATTRIB_FLAG_COLOR = 1 << 1
 /**
  * @constant
  * @type {Number}
  */
-export const VERTEX_ATTRIB_FLAG_TEX_COORDS = 1 << 2;
+export const VERTEX_ATTRIB_FLAG_TEX_COORDS = 1 << 2
 /**
  * @constant
  * @type {Number}
  */
-export const VERTEX_ATTRIB_FLAG_POS_COLOR_TEX = (VERTEX_ATTRIB_FLAG_POSITION | VERTEX_ATTRIB_FLAG_COLOR | VERTEX_ATTRIB_FLAG_TEX_COORDS);
+export const VERTEX_ATTRIB_FLAG_POS_COLOR_TEX = VERTEX_ATTRIB_FLAG_POSITION | VERTEX_ATTRIB_FLAG_COLOR | VERTEX_ATTRIB_FLAG_TEX_COORDS
 
 /**
  * GL server side states
  * @constant
  * @type {Number}
  */
-export const GL_ALL = 0;
+export const GL_ALL = 0
 
 //-------------Vertex Attributes-----------
 /**
  * @constant
  * @type {Number}
  */
-export const VERTEX_ATTRIB_POSITION = 0;
+export const VERTEX_ATTRIB_POSITION = 0
 /**
  * @constant
  * @type {Number}
  */
-export const VERTEX_ATTRIB_COLOR = 1;
+export const VERTEX_ATTRIB_COLOR = 1
 /**
  * @constant
  * @type {Number}
  */
-export const VERTEX_ATTRIB_TEX_COORDS = 2;
+export const VERTEX_ATTRIB_TEX_COORDS = 2
 /**
  * @constant
  * @type {Number}
  */
-export const VERTEX_ATTRIB_MAX = 7;
+export const VERTEX_ATTRIB_MAX = 7
 
 //------------Uniforms------------------
 /**
  * @constant
  * @type {Number}
  */
-export const UNIFORM_PMATRIX = 0;
+export const UNIFORM_PMATRIX = 0
 /**
  * @constant
  * @type {Number}
  */
-export const UNIFORM_MVMATRIX = 1;
+export const UNIFORM_MVMATRIX = 1
 /**
  * @constant
  * @type {Number}
  */
-export const UNIFORM_MVPMATRIX = 2;
+export const UNIFORM_MVPMATRIX = 2
 /**
  * @constant
  * @type {Number}
  */
-export const UNIFORM_TIME = 3;
+export const UNIFORM_TIME = 3
 /**
  * @constant
  * @type {Number}
  */
-export const UNIFORM_SINTIME = 4;
+export const UNIFORM_SINTIME = 4
 /**
  * @constant
  * @type {Number}
  */
-export const UNIFORM_COSTIME = 5;
+export const UNIFORM_COSTIME = 5
 /**
  * @constant
  * @type {Number}
  */
-export const UNIFORM_RANDOM01 = 6;
+export const UNIFORM_RANDOM01 = 6
 /**
  * @constant
  * @type {Number}
  */
-export const UNIFORM_SAMPLER = 7;
+export const UNIFORM_SAMPLER = 7
 /**
  * @constant
  * @type {Number}
  */
-export const UNIFORM_MAX = 8;
+export const UNIFORM_MAX = 8
 
 //------------Shader Name---------------
 /**
  * @constant
  * @type {String}
  */
-export const SHADER_POSITION_TEXTURECOLOR = "ShaderPositionTextureColor";
+export const SHADER_POSITION_TEXTURECOLOR = 'ShaderPositionTextureColor'
 /**
  * @constant
  * @type {String}
  */
-export const SHADER_SPRITE_POSITION_TEXTURECOLOR = "ShaderSpritePositionTextureColor";
+export const SHADER_SPRITE_POSITION_TEXTURECOLOR = 'ShaderSpritePositionTextureColor'
 /**
  * @constant
  * @type {String}
  */
-export const SHADER_SPRITE_POSITION_TEXTURECOLOR_GRAY = "ShaderSpritePositionTextureColorGray";
+export const SHADER_SPRITE_POSITION_TEXTURECOLOR_GRAY = 'ShaderSpritePositionTextureColorGray'
 /**
  * @constant
  * @type {String}
  */
-export const SHADER_POSITION_TEXTURECOLORALPHATEST = "ShaderPositionTextureColorAlphaTest";
+export const SHADER_POSITION_TEXTURECOLORALPHATEST = 'ShaderPositionTextureColorAlphaTest'
 /**
  * @constant
  * @type {String}
  */
-export const SHADER_SPRITE_POSITION_TEXTURECOLORALPHATEST = "ShaderSpritePositionTextureColorAlphaTest";
+export const SHADER_SPRITE_POSITION_TEXTURECOLORALPHATEST = 'ShaderSpritePositionTextureColorAlphaTest'
 /**
  * @constant
  * @type {String}
  */
-export const SHADER_POSITION_COLOR = "ShaderPositionColor";
+export const SHADER_POSITION_COLOR = 'ShaderPositionColor'
 /**
  * @constant
  * @type {String}
  */
-export const SHADER_SPRITE_POSITION_COLOR = "ShaderSpritePositionColor";
+export const SHADER_SPRITE_POSITION_COLOR = 'ShaderSpritePositionColor'
 /**
  * @constant
  * @type {String}
  */
-export const SHADER_POSITION_TEXTURE = "ShaderPositionTexture";
+export const SHADER_POSITION_TEXTURE = 'ShaderPositionTexture'
 /**
  * @constant
  * @type {String}
  */
-export const SHADER_POSITION_TEXTURE_UCOLOR = "ShaderPositionTextureUColor";
+export const SHADER_POSITION_TEXTURE_UCOLOR = 'ShaderPositionTextureUColor'
 /**
  * @constant
  * @type {String}
  */
-export const SHADER_POSITION_TEXTUREA8COLOR = "ShaderPositionTextureA8Color";
+export const SHADER_POSITION_TEXTUREA8COLOR = 'ShaderPositionTextureA8Color'
 /**
  * @constant
  * @type {String}
  */
-export const SHADER_POSITION_UCOLOR = "ShaderPositionUColor";
+export const SHADER_POSITION_UCOLOR = 'ShaderPositionUColor'
 /**
  * @constant
  * @type {String}
  */
-export const SHADER_POSITION_LENGTHTEXTURECOLOR = "ShaderPositionLengthTextureColor";
+export const SHADER_POSITION_LENGTHTEXTURECOLOR = 'ShaderPositionLengthTextureColor'
 
 //------------uniform names----------------
 /**
  * @constant
  * @type {String}
  */
-export const UNIFORM_PMATRIX_S = "CC_PMatrix";
+export const UNIFORM_PMATRIX_S = 'CC_PMatrix'
 /**
  * @constant
  * @type {String}
  */
-export const UNIFORM_MVMATRIX_S = "CC_MVMatrix";
+export const UNIFORM_MVMATRIX_S = 'CC_MVMatrix'
 /**
  * @constant
  * @type {String}
  */
-export const UNIFORM_MVPMATRIX_S = "CC_MVPMatrix";
+export const UNIFORM_MVPMATRIX_S = 'CC_MVPMatrix'
 /**
  * @constant
  * @type {String}
  */
-export const UNIFORM_TIME_S = "CC_Time";
+export const UNIFORM_TIME_S = 'CC_Time'
 /**
  * @constant
  * @type {String}
  */
-export const UNIFORM_SINTIME_S = "CC_SinTime";
+export const UNIFORM_SINTIME_S = 'CC_SinTime'
 /**
  * @constant
  * @type {String}
  */
-export const UNIFORM_COSTIME_S = "CC_CosTime";
+export const UNIFORM_COSTIME_S = 'CC_CosTime'
 /**
  * @constant
  * @type {String}
  */
-export const UNIFORM_RANDOM01_S = "CC_Random01";
+export const UNIFORM_RANDOM01_S = 'CC_Random01'
 /**
  * @constant
  * @type {String}
  */
-export const UNIFORM_SAMPLER_S = "CC_Texture0";
+export const UNIFORM_SAMPLER_S = 'CC_Texture0'
 /**
  * @constant
  * @type {String}
  */
-export const UNIFORM_ALPHA_TEST_VALUE_S = "CC_alpha_value";
+export const UNIFORM_ALPHA_TEST_VALUE_S = 'CC_alpha_value'
 
 //------------Attribute names--------------
 /**
  * @constant
  * @type {String}
  */
-export const ATTRIBUTE_NAME_COLOR = "a_color";
+export const ATTRIBUTE_NAME_COLOR = 'a_color'
 /**
  * @constant
  * @type {String}
  */
-export const ATTRIBUTE_NAME_POSITION = "a_position";
+export const ATTRIBUTE_NAME_POSITION = 'a_position'
 /**
  * @constant
  * @type {String}
  */
-export const ATTRIBUTE_NAME_TEX_COORD = "a_texCoord";
+export const ATTRIBUTE_NAME_TEX_COORD = 'a_texCoord'
 /**
  * @constant
  * @type {String}
  */
-export const ATTRIBUTE_NAME_MVMAT = "a_mvMatrix";
-
+export const ATTRIBUTE_NAME_MVMAT = 'a_mvMatrix'
 
 /**
  * default size for font size
  * @constant
  * @type Number
  */
-export const ITEM_SIZE = 32;
+export const ITEM_SIZE = 32
 
 /**
  * default tag for current item
  * @constant
  * @type Number
  */
-export const CURRENT_ITEM = 0xc0c05001;
+export const CURRENT_ITEM = 0xc0c05001
 /**
  * default tag for zoom action tag
  * @constant
  * @type Number
  */
-export const ZOOM_ACTION_TAG = 0xc0c05002;
+export const ZOOM_ACTION_TAG = 0xc0c05002
 /**
  * default tag for normal
  * @constant
  * @type Number
  */
-export const NORMAL_TAG = 8801;
+export const NORMAL_TAG = 8801
 
 /**
  * default selected tag
  * @constant
  * @type Number
  */
-export const SELECTED_TAG = 8802;
+export const SELECTED_TAG = 8802
 
 /**
  * default disabled tag
  * @constant
  * @type Number
  */
-export const DISABLE_TAG = 8803;
-
+export const DISABLE_TAG = 8803
 
 // Array utils
 
@@ -773,15 +767,15 @@ export const DISABLE_TAG = 8803;
  */
 export const arrayVerifyType = function (arr, type) {
   if (arr && arr.length > 0) {
-    for (var i = 0; i < arr.length; i++) {
+    for (let i = 0; i < arr.length; i++) {
       if (!(arr[i] instanceof type)) {
-        log("element type is wrong!");
-        return false;
+        log('element type is wrong!')
+        return false
       }
     }
   }
-  return true;
-};
+  return true
+}
 
 /**
  * Searches for the first occurrence of object and removes it. If object is not found the function has no effect.
@@ -790,13 +784,13 @@ export const arrayVerifyType = function (arr, type) {
  * @param {*} delObj  remove object
  */
 export const arrayRemoveObject = function (arr, delObj) {
-  for (var i = 0, l = arr.length; i < l; i++) {
+  for (let i = 0, l = arr.length; i < l; i++) {
     if (arr[i] === delObj) {
-      arr.splice(i, 1);
-      break;
+      arr.splice(i, 1)
+      break
     }
   }
-};
+}
 
 /**
  * Removes from arr all values in minusArr. For each Value in minusArr, the first matching instance in arr will be removed.
@@ -805,10 +799,10 @@ export const arrayRemoveObject = function (arr, delObj) {
  * @param {Array} minusArr minus Array
  */
 export const arrayRemoveArray = function (arr, minusArr) {
-  for (var i = 0, l = minusArr.length; i < l; i++) {
-    arrayRemoveObject(arr, minusArr[i]);
+  for (let i = 0, l = minusArr.length; i < l; i++) {
+    arrayRemoveObject(arr, minusArr[i])
   }
-};
+}
 
 /**
  * Inserts some objects at index
@@ -819,9 +813,9 @@ export const arrayRemoveArray = function (arr, minusArr) {
  * @return {Array}
  */
 export const arrayAppendObjectsToIndex = function (arr, addObjs, index) {
-  arr.splice.apply(arr, [index, 0].concat(addObjs));
-  return arr;
-};
+  arr.splice(index, 0, ...addObjs)
+  return arr
+}
 
 /**
  * Copy an array's item to a new array (its performance is better than Array.slice)
@@ -829,8 +823,9 @@ export const arrayAppendObjectsToIndex = function (arr, addObjs, index) {
  * @return {Array}
  */
 export const copyArray = function (arr) {
-  var i, len = arr.length, arr_clone = new Array(len);
-  for (i = 0; i < len; i += 1)
-    arr_clone[i] = arr[i];
-  return arr_clone;
-};
+  let i
+  const len = arr.length,
+    arr_clone = new Array(len)
+  for (i = 0; i < len; i += 1) arr_clone[i] = arr[i]
+  return arr_clone
+}

@@ -1,5 +1,5 @@
-import { ContainerStrategy } from './ContainerStrategy';
-import { ContentStrategy } from './ContentStrategy';
+import { ContainerStrategy } from './ContainerStrategy'
+import { ContentStrategy } from './ContentStrategy'
 
 /**
  * @class ResolutionPolicy
@@ -17,21 +17,21 @@ export class ResolutionPolicy {
    * @constant
    * @type {number}
    */
-  public static EXACT_FIT = 0;
+  public static EXACT_FIT = 0
   /**
    * The entire application fills the specified area, without distortion but possibly with some cropping,
    * while maintaining the original aspect ratio of the application.
    * @constant
    * @type {number}
    */
-  public static NO_BORDER = 1;
+  public static NO_BORDER = 1
   /**
    * The entire application is visible in the specified area without distortion while maintaining the original
    * aspect ratio of the application. Borders can appear on two sides of the application.
    * @constant
    * @type {number}
    */
-  public static SHOW_ALL = 2;
+  public static SHOW_ALL = 2
   /**
    * The application takes the height of the design resolution size and modifies the width of the internal
    * canvas so that it fits the aspect ratio of the device.
@@ -40,7 +40,7 @@ export class ResolutionPolicy {
    * @constant
    * @type {number}
    */
-  public static FIXED_HEIGHT = 3;
+  public static FIXED_HEIGHT = 3
   /**
    * The application takes the width of the design resolution size and modifies the height of the internal
    * canvas so that it fits the aspect ratio of the device.
@@ -49,16 +49,16 @@ export class ResolutionPolicy {
    * @constant
    * @type {number}
    */
-  public static FIXED_WIDTH = 4;
+  public static FIXED_WIDTH = 4
   /**
    * Unknown policy.
    * @constant
    * @type {number}
    */
-  public static UNKNOWN = 5;
+  public static UNKNOWN = 5
 
-  private _containerStrategy: ContainerStrategy | null = null;
-  private _contentStrategy: ContentStrategy | null = null;
+  private _containerStrategy: ContainerStrategy | null = null
+  private _contentStrategy: ContentStrategy | null = null
 
   /**
    * @constructor
@@ -66,8 +66,8 @@ export class ResolutionPolicy {
    * @param {ContentStrategy} contentStg
    */
   constructor(containerStg: ContainerStrategy, contentStg: ContentStrategy) {
-    this.setContainerStrategy(containerStg);
-    this.setContentStrategy(contentStg);
+    this.setContainerStrategy(containerStg)
+    this.setContentStrategy(contentStg)
   }
 
   /**
@@ -75,8 +75,8 @@ export class ResolutionPolicy {
    * @param {View} view
    */
   public preApply(view) {
-    this._containerStrategy.preApply(view);
-    this._contentStrategy.preApply(view);
+    this._containerStrategy.preApply(view)
+    this._contentStrategy.preApply(view)
   }
 
   /**
@@ -88,8 +88,8 @@ export class ResolutionPolicy {
    * @returns {{scale: number[], viewport: Rect}}
    */
   public apply(view, designedResolution) {
-    this._containerStrategy.apply(view, designedResolution);
-    return this._contentStrategy.apply(view, designedResolution);
+    this._containerStrategy.apply(view, designedResolution)
+    return this._contentStrategy.apply(view, designedResolution)
   }
 
   /**
@@ -97,8 +97,8 @@ export class ResolutionPolicy {
    * @param {View} view
    */
   public postApply(view) {
-    this._containerStrategy.postApply(view);
-    this._contentStrategy.postApply(view);
+    this._containerStrategy.postApply(view)
+    this._contentStrategy.postApply(view)
   }
 
   /**
@@ -107,7 +107,7 @@ export class ResolutionPolicy {
    */
   public setContainerStrategy(containerStg: ContainerStrategy) {
     if (containerStg instanceof ContainerStrategy) {
-      this._containerStrategy = containerStg;
+      this._containerStrategy = containerStg
     }
   }
 
@@ -117,8 +117,7 @@ export class ResolutionPolicy {
    */
   public setContentStrategy(contentStg: ContentStrategy) {
     if (contentStg instanceof ContentStrategy) {
-      this._contentStrategy = contentStg;
+      this._contentStrategy = contentStg
     }
   }
 }
-

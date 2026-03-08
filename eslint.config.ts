@@ -20,6 +20,7 @@ export default [
       '@typescript-eslint/no-inferrable-types': 'error',
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-unused-expressions': 'warn',
+      '@typescript-eslint/no-unused-vars': 'warn',
       'prettier/prettier': [
         'error',
         {

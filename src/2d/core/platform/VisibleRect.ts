@@ -1,4 +1,4 @@
-import { p } from "../cocoa/Geometry";
+import { p } from '../cocoa/Geometry'
 
 /**
  * visibleRect is a singleton object which defines the actual visible rect of the current view,
@@ -37,40 +37,39 @@ export const visibleRect = {
    * @param {Rect} visibleRect
    */
   init: function (visibleRect) {
-
-    var w = this.width = visibleRect.width;
-    var h = this.height = visibleRect.height;
-    var l = visibleRect.x,
+    const w = (this.width = visibleRect.width)
+    const h = (this.height = visibleRect.height)
+    const l = visibleRect.x,
       b = visibleRect.y,
       t = b + h,
-      r = l + w;
+      r = l + w
 
     //top
-    this.topLeft.x = l;
-    this.topLeft.y = t;
-    this.topRight.x = r;
-    this.topRight.y = t;
-    this.top.x = l + w / 2;
-    this.top.y = t;
+    this.topLeft.x = l
+    this.topLeft.y = t
+    this.topRight.x = r
+    this.topRight.y = t
+    this.top.x = l + w / 2
+    this.top.y = t
 
     //bottom
-    this.bottomLeft.x = l;
-    this.bottomLeft.y = b;
-    this.bottomRight.x = r;
-    this.bottomRight.y = b;
-    this.bottom.x = l + w / 2;
-    this.bottom.y = b;
+    this.bottomLeft.x = l
+    this.bottomLeft.y = b
+    this.bottomRight.x = r
+    this.bottomRight.y = b
+    this.bottom.x = l + w / 2
+    this.bottom.y = b
 
     //center
-    this.center.x = l + w / 2;
-    this.center.y = b + h / 2;
+    this.center.x = l + w / 2
+    this.center.y = b + h / 2
 
     //left
-    this.left.x = l;
-    this.left.y = b + h / 2;
+    this.left.x = l
+    this.left.y = b + h / 2
 
     //right
-    this.right.x = r;
-    this.right.y = b + h / 2;
-  }
-};
+    this.right.x = r
+    this.right.y = b + h / 2
+  },
+}

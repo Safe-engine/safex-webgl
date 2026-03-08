@@ -1,10 +1,10 @@
-import { director, game, view } from "../src"
-import { ResolutionPolicy } from "../src/2d/core/platform/EGLView/ResolutionPolicy"
-import { Scene } from "../src/2d/core/scenes/Scene"
-import { Sprite } from "../src/2d/core/sprites/Sprite"
-import { global } from "../src/helper/global"
-import { loader } from "../src/helper/loader"
-import { sys } from "../src/helper/sys"
+import { director, game, view } from '../src'
+import { ResolutionPolicy } from '../src/2d/core/platform/EGLView/ResolutionPolicy'
+import { Scene } from '../src/2d/core/scenes/Scene'
+import { Sprite } from '../src/2d/core/sprites/Sprite'
+import { global } from '../src/helper/global'
+import { loader } from '../src/helper/loader'
+import { sys } from '../src/helper/sys'
 
 class BootScene extends Scene {
   // constructor() {
@@ -14,15 +14,15 @@ class BootScene extends Scene {
   // }
   onEnter() {
     super.onEnter()
-    loader.load(["res/button.png"], (err, img) => {
+    loader.load(['res/button.png'], (err, img) => {
       if (err) {
-        console.error("Failed to load image", err)
+        console.error('Failed to load image', err)
         return
       }
       // console.log("Image loaded", img)
-      const sprite = new Sprite("res/button.png")
-      const sprite2 = new Sprite("res/button_plus.png")
-      const sprite3 = new Sprite("res/button.png")
+      const sprite = new Sprite('res/button.png')
+      const sprite2 = new Sprite('res/button_plus.png')
+      const sprite3 = new Sprite('res/button.png')
       // console.log("sprite onEnter", sprite.getTexture())
       sprite.setPosition(view.getDesignResolutionSize().width / 2, view.getDesignResolutionSize().height / 2)
       sprite2.setPosition(85, 26)
@@ -34,7 +34,7 @@ class BootScene extends Scene {
   }
 
   update(dt) {
-    console.log("BootScene update", dt)
+    console.log('BootScene update', dt)
   }
 }
 
@@ -59,8 +59,8 @@ game.run(
     view.setDesignResolutionSize(width, height, policy)
     // The game will be resized when browser size change
     view.resizeWithBrowserSize(true)
-    const scene = new Scene();
-    const sprite = new Sprite("res/button.png")
+    const scene = new Scene()
+    const sprite = new Sprite('res/button.png')
     sprite.setPosition(100, 200)
     scene.addChild(sprite)
     director.runScene(new BootScene())

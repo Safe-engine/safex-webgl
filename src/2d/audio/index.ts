@@ -1,184 +1,172 @@
+;(function (polyfill) {
+  let SWA = polyfill.WEB_AUDIO,
+    SWB = polyfill.ONLY_ONE
 
+  const support = []
 
-(function (polyfill) {
-
-  var SWA = polyfill.WEB_AUDIO, SWB = polyfill.ONLY_ONE;
-
-  var support = [];
-
-  (function () {
-    var audio = document.createElement("audio");
+  ;(function () {
+    const audio = document.createElement('audio')
     if (audio.canPlayType) {
-      var ogg = audio.canPlayType('audio/ogg; codecs="vorbis"');
-      if (ogg && ogg !== "") support.push(".ogg");
-      var mp3 = audio.canPlayType("audio/mpeg");
-      if (mp3 && mp3 !== "") support.push(".mp3");
-      var wav = audio.canPlayType('audio/wav; codecs="1"');
-      if (wav && wav !== "") support.push(".wav");
-      var mp4 = audio.canPlayType("audio/mp4");
-      if (mp4 && mp4 !== "") support.push(".mp4");
-      var m4a = audio.canPlayType("audio/x-m4a");
-      if (m4a && m4a !== "") support.push(".m4a");
+      const ogg = audio.canPlayType('audio/ogg; codecs="vorbis"')
+      if (ogg && ogg !== '') support.push('.ogg')
+      const mp3 = audio.canPlayType('audio/mpeg')
+      if (mp3 && mp3 !== '') support.push('.mp3')
+      const wav = audio.canPlayType('audio/wav; codecs="1"')
+      if (wav && wav !== '') support.push('.wav')
+      const mp4 = audio.canPlayType('audio/mp4')
+      if (mp4 && mp4 !== '') support.push('.mp4')
+      const m4a = audio.canPlayType('audio/x-m4a')
+      if (m4a && m4a !== '') support.push('.m4a')
     }
-  })();
+  })()
   try {
     if (SWA) {
-      var context = new (window.AudioContext || window.webkitAudioContext || window.mozAudioContext)();
-      cc.Audio._context = context;
+      var context = new (window.AudioContext || window.webkitAudioContext || window.mozAudioContext)()
+      cc.Audio._context = context
       // check context integrity
-      if (
-        !context["createBufferSource"] ||
-        !context["createGain"] ||
-        !context["destination"] ||
-        !context["decodeAudioData"]
-      ) {
-        throw 'context is incomplete';
+      if (!context['createBufferSource'] || !context['createGain'] || !context['destination'] || !context['decodeAudioData']) {
+        throw 'context is incomplete'
       }
       if (polyfill.DELAY_CREATE_CTX)
         setTimeout(function () {
-          context = new (window.AudioContext || window.webkitAudioContext || window.mozAudioContext)();
-          cc.Audio._context = context;
-        }, 0);
+          context = new (window.AudioContext || window.webkitAudioContext || window.mozAudioContext)()
+          cc.Audio._context = context
+        }, 0)
     }
   } catch (error) {
-    SWA = false;
-    cc.log("browser don't support web audio");
+    SWA = false
+    cc.log("browser don't support web audio")
   }
 
-  var loader = {
-
+  const loader = {
     cache: {},
 
     useWebAudio: true,
 
     loadBuffer: function (url, cb) {
-      if (!SWA) return; // WebAudio Buffer
+      if (!SWA) return // WebAudio Buffer
 
-      var request = cc.loader.getXMLHttpRequest();
-      request.open("GET", url, true);
-      request.responseType = "arraybuffer";
+      const request = cc.loader.getXMLHttpRequest()
+      request.open('GET', url, true)
+      request.responseType = 'arraybuffer'
 
       // Our asynchronous callback
       request.onload = function () {
         if (request._timeoutId >= 0) {
-          clearTimeout(request._timeoutId);
+          clearTimeout(request._timeoutId)
         }
-        context["decodeAudioData"](request.response, function (buffer) {
-          //success
-          cb(null, buffer);
-          //audio.setBuffer(buffer);
-        }, function () {
-          //error
-          cb('decode error - ' + url);
-        });
-      };
+        context['decodeAudioData'](
+          request.response,
+          function (buffer) {
+            //success
+            cb(null, buffer)
+            //audio.setBuffer(buffer);
+          },
+          function () {
+            //error
+            cb(`decode error - ${url}`)
+          },
+        )
+      }
 
       request.onerror = function () {
-        cb('request error - ' + url);
-      };
+        cb(`request error - ${url}`)
+      }
       if (request.ontimeout === undefined) {
         request._timeoutId = setTimeout(function () {
-          request.ontimeout();
-        }, request.timeout);
+          request.ontimeout()
+        }, request.timeout)
       }
       request.ontimeout = function () {
-        cb('request timeout - ' + url);
-      };
+        cb(`request timeout - ${url}`)
+      }
 
-      request.send();
+      request.send()
     },
 
     load: function (realUrl, url, res, cb) {
+      if (support.length === 0) return cb('can not support audio!')
 
-      if (support.length === 0)
-        return cb("can not support audio!");
+      let audio = cc.loader.getRes(url)
+      if (audio) return cb(null, audio)
 
-      var audio = cc.loader.getRes(url);
-      if (audio)
-        return cb(null, audio);
+      if (cc.loader.audioPath) realUrl = cc.path.join(cc.loader.audioPath, realUrl)
 
-      if (cc.loader.audioPath)
-        realUrl = cc.path.join(cc.loader.audioPath, realUrl);
+      const extname = cc.path.extname(realUrl)
 
-      var extname = cc.path.extname(realUrl);
-
-      var typeList = [extname];
-      for (var i = 0; i < support.length; i++) {
+      const typeList = [extname]
+      for (let i = 0; i < support.length; i++) {
         if (extname !== support[i]) {
-          typeList.push(support[i]);
+          typeList.push(support[i])
         }
       }
 
-      audio = new cc.Audio(realUrl);
-      cc.loader.cache[url] = audio;
-      this.loadAudioFromExtList(realUrl, typeList, audio, cb);
-      return audio;
+      audio = new cc.Audio(realUrl)
+      cc.loader.cache[url] = audio
+      this.loadAudioFromExtList(realUrl, typeList, audio, cb)
+      return audio
     },
 
     loadAudioFromExtList: function (realUrl, typeList, audio, cb) {
       if (typeList.length === 0) {
-        var ERRSTR = "can not found the resource of audio! Last match url is : ";
-        ERRSTR += realUrl.replace(/\.(.*)?$/, "(");
+        let ERRSTR = 'can not found the resource of audio! Last match url is : '
+        ERRSTR += realUrl.replace(/\.(.*)?$/, '(')
         support.forEach(function (ext) {
-          ERRSTR += ext + "|";
-        });
-        ERRSTR = ERRSTR.replace(/\|$/, ")");
-        return cb({ status: 520, errorMessage: ERRSTR }, null);
+          ERRSTR += `${ext}|`
+        })
+        ERRSTR = ERRSTR.replace(/\|$/, ')')
+        return cb({ status: 520, errorMessage: ERRSTR }, null)
       }
 
       if (SWA && this.useWebAudio) {
         this.loadBuffer(realUrl, function (error, buffer) {
-          if (error)
-            cc.log(error);
+          if (error) cc.log(error)
 
-          if (buffer)
-            audio.setBuffer(buffer);
+          if (buffer) audio.setBuffer(buffer)
 
-          cb(null, audio);
-        });
-        return;
+          cb(null, audio)
+        })
+        return
       }
 
-      var num = polyfill.ONE_SOURCE ? 1 : typeList.length;
+      const num = polyfill.ONE_SOURCE ? 1 : typeList.length
 
       // 加载统一使用dom
-      var dom = document.createElement('audio');
-      for (var i = 0; i < num; i++) {
-        var source = document.createElement('source');
-        source.src = cc.path.changeExtname(realUrl, typeList[i]);
-        dom.appendChild(source);
+      const dom = document.createElement('audio')
+      for (let i = 0; i < num; i++) {
+        const source = document.createElement('source')
+        source.src = cc.path.changeExtname(realUrl, typeList[i])
+        dom.appendChild(source)
       }
 
-      audio.setElement(dom);
+      audio.setElement(dom)
 
-      var timer = setTimeout(function () {
+      const timer = setTimeout(function () {
         if (dom.readyState === 0) {
-          failure();
+          failure()
         } else {
-          success();
+          success()
         }
-      }, 8000);
+      }, 8000)
 
       var success = function () {
-        dom.removeEventListener("canplaythrough", success, false);
-        dom.removeEventListener("error", failure, false);
-        dom.removeEventListener("emptied", success, false);
-        if (polyfill.USE_LOADER_EVENT)
-          dom.removeEventListener(polyfill.USE_LOADER_EVENT, success, false);
-        clearTimeout(timer);
-        cb(null, audio);
-      };
+        dom.removeEventListener('canplaythrough', success, false)
+        dom.removeEventListener('error', failure, false)
+        dom.removeEventListener('emptied', success, false)
+        if (polyfill.USE_LOADER_EVENT) dom.removeEventListener(polyfill.USE_LOADER_EVENT, success, false)
+        clearTimeout(timer)
+        cb(null, audio)
+      }
       var failure = function () {
-        cc.log('load audio failure - ' + realUrl);
-        success();
-      };
-      dom.addEventListener("canplaythrough", success, false);
-      dom.addEventListener("error", failure, false);
-      if (polyfill.USE_LOADER_EVENT)
-        dom.addEventListener(polyfill.USE_LOADER_EVENT, success, false);
-    }
-  };
-  cc.loader.register(["mp3", "ogg", "wav", "mp4", "m4a"], loader);
+        cc.log(`load audio failure - ${realUrl}`)
+        success()
+      }
+      dom.addEventListener('canplaythrough', success, false)
+      dom.addEventListener('error', failure, false)
+      if (polyfill.USE_LOADER_EVENT) dom.addEventListener(polyfill.USE_LOADER_EVENT, success, false)
+    },
+  }
+  cc.loader.register(['mp3', 'ogg', 'wav', 'mp4', 'm4a'], loader)
 
   /**
    * cc.audioEngine is the singleton object, it provide simple audio APIs.
@@ -195,7 +183,7 @@
      * @returns {boolean} <i>true</i> if the background music is playing, otherwise <i>false</i>
      */
     willPlayMusic: function () {
-      return false;
+      return false
     },
 
     /**
@@ -207,25 +195,25 @@
      * cc.audioEngine.playMusic(path, false);
      */
     playMusic: function (url, loop) {
-      var bgMusic = this._currMusic;
+      const bgMusic = this._currMusic
       if (bgMusic && bgMusic.getPlaying()) {
-        bgMusic.stop();
+        bgMusic.stop()
       }
-      var musicVolume = this._musicVolume;
-      var audio = cc.loader.getRes(url);
+      const musicVolume = this._musicVolume
+      let audio = cc.loader.getRes(url)
       if (!audio) {
         cc.loader.load(url, function () {
           if (!audio.getPlaying() && !audio.interruptPlay) {
-            audio.setVolume(musicVolume);
-            audio.play(0, loop || false);
+            audio.setVolume(musicVolume)
+            audio.play(0, loop || false)
           }
-        });
-        audio = cc.loader.getRes(url);
+        })
+        audio = cc.loader.getRes(url)
       }
-      audio.setVolume(musicVolume);
-      audio.play(0, loop || false);
+      audio.setVolume(musicVolume)
+      audio.play(0, loop || false)
 
-      this._currMusic = audio;
+      this._currMusic = audio
     },
 
     /**
@@ -236,18 +224,16 @@
      * cc.audioEngine.stopMusic();
      */
     stopMusic: function (releaseData) {
-      var audio = this._currMusic;
+      const audio = this._currMusic
       if (audio) {
-        var list = cc.Audio.touchPlayList;
-        for (var i = list.length - 1; i >= 0; --i) {
-          if (this[i] && this[i].audio === audio._element)
-            list.splice(i, 1);
+        const list = cc.Audio.touchPlayList
+        for (let i = list.length - 1; i >= 0; --i) {
+          if (this[i] && this[i].audio === audio._element) list.splice(i, 1)
         }
 
-        audio.stop();
-        this._currMusic = null;
-        if (releaseData)
-          cc.loader.release(audio.src);
+        audio.stop()
+        this._currMusic = null
+        if (releaseData) cc.loader.release(audio.src)
       }
     },
 
@@ -258,9 +244,8 @@
      * cc.audioEngine.pauseMusic();
      */
     pauseMusic: function () {
-      var audio = this._currMusic;
-      if (audio)
-        audio.pause();
+      const audio = this._currMusic
+      if (audio) audio.pause()
     },
 
     /**
@@ -270,9 +255,8 @@
      * cc.audioEngine.resumeMusic();
      */
     resumeMusic: function () {
-      var audio = this._currMusic;
-      if (audio)
-        audio.resume();
+      const audio = this._currMusic
+      if (audio) audio.resume()
     },
 
     /**
@@ -282,10 +266,10 @@
      * cc.audioEngine.rewindMusic();
      */
     rewindMusic: function () {
-      var audio = this._currMusic;
+      const audio = this._currMusic
       if (audio) {
-        audio.stop();
-        audio.play();
+        audio.stop()
+        audio.play()
       }
     },
 
@@ -297,7 +281,7 @@
      * var volume = cc.audioEngine.getMusicVolume();
      */
     getMusicVolume: function () {
-      return this._musicVolume;
+      return this._musicVolume
     },
 
     /**
@@ -308,15 +292,15 @@
      * cc.audioEngine.setMusicVolume(0.5);
      */
     setMusicVolume: function (volume) {
-      volume = volume - 0;
-      if (isNaN(volume)) volume = 1;
-      if (volume > 1) volume = 1;
-      if (volume < 0) volume = 0;
+      volume = volume - 0
+      if (isNaN(volume)) volume = 1
+      if (volume > 1) volume = 1
+      if (volume < 0) volume = 0
 
-      this._musicVolume = volume;
-      var audio = this._currMusic;
+      this._musicVolume = volume
+      const audio = this._currMusic
       if (audio) {
-        audio.setVolume(volume);
+        audio.setVolume(volume)
       }
     },
 
@@ -333,11 +317,11 @@
      *  }
      */
     isMusicPlaying: function () {
-      var audio = this._currMusic;
+      const audio = this._currMusic
       if (audio) {
-        return audio.getPlaying();
+        return audio.getPlaying()
       } else {
-        return false;
+        return false
       }
     },
 
@@ -354,77 +338,73 @@
      * var soundId = cc.audioEngine.playEffect(path);
      */
     playEffect: function (url, loop) {
-
       if (SWB && this._currMusic && this._currMusic.getPlaying()) {
-        cc.log('Browser is only allowed to play one audio');
-        return null;
+        cc.log('Browser is only allowed to play one audio')
+        return null
       }
 
-      var effectList = this._audioPool[url];
+      let effectList = this._audioPool[url]
       if (!effectList) {
-        effectList = this._audioPool[url] = [];
+        effectList = this._audioPool[url] = []
       }
 
       for (var i = 0; i < effectList.length; i++) {
         if (!effectList[i].getPlaying()) {
-          break;
+          break
         }
       }
 
       if (!SWA && i > this._maxAudioInstance) {
-        var first = effectList.shift();
-        first.stop();
-        effectList.push(first);
-        i = effectList.length - 1;
+        const first = effectList.shift()
+        first.stop()
+        effectList.push(first)
+        i = effectList.length - 1
         // cc.log("Error: %s greater than %d", url, this._maxAudioInstance);
       }
 
-      var audio;
+      let audio
       if (effectList[i]) {
-        audio = effectList[i];
-        audio.setVolume(this._effectVolume);
-        audio.play(0, loop || false);
-        return audio;
+        audio = effectList[i]
+        audio.setVolume(this._effectVolume)
+        audio.play(0, loop || false)
+        return audio
       }
 
-      audio = cc.loader.getRes(url);
+      audio = cc.loader.getRes(url)
 
       if (audio && SWA && audio._AUDIO_TYPE === 'AUDIO') {
-        cc.loader.release(url);
-        audio = null;
+        cc.loader.release(url)
+        audio = null
       }
 
       if (audio) {
-
         if (SWA && audio._AUDIO_TYPE === 'AUDIO') {
           loader.loadBuffer(url, function (error, buffer) {
-            audio.setBuffer(buffer);
-            audio.setVolume(cc.audioEngine._effectVolume);
-            if (!audio.getPlaying())
-              audio.play(0, loop || false);
-          });
+            audio.setBuffer(buffer)
+            audio.setVolume(cc.audioEngine._effectVolume)
+            if (!audio.getPlaying()) audio.play(0, loop || false)
+          })
         } else {
-          audio = audio.cloneNode();
-          audio.setVolume(this._effectVolume);
-          audio.play(0, loop || false);
-          effectList.push(audio);
-          return audio;
+          audio = audio.cloneNode()
+          audio.setVolume(this._effectVolume)
+          audio.play(0, loop || false)
+          effectList.push(audio)
+          return audio
         }
-
       }
 
-      var cache = loader.useWebAudio;
-      loader.useWebAudio = true;
+      const cache = loader.useWebAudio
+      loader.useWebAudio = true
       cc.loader.load(url, function (audio) {
-        audio = cc.loader.getRes(url);
-        audio = audio.cloneNode();
-        audio.setVolume(cc.audioEngine._effectVolume);
-        audio.play(0, loop || false);
-        effectList.push(audio);
-      });
-      loader.useWebAudio = cache;
+        audio = cc.loader.getRes(url)
+        audio = audio.cloneNode()
+        audio.setVolume(cc.audioEngine._effectVolume)
+        audio.play(0, loop || false)
+        effectList.push(audio)
+      })
+      loader.useWebAudio = cache
 
-      return audio;
+      return audio
     },
 
     /**
@@ -435,18 +415,18 @@
      * cc.audioEngine.setEffectsVolume(0.5);
      */
     setEffectsVolume: function (volume) {
-      volume = volume - 0;
-      if (isNaN(volume)) volume = 1;
-      if (volume > 1) volume = 1;
-      if (volume < 0) volume = 0;
+      volume = volume - 0
+      if (isNaN(volume)) volume = 1
+      if (volume > 1) volume = 1
+      if (volume < 0) volume = 0
 
-      this._effectVolume = volume;
-      var audioPool = this._audioPool;
-      for (var p in audioPool) {
-        var audioList = audioPool[p];
+      this._effectVolume = volume
+      const audioPool = this._audioPool
+      for (const p in audioPool) {
+        const audioList = audioPool[p]
         if (Array.isArray(audioList))
-          for (var i = 0; i < audioList.length; i++) {
-            audioList[i].setVolume(volume);
+          for (let i = 0; i < audioList.length; i++) {
+            audioList[i].setVolume(volume)
           }
       }
     },
@@ -459,7 +439,7 @@
      * var effectVolume = cc.audioEngine.getEffectsVolume();
      */
     getEffectsVolume: function () {
-      return this._effectVolume;
+      return this._effectVolume
     },
 
     /**
@@ -471,7 +451,7 @@
      */
     pauseEffect: function (audio) {
       if (audio) {
-        audio.pause();
+        audio.pause()
       }
     },
 
@@ -482,12 +462,12 @@
      * cc.audioEngine.pauseAllEffects();
      */
     pauseAllEffects: function () {
-      var ap = this._audioPool;
-      for (var p in ap) {
-        var list = ap[p];
-        for (var i = 0; i < ap[p].length; i++) {
+      const ap = this._audioPool
+      for (const p in ap) {
+        const list = ap[p]
+        for (let i = 0; i < ap[p].length; i++) {
           if (list[i].getPlaying()) {
-            list[i].pause();
+            list[i].pause()
           }
         }
       }
@@ -501,8 +481,7 @@
      * cc.audioEngine.resumeEffect(audioID);
      */
     resumeEffect: function (audio) {
-      if (audio)
-        audio.resume();
+      if (audio) audio.resume()
     },
 
     /**
@@ -512,11 +491,11 @@
      * cc.audioEngine.resumeAllEffects();
      */
     resumeAllEffects: function () {
-      var ap = this._audioPool;
-      for (var p in ap) {
-        var list = ap[p];
-        for (var i = 0; i < ap[p].length; i++) {
-          list[i].resume();
+      const ap = this._audioPool
+      for (const p in ap) {
+        const list = ap[p]
+        for (let i = 0; i < ap[p].length; i++) {
+          list[i].resume()
         }
       }
     },
@@ -530,7 +509,7 @@
      */
     stopEffect: function (audio) {
       if (audio) {
-        audio.stop();
+        audio.stop()
       }
     },
 
@@ -541,15 +520,15 @@
      * cc.audioEngine.stopAllEffects();
      */
     stopAllEffects: function () {
-      var ap = this._audioPool;
-      for (var p in ap) {
-        var list = ap[p];
-        for (var i = 0; i < list.length; i++) {
-          list[i].stop();
+      const ap = this._audioPool
+      for (const p in ap) {
+        const list = ap[p]
+        for (let i = 0; i < list.length; i++) {
+          list[i].stop()
         }
-        list.length = 0;
+        list.length = 0
       }
-      ap.length = 0;
+      ap.length = 0
     },
 
     /**
@@ -561,55 +540,53 @@
      */
     unloadEffect: function (url) {
       if (!url) {
-        return;
+        return
       }
 
-      cc.loader.release(url);
-      var pool = this._audioPool[url];
+      cc.loader.release(url)
+      const pool = this._audioPool[url]
       if (pool) {
-        for (var i = 0; i < pool.length; i++) {
-          pool[i].stop();
+        for (let i = 0; i < pool.length; i++) {
+          pool[i].stop()
         }
-        pool.length = 0;
+        pool.length = 0
       }
-      delete this._audioPool[url];
+      delete this._audioPool[url]
     },
 
     /**
      * End music and effects.
      */
     end: function () {
-      this.stopMusic();
-      this.stopAllEffects();
+      this.stopMusic()
+      this.stopAllEffects()
     },
 
     _pauseCache: [],
     _pausePlaying: function () {
-      var bgMusic = this._currMusic;
+      const bgMusic = this._currMusic
       if (bgMusic && bgMusic.getPlaying()) {
-        bgMusic.pause();
-        this._pauseCache.push(bgMusic);
+        bgMusic.pause()
+        this._pauseCache.push(bgMusic)
       }
-      var ap = this._audioPool;
-      for (var p in ap) {
-        var list = ap[p];
-        for (var i = 0; i < ap[p].length; i++) {
+      const ap = this._audioPool
+      for (const p in ap) {
+        const list = ap[p]
+        for (let i = 0; i < ap[p].length; i++) {
           if (list[i].getPlaying()) {
-            list[i].pause();
-            this._pauseCache.push(list[i]);
+            list[i].pause()
+            this._pauseCache.push(list[i])
           }
         }
       }
     },
 
     _resumePlaying: function () {
-      var list = this._pauseCache;
-      for (var i = 0; i < list.length; i++) {
-        list[i].resume();
+      const list = this._pauseCache
+      for (let i = 0; i < list.length; i++) {
+        list[i].resume()
       }
-      list.length = 0;
-    }
-  };
-
-})(window.__audioSupport);
-
+      list.length = 0
+    },
+  }
+})(window.__audioSupport)

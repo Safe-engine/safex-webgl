@@ -1,41 +1,41 @@
-import { Event } from "./Event";
+import { Event } from './Event'
 
 export class EventTouch extends Event {
-  _eventCode: number = 0;
-  private _touches: any[] = [];
+  _eventCode = 0
+  private _touches: any[] = []
 
-  static MAX_TOUCHES: number = 5;
-  static EventCode = { BEGAN: 0, MOVED: 1, ENDED: 2, CANCELLED: 3 };
+  static MAX_TOUCHES = 5
+  static EventCode = { BEGAN: 0, MOVED: 1, ENDED: 2, CANCELLED: 3 }
 
   constructor(arr?: any[]) {
-    super(Event.TOUCH);
-    this._touches = arr || [];
+    super(Event.TOUCH)
+    this._touches = arr || []
   }
 
   /**
    * Returns event code
    */
   getEventCode() {
-    return this._eventCode;
+    return this._eventCode
   }
 
   /**
    * Returns touches of event
    */
   getTouches() {
-    return this._touches;
+    return this._touches
   }
 
   _setEventCode(eventCode: number) {
-    this._eventCode = eventCode;
+    this._eventCode = eventCode
   }
 
   _setTouches(touches: any[]) {
-    this._touches = touches;
+    this._touches = touches
   }
 }
 
 // The maximum touch numbers
-EventTouch.MAX_TOUCHES = 5;
+EventTouch.MAX_TOUCHES = 5
 
-EventTouch.EventCode = { BEGAN: 0, MOVED: 1, ENDED: 2, CANCELLED: 3 };
+EventTouch.EventCode = { BEGAN: 0, MOVED: 1, ENDED: 2, CANCELLED: 3 }

@@ -1,16 +1,16 @@
-import { director } from "../../..";
-import { Node } from "../base-nodes/Node";
+import { director } from '../../..'
+import { Node } from '../base-nodes/Node'
 
 export class Scene extends Node {
-  _className = "Scene"
+  _className = 'Scene'
   constructor() {
-    super();
-    this._ignoreAnchorPointForPosition = true;
-    this.setAnchorPoint(0.5, 0.5);
-    this.setContentSize(director.getWinSize());
+    super()
+    this._ignoreAnchorPointForPosition = true
+    this.setAnchorPoint(0.5, 0.5)
+    this.setContentSize(director.getWinSize())
   }
 
   static create = function () {
-    return new Scene();
-  };
+    return new Scene()
+  }
 }

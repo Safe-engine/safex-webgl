@@ -1,226 +1,218 @@
-import { _renderContext, container, director, game, renderer, view, winSize } from '../../..';
-import { log } from '../../../helper/Debugger';
-import { _renderType } from '../../../helper/engine';
-import { sys } from '../../../helper/sys';
-import { rect, Rect, size, Size, Point as Vec2 } from '../cocoa/Geometry';
-import { eventManager } from '../event-manager/EventManager';
-import { ContainerStrategy } from './EGLView/ContainerStrategy';
-import { ContentStrategy } from './EGLView/ContentStrategy';
-import { ResolutionPolicy } from './EGLView/ResolutionPolicy';
-import { visibleRect } from './VisibleRect';
+import { _renderContext, container, director, game, renderer, view, winSize } from '../../..'
+import { log } from '../../../helper/Debugger'
+import { _renderType } from '../../../helper/engine'
+import { sys } from '../../../helper/sys'
+import { rect, Rect, size, Size, Point as Vec2 } from '../cocoa/Geometry'
+import { eventManager } from '../event-manager/EventManager'
+import { ContainerStrategy } from './EGLView/ContainerStrategy'
+import { ContentStrategy } from './EGLView/ContentStrategy'
+import { ResolutionPolicy } from './EGLView/ResolutionPolicy'
+import { visibleRect } from './VisibleRect'
 
-declare const gl: any;
+declare const gl: any
 
-export const Touches: any[] = [];
-export const TouchesIntergerDict: any = {};
+export const Touches: any[] = []
+export const TouchesIntergerDict: any = {}
 
-export const DENSITYDPI_DEVICE = 'device-dpi';
-export const DENSITYDPI_HIGH = 'high-dpi';
-export const DENSITYDPI_MEDIUM = 'medium-dpi';
-export const DENSITYDPI_LOW = 'low-dpi';
+export const DENSITYDPI_DEVICE = 'device-dpi'
+export const DENSITYDPI_HIGH = 'high-dpi'
+export const DENSITYDPI_MEDIUM = 'medium-dpi'
+export const DENSITYDPI_LOW = 'low-dpi'
 
-export const ORIENTATION_LANDSCAPE = 0;
-export const ORIENTATION_PORTRAIT = 1;
-export const ORIENTATION_AUTO = 2;
+export const ORIENTATION_LANDSCAPE = 0
+export const ORIENTATION_PORTRAIT = 1
+export const ORIENTATION_AUTO = 2
 
 const __BrowserGetter = {
   html: null as HTMLElement | null,
   init: function (_view: EGLView) {
-    this.html = document.documentElement;
+    this.html = document.documentElement
   },
   availWidth: function (frame: HTMLElement | null) {
-    if (!frame || frame === this.html)
-      return window.innerWidth;
-    else
-      return frame.clientWidth;
+    if (!frame || frame === this.html) return window.innerWidth
+    else return frame.clientWidth
   },
   availHeight: function (frame: HTMLElement | null) {
-    if (!frame || frame === this.html)
-      return window.innerHeight;
-    else
-      return frame.clientHeight;
+    if (!frame || frame === this.html) return window.innerHeight
+    else return frame.clientHeight
   },
   meta: {
-    'width': 'device-width'
+    width: 'device-width',
   } as any,
-  adaptationType: sys.browserType
-};
+  adaptationType: sys.browserType,
+}
 
-if (window.navigator.userAgent.indexOf('OS 8_1_') > -1) //this mistake like MIUI, so use of MIUI treatment method
-  __BrowserGetter.adaptationType = sys.BROWSER_TYPE_MIUI;
+if (window.navigator.userAgent.indexOf('OS 8_1_') > -1)
+  //this mistake like MIUI, so use of MIUI treatment method
+  __BrowserGetter.adaptationType = sys.BROWSER_TYPE_MIUI
 
-if (sys.os === sys.OS_IOS) // All browsers are WebView
-  __BrowserGetter.adaptationType = sys.BROWSER_TYPE_SAFARI;
+if (sys.os === sys.OS_IOS)
+  // All browsers are WebView
+  __BrowserGetter.adaptationType = sys.BROWSER_TYPE_SAFARI
 
 switch (__BrowserGetter.adaptationType) {
   case sys.BROWSER_TYPE_SAFARI:
-    __BrowserGetter.meta['minimal-ui'] = 'true';
-    break;
+    __BrowserGetter.meta['minimal-ui'] = 'true'
+    break
   case sys.BROWSER_TYPE_CHROME:
     Object.defineProperty(__BrowserGetter, 'target-densitydpi', {
       get: function () {
-        return view._targetDensityDPI;
-      }
-    });
-    break;
+        return view._targetDensityDPI
+      },
+    })
+    break
   case sys.BROWSER_TYPE_MIUI:
     __BrowserGetter.init = function (view: EGLView) {
-      if (view.__resizeWithBrowserSize) return;
+      if (view.__resizeWithBrowserSize) return
       const resize = function () {
-        view.setDesignResolutionSize(
-          view._designResolutionSize.width,
-          view._designResolutionSize.height,
-          view._resolutionPolicy
-        );
-        window.removeEventListener('resize', resize, false);
-      };
-      window.addEventListener('resize', resize, false);
-    };
-    break;
+        view.setDesignResolutionSize(view._designResolutionSize.width, view._designResolutionSize.height, view._resolutionPolicy)
+        window.removeEventListener('resize', resize, false)
+      }
+      window.addEventListener('resize', resize, false)
+    }
+    break
 }
 
-let _scissorRect: Rect | null = null;
+let _scissorRect: Rect | null = null
 
 export class EGLView {
   // fields
-  _delegate: any = null;
+  _delegate: any = null
   // Size of parent node that contains game.container and game.canvas
-  _frameSize: Size;
+  _frameSize: Size
   // resolution size, it is the size appropriate for the app resources.
-  _designResolutionSize: Size;
-  _originalDesignResolutionSize: Size;
+  _designResolutionSize: Size
+  _originalDesignResolutionSize: Size
   // Viewport is the container's rect related to content's coordinates in pixel
-  _viewPortRect: Rect;
+  _viewPortRect: Rect
   // The visible rect in content's coordinate in point
-  _visibleRect: Rect;
-  _retinaEnabled = false;
-  _autoFullScreen = false;
+  _visibleRect: Rect
+  _retinaEnabled = false
+  _autoFullScreen = false
   // The device's pixel ratio (for retina displays)
-  _devicePixelRatio = 1;
+  _devicePixelRatio = 1
   // the view name
-  _viewName = "";
+  _viewName = ''
   // Custom callback for resize event
-  _resizeCallback: (() => void) | null = null;
+  _resizeCallback: (() => void) | null = null
 
-  _orientationChanging = true;
-  _resizing = false;
+  _orientationChanging = true
+  _resizing = false
 
-  _scaleX = 1;
-  _originalScaleX = 1;
-  _scaleY = 1;
-  _originalScaleY = 1;
+  _scaleX = 1
+  _originalScaleX = 1
+  _scaleY = 1
+  _originalScaleY = 1
 
-  _isRotated = false;
-  _orientation = 3;
+  _isRotated = false
+  _orientation = 3
 
-  _resolutionPolicy: ResolutionPolicy | null = null;
-  _rpExactFit: ResolutionPolicy | null = null;
-  _rpShowAll: ResolutionPolicy | null = null;
-  _rpNoBorder: ResolutionPolicy | null = null;
-  _rpFixedHeight: ResolutionPolicy | null = null;
-  _rpFixedWidth: ResolutionPolicy | null = null;
-  _initialized = false;
+  _resolutionPolicy: ResolutionPolicy | null = null
+  _rpExactFit: ResolutionPolicy | null = null
+  _rpShowAll: ResolutionPolicy | null = null
+  _rpNoBorder: ResolutionPolicy | null = null
+  _rpFixedHeight: ResolutionPolicy | null = null
+  _rpFixedWidth: ResolutionPolicy | null = null
+  _initialized = false
 
-  _contentTranslateLeftTop: { left: number, top: number } | null = null;
+  _contentTranslateLeftTop: { left: number; top: number } | null = null
 
   // Parent node that contains game.container and game.canvas
-  _frame: HTMLElement | null = null;
-  _frameZoomFactor = 1.0;
-  __resizeWithBrowserSize = false;
-  _isAdjustViewPort = true;
-  _targetDensityDPI: string | null = null;
+  _frame: HTMLElement | null = null
+  _frameZoomFactor = 1.0
+  __resizeWithBrowserSize = false
+  _isAdjustViewPort = true
+  _targetDensityDPI: string | null = null
 
   /**
    * Constructor of EGLView
    */
   constructor() {
-    const d = document;
-    const _strategyer = ContainerStrategy;
-    const _strategy = ContentStrategy;
+    const d = document
+    const _strategyer = ContainerStrategy
+    const _strategy = ContentStrategy
 
-    __BrowserGetter.init(this);
+    __BrowserGetter.init(this)
 
-    this._frame = (game.container!.parentNode === d.body) ? d.documentElement : game.container!.parentNode as HTMLElement;
-    this._frameSize = size(0, 0);
-    this._initFrameSize();
+    this._frame = game.container!.parentNode === d.body ? d.documentElement : (game.container!.parentNode as HTMLElement)
+    this._frameSize = size(0, 0)
+    this._initFrameSize()
 
-    const w = game.canvas!.width;
-    const h = game.canvas!.height;
-    this._designResolutionSize = size(w, h);
-    this._originalDesignResolutionSize = size(w, h);
-    this._viewPortRect = rect(0, 0, w, h);
-    this._visibleRect = rect(0, 0, w, h);
-    this._contentTranslateLeftTop = { left: 0, top: 0 };
-    this._viewName = 'Cocos2dHTML5';
+    const w = game.canvas!.width
+    const h = game.canvas!.height
+    this._designResolutionSize = size(w, h)
+    this._originalDesignResolutionSize = size(w, h)
+    this._viewPortRect = rect(0, 0, w, h)
+    this._visibleRect = rect(0, 0, w, h)
+    this._contentTranslateLeftTop = { left: 0, top: 0 }
+    this._viewName = 'Cocos2dHTML5'
 
-    visibleRect?.init(this._visibleRect);
+    visibleRect?.init(this._visibleRect)
 
     // Setup system default resolution policies
-    this._rpExactFit = new ResolutionPolicy(_strategyer.EQUAL_TO_FRAME, _strategy.EXACT_FIT);
-    this._rpShowAll = new ResolutionPolicy(_strategyer.PROPORTION_TO_FRAME, _strategy.SHOW_ALL);
-    this._rpNoBorder = new ResolutionPolicy(_strategyer.EQUAL_TO_FRAME, _strategy.NO_BORDER);
-    this._rpFixedHeight = new ResolutionPolicy(_strategyer.EQUAL_TO_FRAME, _strategy.FIXED_HEIGHT);
-    this._rpFixedWidth = new ResolutionPolicy(_strategyer.EQUAL_TO_FRAME, _strategy.FIXED_WIDTH);
+    this._rpExactFit = new ResolutionPolicy(_strategyer.EQUAL_TO_FRAME, _strategy.EXACT_FIT)
+    this._rpShowAll = new ResolutionPolicy(_strategyer.PROPORTION_TO_FRAME, _strategy.SHOW_ALL)
+    this._rpNoBorder = new ResolutionPolicy(_strategyer.EQUAL_TO_FRAME, _strategy.NO_BORDER)
+    this._rpFixedHeight = new ResolutionPolicy(_strategyer.EQUAL_TO_FRAME, _strategy.FIXED_HEIGHT)
+    this._rpFixedWidth = new ResolutionPolicy(_strategyer.EQUAL_TO_FRAME, _strategy.FIXED_WIDTH)
 
-    this._targetDensityDPI = DENSITYDPI_HIGH;
+    this._targetDensityDPI = DENSITYDPI_HIGH
 
     if (sys.isMobile) {
-      window.addEventListener('orientationchange', this._orientationChange.bind(this));
+      window.addEventListener('orientationchange', this._orientationChange.bind(this))
     } else {
-      this._orientationChanging = false;
+      this._orientationChanging = false
     }
   }
 
   // Resize helper functions
   _resizeEvent() {
-    const view: EGLView = this;
+    const view: EGLView = this
     if (view._orientationChanging) {
-      return;
+      return
     }
 
     // Check frame size changed or not
-    const prevFrameW = view._frameSize.width;
-    const prevFrameH = view._frameSize.height;
-    const prevRotated = view._isRotated;
+    const prevFrameW = view._frameSize.width
+    const prevFrameH = view._frameSize.height
+    const prevRotated = view._isRotated
     if (sys.isMobile) {
-      const containerStyle = game.container!.style;
-      const margin = containerStyle.margin;
-      containerStyle.margin = '0';
-      containerStyle.display = 'none';
-      view._initFrameSize();
-      containerStyle.margin = margin;
-      containerStyle.display = 'block';
+      const containerStyle = game.container!.style
+      const margin = containerStyle.margin
+      containerStyle.margin = '0'
+      containerStyle.display = 'none'
+      view._initFrameSize()
+      containerStyle.margin = margin
+      containerStyle.display = 'block'
+    } else {
+      view._initFrameSize()
     }
-    else {
-      view._initFrameSize();
-    }
-    if (view._isRotated === prevRotated && view._frameSize.width === prevFrameW && view._frameSize.height === prevFrameH)
-      return;
+    if (view._isRotated === prevRotated && view._frameSize.width === prevFrameW && view._frameSize.height === prevFrameH) return
 
     // Frame size changed, do resize works
-    const width = view._originalDesignResolutionSize.width;
-    const height = view._originalDesignResolutionSize.height;
-    view._resizing = true;
+    const width = view._originalDesignResolutionSize.width
+    const height = view._originalDesignResolutionSize.height
+    view._resizing = true
     if (width > 0) {
-      view.setDesignResolutionSize(width, height, view._resolutionPolicy);
+      view.setDesignResolutionSize(width, height, view._resolutionPolicy)
     }
-    view._resizing = false;
+    view._resizing = false
 
-    eventManager.dispatchCustomEvent('canvas-resize');
+    eventManager.dispatchCustomEvent('canvas-resize')
     if (view._resizeCallback) {
-      view._resizeCallback.call(view);
+      view._resizeCallback.call(view)
     }
   }
 
   _orientationChange() {
-    view._orientationChanging = true;
+    view._orientationChanging = true
     if (sys.isMobile) {
-      game.container!.style.display = 'none';
+      game.container!.style.display = 'none'
     }
     setTimeout(function () {
-      view._orientationChanging = false;
-      view._resizeEvent();
-    }, 300);
+      view._orientationChanging = false
+      view._resizeEvent()
+    }, 300)
   }
 
   /**
@@ -235,33 +227,33 @@ export class EGLView {
    * @param densityDPI
    */
   setTargetDensityDPI(densityDPI: string) {
-    this._targetDensityDPI = densityDPI;
-    this._adjustViewportMeta();
+    this._targetDensityDPI = densityDPI
+    this._adjustViewportMeta()
   }
 
   getTargetDensityDPI(): string | null {
-    return this._targetDensityDPI;
+    return this._targetDensityDPI
   }
 
   resizeWithBrowserSize(enabled: boolean) {
     if (enabled) {
       //enable
       if (!this.__resizeWithBrowserSize) {
-        this.__resizeWithBrowserSize = true;
-        window.addEventListener('resize', this._resizeEvent.bind(this));
+        this.__resizeWithBrowserSize = true
+        window.addEventListener('resize', this._resizeEvent.bind(this))
       }
     } else {
       //disable
       if (this.__resizeWithBrowserSize) {
-        this.__resizeWithBrowserSize = false;
-        window.removeEventListener('resize', this._resizeEvent.bind(this));
+        this.__resizeWithBrowserSize = false
+        window.removeEventListener('resize', this._resizeEvent.bind(this))
       }
     }
   }
 
   setResizeCallback(callback: (() => void) | null) {
     if (typeof callback === 'function' || callback == null) {
-      this._resizeCallback = callback;
+      this._resizeCallback = callback
     }
   }
 
@@ -274,141 +266,136 @@ export class EGLView {
    * @param orientation - Possible values: ORIENTATION_LANDSCAPE | ORIENTATION_PORTRAIT | ORIENTATION_AUTO
    */
   setOrientation(orientation: number) {
-    orientation = orientation & ORIENTATION_AUTO;
+    orientation = orientation & ORIENTATION_AUTO
     if (orientation && this._orientation !== orientation) {
-      this._orientation = orientation;
+      this._orientation = orientation
       if (this._resolutionPolicy) {
-        const designWidth = this._originalDesignResolutionSize.width;
-        const designHeight = this._originalDesignResolutionSize.height;
-        this.setDesignResolutionSize(designWidth, designHeight, this._resolutionPolicy);
+        const designWidth = this._originalDesignResolutionSize.width
+        const designHeight = this._originalDesignResolutionSize.height
+        this.setDesignResolutionSize(designWidth, designHeight, this._resolutionPolicy)
       }
     }
   }
 
   setDocumentPixelWidth(width: number) {
     // Set viewport's width
-    this._setViewportMeta({ width }, true);
+    this._setViewportMeta({ width }, true)
 
     // Set body width to the exact pixel resolution
-    document.documentElement.style.width = width + 'px';
-    document.body.style.width = '100%';
+    document.documentElement.style.width = `${width}px`
+    document.body.style.width = '100%'
 
     // Reset the resolution size and policy
-    this.setDesignResolutionSize(this._designResolutionSize.width, this._designResolutionSize.height, this._resolutionPolicy);
+    this.setDesignResolutionSize(this._designResolutionSize.width, this._designResolutionSize.height, this._resolutionPolicy)
   }
 
   _initFrameSize() {
-    const locFrameSize = this._frameSize;
-    const w = __BrowserGetter.availWidth(this._frame);
-    const h = __BrowserGetter.availHeight(this._frame);
-    const isLandscape = w >= h;
+    const locFrameSize = this._frameSize
+    const w = __BrowserGetter.availWidth(this._frame)
+    const h = __BrowserGetter.availHeight(this._frame)
+    const isLandscape = w >= h
 
-    if (!sys.isMobile ||
+    if (
+      !sys.isMobile ||
       (isLandscape && this._orientation & ORIENTATION_LANDSCAPE) ||
-      (!isLandscape && this._orientation & ORIENTATION_PORTRAIT)) {
-      locFrameSize.width = w;
-      locFrameSize.height = h;
-      container.style['-webkit-transform'] = 'rotate(0deg)';
-      container.style.transform = 'rotate(0deg)';
-      this._isRotated = false;
-    }
-    else {
-      locFrameSize.width = h;
-      locFrameSize.height = w;
-      container.style['-webkit-transform'] = 'rotate(90deg)';
-      container.style.transform = 'rotate(90deg)';
-      container.style['-webkit-transform-origin'] = '0px 0px 0px';
-      container.style.transformOrigin = '0px 0px 0px';
-      this._isRotated = true;
+      (!isLandscape && this._orientation & ORIENTATION_PORTRAIT)
+    ) {
+      locFrameSize.width = w
+      locFrameSize.height = h
+      container.style['-webkit-transform'] = 'rotate(0deg)'
+      container.style.transform = 'rotate(0deg)'
+      this._isRotated = false
+    } else {
+      locFrameSize.width = h
+      locFrameSize.height = w
+      container.style['-webkit-transform'] = 'rotate(90deg)'
+      container.style.transform = 'rotate(90deg)'
+      container.style['-webkit-transform-origin'] = '0px 0px 0px'
+      container.style.transformOrigin = '0px 0px 0px'
+      this._isRotated = true
     }
   }
 
   // hack
   _adjustSizeKeepCanvasSize() {
-    const designWidth = this._originalDesignResolutionSize.width;
-    const designHeight = this._originalDesignResolutionSize.height;
-    if (designWidth > 0)
-      this.setDesignResolutionSize(designWidth, designHeight, this._resolutionPolicy);
+    const designWidth = this._originalDesignResolutionSize.width
+    const designHeight = this._originalDesignResolutionSize.height
+    if (designWidth > 0) this.setDesignResolutionSize(designWidth, designHeight, this._resolutionPolicy)
   }
 
   _setViewportMeta(metas: any, overwrite: boolean) {
-    let vp = document.getElementById('cocosMetaElement');
+    let vp = document.getElementById('cocosMetaElement')
     if (vp && overwrite) {
-      document.head.removeChild(vp);
+      document.head.removeChild(vp)
     }
 
-    const elems = document.getElementsByName('viewport');
-    const currentVP = elems ? elems[0] as HTMLMetaElement : null;
-    let content: string;
-    let key: string;
-    let pattern: RegExp;
+    const elems = document.getElementsByName('viewport')
+    const currentVP = elems ? (elems[0] as HTMLMetaElement) : null
+    let content: string
+    let key: string
+    let pattern: RegExp
 
-    content = currentVP ? currentVP.content : '';
-    vp = vp || document.createElement('meta');
-    vp.id = 'cocosMetaElement';
-    (vp as HTMLMetaElement).name = 'viewport';
-    (vp as HTMLMetaElement).content = '';
+    content = currentVP ? currentVP.content : ''
+    vp = vp || document.createElement('meta')
+    vp.id = 'cocosMetaElement'
+    ;(vp as HTMLMetaElement).name = 'viewport'
+    ;(vp as HTMLMetaElement).content = ''
 
     for (key in metas) {
       if (content.indexOf(key) === -1) {
-        content += ',' + key + '=' + metas[key];
-      }
-      else if (overwrite) {
-        pattern = new RegExp(key + '\s*=\s*[^,]+');
-        content = content.replace(pattern, key + '=' + metas[key]);
+        content += `,${key}=${metas[key]}`
+      } else if (overwrite) {
+        pattern = new RegExp(`${key}\s*=\s*[^,]+`)
+        content = content.replace(pattern, `${key}=${metas[key]}`)
       }
     }
-    if (/^,/.test(content))
-      content = content.substr(1);
-
-    (vp as HTMLMetaElement).content = content;
+    if (/^,/.test(content)) content = content.substr(1)
+    ;(vp as HTMLMetaElement).content = content
     // For adopting certain android devices which don't support second viewport
-    if (currentVP)
-      currentVP.content = content;
+    if (currentVP) currentVP.content = content
 
-    document.head.appendChild(vp);
+    document.head.appendChild(vp)
   }
 
   _adjustViewportMeta() {
     if (this._isAdjustViewPort) {
-      this._setViewportMeta(__BrowserGetter.meta, false);
+      this._setViewportMeta(__BrowserGetter.meta, false)
       // Only adjust viewport once
-      this._isAdjustViewPort = false;
+      this._isAdjustViewPort = false
     }
   }
 
   // RenderTexture hacker
   _setScaleXYForRenderTexture() {
     //hack for RenderTexture on canvas mode when adapting multiple resolution resources
-    const scaleFactor = 1; //contentScaleFactor();
-    this._scaleX = scaleFactor;
-    this._scaleY = scaleFactor;
+    const scaleFactor = 1 //contentScaleFactor();
+    this._scaleX = scaleFactor
+    this._scaleY = scaleFactor
   }
 
   // Other helper functions
   _resetScale() {
-    this._scaleX = this._originalScaleX;
-    this._scaleY = this._originalScaleY;
+    this._scaleX = this._originalScaleX
+    this._scaleY = this._originalScaleY
   }
 
   // Useless, just make sure the compatibility temporarily, should be removed
-  _adjustSizeToBrowser() {
-  }
+  _adjustSizeToBrowser() {}
 
   initialize() {
-    this._initialized = true;
+    this._initialized = true
   }
 
   adjustViewPort(enabled: boolean) {
-    this._isAdjustViewPort = enabled;
+    this._isAdjustViewPort = enabled
   }
 
   enableRetina(enabled: boolean) {
-    this._retinaEnabled = !!enabled;
+    this._retinaEnabled = !!enabled
   }
 
   isRetinaEnabled(): boolean {
-    return this._retinaEnabled;
+    return this._retinaEnabled
   }
 
   /**
@@ -420,33 +407,31 @@ export class EGLView {
   enableAutoFullScreen(enabled: boolean) {
     if (enabled && enabled !== this._autoFullScreen && sys.isMobile && this._frame === document.documentElement) {
       // Automatically full screen when user touches on mobile version
-      this._autoFullScreen = true;
-      screen.autoFullScreen(this._frame as HTMLElement);
-    }
-    else {
-      this._autoFullScreen = false;
+      this._autoFullScreen = true
+      screen.autoFullScreen(this._frame as HTMLElement)
+    } else {
+      this._autoFullScreen = false
     }
   }
 
   isAutoFullScreenEnabled(): boolean {
-    return this._autoFullScreen;
+    return this._autoFullScreen
   }
 
   isOpenGLReady(): boolean {
-    return (game.canvas && game._renderContext);
+    return game.canvas && game._renderContext
   }
 
   setFrameZoomFactor(zoomFactor: number) {
-    this._frameZoomFactor = zoomFactor;
-    this.centerWindow();
-    director.setProjection(director.getProjection());
+    this._frameZoomFactor = zoomFactor
+    this.centerWindow()
+    director.setProjection(director.getProjection())
   }
 
   /**
    * Exchanges the front and back buffers, subclass must implement this method.
    */
-  swapBuffers() {
-  }
+  swapBuffers() {}
 
   setIMEKeyboardState(_isOpen: boolean) {
     // parameter intentionally unused in web implementation
@@ -457,11 +442,11 @@ export class EGLView {
   }
 
   setContentTranslateLeftTop(offsetLeft: number, offsetTop: number) {
-    this._contentTranslateLeftTop = { left: offsetLeft, top: offsetTop };
+    this._contentTranslateLeftTop = { left: offsetLeft, top: offsetTop }
   }
 
-  getContentTranslateLeftTop(): { left: number, top: number } | null {
-    return this._contentTranslateLeftTop;
+  getContentTranslateLeftTop(): { left: number; top: number } | null {
+    return this._contentTranslateLeftTop
   }
 
   /**
@@ -471,20 +456,20 @@ export class EGLView {
    * @return
    */
   getCanvasSize(): Size {
-    return size(game.canvas!.width, game.canvas!.height);
+    return size(game.canvas!.width, game.canvas!.height)
   }
 
   getFrameSize(): Size {
-    return size(this._frameSize.width, this._frameSize.height);
+    return size(this._frameSize.width, this._frameSize.height)
   }
 
   setFrameSize(width: number, height: number) {
-    this._frameSize.width = width;
-    this._frameSize.height = height;
-    this._frame!.style.width = width + 'px';
-    this._frame!.style.height = height + 'px';
-    this._resizeEvent();
-    director.setProjection(director.getProjection());
+    this._frameSize.width = width
+    this._frameSize.height = height
+    this._frame!.style.width = `${width}px`
+    this._frame!.style.height = `${height}px`
+    this._resizeEvent()
+    director.setProjection(director.getProjection())
   }
 
   /**
@@ -492,21 +477,19 @@ export class EGLView {
    * @return
    */
   getVisibleSize(): Size {
-    return size(this._visibleRect.width, this._visibleRect.height);
+    return size(this._visibleRect.width, this._visibleRect.height)
   }
 
   getVisibleSizeInPixel(): Size {
-    return size(this._visibleRect.width * this._scaleX,
-      this._visibleRect.height * this._scaleY);
+    return size(this._visibleRect.width * this._scaleX, this._visibleRect.height * this._scaleY)
   }
 
   getVisibleOrigin(): Vec2 {
-    return new Vec2(this._visibleRect.x, this._visibleRect.y);
+    return new Vec2(this._visibleRect.x, this._visibleRect.y)
   }
 
   getVisibleOriginInPixel(): Vec2 {
-    return new Vec2(this._visibleRect.x * this._scaleX,
-      this._visibleRect.y * this._scaleY);
+    return new Vec2(this._visibleRect.x * this._scaleX, this._visibleRect.y * this._scaleY)
   }
 
   /**
@@ -514,30 +497,25 @@ export class EGLView {
    * @return
    */
   canSetContentScaleFactor(): boolean {
-    return true;
+    return true
   }
 
   getResolutionPolicy(): ResolutionPolicy | null {
-    return this._resolutionPolicy;
+    return this._resolutionPolicy
   }
 
   setResolutionPolicy(resolutionPolicy: ResolutionPolicy | number) {
     if (resolutionPolicy instanceof ResolutionPolicy) {
-      this._resolutionPolicy = resolutionPolicy;
+      this._resolutionPolicy = resolutionPolicy
     }
     // Ensure compatibility with JSB
     else {
-      const _locPolicy = ResolutionPolicy;
-      if (resolutionPolicy === _locPolicy.EXACT_FIT)
-        this._resolutionPolicy = this._rpExactFit;
-      if (resolutionPolicy === _locPolicy.SHOW_ALL)
-        this._resolutionPolicy = this._rpShowAll;
-      if (resolutionPolicy === _locPolicy.NO_BORDER)
-        this._resolutionPolicy = this._rpNoBorder;
-      if (resolutionPolicy === _locPolicy.FIXED_HEIGHT)
-        this._resolutionPolicy = this._rpFixedHeight;
-      if (resolutionPolicy === _locPolicy.FIXED_WIDTH)
-        this._resolutionPolicy = this._rpFixedWidth;
+      const _locPolicy = ResolutionPolicy
+      if (resolutionPolicy === _locPolicy.EXACT_FIT) this._resolutionPolicy = this._rpExactFit
+      if (resolutionPolicy === _locPolicy.SHOW_ALL) this._resolutionPolicy = this._rpShowAll
+      if (resolutionPolicy === _locPolicy.NO_BORDER) this._resolutionPolicy = this._rpNoBorder
+      if (resolutionPolicy === _locPolicy.FIXED_HEIGHT) this._resolutionPolicy = this._rpFixedHeight
+      if (resolutionPolicy === _locPolicy.FIXED_WIDTH) this._resolutionPolicy = this._rpFixedWidth
     }
   }
 
@@ -557,74 +535,71 @@ export class EGLView {
   setDesignResolutionSize(width: number, height: number, resolutionPolicy: ResolutionPolicy | number) {
     // Defensive code
     if (!(width > 0 || height > 0)) {
-      log('EGLView_setDesignResolutionSize');
-      return;
+      log('EGLView_setDesignResolutionSize')
+      return
     }
 
-    this.setResolutionPolicy(resolutionPolicy);
-    const policy = this._resolutionPolicy;
+    this.setResolutionPolicy(resolutionPolicy)
+    const policy = this._resolutionPolicy
     if (policy) {
-      policy.preApply(this);
+      policy.preApply(this)
     }
 
     // Reinit frame size
-    if (sys.isMobile)
-      this._adjustViewportMeta();
+    if (sys.isMobile) this._adjustViewportMeta()
 
     // If resizing, then frame size is already initialized, this logic should be improved
-    if (!this._resizing)
-      this._initFrameSize();
+    if (!this._resizing) this._initFrameSize()
 
     if (!policy) {
-      log('EGLView_setDesignResolutionSize_2');
-      return;
+      log('EGLView_setDesignResolutionSize_2')
+      return
     }
 
-    this._originalDesignResolutionSize.width = this._designResolutionSize.width = width;
-    this._originalDesignResolutionSize.height = this._designResolutionSize.height = height;
+    this._originalDesignResolutionSize.width = this._designResolutionSize.width = width
+    this._originalDesignResolutionSize.height = this._designResolutionSize.height = height
 
-    const result = policy.apply(this, this._designResolutionSize);
+    const result = policy.apply(this, this._designResolutionSize)
 
     if (result.scale && result.scale.length === 2) {
-      this._scaleX = result.scale[0];
-      this._scaleY = result.scale[1];
+      this._scaleX = result.scale[0]
+      this._scaleY = result.scale[1]
     }
 
     if (result.viewport) {
-      const vp = this._viewPortRect;
-      const vb = this._visibleRect;
-      const rv = result.viewport;
+      const vp = this._viewPortRect
+      const vb = this._visibleRect
+      const rv = result.viewport
 
-      vp.x = rv.x;
-      vp.y = rv.y;
-      vp.width = rv.width;
-      vp.height = rv.height;
+      vp.x = rv.x
+      vp.y = rv.y
+      vp.width = rv.width
+      vp.height = rv.height
 
-      vb.x = -vp.x / this._scaleX;
-      vb.y = -vp.y / this._scaleY;
-      vb.width = game.canvas!.width / this._scaleX;
-      vb.height = game.canvas!.height / this._scaleY;
-      (_renderContext as any).setOffset && (_renderContext as any).setOffset(vp.x, -vp.y);
+      vb.x = -vp.x / this._scaleX
+      vb.y = -vp.y / this._scaleY
+      vb.width = game.canvas!.width / this._scaleX
+      vb.height = game.canvas!.height / this._scaleY
+      ;(_renderContext as any).setOffset && (_renderContext as any).setOffset(vp.x, -vp.y)
     }
 
     // reset director's member variables to fit visible rect
-    director._winSizeInPoints.width = this._designResolutionSize.width;
-    director._winSizeInPoints.height = this._designResolutionSize.height;
-    policy.postApply(this);
-    winSize.width = director._winSizeInPoints.width;
-    winSize.height = director._winSizeInPoints.height;
+    director._winSizeInPoints.width = this._designResolutionSize.width
+    director._winSizeInPoints.height = this._designResolutionSize.height
+    policy.postApply(this)
+    winSize.width = director._winSizeInPoints.width
+    winSize.height = director._winSizeInPoints.height
 
     if (_renderType === game.RENDER_TYPE_WEBGL) {
       // reset director's member variables to fit visible rect
-      director.setGLDefaultValues();
-    }
-    else if (_renderType === game.RENDER_TYPE_CANVAS) {
-      renderer._allNeedDraw = true;
+      director.setGLDefaultValues()
+    } else if (_renderType === game.RENDER_TYPE_CANVAS) {
+      renderer._allNeedDraw = true
     }
 
-    this._originalScaleX = this._scaleX;
-    this._originalScaleY = this._scaleY;
-    visibleRect && visibleRect.init(this._visibleRect);
+    this._originalScaleX = this._scaleX
+    this._originalScaleY = this._scaleY
+    visibleRect && visibleRect.init(this._visibleRect)
   }
 
   /**
@@ -633,21 +608,21 @@ export class EGLView {
    * @return
    */
   getDesignResolutionSize(): Size {
-    return size(this._designResolutionSize.width, this._designResolutionSize.height);
+    return size(this._designResolutionSize.width, this._designResolutionSize.height)
   }
 
   setRealPixelResolution(width: number, height: number, resolutionPolicy: ResolutionPolicy | number) {
     // Set viewport's width
-    this._setViewportMeta({ 'width': width }, true);
+    this._setViewportMeta({ width: width }, true)
 
     // Set body width to the exact pixel resolution
-    document.documentElement.style.width = width + 'px';
-    document.body.style.width = width + 'px';
-    document.body.style.left = '0px';
-    document.body.style.top = '0px';
+    document.documentElement.style.width = `${width}px`
+    document.body.style.width = `${width}px`
+    document.body.style.left = '0px'
+    document.body.style.top = '0px'
 
     // Reset the resolution size and policy
-    this.setDesignResolutionSize(width, height, resolutionPolicy);
+    this.setDesignResolutionSize(width, height, resolutionPolicy)
   }
 
   /**
@@ -658,35 +633,37 @@ export class EGLView {
    * @param h height
    */
   setViewPortInPoints(x: number, y: number, w: number, h: number) {
-    const locFrameZoomFactor = this._frameZoomFactor;
-    const locScaleX = this._scaleX;
-    const locScaleY = this._scaleY;
-    (_renderContext as any).viewport((x * locScaleX * locFrameZoomFactor + this._viewPortRect.x * locFrameZoomFactor),
-      (y * locScaleY * locFrameZoomFactor + this._viewPortRect.y * locFrameZoomFactor),
-      (w * locScaleX * locFrameZoomFactor),
-      (h * locScaleY * locFrameZoomFactor));
+    const locFrameZoomFactor = this._frameZoomFactor
+    const locScaleX = this._scaleX
+    const locScaleY = this._scaleY
+    ;(_renderContext as any).viewport(
+      x * locScaleX * locFrameZoomFactor + this._viewPortRect.x * locFrameZoomFactor,
+      y * locScaleY * locFrameZoomFactor + this._viewPortRect.y * locFrameZoomFactor,
+      w * locScaleX * locFrameZoomFactor,
+      h * locScaleY * locFrameZoomFactor,
+    )
   }
 
   setScissorInPoints(x: number, y: number, w: number, h: number) {
-    const locFrameZoomFactor = this._frameZoomFactor;
-    const locScaleX = this._scaleX;
-    const locScaleY = this._scaleY;
-    const sx = Math.ceil(x * locScaleX * locFrameZoomFactor + this._viewPortRect.x * locFrameZoomFactor);
-    const sy = Math.ceil(y * locScaleY * locFrameZoomFactor + this._viewPortRect.y * locFrameZoomFactor);
-    const sw = Math.ceil(w * locScaleX * locFrameZoomFactor);
-    const sh = Math.ceil(h * locScaleY * locFrameZoomFactor);
+    const locFrameZoomFactor = this._frameZoomFactor
+    const locScaleX = this._scaleX
+    const locScaleY = this._scaleY
+    const sx = Math.ceil(x * locScaleX * locFrameZoomFactor + this._viewPortRect.x * locFrameZoomFactor)
+    const sy = Math.ceil(y * locScaleY * locFrameZoomFactor + this._viewPortRect.y * locFrameZoomFactor)
+    const sw = Math.ceil(w * locScaleX * locFrameZoomFactor)
+    const sh = Math.ceil(h * locScaleY * locFrameZoomFactor)
 
     if (!_scissorRect) {
-      const boxArr = gl.getParameter(gl.SCISSOR_BOX);
-      _scissorRect = rect(boxArr[0], boxArr[1], boxArr[2], boxArr[3]);
+      const boxArr = gl.getParameter(gl.SCISSOR_BOX)
+      _scissorRect = rect(boxArr[0], boxArr[1], boxArr[2], boxArr[3])
     }
 
     if (_scissorRect.x != sx || _scissorRect.y != sy || _scissorRect.width != sw || _scissorRect.height != sh) {
-      _scissorRect.x = sx;
-      _scissorRect.y = sy;
-      _scissorRect.width = sw;
-      _scissorRect.height = sh;
-      (_renderContext as any).scissor(sx, sy, sw, sh);
+      _scissorRect.x = sx
+      _scissorRect.y = sy
+      _scissorRect.width = sw
+      _scissorRect.height = sh
+      ;(_renderContext as any).scissor(sx, sy, sw, sh)
     }
   }
 
@@ -695,22 +672,22 @@ export class EGLView {
    * @return
    */
   isScissorEnabled(): boolean {
-    return (_renderContext as any).isEnabled(gl.SCISSOR_TEST);
+    return (_renderContext as any).isEnabled(gl.SCISSOR_TEST)
   }
 
   getScissorRect(): Rect {
     if (!_scissorRect) {
-      const boxArr = gl.getParameter(gl.SCISSOR_BOX);
-      _scissorRect = rect(boxArr[0], boxArr[1], boxArr[2], boxArr[3]);
+      const boxArr = gl.getParameter(gl.SCISSOR_BOX)
+      _scissorRect = rect(boxArr[0], boxArr[1], boxArr[2], boxArr[3])
     }
-    const scaleXFactor = 1 / this._scaleX;
-    const scaleYFactor = 1 / this._scaleY;
+    const scaleXFactor = 1 / this._scaleX
+    const scaleYFactor = 1 / this._scaleY
     return rect(
       (_scissorRect.x - this._viewPortRect.x) * scaleXFactor,
       (_scissorRect.y - this._viewPortRect.y) * scaleYFactor,
       _scissorRect.width * scaleXFactor,
-      _scissorRect.height * scaleYFactor
-    );
+      _scissorRect.height * scaleYFactor,
+    )
   }
 
   /**
@@ -719,28 +696,28 @@ export class EGLView {
    */
   setViewName(viewName: string) {
     if (viewName != null && viewName.length > 0) {
-      this._viewName = viewName;
+      this._viewName = viewName
     }
   }
 
   getViewName(): string {
-    return this._viewName;
+    return this._viewName
   }
 
   getViewPortRect(): Rect {
-    return this._viewPortRect;
+    return this._viewPortRect
   }
 
   getScaleX(): number {
-    return this._scaleX;
+    return this._scaleX
   }
 
   getScaleY(): number {
-    return this._scaleY;
+    return this._scaleY
   }
 
   getDevicePixelRatio(): number {
-    return this._devicePixelRatio;
+    return this._devicePixelRatio
   }
 
   /**
@@ -750,46 +727,46 @@ export class EGLView {
    * @param relatedPos The related position object including 'left', 'top', 'width', 'height' informations
    * @return
    */
-  convertToLocationInView(tx: number, ty: number, relatedPos: { left: number, top: number, width: number, height: number }): Vec2 {
-    const x = this._devicePixelRatio * (tx - relatedPos.left);
-    const y = this._devicePixelRatio * (relatedPos.top + relatedPos.height - ty);
-    return this._isRotated ? new Vec2(this._viewPortRect.width - y, x) : new Vec2(x, y);
+  convertToLocationInView(tx: number, ty: number, relatedPos: { left: number; top: number; width: number; height: number }): Vec2 {
+    const x = this._devicePixelRatio * (tx - relatedPos.left)
+    const y = this._devicePixelRatio * (relatedPos.top + relatedPos.height - ty)
+    return this._isRotated ? new Vec2(this._viewPortRect.width - y, x) : new Vec2(x, y)
   }
 
-  _convertMouseToLocationInView(point: Vec2, relatedPos: { left: number, top: number, height: number }) {
-    const viewport = this._viewPortRect;
-    point.x = ((this._devicePixelRatio * (point.x - relatedPos.left)) - viewport.x) / this._scaleX;
-    point.y = (this._devicePixelRatio * (relatedPos.top + relatedPos.height - point.y) - viewport.y) / this._scaleY;
+  _convertMouseToLocationInView(point: Vec2, relatedPos: { left: number; top: number; height: number }) {
+    const viewport = this._viewPortRect
+    point.x = (this._devicePixelRatio * (point.x - relatedPos.left) - viewport.x) / this._scaleX
+    point.y = (this._devicePixelRatio * (relatedPos.top + relatedPos.height - point.y) - viewport.y) / this._scaleY
   }
 
   _convertPointWithScale(point: Vec2) {
-    const viewport = this._viewPortRect;
-    point.x = (point.x - viewport.x) / this._scaleX;
-    point.y = (point.y - viewport.y) / this._scaleY;
+    const viewport = this._viewPortRect
+    point.x = (point.x - viewport.x) / this._scaleX
+    point.y = (point.y - viewport.y) / this._scaleY
   }
 
   _convertTouchesWithScale(touches: any[]) {
-    const viewport = this._viewPortRect;
-    const scaleX = this._scaleX;
-    const scaleY = this._scaleY;
-    let selTouch, selPoint, selPrePoint;
+    const viewport = this._viewPortRect
+    const scaleX = this._scaleX
+    const scaleY = this._scaleY
+    let selTouch, selPoint, selPrePoint
     for (let i = 0; i < touches.length; i++) {
-      selTouch = touches[i];
-      selPoint = selTouch._point;
-      selPrePoint = selTouch._prevPoint;
+      selTouch = touches[i]
+      selPoint = selTouch._point
+      selPrePoint = selTouch._prevPoint
 
-      selPoint.x = (selPoint.x - viewport.x) / scaleX;
-      selPoint.y = (selPoint.y - viewport.y) / scaleY;
-      selPrePoint.x = (selPrePoint.x - viewport.x) / scaleX;
-      selPrePoint.y = (selPrePoint.y - viewport.y) / scaleY;
+      selPoint.x = (selPoint.x - viewport.x) / scaleX
+      selPoint.y = (selPoint.y - viewport.y) / scaleY
+      selPrePoint.x = (selPrePoint.x - viewport.x) / scaleX
+      selPrePoint.y = (selPrePoint.y - viewport.y) / scaleY
     }
   }
-  private static _instance: EGLView | null = null;
+  private static _instance: EGLView | null = null
   static getInstance(): EGLView {
     if (!this._instance) {
-      this._instance = new EGLView();
-      this._instance.initialize();
+      this._instance = new EGLView()
+      this._instance.initialize()
     }
-    return this._instance;
+    return this._instance
   }
 }

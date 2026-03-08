@@ -1,6 +1,6 @@
-import { p } from "../cocoa/Geometry";
+import { p } from '../cocoa/Geometry'
 
-export const ENGINE_VERSION = "Safex-webgl v1.0";
+export const ENGINE_VERSION = 'Safex-webgl v1.0'
 
 /**
  * <p>
@@ -25,7 +25,7 @@ export const ENGINE_VERSION = "Safex-webgl v1.0";
  * @constant
  * @type {Number}
  */
-export const FIX_ARTIFACTS_BY_STRECHING_TEXEL = 0;
+export const FIX_ARTIFACTS_BY_STRECHING_TEXEL = 0
 
 /**
  * Position of the FPS (Default: 0,0 (bottom-left corner))<br/>
@@ -33,7 +33,7 @@ export const FIX_ARTIFACTS_BY_STRECHING_TEXEL = 0;
  * @constant
  * @type {Point}
  */
-export const  DIRECTOR_STATS_POSITION = p(0, 0);
+export const DIRECTOR_STATS_POSITION = p(0, 0)
 
 /**
  * <p>
@@ -47,7 +47,7 @@ export const  DIRECTOR_STATS_POSITION = p(0, 0);
  * @constant
  * @type {Number}
  */
-export const DIRECTOR_FPS_INTERVAL = 0.5;
+export const DIRECTOR_FPS_INTERVAL = 0.5
 
 /**
  * <p>
@@ -60,7 +60,7 @@ export const DIRECTOR_FPS_INTERVAL = 0.5;
  * @constant
  * @type {Number}
  */
-export const COCOSNODE_RENDER_SUBPIXEL = 1;
+export const COCOSNODE_RENDER_SUBPIXEL = 1
 
 /**
  * <p>
@@ -73,7 +73,7 @@ export const COCOSNODE_RENDER_SUBPIXEL = 1;
  * @constant
  * @type {Number}
  */
-export const SPRITEBATCHNODE_RENDER_SUBPIXEL = 1;
+export const SPRITEBATCHNODE_RENDER_SUBPIXEL = 1
 
 /**
  * <p>
@@ -86,7 +86,7 @@ export const SPRITEBATCHNODE_RENDER_SUBPIXEL = 1;
  * @constant
  * @type {Number}
  */
-export const OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA = 1;
+export const OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA = 1
 
 /**
  * <p>
@@ -99,7 +99,7 @@ export const OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA = 1;
  * @constant
  * @type {Number}
  */
-export const TEXTURE_ATLAS_USE_TRIANGLE_STRIP = 0;
+export const TEXTURE_ATLAS_USE_TRIANGLE_STRIP = 0
 
 /**
  * <p>
@@ -113,7 +113,7 @@ export const TEXTURE_ATLAS_USE_TRIANGLE_STRIP = 0;
  * @constant
  * @type {Number}
  */
-export const TEXTURE_ATLAS_USE_VAO = 0;
+export const TEXTURE_ATLAS_USE_VAO = 0
 
 /**
  * <p>
@@ -132,7 +132,7 @@ export const TEXTURE_ATLAS_USE_VAO = 0;
  * @type {Number}
  * @deprecated This value will be removed in 1.1 and NPOT textures will be loaded by default if the device supports it.
  */
-export const TEXTURE_NPOT_SUPPORT = 0;
+export const TEXTURE_NPOT_SUPPORT = 0
 
 /**
  * <p>
@@ -146,7 +146,7 @@ export const TEXTURE_NPOT_SUPPORT = 0;
  * @constant
  * @type {String}
  */
-export const RETINA_DISPLAY_FILENAME_SUFFIX = "-hd";
+export const RETINA_DISPLAY_FILENAME_SUFFIX = '-hd'
 
 /**
  * <p>
@@ -159,7 +159,7 @@ export const RETINA_DISPLAY_FILENAME_SUFFIX = "-hd";
  * @constant
  * @type {Number}
  */
-export const USE_LA88_LABELS = 1;
+export const USE_LA88_LABELS = 1
 
 /**
  * <p>
@@ -174,7 +174,7 @@ export const USE_LA88_LABELS = 1;
  * @constant
  * @type {Number}
  */
-export const SPRITE_DEBUG_DRAW = 0;
+export const SPRITE_DEBUG_DRAW = 0
 
 /**
  * <p>
@@ -186,7 +186,7 @@ export const SPRITE_DEBUG_DRAW = 0;
  * @constant
  * @type {Number}
  */
-export const SPRITEBATCHNODE_DEBUG_DRAW = 0;
+export const SPRITEBATCHNODE_DEBUG_DRAW = 0
 
 /**
  * <p>
@@ -198,7 +198,7 @@ export const SPRITEBATCHNODE_DEBUG_DRAW = 0;
  * @constant
  * @type {Number}
  */
-export const LABELBMFONT_DEBUG_DRAW = 0;
+export const LABELBMFONT_DEBUG_DRAW = 0
 
 /**
  * <p>
@@ -210,16 +210,16 @@ export const LABELBMFONT_DEBUG_DRAW = 0;
  * @constant
  * @type {Number}
  */
-export const LABELATLAS_DEBUG_DRAW = 0;
+export const LABELATLAS_DEBUG_DRAW = 0
 
-export const DRAWNODE_TOTAL_VERTICES = 20000;
+export const DRAWNODE_TOTAL_VERTICES = 20000
 
 /**
  * Default engine
  * @constant
  * @type {String}
  */
-export const DEFAULT_ENGINE = ENGINE_VERSION + "-canvas";
+export const DEFAULT_ENGINE = `${ENGINE_VERSION}-canvas`
 
 /**
  * <p>
@@ -230,7 +230,7 @@ export const DEFAULT_ENGINE = ENGINE_VERSION + "-canvas";
  * @constant
  * @type {number}
  */
-export const ENABLE_STACKABLE_ACTIONS = 1;
+export const ENABLE_STACKABLE_ACTIONS = 1
 
 /**
  * <p>
@@ -247,4 +247,4 @@ export const ENABLE_STACKABLE_ACTIONS = 1;
  * @constant
  * @type {Number}
  */
-export let ENABLE_GL_STATE_CACHE = 1;
+export const ENABLE_GL_STATE_CACHE = 1

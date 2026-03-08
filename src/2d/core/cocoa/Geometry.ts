@@ -1,10 +1,10 @@
 export class Point {
-  x: number;
-  y: number;
+  x: number
+  y: number
 
-  constructor(x: number = 0, y: number = 0) {
-    this.x = x;
-    this.y = y;
+  constructor(x = 0, y = 0) {
+    this.x = x
+    this.y = y
   }
 }
 
@@ -22,12 +22,12 @@ export class Point {
  */
 export function p(x?: number | Point, y?: number): Point {
   if (x === undefined) {
-    return new Point();
+    return new Point()
   }
   if (y === undefined) {
-    return new Point((x as Point).x, (x as Point).y);
+    return new Point((x as Point).x, (x as Point).y)
   }
-  return new Point(x as number, y);
+  return new Point(x as number, y)
 }
 
 /**
@@ -38,16 +38,16 @@ export function p(x?: number | Point, y?: number): Point {
  * @return
  */
 export function pointEqualToPoint(point1: Point, point2: Point): boolean {
-  return point1 && point2 && (point1.x === point2.x) && (point1.y === point2.y);
+  return point1 && point2 && point1.x === point2.x && point1.y === point2.y
 }
 
 export class Size {
-  width: number;
-  height: number;
+  width: number
+  height: number
 
-  constructor(width: number = 0, height: number = 0) {
-    this.width = width;
-    this.height = height;
+  constructor(width = 0, height = 0) {
+    this.width = width
+    this.height = height
   }
 }
 
@@ -65,12 +65,12 @@ export class Size {
  */
 export function size(w?: number | Size, h?: number): Size {
   if (w === undefined) {
-    return new Size();
+    return new Size()
   }
   if (h === undefined) {
-    return new Size((w as Size).width, (w as Size).height);
+    return new Size((w as Size).width, (w as Size).height)
   }
-  return new Size(w as number, h);
+  return new Size(w as number, h)
 }
 
 /**
@@ -81,20 +81,20 @@ export function size(w?: number | Size, h?: number): Size {
  * @return
  */
 export function sizeEqualToSize(size1: Size, size2: Size): boolean {
-  return (size1 && size2 && (size1.width === size2.width) && (size1.height === size2.height));
+  return size1 && size2 && size1.width === size2.width && size1.height === size2.height
 }
 
 export class Rect {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
+  x: number
+  y: number
+  width: number
+  height: number
 
-  constructor(x: number = 0, y: number = 0, width: number = 0, height: number = 0) {
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
+  constructor(x = 0, y = 0, width = 0, height = 0) {
+    this.x = x
+    this.y = y
+    this.width = width
+    this.height = height
   }
 }
 
@@ -114,13 +114,13 @@ export class Rect {
  */
 export function rect(x?: number | Rect, y?: number, w?: number, h?: number): Rect {
   if (x === undefined) {
-    return new Rect();
+    return new Rect()
   }
   if (y === undefined) {
-    const r = x as Rect;
-    return new Rect(r.x, r.y, r.width, r.height);
+    const r = x as Rect
+    return new Rect(r.x, r.y, r.width, r.height)
   }
-  return new Rect(x as number, y as number, w as number, h as number);
+  return new Rect(x as number, y as number, w as number, h as number)
 }
 
 /**
@@ -131,11 +131,11 @@ export function rect(x?: number | Rect, y?: number, w?: number, h?: number): Rec
  * @return
  */
 export function rectEqualToRect(rect1: Rect, rect2: Rect): boolean {
-  return rect1 && rect2 && (rect1.x === rect2.x) && (rect1.y === rect2.y) && (rect1.width === rect2.width) && (rect1.height === rect2.height);
+  return rect1 && rect2 && rect1.x === rect2.x && rect1.y === rect2.y && rect1.width === rect2.width && rect1.height === rect2.height
 }
 
 export function rectEqualToZero(rect: Rect): boolean {
-  return rect && (rect.x === 0) && (rect.y === 0) && (rect.width === 0) && (rect.height === 0);
+  return rect && rect.x === 0 && rect.y === 0 && rect.width === 0 && rect.height === 0
 }
 
 /**
@@ -147,11 +147,14 @@ export function rectEqualToZero(rect: Rect): boolean {
  */
 export function rectContainsRect(rect1: Rect, rect2: Rect): boolean {
   if (!rect1 || !rect2) {
-    return false;
+    return false
   }
-  return !((rect1.x >= rect2.x) || (rect1.y >= rect2.y) ||
-    (rect1.x + rect1.width <= rect2.x + rect2.width) ||
-    (rect1.y + rect1.height <= rect2.y + rect2.height));
+  return !(
+    rect1.x >= rect2.x ||
+    rect1.y >= rect2.y ||
+    rect1.x + rect1.width <= rect2.x + rect2.width ||
+    rect1.y + rect1.height <= rect2.y + rect2.height
+  )
 }
 
 /**
@@ -161,7 +164,7 @@ export function rectContainsRect(rect1: Rect, rect2: Rect): boolean {
  * @return The rightmost x value
  */
 export function rectGetMaxX(rect: Rect): number {
-  return (rect.x + rect.width);
+  return rect.x + rect.width
 }
 
 /**
@@ -171,7 +174,7 @@ export function rectGetMaxX(rect: Rect): number {
  * @return The midpoint x value
  */
 export function rectGetMidX(rect: Rect): number {
-  return (rect.x + rect.width / 2.0);
+  return rect.x + rect.width / 2.0
 }
 /**
  * Returns the leftmost x-value of a rect
@@ -180,7 +183,7 @@ export function rectGetMidX(rect: Rect): number {
  * @return The leftmost x value
  */
 export function rectGetMinX(rect: Rect): number {
-  return rect.x;
+  return rect.x
 }
 
 /**
@@ -190,7 +193,7 @@ export function rectGetMinX(rect: Rect): number {
  * @return The topmost y value
  */
 export function rectGetMaxY(rect: Rect): number {
-  return (rect.y + rect.height);
+  return rect.y + rect.height
 }
 
 /**
@@ -200,7 +203,7 @@ export function rectGetMaxY(rect: Rect): number {
  * @return The midpoint y value
  */
 export function rectGetMidY(rect: Rect): number {
-  return rect.y + rect.height / 2.0;
+  return rect.y + rect.height / 2.0
 }
 
 /**
@@ -210,7 +213,7 @@ export function rectGetMidY(rect: Rect): number {
  * @return The bottommost y value
  */
 export function rectGetMinY(rect: Rect): number {
-  return rect.y;
+  return rect.y
 }
 
 /**
@@ -221,8 +224,7 @@ export function rectGetMinY(rect: Rect): number {
  * @return
  */
 export function rectContainsPoint(rect: Rect, point: Point): boolean {
-  return (point.x >= rectGetMinX(rect) && point.x <= rectGetMaxX(rect) &&
-    point.y >= rectGetMinY(rect) && point.y <= rectGetMaxY(rect));
+  return point.x >= rectGetMinX(rect) && point.x <= rectGetMaxX(rect) && point.y >= rectGetMinY(rect) && point.y <= rectGetMaxY(rect)
 }
 
 /**
@@ -233,11 +235,11 @@ export function rectContainsPoint(rect: Rect, point: Point): boolean {
  * @return
  */
 export function rectIntersectsRect(ra: Rect, rb: Rect): boolean {
-  const maxax = ra.x + ra.width;
-  const maxay = ra.y + ra.height;
-  const maxbx = rb.x + rb.width;
-  const maxby = rb.y + rb.height;
-  return !(maxax < rb.x || maxbx < ra.x || maxay < rb.y || maxby < ra.y);
+  const maxax = ra.x + ra.width
+  const maxay = ra.y + ra.height
+  const maxbx = rb.x + rb.width
+  const maxby = rb.y + rb.height
+  return !(maxax < rb.x || maxbx < ra.x || maxay < rb.y || maxby < ra.y)
 }
 
 /**
@@ -248,10 +250,12 @@ export function rectIntersectsRect(ra: Rect, rb: Rect): boolean {
  * @return
  */
 export function rectOverlapsRect(rectA: Rect, rectB: Rect): boolean {
-  return !((rectA.x + rectA.width < rectB.x) ||
-    (rectB.x + rectB.width < rectA.x) ||
-    (rectA.y + rectA.height < rectB.y) ||
-    (rectB.y + rectB.height < rectA.y));
+  return !(
+    rectA.x + rectA.width < rectB.x ||
+    rectB.x + rectB.width < rectA.x ||
+    rectA.y + rectA.height < rectB.y ||
+    rectB.y + rectB.height < rectA.y
+  )
 }
 
 /**
@@ -262,12 +266,12 @@ export function rectOverlapsRect(rectA: Rect, rectB: Rect): boolean {
  * @return
  */
 export function rectUnion(rectA: Rect, rectB: Rect): Rect {
-  const newRect = rect(0, 0, 0, 0);
-  newRect.x = Math.min(rectA.x, rectB.x);
-  newRect.y = Math.min(rectA.y, rectB.y);
-  newRect.width = Math.max(rectA.x + rectA.width, rectB.x + rectB.width) - newRect.x;
-  newRect.height = Math.max(rectA.y + rectA.height, rectB.y + rectB.height) - newRect.y;
-  return newRect;
+  const newRect = rect(0, 0, 0, 0)
+  newRect.x = Math.min(rectA.x, rectB.x)
+  newRect.y = Math.min(rectA.y, rectB.y)
+  newRect.width = Math.max(rectA.x + rectA.width, rectB.x + rectB.width) - newRect.x
+  newRect.height = Math.max(rectA.y + rectA.height, rectB.y + rectB.height) - newRect.y
+  return newRect
 }
 
 /**
@@ -278,13 +282,9 @@ export function rectUnion(rectA: Rect, rectB: Rect): Rect {
  * @return
  */
 export function rectIntersection(rectA: Rect, rectB: Rect): Rect {
-  const intersection = rect(
-    Math.max(rectGetMinX(rectA), rectGetMinX(rectB)),
-    Math.max(rectGetMinY(rectA), rectGetMinY(rectB)),
-    0, 0
-  );
+  const intersection = rect(Math.max(rectGetMinX(rectA), rectGetMinX(rectB)), Math.max(rectGetMinY(rectA), rectGetMinY(rectB)), 0, 0)
 
-  intersection.width = Math.min(rectGetMaxX(rectA), rectGetMaxX(rectB)) - rectGetMinX(intersection);
-  intersection.height = Math.min(rectGetMaxY(rectA), rectGetMaxY(rectB)) - rectGetMinY(intersection);
-  return intersection;
+  intersection.width = Math.min(rectGetMaxX(rectA), rectGetMaxX(rectB)) - rectGetMinX(intersection)
+  intersection.height = Math.min(rectGetMaxY(rectA), rectGetMaxY(rectB)) - rectGetMinY(intersection)
+  return intersection
 }

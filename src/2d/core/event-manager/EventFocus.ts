@@ -1,4 +1,4 @@
-import { Event } from "./Event";
+import { Event } from './Event'
 
 /**
  * Focus change event for UI widget
@@ -14,8 +14,8 @@ export class EventFocus extends Event {
    * @param {ccui.Widget} widgetGetFocus
    */
   constructor(widgetLoseFocus, widgetGetFocus) {
-    super(Event.FOCUS);
-    this._widgetGetFocus = widgetGetFocus;
-    this._widgetLoseFocus = widgetLoseFocus;
+    super(Event.FOCUS)
+    this._widgetGetFocus = widgetGetFocus
+    this._widgetLoseFocus = widgetLoseFocus
   }
 }

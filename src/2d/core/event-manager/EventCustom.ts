@@ -1,12 +1,12 @@
-import { Event } from "./Event";
+import { Event } from './Event'
 
 export class EventCustom extends Event {
   _eventName = null
   _userData = null
 
   constructor(eventName: string) {
-    super(Event.CUSTOM);
-    this._eventName = eventName;
+    super(Event.CUSTOM)
+    this._eventName = eventName
   }
 
   /**
@@ -14,7 +14,7 @@ export class EventCustom extends Event {
    * @param {*} data
    */
   setUserData(data) {
-    this._userData = data;
+    this._userData = data
   }
 
   /**
@@ -22,7 +22,7 @@ export class EventCustom extends Event {
    * @returns {*}
    */
   getUserData() {
-    return this._userData;
+    return this._userData
   }
 
   /**
@@ -30,6 +30,6 @@ export class EventCustom extends Event {
    * @returns {String}
    */
   getEventName() {
-    return this._eventName;
+    return this._eventName
   }
 }

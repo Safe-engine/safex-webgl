@@ -1,7 +1,7 @@
-import { _LogInfos, assert, log } from "../../../helper/Debugger";
-import { loader } from "../../../helper/loader";
-import { REPEAT_FOREVER } from "../platform/Macro";
-import { spriteFrameCache } from "./SpriteFrameCache";
+import { _LogInfos, assert, log } from '../../../helper/Debugger'
+import { loader } from '../../../helper/loader'
+import { REPEAT_FOREVER } from '../platform/Macro'
+import { spriteFrameCache } from './SpriteFrameCache'
 
 export const animationCache = {
   _animations: {},
@@ -12,7 +12,7 @@ export const animationCache = {
    * @param {String} name
    */
   addAnimation: function (animation, name) {
-    this._animations[name] = animation;
+    this._animations[name] = animation
   },
 
   /**
@@ -21,10 +21,10 @@ export const animationCache = {
    */
   removeAnimation: function (name) {
     if (!name) {
-      return;
+      return
     }
     if (this._animations[name]) {
-      delete this._animations[name];
+      delete this._animations[name]
     }
   },
 
@@ -38,40 +38,39 @@ export const animationCache = {
    * @return {Animation}
    */
   getAnimation: function (name) {
-    if (this._animations[name])
-      return this._animations[name];
-    return null;
+    if (this._animations[name]) return this._animations[name]
+    return null
   },
 
   _addAnimationsWithDictionary: function (dictionary, plist) {
-    var animations = dictionary["animations"];
+    const animations = dictionary['animations']
     if (!animations) {
-      log(_LogInfos.animationCache__addAnimationsWithDictionary);
-      return;
+      log(_LogInfos.animationCache__addAnimationsWithDictionary)
+      return
     }
 
-    var version = 1;
-    var properties = dictionary["properties"];
+    let version = 1
+    const properties = dictionary['properties']
     if (properties) {
-      version = (properties["format"] != null) ? parseInt(properties["format"]) : version;
-      var spritesheets = properties["spritesheets"];
-      var spriteFrameCache = spriteFrameCache;
-      var path = path;
-      for (var i = 0; i < spritesheets.length; i++) {
-        spriteFrameCache.addSpriteFrames(path.changeBasename(plist, spritesheets[i]));
+      version = properties['format'] != null ? parseInt(properties['format']) : version
+      const spritesheets = properties['spritesheets']
+      var spriteFrameCache = spriteFrameCache
+      var path = path
+      for (let i = 0; i < spritesheets.length; i++) {
+        spriteFrameCache.addSpriteFrames(path.changeBasename(plist, spritesheets[i]))
       }
     }
 
     switch (version) {
       case 1:
-        this._parseVersion1(animations);
-        break;
+        this._parseVersion1(animations)
+        break
       case 2:
-        this._parseVersion2(animations);
-        break;
+        this._parseVersion2(animations)
+        break
       default:
-        log(_LogInfos.animationCache__addAnimationsWithDictionary_2);
-        break;
+        log(_LogInfos.animationCache__addAnimationsWithDictionary_2)
+        break
     }
   },
 
@@ -83,99 +82,98 @@ export const animationCache = {
    * @param {String} plist
    */
   addAnimations: function (plist) {
+    assert(plist, _LogInfos.animationCache_addAnimations_2)
 
-    assert(plist, _LogInfos.animationCache_addAnimations_2);
-
-    var dict = loader.getRes(plist);
+    const dict = loader.getRes(plist)
 
     if (!dict) {
-      log(_LogInfos.animationCache_addAnimations);
-      return;
+      log(_LogInfos.animationCache_addAnimations)
+      return
     }
 
-    this._addAnimationsWithDictionary(dict, plist);
+    this._addAnimationsWithDictionary(dict, plist)
   },
 
   _parseVersion1: function (animations) {
-    var frameCache = spriteFrameCache;
+    const frameCache = spriteFrameCache
 
-    for (var key in animations) {
-      var animationDict = animations[key];
-      var frameNames = animationDict["frames"];
-      var delay = parseFloat(animationDict["delay"]) || 0;
-      var animation = null;
+    for (const key in animations) {
+      const animationDict = animations[key]
+      const frameNames = animationDict['frames']
+      const delay = parseFloat(animationDict['delay']) || 0
+      let animation = null
       if (!frameNames) {
-        log(_LogInfos.animationCache__parseVersion1, key);
-        continue;
+        log(_LogInfos.animationCache__parseVersion1, key)
+        continue
       }
 
-      var frames = [];
-      for (var i = 0; i < frameNames.length; i++) {
-        var spriteFrame = frameCache.getSpriteFrame(frameNames[i]);
+      const frames = []
+      for (let i = 0; i < frameNames.length; i++) {
+        const spriteFrame = frameCache.getSpriteFrame(frameNames[i])
         if (!spriteFrame) {
-          log(_LogInfos.animationCache__parseVersion1_2, key, frameNames[i]);
-          continue;
+          log(_LogInfos.animationCache__parseVersion1_2, key, frameNames[i])
+          continue
         }
-        var animFrame = new AnimationFrame();
-        animFrame.initWithSpriteFrame(spriteFrame, 1, null);
-        frames.push(animFrame);
+        const animFrame = new AnimationFrame()
+        animFrame.initWithSpriteFrame(spriteFrame, 1, null)
+        frames.push(animFrame)
       }
 
       if (frames.length === 0) {
-        log(_LogInfos.animationCache__parseVersion1_3, key);
-        continue;
+        log(_LogInfos.animationCache__parseVersion1_3, key)
+        continue
       } else if (frames.length !== frameNames.length) {
-        log(_LogInfos.animationCache__parseVersion1_4, key);
+        log(_LogInfos.animationCache__parseVersion1_4, key)
       }
-      animation = new Animation(frames, delay, 1);
-      animationCache.addAnimation(animation, key);
+      animation = new Animation(frames, delay, 1)
+      animationCache.addAnimation(animation, key)
     }
   },
 
   _parseVersion2: function (animations) {
-    var frameCache = spriteFrameCache;
+    const frameCache = spriteFrameCache
 
-    for (var key in animations) {
-      var animationDict = animations[key];
+    for (const key in animations) {
+      const animationDict = animations[key]
 
-      var isLoop = animationDict["loop"];
-      var loopsTemp = parseInt(animationDict["loops"]);
-      var loops = isLoop ? REPEAT_FOREVER : ((isNaN(loopsTemp)) ? 1 : loopsTemp);
-      var restoreOriginalFrame = (animationDict["restoreOriginalFrame"] && animationDict["restoreOriginalFrame"] == true) ? true : false;
-      var frameArray = animationDict["frames"];
+      const isLoop = animationDict['loop']
+      const loopsTemp = parseInt(animationDict['loops'])
+      const loops = isLoop ? REPEAT_FOREVER : isNaN(loopsTemp) ? 1 : loopsTemp
+      const restoreOriginalFrame = animationDict['restoreOriginalFrame'] && animationDict['restoreOriginalFrame'] == true ? true : false
+      const frameArray = animationDict['frames']
 
       if (!frameArray) {
-        log(_LogInfos.animationCache__parseVersion2, key);
-        continue;
+        log(_LogInfos.animationCache__parseVersion2, key)
+        continue
       }
 
       //Array of AnimationFrames
-      var arr = [];
-      for (var i = 0; i < frameArray.length; i++) {
-        var entry = frameArray[i];
-        var spriteFrameName = entry["spriteframe"];
-        var spriteFrame = frameCache.getSpriteFrame(spriteFrameName);
+      const arr = []
+      for (let i = 0; i < frameArray.length; i++) {
+        const entry = frameArray[i]
+        const spriteFrameName = entry['spriteframe']
+        const spriteFrame = frameCache.getSpriteFrame(spriteFrameName)
         if (!spriteFrame) {
-          log(_LogInfos.animationCache__parseVersion2_2, key, spriteFrameName);
-          continue;
+          log(_LogInfos.animationCache__parseVersion2_2, key, spriteFrameName)
+          continue
         }
 
-        var delayUnits = parseFloat(entry["delayUnits"]) || 0;
-        var userInfo = entry["notification"];
-        var animFrame = new AnimationFrame();
-        animFrame.initWithSpriteFrame(spriteFrame, delayUnits, userInfo);
-        arr.push(animFrame);
+        const delayUnits = parseFloat(entry['delayUnits']) || 0
+        const userInfo = entry['notification']
+        const animFrame = new AnimationFrame()
+        animFrame.initWithSpriteFrame(spriteFrame, delayUnits, userInfo)
+        arr.push(animFrame)
       }
 
-      var delayPerUnit = parseFloat(animationDict["delayPerUnit"]) || 0;
-      var animation = new Animation();
-      animation.initWithAnimationFrames(arr, delayPerUnit, loops);
-      animation.setRestoreOriginalFrame(restoreOriginalFrame);
-      animationCache.addAnimation(animation, key);
+      const delayPerUnit = parseFloat(animationDict['delayPerUnit']) || 0
+      const animation = new Animation()
+      animation.initWithAnimationFrames(arr, delayPerUnit, loops)
+      animation.setRestoreOriginalFrame(restoreOriginalFrame)
+      animationCache.addAnimation(animation, key)
     }
   },
 
   _clear: function () {
-    this._animations = {};
-  }
-};
+    this._animations = {}
+  },
+}

@@ -1,11 +1,11 @@
-import { game } from '../index';
-import { log } from './Debugger';
-import { create3DContext } from './engine';
+import { game } from '../index'
+import { log } from './Debugger'
+import { create3DContext } from './engine'
 
-const _tmpCanvas1 = document.createElement('canvas');
-const _tmpCanvas2 = document.createElement('canvas');
+const _tmpCanvas1 = document.createElement('canvas')
+const _tmpCanvas2 = document.createElement('canvas')
 
-let _renderType = 0;
+const _renderType = 0
 
 /**
  * System variables
@@ -403,12 +403,12 @@ const sys = {
    */
   windowPixelResolution: {
     width: 0,
-    height: 0
+    height: 0,
   },
 
   _checkWebGLRenderMode() {
     if (_renderType !== game.RENDER_TYPE_WEBGL) {
-      throw new Error('This feature supports WebGL render mode only.');
+      throw new Error('This feature supports WebGL render mode only.')
     }
   },
 
@@ -476,7 +476,7 @@ const sys = {
    * @return Validity of the object
    */
   isObjectValid(obj: any): boolean {
-    return !!obj;
+    return !!obj
   },
 
   /**
@@ -485,17 +485,17 @@ const sys = {
    * @name dump
    */
   dump() {
-    let str = '';
-    str += `isMobile : ${this.isMobile}\r\n`;
-    str += `language : ${this.language}\r\n`;
-    str += `browserType : ${this.browserType}\r\n`;
-    str += `browserVersion : ${this.browserVersion}\r\n`;
-    str += `capabilities : ${JSON.stringify(this.capabilities)}\r\n`;
-    str += `os : ${this.os}\r\n`;
-    str += `osVersion : ${this.osVersion}\r\n`;
-    str += `platform : ${this.platform}\r\n`;
-    str += `Using ${_renderType === game.RENDER_TYPE_WEBGL ? 'WEBGL' : 'CANVAS'} renderer.\r\n`;
-    log(str);
+    let str = ''
+    str += `isMobile : ${this.isMobile}\r\n`
+    str += `language : ${this.language}\r\n`
+    str += `browserType : ${this.browserType}\r\n`
+    str += `browserVersion : ${this.browserVersion}\r\n`
+    str += `capabilities : ${JSON.stringify(this.capabilities)}\r\n`
+    str += `os : ${this.os}\r\n`
+    str += `osVersion : ${this.osVersion}\r\n`
+    str += `platform : ${this.platform}\r\n`
+    str += `Using ${_renderType === game.RENDER_TYPE_WEBGL ? 'WEBGL' : 'CANVAS'} renderer.\r\n`
+    log(str)
   },
 
   /**
@@ -505,7 +505,7 @@ const sys = {
    * @param url
    */
   openURL(url: string) {
-    window.open(url);
+    window.open(url)
   },
 
   /**
@@ -516,203 +516,199 @@ const sys = {
    */
   now(): number {
     if (Date.now) {
-      return Date.now();
-    }
-    else {
-      return +(new Date());
+      return Date.now()
+    } else {
+      return +new Date()
     }
   },
 
   localStorage: window.localStorage,
-};
+}
 
-const win = window;
-const nav = win.navigator;
-const doc = document;
-const docEle = doc.documentElement;
-const ua = nav.userAgent.toLowerCase();
+const win = window
+const nav = win.navigator
+const doc = document
+const docEle = doc.documentElement
+const ua = nav.userAgent.toLowerCase()
 
-sys.isMobile = /mobile|android|iphone|ipad/.test(ua);
-sys.platform = sys.isMobile ? sys.MOBILE_BROWSER : sys.DESKTOP_BROWSER;
+sys.isMobile = /mobile|android|iphone|ipad/.test(ua)
+sys.platform = sys.isMobile ? sys.MOBILE_BROWSER : sys.DESKTOP_BROWSER
 
-let currLanguage = nav.language;
-currLanguage = currLanguage ? currLanguage : (nav as any).browserLanguage;
-currLanguage = currLanguage ? currLanguage.split('-')[0] : sys.LANGUAGE_ENGLISH;
-sys.language = currLanguage;
+let currLanguage = nav.language
+currLanguage = currLanguage ? currLanguage : (nav as any).browserLanguage
+currLanguage = currLanguage ? currLanguage.split('-')[0] : sys.LANGUAGE_ENGLISH
+sys.language = currLanguage
 
 // Get the os of system
-let isAndroid = false;
-let iOS = false;
-let osVersion = '';
-let osMainVersion = 0;
-let uaResult = /android (\d+(?:\.\d+)+)/i.exec(ua) || /android (\d+(?:\.\d+)+)/i.exec(nav.platform);
+let isAndroid = false
+let iOS = false
+let osVersion = ''
+let osMainVersion = 0
+let uaResult = /android (\d+(?:\.\d+)+)/i.exec(ua) || /android (\d+(?:\.\d+)+)/i.exec(nav.platform)
 if (uaResult) {
-  isAndroid = true;
-  osVersion = uaResult[1] || '';
-  osMainVersion = parseInt(osVersion, 10) || 0;
+  isAndroid = true
+  osVersion = uaResult[1] || ''
+  osMainVersion = parseInt(osVersion, 10) || 0
 }
-uaResult = /(iPad|iPhone|iPod).*OS ((\d+_?){2,3})/i.exec(ua);
+uaResult = /(iPad|iPhone|iPod).*OS ((\d+_?){2,3})/i.exec(ua)
 if (uaResult) {
-  iOS = true;
-  osVersion = uaResult[2] || '';
-  osMainVersion = parseInt(osVersion, 10) || 0;
+  iOS = true
+  osVersion = uaResult[2] || ''
+  osMainVersion = parseInt(osVersion, 10) || 0
+} else if (/(iPhone|iPad|iPod)/.exec(nav.platform)) {
+  iOS = true
+  osVersion = ''
+  osMainVersion = 0
 }
-else if (/(iPhone|iPad|iPod)/.exec(nav.platform)) {
-  iOS = true;
-  osVersion = '';
-  osMainVersion = 0;
-}
 
-let osName: string = sys.OS_UNKNOWN;
-if (nav.appVersion.indexOf('Win') !== -1) osName = sys.OS_WINDOWS;
-else if (iOS) osName = sys.OS_IOS;
-else if (nav.appVersion.indexOf('Mac') !== -1) osName = sys.OS_OSX;
-else if (nav.appVersion.indexOf('X11') !== -1 && nav.appVersion.indexOf('Linux') === -1) osName = (sys as any).OS_UNIX;
-else if (isAndroid) osName = sys.OS_ANDROID;
-else if (nav.appVersion.indexOf('Linux') !== -1) osName = sys.OS_LINUX;
+let osName: string = sys.OS_UNKNOWN
+if (nav.appVersion.indexOf('Win') !== -1) osName = sys.OS_WINDOWS
+else if (iOS) osName = sys.OS_IOS
+else if (nav.appVersion.indexOf('Mac') !== -1) osName = sys.OS_OSX
+else if (nav.appVersion.indexOf('X11') !== -1 && nav.appVersion.indexOf('Linux') === -1) osName = (sys as any).OS_UNIX
+else if (isAndroid) osName = sys.OS_ANDROID
+else if (nav.appVersion.indexOf('Linux') !== -1) osName = sys.OS_LINUX
 
-sys.os = osName;
-sys.osVersion = osVersion;
-sys.osMainVersion = osMainVersion;
-
-(function () {
-  const typeReg1 = /micromessenger|mqqbrowser|sogou|qzone|liebao|ucbrowser|360 aphone|360browser|baiduboxapp|baidubrowser|maxthon|mxbrowser|trident|miuibrowser/i;
-  const typeReg2 = /qqbrowser|qq|chrome|safari|firefox|opr|oupeng|opera/i;
-  let browserTypes = typeReg1.exec(ua);
-  if (!browserTypes) browserTypes = typeReg2.exec(ua);
-  let browserType = browserTypes ? browserTypes[0] : sys.BROWSER_TYPE_UNKNOWN;
+sys.os = osName
+sys.osVersion = osVersion
+sys.osMainVersion = osMainVersion
+;(function () {
+  const typeReg1 =
+    /micromessenger|mqqbrowser|sogou|qzone|liebao|ucbrowser|360 aphone|360browser|baiduboxapp|baidubrowser|maxthon|mxbrowser|trident|miuibrowser/i
+  const typeReg2 = /qqbrowser|qq|chrome|safari|firefox|opr|oupeng|opera/i
+  let browserTypes = typeReg1.exec(ua)
+  if (!browserTypes) browserTypes = typeReg2.exec(ua)
+  let browserType = browserTypes ? browserTypes[0] : sys.BROWSER_TYPE_UNKNOWN
   if (browserType === 'micromessenger') {
-    browserType = sys.BROWSER_TYPE_WECHAT;
+    browserType = sys.BROWSER_TYPE_WECHAT
   } else if (browserType === 'safari' && isAndroid) {
-    browserType = sys.BROWSER_TYPE_ANDROID;
+    browserType = sys.BROWSER_TYPE_ANDROID
   } else if (browserType === 'trident') {
-    browserType = sys.BROWSER_TYPE_IE;
+    browserType = sys.BROWSER_TYPE_IE
   } else if (browserType === '360 aphone') {
-    browserType = sys.BROWSER_TYPE_360;
+    browserType = sys.BROWSER_TYPE_360
   } else if (browserType === 'mxbrowser') {
-    browserType = sys.BROWSER_TYPE_MAXTHON;
+    browserType = sys.BROWSER_TYPE_MAXTHON
   } else if (browserType === 'opr') {
-    browserType = sys.BROWSER_TYPE_OPERA;
+    browserType = sys.BROWSER_TYPE_OPERA
   }
 
-  sys.browserType = browserType;
-})();
+  sys.browserType = browserType
+})()
+;(function () {
+  const versionReg1 = /(mqqbrowser|micromessenger|sogou|qzone|liebao|maxthon|mxbrowser|baidu)(mobile)?(browser)?\/?([\d.]+)/i
+  const versionReg2 = /(msie |rv:|firefox|chrome|ucbrowser|qq|oupeng|opera|opr|safari|miui)(mobile)?(browser)?\/?([\d.]+)/i
+  const tmp = ua.match(versionReg1) || ua.match(versionReg2)
+  sys.browserVersion = tmp ? tmp[4] : ''
+})()
 
-(function () {
-  const versionReg1 = /(mqqbrowser|micromessenger|sogou|qzone|liebao|maxthon|mxbrowser|baidu)(mobile)?(browser)?\/?([\d.]+)/i;
-  const versionReg2 = /(msie |rv:|firefox|chrome|ucbrowser|qq|oupeng|opera|opr|safari|miui)(mobile)?(browser)?\/?([\d.]+)/i;
-  const tmp = ua.match(versionReg1) || ua.match(versionReg2);
-  sys.browserVersion = tmp ? tmp[4] : '';
-})();
-
-const w = window.innerWidth || document.documentElement.clientWidth;
-const h = window.innerHeight || document.documentElement.clientHeight;
-const ratio = window.devicePixelRatio || 1;
+const w = window.innerWidth || document.documentElement.clientWidth
+const h = window.innerHeight || document.documentElement.clientHeight
+const ratio = window.devicePixelRatio || 1
 
 sys.windowPixelResolution = {
   width: ratio * w,
-  height: ratio * h
-};
+  height: ratio * h,
+}
 
 sys._supportCanvasNewBlendModes = (() => {
-  const canvas = _tmpCanvas1;
-  canvas.width = 1;
-  canvas.height = 1;
-  const context = canvas.getContext('2d')!;
-  context.fillStyle = '#000';
-  context.fillRect(0, 0, 1, 1);
-  context.globalCompositeOperation = 'multiply';
+  const canvas = _tmpCanvas1
+  canvas.width = 1
+  canvas.height = 1
+  const context = canvas.getContext('2d')!
+  context.fillStyle = '#000'
+  context.fillRect(0, 0, 1, 1)
+  context.globalCompositeOperation = 'multiply'
 
-  const canvas2 = _tmpCanvas2;
-  canvas2.width = 1;
-  canvas2.height = 1;
-  const context2 = canvas2.getContext('2d')!;
-  context2.fillStyle = '#fff';
-  context2.fillRect(0, 0, 1, 1);
-  context.drawImage(canvas2, 0, 0, 1, 1);
+  const canvas2 = _tmpCanvas2
+  canvas2.width = 1
+  canvas2.height = 1
+  const context2 = canvas2.getContext('2d')!
+  context2.fillStyle = '#fff'
+  context2.fillRect(0, 0, 1, 1)
+  context.drawImage(canvas2, 0, 0, 1, 1)
 
-  return context.getImageData(0, 0, 1, 1).data[0] === 0;
-})();
+  return context.getImageData(0, 0, 1, 1).data[0] === 0
+})()
 
 if (sys.isMobile) {
-  const fontStyle = document.createElement('style');
-  fontStyle.type = 'text/css';
-  document.body.appendChild(fontStyle);
+  const fontStyle = document.createElement('style')
+  fontStyle.type = 'text/css'
+  document.body.appendChild(fontStyle)
 
-  fontStyle.textContent = 'body,canvas,div{ -moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;-khtml-user-select: none;}'
-    + '-webkit-tap-highlight-color:rgba(0,0,0,0);}';
+  fontStyle.textContent =
+    'body,canvas,div{ -moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;-khtml-user-select: none;}' +
+    '-webkit-tap-highlight-color:rgba(0,0,0,0);}'
 }
 
 try {
-  const localStorage = sys.localStorage = win.localStorage;
-  localStorage.setItem('storage', '');
-  localStorage.removeItem('storage');
+  const localStorage = (sys.localStorage = win.localStorage)
+  localStorage.setItem('storage', '')
+  localStorage.removeItem('storage')
 } catch (e) {
   const warn = () => {
-    log("Warning: localStorage isn't enabled. Please confirm browser cookie or privacy option");
-  };
+    log("Warning: localStorage isn't enabled. Please confirm browser cookie or privacy option")
+  }
   sys.localStorage = {
     getItem: warn,
     setItem: warn,
     removeItem: warn,
     clear: warn,
-  } as any;
+  } as any
 }
 
-const _supportCanvas = !!_tmpCanvas1.getContext('2d');
-let _supportWebGL = false;
+const _supportCanvas = !!_tmpCanvas1.getContext('2d')
+let _supportWebGL = false
 if (win.WebGLRenderingContext) {
-  const tmpCanvas = document.createElement('CANVAS');
+  const tmpCanvas = document.createElement('CANVAS')
   try {
-    const context = create3DContext(tmpCanvas, {});
+    const context = create3DContext(tmpCanvas, {})
     if (context) {
-      _supportWebGL = true;
+      _supportWebGL = true
     }
 
     if (_supportWebGL && sys.os === sys.OS_IOS && sys.osMainVersion === 9) {
       // Not activating WebGL in iOS 9 UIWebView because it may crash when entering background
       if (!window.indexedDB) {
-        _supportWebGL = false;
+        _supportWebGL = false
       }
     }
 
     if (_supportWebGL && sys.os === sys.OS_ANDROID) {
-      const browserVer = parseFloat(sys.browserVersion);
+      const browserVer = parseFloat(sys.browserVersion)
       switch (sys.browserType) {
         case sys.BROWSER_TYPE_MOBILE_QQ:
         case sys.BROWSER_TYPE_BAIDU:
         case sys.BROWSER_TYPE_BAIDU_APP:
           // QQ & Baidu Brwoser 6.2+ (using blink kernel)
           if (browserVer >= 6.2) {
-            _supportWebGL = true;
+            _supportWebGL = true
+          } else {
+            _supportWebGL = false
           }
-          else {
-            _supportWebGL = false;
-          }
-          break;
+          break
         case sys.BROWSER_TYPE_CHROME:
           // Chrome on android supports WebGL from v.30
           if (browserVer >= 30.0) {
-            _supportWebGL = true;
+            _supportWebGL = true
           } else {
-            _supportWebGL = false;
+            _supportWebGL = false
           }
-          break;
+          break
         case sys.BROWSER_TYPE_ANDROID:
           // Android 5+ default browser
           if (sys.osMainVersion && sys.osMainVersion >= 5) {
-            _supportWebGL = true;
+            _supportWebGL = true
           }
-          break;
+          break
         case sys.BROWSER_TYPE_UNKNOWN:
         case sys.BROWSER_TYPE_360:
         case sys.BROWSER_TYPE_MIUI:
         case sys.BROWSER_TYPE_UC:
-          _supportWebGL = false;
+          _supportWebGL = false
       }
     }
-  }
-  catch (e) { }
+  } catch (e) {}
 }
 
 sys.capabilities = {
@@ -722,19 +718,19 @@ sys.capabilities = {
   mouse: false,
   keyboard: false,
   accelerometer: false,
-};
+}
 
 if (docEle.ontouchstart !== undefined || (doc as any).ontouchstart !== undefined || nav.msPointerEnabled) {
-  sys.capabilities.touches = true;
+  sys.capabilities.touches = true
 }
 if (docEle.onmouseup !== undefined) {
-  sys.capabilities.mouse = true;
+  sys.capabilities.mouse = true
 }
 if (docEle.onkeyup !== undefined) {
-  sys.capabilities.keyboard = true;
+  sys.capabilities.keyboard = true
 }
 if (win.DeviceMotionEvent || win.DeviceOrientationEvent) {
-  sys.capabilities.accelerometer = true;
+  sys.capabilities.accelerometer = true
 }
 
-export { sys };
+export { sys }

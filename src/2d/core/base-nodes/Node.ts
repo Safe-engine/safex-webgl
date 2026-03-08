@@ -475,7 +475,7 @@ export class Node extends EventHelper {
       name = ''
     }
     assert(child, _LogInfos.Node_addChild_3)
-    assert(child._parent === null, 'child already added. It can\'t be added again')
+    assert(child._parent === null, 'child already added. It cant be added again')
     this._addChildHelper(child, localZOrder, tag, name, setTag)
   }
 
@@ -580,10 +580,8 @@ export class Node extends EventHelper {
   sortAllChildren() {
     if (this._reorderChildDirty) {
       const _children = this._children
-      let len = _children.length,
-        i,
-        j,
-        tmp
+      const len = _children.length
+      let i, j, tmp
       for (i = 1; i < len; i++) {
         tmp = _children[i]
         j = i - 1
@@ -603,7 +601,7 @@ export class Node extends EventHelper {
     }
   }
 
-  draw(ctx: any) {}
+  draw() {}
   transformAncestors() {
     if (this._parent !== null) {
       this._parent.transformAncestors()
@@ -897,10 +895,10 @@ export class Node extends EventHelper {
       return
     }
     cmd.visit(parentCmd)
-    let i: any,
-      children = this._children,
-      len = children.length,
-      child: any
+    let i: any
+    const children = this._children,
+      len = children.length
+    let child: any
     if (len > 0) {
       if (this._reorderChildDirty) this.sortAllChildren()
       for (i = 0; i < len; i++) {
@@ -961,7 +959,7 @@ export class Node extends EventHelper {
   getGLServerState() {
     return 0
   }
-  setGLServerState(state: any) {}
+  setGLServerState() {}
 
   getBoundingBoxToWorld() {
     let r = rect(0, 0, this._contentSize.width, this._contentSize.height)
@@ -1083,8 +1081,8 @@ export class Node extends EventHelper {
     let ret = false
     if (node.doEnumerate(name, callback)) ret = true
     else {
-      let child,
-        children = node.getChildren(),
+      let child
+      const children = node.getChildren(),
         length = children.length
       for (let i = 0; i < length; i++) {
         child = children[i]
@@ -1106,8 +1104,8 @@ export class Node extends EventHelper {
       needRecursive = true
     }
     let ret = false
-    let child,
-      children = this._children,
+    let child
+    const children = this._children,
       length = children.length
     for (let i = 0; i < length; i++) {
       child = children[i]

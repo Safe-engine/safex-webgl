@@ -1,35 +1,36 @@
-import { game } from "../..";
-import { _LogInfos, assert } from "../../helper/Debugger";
-import { _tmp } from "../../helper/global";
-import { loader } from "../../helper/loader";
-import { path } from "../../helper/path";
-import { textureCache } from "./TextureCache";
-import { Texture2D } from "./TexturesWebGL";
+import { game } from '../..'
+import { _LogInfos, assert } from '../../helper/Debugger'
+import { _tmp } from '../../helper/global'
+import { loader } from '../../helper/loader'
+import { path } from '../../helper/path'
+import { textureCache } from './TextureCache'
+import { Texture2D } from './TexturesWebGL'
 
 _tmp.WebGLTextureCache = function () {
-  var _p = textureCache;
+  let _p = textureCache
 
   _p.handleLoadedTexture = function (url, img) {
-    var locTexs = this._textures, tex, ext;
+    let locTexs = this._textures,
+      tex,
+      ext
     //remove judge(webgl)
     if (!game._rendererInitialized) {
-      locTexs = this._loadedTexturesBefore;
+      locTexs = this._loadedTexturesBefore
     }
-    tex = locTexs[url];
+    tex = locTexs[url]
     if (!tex) {
-      tex = locTexs[url] = new Texture2D();
-      tex.url = url;
+      tex = locTexs[url] = new Texture2D()
+      tex.url = url
     }
-    tex.initWithElement(img);
-    ext = path.extname(url);
-    if (ext === ".png") {
-      tex.handleLoadedTexture(true);
+    tex.initWithElement(img)
+    ext = path.extname(url)
+    if (ext === '.png') {
+      tex.handleLoadedTexture(true)
+    } else {
+      tex.handleLoadedTexture()
     }
-    else {
-      tex.handleLoadedTexture();
-    }
-    return tex;
-  };
+    return tex
+  }
 
   /**
    * <p>Returns a Texture2D object given an file image <br />
@@ -46,41 +47,43 @@ _tmp.WebGLTextureCache = function () {
    * textureCache.addImage("hello.png");
    */
   _p.addImage = function (url, cb, target) {
-    assert(url, _LogInfos.Texture2D_addImage_2);
+    assert(url, _LogInfos.Texture2D_addImage_2)
 
-    var locTexs = this._textures;
+    let locTexs = this._textures
     //remove judge(webgl)
     if (!game._rendererInitialized) {
-      locTexs = this._loadedTexturesBefore;
+      locTexs = this._loadedTexturesBefore
     }
-    var tex = locTexs[url] || locTexs[loader._getAliase(url)];
+    let tex = locTexs[url] || locTexs[loader._getAliase(url)]
     if (tex) {
       if (tex.isLoaded()) {
-        cb && cb.call(target, tex);
-        return tex;
-      }
-      else {
-        tex.addEventListener("load", function () {
-          cb && cb.call(target, tex);
-        }, target);
-        return tex;
+        cb && cb.call(target, tex)
+        return tex
+      } else {
+        tex.addEventListener(
+          'load',
+          function () {
+            cb && cb.call(target, tex)
+          },
+          target,
+        )
+        return tex
       }
     }
 
-    tex = locTexs[url] = new Texture2D();
-    tex.url = url;
-    const basePath = loader.resPath;
-    loader.loadImg(path.join(basePath || "", url), function (err, img) {
-      if (err)
-        return cb && cb.call(target, err);
+    tex = locTexs[url] = new Texture2D()
+    tex.url = url
+    const basePath = loader.resPath
+    loader.loadImg(path.join(basePath || '', url), function (err, img) {
+      if (err) return cb && cb.call(target, err)
 
-      const texResult = textureCache.handleLoadedTexture(url, img);
-      cb && cb.call(target, texResult);
-    });
+      const texResult = textureCache.handleLoadedTexture(url, img)
+      cb && cb.call(target, texResult)
+    })
 
-    return tex;
-  };
+    return tex
+  }
 
-  _p.addImageAsync = _p.addImage;
-  _p = null;
-};
+  _p.addImageAsync = _p.addImage
+  _p = null
+}

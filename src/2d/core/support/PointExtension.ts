@@ -10,14 +10,14 @@
  * - pAdd( cpv(1,1), cpv(2,2) ); // mixing chipmunk and cocos2d (avoid)</p>
  */
 
-import { p } from "../cocoa/Geometry";
+import { p } from '../cocoa/Geometry'
 
 /**
  * smallest such that 1.0+FLT_EPSILON != 1.0
  * @constant
  * @type Number
  */
-export const POINT_EPSILON = parseFloat('1.192092896e-07F');
+export const POINT_EPSILON = parseFloat('1.192092896e-07F')
 
 /**
  * Returns opposite of point.
@@ -25,8 +25,8 @@ export const POINT_EPSILON = parseFloat('1.192092896e-07F');
  * @return {Point}
  */
 export const pNeg = function (point) {
-    return p(-point.x, -point.y);
-};
+  return p(-point.x, -point.y)
+}
 
 /**
  * Calculates sum of two points.
@@ -35,8 +35,8 @@ export const pNeg = function (point) {
  * @return {Point}
  */
 export const pAdd = function (v1, v2) {
-    return p(v1.x + v2.x, v1.y + v2.y);
-};
+  return p(v1.x + v2.x, v1.y + v2.y)
+}
 
 /**
  * Calculates difference of two points.
@@ -45,8 +45,8 @@ export const pAdd = function (v1, v2) {
  * @return {Point}
  */
 export const pSub = function (v1, v2) {
-    return p(v1.x - v2.x, v1.y - v2.y);
-};
+  return p(v1.x - v2.x, v1.y - v2.y)
+}
 
 /**
  * Returns point multiplied by given factor.
@@ -55,8 +55,8 @@ export const pSub = function (v1, v2) {
  * @return {Point}
  */
 export const pMult = function (point, floatVar) {
-    return p(point.x * floatVar, point.y * floatVar);
-};
+  return p(point.x * floatVar, point.y * floatVar)
+}
 
 /**
  * Calculates midpoint between two points.
@@ -65,8 +65,8 @@ export const pMult = function (point, floatVar) {
  * @return {Point}
  */
 export const pMidpoint = function (v1, v2) {
-    return pMult(pAdd(v1, v2), 0.5);
-};
+  return pMult(pAdd(v1, v2), 0.5)
+}
 
 /**
  * Calculates dot product of two points.
@@ -75,8 +75,8 @@ export const pMidpoint = function (v1, v2) {
  * @return {Number}
  */
 export const pDot = function (v1, v2) {
-    return v1.x * v2.x + v1.y * v2.y;
-};
+  return v1.x * v2.x + v1.y * v2.y
+}
 
 /**
  * Calculates cross product of two points.
@@ -85,8 +85,8 @@ export const pDot = function (v1, v2) {
  * @return {Number}
  */
 export const pCross = function (v1, v2) {
-    return v1.x * v2.y - v1.y * v2.x;
-};
+  return v1.x * v2.y - v1.y * v2.x
+}
 
 /**
  * Calculates perpendicular of v, rotated 90 degrees counter-clockwise -- cross(v, perp(v)) >= 0
@@ -94,8 +94,8 @@ export const pCross = function (v1, v2) {
  * @return {Point}
  */
 export const pPerp = function (point) {
-    return p(-point.y, point.x);
-};
+  return p(-point.y, point.x)
+}
 
 /**
  * Calculates perpendicular of v, rotated 90 degrees clockwise -- cross(v, rperp(v)) <= 0
@@ -103,8 +103,8 @@ export const pPerp = function (point) {
  * @return {Point}
  */
 export const pRPerp = function (point) {
-    return p(point.y, -point.x);
-};
+  return p(point.y, -point.x)
+}
 
 /**
  * Calculates the projection of v1 over v2.
@@ -113,8 +113,8 @@ export const pRPerp = function (point) {
  * @return {Point}
  */
 export const pProject = function (v1, v2) {
-    return pMult(v2, pDot(v1, v2) / pDot(v2, v2));
-};
+  return pMult(v2, pDot(v1, v2) / pDot(v2, v2))
+}
 
 /**
  * Rotates two points.
@@ -123,8 +123,8 @@ export const pProject = function (v1, v2) {
  * @return {Point}
  */
 export const pRotate = function (v1, v2) {
-    return p(v1.x * v2.x - v1.y * v2.y, v1.x * v2.y + v1.y * v2.x);
-};
+  return p(v1.x * v2.x - v1.y * v2.y, v1.x * v2.y + v1.y * v2.x)
+}
 
 /**
  * Unrotates two points.
@@ -133,8 +133,8 @@ export const pRotate = function (v1, v2) {
  * @return {Point}
  */
 export const pUnrotate = function (v1, v2) {
-    return p(v1.x * v2.x + v1.y * v2.y, v1.y * v2.x - v1.x * v2.y);
-};
+  return p(v1.x * v2.x + v1.y * v2.y, v1.y * v2.x - v1.x * v2.y)
+}
 
 /**
  * Calculates the square length of a Point (not calling sqrt() )
@@ -142,8 +142,8 @@ export const pUnrotate = function (v1, v2) {
  *@return {Number}
  */
 export const pLengthSQ = function (v) {
-    return  pDot(v, v);
-};
+  return pDot(v, v)
+}
 
 /**
  * Calculates the square distance between two points (not calling sqrt() )
@@ -151,9 +151,9 @@ export const pLengthSQ = function (v) {
  * @param {Point} point2
  * @return {Number}
  */
-export const pDistanceSQ = function(point1, point2){
-    return pLengthSQ(pSub(point1,point2));
-};
+export const pDistanceSQ = function (point1, point2) {
+  return pLengthSQ(pSub(point1, point2))
+}
 
 /**
  * Calculates distance between point an origin
@@ -161,8 +161,8 @@ export const pDistanceSQ = function(point1, point2){
  * @return {Number}
  */
 export const pLength = function (v) {
-    return Math.sqrt(pLengthSQ(v));
-};
+  return Math.sqrt(pLengthSQ(v))
+}
 
 /**
  * Calculates the distance between two points
@@ -171,8 +171,8 @@ export const pLength = function (v) {
  * @return {Number}
  */
 export const pDistance = function (v1, v2) {
-    return pLength(pSub(v1, v2));
-};
+  return pLength(pSub(v1, v2))
+}
 
 /**
  * Returns point multiplied to a length of 1.
@@ -180,9 +180,9 @@ export const pDistance = function (v1, v2) {
  * @return {Point}
  */
 export const pNormalize = function (v) {
-    var n = pLength(v);
-    return n === 0 ? p(v) : pMult(v, 1.0 / n);
-};
+  const n = pLength(v)
+  return n === 0 ? p(v) : pMult(v, 1.0 / n)
+}
 
 /**
  * Converts radians to a normalized vector.
@@ -190,8 +190,8 @@ export const pNormalize = function (v) {
  * @return {Point}
  */
 export const pForAngle = function (a) {
-    return p(Math.cos(a), Math.sin(a));
-};
+  return p(Math.cos(a), Math.sin(a))
+}
 
 /**
  * Converts a vector to radians.
@@ -199,8 +199,8 @@ export const pForAngle = function (a) {
  * @return {Number}
  */
 export const pToAngle = function (v) {
-    return Math.atan2(v.y, v.x);
-};
+  return Math.atan2(v.y, v.x)
+}
 
 /**
  * Clamp a value between from and to.
@@ -210,13 +210,13 @@ export const pToAngle = function (v) {
  * @return {Number}
  */
 export const clampf = function (value, min_inclusive, max_inclusive) {
-    if (min_inclusive > max_inclusive) {
-        var temp = min_inclusive;
-        min_inclusive = max_inclusive;
-        max_inclusive = temp;
-    }
-    return value < min_inclusive ? min_inclusive : value < max_inclusive ? value : max_inclusive;
-};
+  if (min_inclusive > max_inclusive) {
+    const temp = min_inclusive
+    min_inclusive = max_inclusive
+    max_inclusive = temp
+  }
+  return value < min_inclusive ? min_inclusive : value < max_inclusive ? value : max_inclusive
+}
 
 /**
  * Clamp a point between from and to.
@@ -226,8 +226,8 @@ export const clampf = function (value, min_inclusive, max_inclusive) {
  * @return {Point}
  */
 export const pClamp = function (p, min_inclusive, max_inclusive) {
-    return p(clampf(p.x, min_inclusive.x, max_inclusive.x), clampf(p.y, min_inclusive.y, max_inclusive.y));
-};
+  return p(clampf(p.x, min_inclusive.x, max_inclusive.x), clampf(p.y, min_inclusive.y, max_inclusive.y))
+}
 
 /**
  * Quickly convert Size to a Point
@@ -235,8 +235,8 @@ export const pClamp = function (p, min_inclusive, max_inclusive) {
  * @return {Point}
  */
 export const pFromSize = function (s) {
-    return p(s.width, s.height);
-};
+  return p(s.width, s.height)
+}
 
 /**
  * Run a math operation function on each point component <br />
@@ -249,8 +249,8 @@ export const pFromSize = function (s) {
  * var p = pCompOp(p(10,10),Math.abs);
  */
 export const pCompOp = function (p, opFunc) {
-    return p(opFunc(p.x), opFunc(p.y));
-};
+  return p(opFunc(p.x), opFunc(p.y))
+}
 
 /**
  * Linear Interpolation between two points a and b
@@ -263,8 +263,8 @@ export const pCompOp = function (p, opFunc) {
  * @return {Point}
  */
 export const pLerp = function (a, b, alpha) {
-    return pAdd(pMult(a, 1 - alpha), pMult(b, alpha));
-};
+  return pAdd(pMult(a, 1 - alpha), pMult(b, alpha))
+}
 
 /**
  * @param {Point} a
@@ -273,12 +273,11 @@ export const pLerp = function (a, b, alpha) {
  * @return {Boolean} if points have fuzzy equality which means equal with some degree of variance.
  */
 export const pFuzzyEqual = function (a, b, variance) {
-    if (a.x - variance <= b.x && b.x <= a.x + variance) {
-        if (a.y - variance <= b.y && b.y <= a.y + variance)
-            return true;
-    }
-    return false;
-};
+  if (a.x - variance <= b.x && b.x <= a.x + variance) {
+    if (a.y - variance <= b.y && b.y <= a.y + variance) return true
+  }
+  return false
+}
 
 /**
  * Multiplies a nd b components, a.x*b.x, a.y*b.y
@@ -287,8 +286,8 @@ export const pFuzzyEqual = function (a, b, variance) {
  * @return {Point}
  */
 export const pCompMult = function (a, b) {
-    return p(a.x * b.x, a.y * b.y);
-};
+  return p(a.x * b.x, a.y * b.y)
+}
 
 /**
  * @param {Point} a
@@ -296,13 +295,12 @@ export const pCompMult = function (a, b) {
  * @return {Number} the signed angle in radians between two vector directions
  */
 export const pAngleSigned = function (a, b) {
-    var a2 = pNormalize(a);
-    var b2 = pNormalize(b);
-    var angle = Math.atan2(a2.x * b2.y - a2.y * b2.x, pDot(a2, b2));
-    if (Math.abs(angle) < POINT_EPSILON)
-        return 0.0;
-    return angle;
-};
+  const a2 = pNormalize(a)
+  const b2 = pNormalize(b)
+  const angle = Math.atan2(a2.x * b2.y - a2.y * b2.x, pDot(a2, b2))
+  if (Math.abs(angle) < POINT_EPSILON) return 0.0
+  return angle
+}
 
 /**
  * @param {Point} a
@@ -310,10 +308,10 @@ export const pAngleSigned = function (a, b) {
  * @return {Number} the angle in radians between two vector directions
  */
 export const pAngle = function (a, b) {
-    var angle = Math.acos(pDot(pNormalize(a), pNormalize(b)));
-    if (Math.abs(angle) < POINT_EPSILON) return 0.0;
-    return angle;
-};
+  const angle = Math.acos(pDot(pNormalize(a), pNormalize(b)))
+  if (Math.abs(angle) < POINT_EPSILON) return 0.0
+  return angle
+}
 
 /**
  * Rotates a point counter clockwise by the angle around a pivot
@@ -323,13 +321,14 @@ export const pAngle = function (a, b) {
  * @return {Point} the rotated point
  */
 export const pRotateByAngle = function (v, pivot, angle) {
-    var r = pSub(v, pivot);
-    var cosa = Math.cos(angle), sina = Math.sin(angle);
-    var t = r.x;
-    r.x = t * cosa - r.y * sina + pivot.x;
-    r.y = t * sina + r.y * cosa + pivot.y;
-    return r;
-};
+  const r = pSub(v, pivot)
+  const cosa = Math.cos(angle),
+    sina = Math.sin(angle)
+  const t = r.x
+  r.x = t * cosa - r.y * sina + pivot.x
+  r.y = t * sina + r.y * cosa + pivot.y
+  return r
+}
 
 /**
  * A general line-line intersection test
@@ -347,35 +346,35 @@ export const pRotateByAngle = function (v, pivot, angle) {
  * @return {Boolean}
  */
 export const pLineIntersect = function (A, B, C, D, retP) {
-    if ((A.x === B.x && A.y === B.y) || (C.x === D.x && C.y === D.y)) {
-        return false;
+  if ((A.x === B.x && A.y === B.y) || (C.x === D.x && C.y === D.y)) {
+    return false
+  }
+  const BAx = B.x - A.x
+  const BAy = B.y - A.y
+  const DCx = D.x - C.x
+  const DCy = D.y - C.y
+  const ACx = A.x - C.x
+  const ACy = A.y - C.y
+
+  const denom = DCy * BAx - DCx * BAy
+
+  retP.x = DCx * ACy - DCy * ACx
+  retP.y = BAx * ACy - BAy * ACx
+
+  if (denom === 0) {
+    if (retP.x === 0 || retP.y === 0) {
+      // Lines incident
+      return true
     }
-    var BAx = B.x - A.x;
-    var BAy = B.y - A.y;
-    var DCx = D.x - C.x;
-    var DCy = D.y - C.y;
-    var ACx = A.x - C.x;
-    var ACy = A.y - C.y;
+    // Lines parallel and not incident
+    return false
+  }
 
-    var denom = DCy * BAx - DCx * BAy;
+  retP.x = retP.x / denom
+  retP.y = retP.y / denom
 
-    retP.x = DCx * ACy - DCy * ACx;
-    retP.y = BAx * ACy - BAy * ACx;
-
-    if (denom === 0) {
-        if (retP.x === 0 || retP.y === 0) {
-            // Lines incident
-            return true;
-        }
-        // Lines parallel and not incident
-        return false;
-    }
-
-    retP.x = retP.x / denom;
-    retP.y = retP.y / denom;
-
-    return true;
-};
+  return true
+}
 
 /**
  * ccpSegmentIntersect return YES if Segment A-B intersects with segment C-D.
@@ -386,12 +385,10 @@ export const pLineIntersect = function (A, B, C, D, retP) {
  * @return {Boolean}
  */
 export const pSegmentIntersect = function (A, B, C, D) {
-    var retP = p(0, 0);
-    if (pLineIntersect(A, B, C, D, retP))
-        if (retP.x >= 0.0 && retP.x <= 1.0 && retP.y >= 0.0 && retP.y <= 1.0)
-            return true;
-    return false;
-};
+  const retP = p(0, 0)
+  if (pLineIntersect(A, B, C, D, retP)) if (retP.x >= 0.0 && retP.x <= 1.0 && retP.y >= 0.0 && retP.y <= 1.0) return true
+  return false
+}
 
 /**
  * ccpIntersectPoint return the intersection point of line A-B, C-D
@@ -402,18 +399,18 @@ export const pSegmentIntersect = function (A, B, C, D) {
  * @return {Point}
  */
 export const pIntersectPoint = function (A, B, C, D) {
-    var retP = p(0, 0);
+  const retP = p(0, 0)
 
-    if (pLineIntersect(A, B, C, D, retP)) {
-        // Point of intersection
-        var P = p(0, 0);
-        P.x = A.x + retP.x * (B.x - A.x);
-        P.y = A.y + retP.x * (B.y - A.y);
-        return P;
-    }
+  if (pLineIntersect(A, B, C, D, retP)) {
+    // Point of intersection
+    const P = p(0, 0)
+    P.x = A.x + retP.x * (B.x - A.x)
+    P.y = A.y + retP.x * (B.y - A.y)
+    return P
+  }
 
-    return p(0,0);
-};
+  return p(0, 0)
+}
 
 /**
  * check to see if both points are equal
@@ -422,13 +419,11 @@ export const pIntersectPoint = function (A, B, C, D) {
  * @return {Boolean} the true if both ccp are same
  */
 export const pSameAs = function (A, B) {
-    if ((A != null) && (B != null)) {
-        return (A.x === B.x && A.y === B.y);
-    }
-    return false;
-};
-
-
+  if (A != null && B != null) {
+    return A.x === B.x && A.y === B.y
+  }
+  return false
+}
 
 // High Performance In Place Operationrs ---------------------------------------
 
@@ -436,57 +431,56 @@ export const pSameAs = function (A, B) {
  * sets the position of the point to 0
  * @param {Point} v
  */
-export const pZeroIn = function(v) {
-    v.x = 0;
-    v.y = 0;
-};
+export const pZeroIn = function (v) {
+  v.x = 0
+  v.y = 0
+}
 
 /**
  * copies the position of one point to another
  * @param {Point} v1
  * @param {Point} v2
  */
-export const pIn = function(v1, v2) {
-    v1.x = v2.x;
-    v1.y = v2.y;
-};
+export const pIn = function (v1, v2) {
+  v1.x = v2.x
+  v1.y = v2.y
+}
 
 /**
  * multiplies the point with the given factor (inplace)
  * @param {Point} point
  * @param {Number} floatVar
  */
-export const pMultIn = function(point, floatVar) {
-    point.x *= floatVar;
-    point.y *= floatVar;
-};
+export const pMultIn = function (point, floatVar) {
+  point.x *= floatVar
+  point.y *= floatVar
+}
 
 /**
  * subtracts one point from another (inplace)
  * @param {Point} v1
  * @param {Point} v2
  */
-export const pSubIn = function(v1, v2) {
-    v1.x -= v2.x;
-    v1.y -= v2.y;
-};
+export const pSubIn = function (v1, v2) {
+  v1.x -= v2.x
+  v1.y -= v2.y
+}
 
 /**
  * adds one point to another (inplace)
  * @param {Point} v1
  * @param {Point} v2
  */
-export const pAddIn = function(v1, v2) {
-    v1.x += v2.x;
-    v1.y += v2.y;
-};
+export const pAddIn = function (v1, v2) {
+  v1.x += v2.x
+  v1.y += v2.y
+}
 
 /**
  * normalizes the point (inplace)
  * @param {Point} v
  */
-export const pNormalizeIn = function(v) {
-    var n = Math.sqrt(v.x * v.x + v.y * v.y);
-    if (n !== 0)
-        pMultIn(v, 1.0 / n);
-};
+export const pNormalizeIn = function (v) {
+  const n = Math.sqrt(v.x * v.x + v.y * v.y)
+  if (n !== 0) pMultIn(v, 1.0 / n)
+}

@@ -1,11 +1,11 @@
-import { _renderContext, game } from "../..";
-import { _LogInfos, assert, log } from "../../helper/Debugger";
-import { _renderType } from "../../helper/engine";
-import { loader } from "../../helper/loader";
-import { ENABLE_GL_STATE_CACHE, ENGINE_VERSION } from "./platform/Config";
-import { checkGLErrorDebug } from "./platform/Macro";
+import { _renderContext, game } from '../..'
+import { _LogInfos, assert, log } from '../../helper/Debugger'
+import { _renderType } from '../../helper/engine'
+import { loader } from '../../helper/loader'
+import { ENABLE_GL_STATE_CACHE, ENGINE_VERSION } from './platform/Config'
+import { checkGLErrorDebug } from './platform/Macro'
 
-export const configuration = /** @lends configuration# */{
+export const configuration = /** @lends configuration# */ {
   // Type constants
   /*
    * ERROR type
@@ -56,17 +56,17 @@ export const configuration = /** @lends configuration# */{
   _supportsShareableVAO: false,
   _maxSamplesAllowed: 0,
   _maxTextureUnits: 0,
-  _GlExtensions: "",
+  _GlExtensions: '',
   _valueDict: {},
 
   _inited: false,
 
   _init: function () {
-    var locValueDict = this._valueDict;
-    locValueDict["cocos2d.x.version"] = ENGINE_VERSION;
-    locValueDict["cocos2d.x.compiled_with_profiler"] = false;
-    locValueDict["cocos2d.x.compiled_with_gl_state_cache"] = ENABLE_GL_STATE_CACHE;
-    this._inited = true;
+    const locValueDict = this._valueDict
+    locValueDict['cocos2d.x.version'] = ENGINE_VERSION
+    locValueDict['cocos2d.x.compiled_with_profiler'] = false
+    locValueDict['cocos2d.x.compiled_with_gl_state_cache'] = ENABLE_GL_STATE_CACHE
+    this._inited = true
   },
 
   /**
@@ -74,7 +74,7 @@ export const configuration = /** @lends configuration# */{
    * @return {Number}
    */
   getMaxTextureSize: function () {
-    return this._maxTextureSize;
+    return this._maxTextureSize
   },
 
   /**
@@ -82,7 +82,7 @@ export const configuration = /** @lends configuration# */{
    * @return {Number}
    */
   getMaxModelviewStackDepth: function () {
-    return this._maxModelviewStackDepth;
+    return this._maxModelviewStackDepth
   },
 
   /**
@@ -90,7 +90,7 @@ export const configuration = /** @lends configuration# */{
    * @return {Number}
    */
   getMaxTextureUnits: function () {
-    return this._maxTextureUnits;
+    return this._maxTextureUnits
   },
 
   /**
@@ -99,7 +99,7 @@ export const configuration = /** @lends configuration# */{
    * @return {Boolean}
    */
   supportsNPOT: function () {
-    return this._supportsNPOT;
+    return this._supportsNPOT
   },
 
   /**
@@ -107,7 +107,7 @@ export const configuration = /** @lends configuration# */{
    * @return {Boolean}
    */
   supportsPVRTC: function () {
-    return this._supportsPVRTC;
+    return this._supportsPVRTC
   },
 
   /**
@@ -115,7 +115,7 @@ export const configuration = /** @lends configuration# */{
    * @return {Boolean}
    */
   supportsETC: function () {
-    return false;
+    return false
   },
 
   /**
@@ -123,7 +123,7 @@ export const configuration = /** @lends configuration# */{
    * @return {Boolean}
    */
   supportsS3TC: function () {
-    return false;
+    return false
   },
 
   /**
@@ -131,7 +131,7 @@ export const configuration = /** @lends configuration# */{
    * @return {Boolean}
    */
   supportsATITC: function () {
-    return false;
+    return false
   },
 
   /**
@@ -139,7 +139,7 @@ export const configuration = /** @lends configuration# */{
    * @return {Boolean}
    */
   supportsBGRA8888: function () {
-    return this._supportsBGRA8888;
+    return this._supportsBGRA8888
   },
 
   /**
@@ -147,7 +147,7 @@ export const configuration = /** @lends configuration# */{
    * @return {Boolean}
    */
   supportsDiscardFramebuffer: function () {
-    return this._supportsDiscardFramebuffer;
+    return this._supportsDiscardFramebuffer
   },
 
   /**
@@ -155,7 +155,7 @@ export const configuration = /** @lends configuration# */{
    * @return {Boolean}
    */
   supportsShareableVAO: function () {
-    return this._supportsShareableVAO;
+    return this._supportsShareableVAO
   },
 
   /**
@@ -163,7 +163,7 @@ export const configuration = /** @lends configuration# */{
    * @param {String} searchName
    */
   checkForGLExtension: function (searchName) {
-    return this._GlExtensions.indexOf(searchName) > -1;
+    return this._GlExtensions.indexOf(searchName) > -1
   },
 
   /**
@@ -173,12 +173,10 @@ export const configuration = /** @lends configuration# */{
    * @returns {String|Bool|Number|Object}
    */
   getValue: function (key, default_value) {
-    if (!this._inited)
-      this._init();
-    var locValueDict = this._valueDict;
-    if (locValueDict[key])
-      return locValueDict[key];
-    return default_value;
+    if (!this._inited) this._init()
+    const locValueDict = this._valueDict
+    if (locValueDict[key]) return locValueDict[key]
+    return default_value
   },
 
   /**
@@ -187,7 +185,7 @@ export const configuration = /** @lends configuration# */{
    * @param {String|Bool|Number|Object} value
    */
   setValue: function (key, value) {
-    this._valueDict[key] = value;
+    this._valueDict[key] = value
   },
 
   /**
@@ -195,9 +193,9 @@ export const configuration = /** @lends configuration# */{
    */
   dumpInfo: function () {
     if (ENABLE_GL_STATE_CACHE === 0) {
-      log("");
-      log(_LogInfos.configuration_dumpInfo);
-      log("")
+      log('')
+      log(_LogInfos.configuration_dumpInfo)
+      log('')
     }
   },
 
@@ -205,43 +203,40 @@ export const configuration = /** @lends configuration# */{
    * gathers OpenGL / GPU information
    */
   gatherGPUInfo: function () {
-    if (_renderType === game.RENDER_TYPE_CANVAS)
-      return;
+    if (_renderType === game.RENDER_TYPE_CANVAS) return
 
-    if (!this._inited)
-      this._init();
-    var gl = _renderContext;
-    var locValueDict = this._valueDict;
-    locValueDict["gl.vendor"] = gl.getParameter(gl.VENDOR);
-    locValueDict["gl.renderer"] = gl.getParameter(gl.RENDERER);
-    locValueDict["gl.version"] = gl.getParameter(gl.VERSION);
+    if (!this._inited) this._init()
+    const gl = _renderContext
+    const locValueDict = this._valueDict
+    locValueDict['gl.vendor'] = gl.getParameter(gl.VENDOR)
+    locValueDict['gl.renderer'] = gl.getParameter(gl.RENDERER)
+    locValueDict['gl.version'] = gl.getParameter(gl.VERSION)
 
-    this._GlExtensions = "";
-    var extArr = gl.getSupportedExtensions();
-    for (var i = 0; i < extArr.length; i++)
-      this._GlExtensions += extArr[i] + " ";
+    this._GlExtensions = ''
+    const extArr = gl.getSupportedExtensions()
+    for (let i = 0; i < extArr.length; i++) this._GlExtensions += `${extArr[i]} `
 
-    this._maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE);
-    locValueDict["gl.max_texture_size"] = this._maxTextureSize;
-    this._maxTextureUnits = gl.getParameter(gl.MAX_COMBINED_TEXTURE_IMAGE_UNITS);
-    locValueDict["gl.max_texture_units"] = this._maxTextureUnits;
+    this._maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE)
+    locValueDict['gl.max_texture_size'] = this._maxTextureSize
+    this._maxTextureUnits = gl.getParameter(gl.MAX_COMBINED_TEXTURE_IMAGE_UNITS)
+    locValueDict['gl.max_texture_units'] = this._maxTextureUnits
 
-    this._supportsPVRTC = this.checkForGLExtension("GL_IMG_texture_compression_pvrtc");
-    locValueDict["gl.supports_PVRTC"] = this._supportsPVRTC;
+    this._supportsPVRTC = this.checkForGLExtension('GL_IMG_texture_compression_pvrtc')
+    locValueDict['gl.supports_PVRTC'] = this._supportsPVRTC
 
-    this._supportsNPOT = false; //true;
-    locValueDict["gl.supports_NPOT"] = this._supportsNPOT;
+    this._supportsNPOT = false //true;
+    locValueDict['gl.supports_NPOT'] = this._supportsNPOT
 
-    this._supportsBGRA8888 = this.checkForGLExtension("GL_IMG_texture_format_BGRA888");
-    locValueDict["gl.supports_BGRA8888"] = this._supportsBGRA8888;
+    this._supportsBGRA8888 = this.checkForGLExtension('GL_IMG_texture_format_BGRA888')
+    locValueDict['gl.supports_BGRA8888'] = this._supportsBGRA8888
 
-    this._supportsDiscardFramebuffer = this.checkForGLExtension("GL_EXT_discard_framebuffer");
-    locValueDict["gl.supports_discard_framebuffer"] = this._supportsDiscardFramebuffer;
+    this._supportsDiscardFramebuffer = this.checkForGLExtension('GL_EXT_discard_framebuffer')
+    locValueDict['gl.supports_discard_framebuffer'] = this._supportsDiscardFramebuffer
 
-    this._supportsShareableVAO = this.checkForGLExtension("vertex_array_object");
-    locValueDict["gl.supports_vertex_array_object"] = this._supportsShareableVAO;
+    this._supportsShareableVAO = this.checkForGLExtension('vertex_array_object')
+    locValueDict['gl.supports_vertex_array_object'] = this._supportsShareableVAO
 
-    checkGLErrorDebug();
+    checkGLErrorDebug()
   },
 
   /**
@@ -249,20 +244,18 @@ export const configuration = /** @lends configuration# */{
    * @param {string} url
    */
   loadConfigFile: function (url) {
-    if (!this._inited)
-      this._init();
-    var dict = loader.getRes(url);
-    if (!dict) throw new Error("Please load the resource first : " + url);
-    assert(dict, _LogInfos.configuration_loadConfigFile_2, url);
+    if (!this._inited) this._init()
+    const dict = loader.getRes(url)
+    if (!dict) throw new Error(`Please load the resource first : ${url}`)
+    assert(dict, _LogInfos.configuration_loadConfigFile_2, url)
 
-    var getDatas = dict["data"];
+    const getDatas = dict['data']
     if (!getDatas) {
-      log(_LogInfos.configuration_loadConfigFile, url);
-      return;
+      log(_LogInfos.configuration_loadConfigFile, url)
+      return
     }
 
     // Add all keys in the existing dictionary
-    for (var selKey in getDatas)
-      this._valueDict[selKey] = getDatas[selKey];
-  }
-};
+    for (const selKey in getDatas) this._valueDict[selKey] = getDatas[selKey]
+  },
+}

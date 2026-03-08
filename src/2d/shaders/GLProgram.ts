@@ -23,10 +23,10 @@ import {
 import { glDeleteProgram, glUseProgram } from './GLStateCache'
 
 export class GLProgram {
-  _glContext: any = null
-  _programObj: any = null
-  _vertShader: any = null
-  _fragShader: any = null
+  _glContext: WebGLRenderingContext = null
+  _programObj: WebGLProgram = null
+  _vertShader: WebGLShader = null
+  _fragShader: WebGLShader = null
   _uniforms: any = null
   _hashForUniforms: any = null
   _usesTime = false
@@ -34,7 +34,7 @@ export class GLProgram {
 
   static _highpSupported: boolean | null = null
 
-  constructor(vShaderFileName?: string, fShaderFileName?: string, glContext?: any) {
+  constructor(vShaderFileName?: string, fShaderFileName?: string, glContext?: WebGLRenderingContext) {
     this._uniforms = {}
     this._hashForUniforms = {}
     this._glContext = glContext || _renderContext
@@ -43,7 +43,7 @@ export class GLProgram {
   }
 
   // Uniform cache
-  _updateUniform(name: string, matrix?: Float32Array | Int32Array | number, v1?: number, v2?: number, v3?: number, v4?: number): boolean {
+  _updateUniform(name: string, matrix?: Float32Array | Int32Array | number, ...rest: number[]): boolean {
     if (!name) return false
 
     let updated = false
@@ -52,17 +52,14 @@ export class GLProgram {
     if (Array.isArray(matrix)) {
       args = matrix
     } else {
-      args = new Array(arguments.length - 1)
-      for (var i = 1; i < arguments.length; i += 1) {
-        args[i - 1] = arguments[i]
-      }
+      args = [matrix, ...rest]
     }
 
     if (!element || element.length !== args.length) {
       this._hashForUniforms[name] = [].concat(args)
       updated = true
     } else {
-      for (var i = 0; i < args.length; i += 1) {
+      for (let i = 0; i < args.length; i += 1) {
         // Array and Typed Array inner values could be changed, so we must update them
         if (args[i] !== element[i] || typeof args[i] === 'object') {
           element[i] = args[i]
@@ -701,7 +698,6 @@ export class GLProgram {
     this.setUniformLocationWithMatrix4fv(this._uniforms[UNIFORM_MVPMATRIX_S], matrixMVP.mat, 1)
 
     if (this._usesTime) {
-      var director = director
       // This doesn't give the most accurate global time value.
       // Cocos2D doesn't store a high precision time value, so this will have to do.
       // Getting Mach time per frame per shader using time could be extremely expensive.

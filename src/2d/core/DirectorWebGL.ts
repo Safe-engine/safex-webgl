@@ -1,4 +1,4 @@
-import { Director } from './Director';
+import { Director } from './Director'
 
 export function installWebGLDirectorExtensions() {
   // Only apply for WebGL render type
@@ -8,8 +8,7 @@ export function installWebGLDirectorExtensions() {
 
   // DirectorDelegate for custom projection
 
-  const _p = (Director as any).prototype;
-
+  const _p = (Director as any).prototype
 }
 
 // Call this function after Director is defined and _renderType is
