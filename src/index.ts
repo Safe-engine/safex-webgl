@@ -40,7 +40,7 @@ export class Game extends EventHelper {
   EVENT_HIDE = 'game_on_hide'
   EVENT_SHOW = 'game_on_show'
   EVENT_RESIZE = 'game_on_resize'
-  static readonly EVENT_RENDERER_INITD = 'renderer_inited'
+  static readonly EVENT_RENDERER_INITD = 'renderer_initd'
 
   RENDER_TYPE_CANVAS = 0
   RENDER_TYPE_WEBGL = 1
