@@ -1,5 +1,6 @@
 import { director, game, global, loader, sys, view } from '../src'
 import { ResolutionPolicy, Scene, Sprite } from '../src/core'
+import { ActionScene } from './ActionScene'
 
 class BootScene extends Scene {
   // constructor() {
@@ -58,6 +59,6 @@ game.run(
     const sprite = new Sprite('res/button.png')
     sprite.setPosition(100, 200)
     scene.addChild(sprite)
-    director.runScene(new BootScene())
+    director.runScene(new ActionScene())
   },
 )
