@@ -8,15 +8,9 @@ import { warn } from '../../helper/Debugger'
  */
 export class SAXParser {
   private _parser: DOMParser | null = null
-  private _isSupportDOMParser: boolean | null = null
 
   constructor() {
-    if (window.DOMParser) {
-      this._isSupportDOMParser = true
-      this._parser = new DOMParser()
-    } else {
-      this._isSupportDOMParser = false
-    }
+    this._parser = new DOMParser()
   }
 
   /**
@@ -30,16 +24,7 @@ export class SAXParser {
 
   protected _parseXML(textxml: string): Document {
     // get a reference to the requested corresponding xml file
-    let xmlDoc: Document
-    if (this._isSupportDOMParser) {
-      xmlDoc = this._parser!.parseFromString(textxml, 'text/xml')
-    } else {
-      // Internet Explorer (untested!)
-      const activeX = new (ActiveXObject as any)('Microsoft.XMLDOM')
-      activeX.async = 'false'
-      activeX.loadXML(textxml)
-      xmlDoc = activeX
-    }
+    const xmlDoc: Document = this._parser!.parseFromString(textxml, 'text/xml')
     return xmlDoc
   }
 }

@@ -20,7 +20,7 @@ interface Window {
   mozAudioContext: any
   __audioSupport: any
 }
-const ActiveXObject: any
+type SafexXMLHttpRequest = XMLHttpRequest & { _timeoutId: number }
 
 interface Document {
   ccConfig?: any

@@ -71,7 +71,7 @@ export const loader = (function () {
      * @returns {XMLHttpRequest}
      */
     getXMLHttpRequest: function () {
-      const xhr = window.XMLHttpRequest ? new window.XMLHttpRequest() : new ActiveXObject('MSXML2.XMLHTTP')
+      const xhr = new XMLHttpRequest() as SafexXMLHttpRequest
       xhr.timeout = 10000
       if (xhr.ontimeout === undefined) {
         xhr._timeoutId = -1
@@ -89,7 +89,7 @@ export const loader = (function () {
      */
     loadTxt: function (url, cb) {
       if (!_isNodeJs) {
-        const xhr = this.getXMLHttpRequest(),
+        const xhr: SafexXMLHttpRequest = this.getXMLHttpRequest(),
           errInfo = `load ${url} failed!`
         xhr.open('GET', url, true)
         if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
