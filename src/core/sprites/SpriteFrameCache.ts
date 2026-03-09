@@ -185,6 +185,7 @@ export const spriteFrameCache = {
         //     spriteFrame.setRect(rect(0, 0, rect.width, rect.height))
         //   }
         // }
+        // console.log('create sprite frames', key, spriteFrame)
         spriteFrames[key] = spriteFrame
       }
     }

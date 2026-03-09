@@ -227,13 +227,15 @@ export const loader = (function () {
         }
       }
 
+      // eslint-disable-next-line @typescript-eslint/no-this-alias
+      const self = this
       const errorCallback = function () {
         this.removeEventListener('load', loadCallback, false)
         this.removeEventListener('error', errorCallback, false)
 
         if (window.location.protocol !== 'https:' && img.crossOrigin && img.crossOrigin.toLowerCase() === 'anonymous') {
           opt.isCrossOrigin = false
-          this.release(url)
+          self.release(url)
           loader.loadImg(url, opt, callback, img)
         } else {
           const queue = _queue[url]

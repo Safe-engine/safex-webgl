@@ -1,6 +1,5 @@
 import { director, game, global, loader, sys, view } from '../src'
-import { ResolutionPolicy, Scene, Sprite } from '../src/core'
-import { ActionScene } from './ActionScene'
+import { ResolutionPolicy, Scene, Sprite, spriteFrameCache } from '../src/core'
 
 class BootScene extends Scene {
   // constructor() {
@@ -10,16 +9,18 @@ class BootScene extends Scene {
   // }
   onEnter() {
     super.onEnter()
-    loader.load(['res/button.png'], (err, img) => {
+    loader.load(['button.png', 'ui.plist', 'ui.png'], (err, resources) => {
       if (err) {
         console.error('Failed to load image', err)
         return
       }
-      // console.log("Image loaded", img)
-      const sprite = new Sprite('res/button.png')
-      const sprite2 = new Sprite('res/button_plus.png')
-      const sprite3 = new Sprite('res/button.png')
-      // console.log("sprite onEnter", sprite.getTexture())
+      console.log('Resources loaded', resources)
+      spriteFrameCache.addSpriteFrames('ui.plist', 'ui.png')
+      const sprite = new Sprite('button.png')
+      const sprite2 = new Sprite('button_plus.png')
+      const frame = spriteFrameCache.getSpriteFrame('ui/buttons/back')
+      const sprite3 = new Sprite(frame)
+      console.log('sprite onEnter', sprite3.getTexture())
       sprite.setPosition(view.getDesignResolutionSize().width / 2, view.getDesignResolutionSize().height / 2)
       sprite2.setPosition(85, 26)
       sprite3.setPosition(100, 200)
@@ -56,9 +57,9 @@ game.run(
     // The game will be resized when browser size change
     view.resizeWithBrowserSize(true)
     const scene = new Scene()
-    const sprite = new Sprite('res/button.png')
+    const sprite = new Sprite('button.png')
     sprite.setPosition(100, 200)
     scene.addChild(sprite)
-    director.runScene(new ActionScene())
+    director.runScene(new BootScene())
   },
 )

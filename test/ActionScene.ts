@@ -6,7 +6,7 @@ import { p } from '../src/core/cocoa/Geometry'
 export class ActionScene extends Scene {
   onEnter() {
     super.onEnter()
-    const sprite = new Sprite('res/button_plus.png')
+    const sprite = new Sprite('button_plus.png')
     sprite.setPosition(view.getDesignResolutionSize().width / 2, view.getDesignResolutionSize().height / 2)
     this.addChild(sprite)
     const moveAction = moveBy(5, p(100, 600))

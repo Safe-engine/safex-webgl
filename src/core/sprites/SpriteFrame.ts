@@ -6,7 +6,6 @@ import { Texture2D } from '../../textures/TexturesWebGL'
 import { p, rect, size } from '../cocoa/Geometry'
 import { EventHelper } from '../event-manager/EventHelper'
 import { _pointPixelsToPointsOut, _sizePixelsToPointsOut, rectPixelsToPoints, rectPointsToPixels } from '../platform/Macro'
-import { Sprite } from './Sprite'
 
 /**
  * <p>
@@ -32,6 +31,7 @@ export class SpriteFrame extends EventHelper {
   _textureLoaded: boolean
 
   constructor(filename?: any, rectArg?: any, rotated?: any, offset?: any, originalSize?: any) {
+    super()
     this._offset = p(0, 0)
     this._offsetInPixels = p(0, 0)
     this._originalSize = size(0, 0)
@@ -144,8 +144,8 @@ export class SpriteFrame extends EventHelper {
           function (sender: any) {
             this._textureLoaded = true
             if (this._rotated && _renderType === game.RENDER_TYPE_CANVAS) {
-              let tempElement = sender.getHtmlElementObj()
-              tempElement = Sprite.CanvasRenderCmd._cutRotateImageToCanvas(tempElement, this.getRect())
+              const tempElement = sender.getHtmlElementObj()
+              // tempElement = Sprite.CanvasRenderCmd._cutRotateImageToCanvas(tempElement, this.getRect())
               const tempTexture = new Texture2D()
               tempTexture.initWithElement(tempElement)
               tempTexture.handleLoadedTexture()

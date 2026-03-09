@@ -2,6 +2,7 @@ import { isString } from '../../helper/checkType'
 import { loader } from '../../helper/loader'
 import { path } from '../../helper/path'
 import { textureCache } from '../../textures/TextureCache'
+import { plistParser } from './SAXParser'
 
 const _txtLoader = {
   load: function (realUrl, url, res, cb) {
@@ -129,11 +130,11 @@ const _fontLoader = {
 }
 loader.register(['font', 'eot', 'ttf', 'woff', 'svg', 'ttc'], _fontLoader)
 
-const _binaryLoader = {
-  load: function (realUrl, url, res, cb) {
-    loader.loadBinary(realUrl, cb)
-  },
-}
+// const _binaryLoader = {
+//   load: function (realUrl, url, res, cb) {
+//     loader.loadBinary(realUrl, cb)
+//   },
+// }
 
 // const _csbLoader = {
 //   load: function (realUrl, url, res, cb) {
