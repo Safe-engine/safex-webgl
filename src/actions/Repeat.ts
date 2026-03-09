@@ -1,3 +1,5 @@
+import { ActionInterval } from './ActionInterval'
+
 /**
  * Repeats an action a number of times.
  * To repeat an action forever use the CCRepeatForever action.
@@ -8,154 +10,154 @@
  * @example
  * var rep = new Repeat(sequence(jump2, jump1), 5);
  */
-Repeat = ActionInterval.extend(
-  /** @lends Repeat# */ {
-    _times: 0,
-    _total: 0,
-    _nextDt: 0,
-    _actionInstant: false,
-    _innerAction: null, //CCFiniteTimeAction
+export class Repeat extends ActionInterval {
+  _times = 0
+  _total = 0
+  _nextDt = 0
+  _actionInstant = false
+  _innerAction: any = null //CCFiniteTimeAction
 
-    /**
-     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
-     * Creates a Repeat action. Times is an unsigned integer between 1 and pow(2,30).
-     * @param {FiniteTimeAction} action
-     * @param {Number} times
-     */
-    ctor: function (action, times) {
-      ActionInterval.prototype.ctor.call(this)
+  /**
+   * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
+   * Creates a Repeat action. Times is an unsigned integer between 1 and pow(2,30).
+   * @param {FiniteTimeAction} action
+   * @param {Number} times
+   */
+  constructor(action?: any, times?: number) {
+    super()
 
-      times !== undefined && this.initWithAction(action, times)
-    },
+    if (times !== undefined) {
+      this.initWithAction(action, times)
+    }
+  }
 
-    /**
-     * @param {FiniteTimeAction} action
-     * @param {Number} times
-     * @return {Boolean}
-     */
-    initWithAction: function (action, times) {
-      const duration = action._duration * times
+  /**
+   * @param {FiniteTimeAction} action
+   * @param {Number} times
+   * @return {Boolean}
+   */
+  initWithAction(action: any, times: number) {
+    const duration = action._duration * times
 
-      if (this.initWithDuration(duration)) {
-        this._times = times
-        this._innerAction = action
-        if (action instanceof ActionInstant) {
-          this._actionInstant = true
-          this._times -= 1
-        }
-        this._total = 0
-        return true
+    if (this.initWithDuration(duration)) {
+      this._times = times
+      this._innerAction = action
+      if (action instanceof ActionInstant) {
+        this._actionInstant = true
+        this._times -= 1
       }
-      return false
-    },
-
-    /**
-     * returns a new clone of the action
-     * @returns {Repeat}
-     */
-    clone: function () {
-      const action = new Repeat()
-      this._cloneDecoration(action)
-      action.initWithAction(this._innerAction.clone(), this._times)
-      return action
-    },
-
-    /**
-     * Start the action with target.
-     * @param {Node} target
-     */
-    startWithTarget: function (target) {
       this._total = 0
-      this._nextDt = this._innerAction._duration / this._duration
-      ActionInterval.prototype.startWithTarget.call(this, target)
-      this._innerAction.startWithTarget(target)
-    },
+      return true
+    }
+    return false
+  }
 
-    /**
-     * stop the action
-     */
-    stop: function () {
-      this._innerAction.stop()
-      Action.prototype.stop.call(this)
-    },
+  /**
+   * returns a new clone of the action
+   * @returns {Repeat}
+   */
+  clone() {
+    const action = new Repeat()
+    this._cloneDecoration(action)
+    action.initWithAction(this._innerAction.clone(), this._times)
+    return action
+  }
 
-    /**
-     * Called once per frame. Time is the number of seconds of a frame interval.
-     * @param {Number}  dt
-     */
-    update: function (dt) {
-      dt = this._computeEaseTime(dt)
-      const locInnerAction = this._innerAction
-      const locDuration = this._duration
-      const locTimes = this._times
-      let locNextDt = this._nextDt
+  /**
+   * Start the action with target.
+   * @param {Node} target
+   */
+  startWithTarget(target: any) {
+    this._total = 0
+    this._nextDt = this._innerAction._duration / this._duration
+    super.startWithTarget(target)
+    this._innerAction.startWithTarget(target)
+  }
 
-      if (dt >= locNextDt) {
-        while (dt > locNextDt && this._total < locTimes) {
+  /**
+   * stop the action
+   */
+  stop() {
+    this._innerAction.stop()
+    super.stop()
+  }
+
+  /**
+   * Called once per frame. Time is the number of seconds of a frame interval.
+   * @param {Number}  dt
+   */
+  update(dt: number) {
+    dt = this._computeEaseTime(dt)
+    const locInnerAction = this._innerAction
+    const locDuration = this._duration
+    const locTimes = this._times
+    let locNextDt = this._nextDt
+
+    if (dt >= locNextDt) {
+      while (dt > locNextDt && this._total < locTimes) {
+        locInnerAction.update(1)
+        this._total++
+        locInnerAction.stop()
+        locInnerAction.startWithTarget(this.target)
+        locNextDt += locInnerAction._duration / locDuration
+        this._nextDt = locNextDt
+      }
+
+      // fix for issue #1288, incorrect end value of repeat
+      if (dt >= 1.0 && this._total < locTimes) this._total++
+
+      // don't set a instant action back or update it, it has no use because it has no duration
+      if (!this._actionInstant) {
+        if (this._total === locTimes) {
           locInnerAction.update(1)
-          this._total++
           locInnerAction.stop()
-          locInnerAction.startWithTarget(this.target)
-          locNextDt += locInnerAction._duration / locDuration
-          this._nextDt = locNextDt
+        } else {
+          // issue #390 prevent jerk, use right update
+          locInnerAction.update(dt - (locNextDt - locInnerAction._duration / locDuration))
         }
-
-        // fix for issue #1288, incorrect end value of repeat
-        if (dt >= 1.0 && this._total < locTimes) this._total++
-
-        // don't set a instant action back or update it, it has no use because it has no duration
-        if (!this._actionInstant) {
-          if (this._total === locTimes) {
-            locInnerAction.update(1)
-            locInnerAction.stop()
-          } else {
-            // issue #390 prevent jerk, use right update
-            locInnerAction.update(dt - (locNextDt - locInnerAction._duration / locDuration))
-          }
-        }
-      } else {
-        locInnerAction.update((dt * locTimes) % 1.0)
       }
-    },
+    } else {
+      locInnerAction.update((dt * locTimes) % 1.0)
+    }
+  }
 
-    /**
-     * Return true if the action has finished.
-     * @return {Boolean}
-     */
-    isDone: function () {
-      return this._total === this._times
-    },
+  /**
+   * Return true if the action has finished.
+   * @return {Boolean}
+   */
+  isDone() {
+    return this._total === this._times
+  }
 
-    /**
-     * returns a reversed action.
-     * @return {Repeat}
-     */
-    reverse: function () {
-      const action = new Repeat(this._innerAction.reverse(), this._times)
-      this._cloneDecoration(action)
-      this._reverseEaseList(action)
-      return action
-    },
+  /**
+   * returns a reversed action.
+   * @return {Repeat}
+   */
+  reverse() {
+    const action = new Repeat(this._innerAction.reverse(), this._times)
+    this._cloneDecoration(action)
+    this._reverseEaseList(action)
+    return action
+  }
 
-    /**
-     * Set inner Action.
-     * @param {FiniteTimeAction} action
-     */
-    setInnerAction: function (action) {
-      if (this._innerAction !== action) {
-        this._innerAction = action
-      }
-    },
+  /**
+   * Set inner Action.
+   * @param {FiniteTimeAction} action
+   */
+  setInnerAction(action: any) {
+    if (this._innerAction !== action) {
+      this._innerAction = action
+    }
+  }
 
-    /**
-     * Get inner Action.
-     * @return {FiniteTimeAction}
-     */
-    getInnerAction: function () {
-      return this._innerAction
-    },
-  },
-)
+  /**
+   * Get inner Action.
+   * @return {FiniteTimeAction}
+   */
+  getInnerAction() {
+    return this._innerAction
+  }
+}
 
 /**
  * Creates a Repeat action. Times is an unsigned integer between 1 and pow(2,30)
@@ -167,20 +169,9 @@ Repeat = ActionInterval.extend(
  * // example
  * var rep = repeat(sequence(jump2, jump1), 5);
  */
-repeat = function (action, times) {
+export const repeat = function (action, times) {
   return new Repeat(action, times)
 }
-
-/**
- * Please use repeat instead
- * Creates a Repeat action. Times is an unsigned integer between 1 and pow(2,30)
- * @static
- * @deprecated since v3.0 <br /> Please use repeat instead.
- * @param {FiniteTimeAction} action
- * @param {Number} times
- * @return {Repeat}
- */
-Repeat.create = repeat
 
 /**  Repeats an action for ever.  <br/>
  * To repeat the an action for a limited number of times use the Repeat action. <br/>
@@ -191,109 +182,108 @@ Repeat.create = repeat
  * @example
  * var rep = new RepeatForever(sequence(jump2, jump1), 5);
  */
-RepeatForever = ActionInterval.extend(
-  /** @lends RepeatForever# */ {
-    _innerAction: null, //CCActionInterval
+export class RepeatForever extends ActionInterval {
+  _innerAction: any = null //CCActionInterval
 
-    /**
-     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
-     * Create a acton which repeat forever.
-     * @param {FiniteTimeAction} action
-     */
-    ctor: function (action) {
-      ActionInterval.prototype.ctor.call(this)
-      this._innerAction = null
+  /**
+   * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
+   * Create a acton which repeat forever.
+   * @param {FiniteTimeAction} action
+   */
+  constructor(action?: any) {
+    super()
+    this._innerAction = null
+    if (action) {
+      this.initWithAction(action)
+    }
+  }
 
-      action && this.initWithAction(action)
-    },
+  /**
+   * @param {ActionInterval} action
+   * @return {Boolean}
+   */
+  initWithAction(action: any) {
+    if (!action) throw new Error('RepeatForever.initWithAction(): action must be non null')
 
-    /**
-     * @param {ActionInterval} action
-     * @return {Boolean}
-     */
-    initWithAction: function (action) {
-      if (!action) throw new Error('RepeatForever.initWithAction(): action must be non null')
+    this._innerAction = action
+    return true
+  }
 
+  /**
+   * returns a new clone of the action
+   * @returns {RepeatForever}
+   */
+  clone() {
+    const action = new RepeatForever()
+    this._cloneDecoration(action)
+    action.initWithAction(this._innerAction.clone())
+    return action
+  }
+
+  /**
+   * Start the action with target.
+   * @param {Node} target
+   */
+  startWithTarget(target: any) {
+    super.startWithTarget(target)
+    this._innerAction.startWithTarget(target)
+  }
+
+  /**
+   * called every frame with it's delta time. <br />
+   * DON'T override unless you know what you are doing.
+   * @param dt delta time in seconds
+   */
+  step(dt: number) {
+    const locInnerAction = this._innerAction
+    locInnerAction.step(dt)
+    if (locInnerAction.isDone()) {
+      //var diff = locInnerAction.getElapsed() - locInnerAction._duration;
+      locInnerAction.startWithTarget(this.target)
+      // to prevent jerk. issue #390 ,1247
+      //this._innerAction.step(0);
+      //this._innerAction.step(diff);
+      locInnerAction.step(locInnerAction.getElapsed() - locInnerAction._duration)
+    }
+  }
+
+  /**
+   * Return true if the action has finished.
+   * @return {Boolean}
+   */
+  isDone() {
+    return false
+  }
+
+  /**
+   * Returns a reversed action.
+   * @return {RepeatForever}
+   */
+  reverse() {
+    const action = new RepeatForever(this._innerAction.reverse())
+    this._cloneDecoration(action)
+    this._reverseEaseList(action)
+    return action
+  }
+
+  /**
+   * Set inner action.
+   * @param {ActionInterval} action
+   */
+  setInnerAction(action: any) {
+    if (this._innerAction !== action) {
       this._innerAction = action
-      return true
-    },
+    }
+  }
 
-    /**
-     * returns a new clone of the action
-     * @returns {RepeatForever}
-     */
-    clone: function () {
-      const action = new RepeatForever()
-      this._cloneDecoration(action)
-      action.initWithAction(this._innerAction.clone())
-      return action
-    },
-
-    /**
-     * Start the action with target.
-     * @param {Node} target
-     */
-    startWithTarget: function (target) {
-      ActionInterval.prototype.startWithTarget.call(this, target)
-      this._innerAction.startWithTarget(target)
-    },
-
-    /**
-     * called every frame with it's delta time. <br />
-     * DON'T override unless you know what you are doing.
-     * @param dt delta time in seconds
-     */
-    step: function (dt) {
-      const locInnerAction = this._innerAction
-      locInnerAction.step(dt)
-      if (locInnerAction.isDone()) {
-        //var diff = locInnerAction.getElapsed() - locInnerAction._duration;
-        locInnerAction.startWithTarget(this.target)
-        // to prevent jerk. issue #390 ,1247
-        //this._innerAction.step(0);
-        //this._innerAction.step(diff);
-        locInnerAction.step(locInnerAction.getElapsed() - locInnerAction._duration)
-      }
-    },
-
-    /**
-     * Return true if the action has finished.
-     * @return {Boolean}
-     */
-    isDone: function () {
-      return false
-    },
-
-    /**
-     * Returns a reversed action.
-     * @return {RepeatForever}
-     */
-    reverse: function () {
-      const action = new RepeatForever(this._innerAction.reverse())
-      this._cloneDecoration(action)
-      this._reverseEaseList(action)
-      return action
-    },
-
-    /**
-     * Set inner action.
-     * @param {ActionInterval} action
-     */
-    setInnerAction: function (action) {
-      if (this._innerAction !== action) {
-        this._innerAction = action
-      }
-    },
-
-    /**
-     * Get inner action.
-     * @return {ActionInterval}
-     */
-    getInnerAction: function () {
-      return this._innerAction
-    },
-  },
-)
+  /**
+   * Get inner action.
+   * @return {ActionInterval}
+   */
+  getInnerAction() {
+    return this._innerAction
+  }
+}
 
 /**
  * Create a acton which repeat forever
@@ -304,19 +294,6 @@ RepeatForever = ActionInterval.extend(
  * // example
  * var repeat = repeatForever(rotateBy(1.0, 360));
  */
-repeatForever = function (action) {
+export const repeatForever = function (action) {
   return new RepeatForever(action)
 }
-
-/**
- * Please use repeatForever instead
- * Create a acton which repeat forever
- * @static
- * @deprecated since v3.0 <br /> Please use repeatForever instead.
- * @param {FiniteTimeAction} action
- * @return {RepeatForever}
- * @param {Array|FiniteTimeAction} tempArray
- * @example
- * var action = new Spawn(jumpBy(2, p(300, 0), 50, 4), rotateBy(2, 720));
- */
-RepeatForever.create = repeatForever

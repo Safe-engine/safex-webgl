@@ -43,7 +43,7 @@ export class ActionInterval extends FiniteTimeAction {
    * @param {Number} d duration in seconds
    * @return {Boolean}
    */
-  initWithDuration(d: number): boolean {
+  initWithDuration(d: number, c?: any): boolean {
     this._duration = d === 0 ? FLT_EPSILON : d
     // prevent division by 0
     // This comparison could be in step:, but it might decrease the performance
