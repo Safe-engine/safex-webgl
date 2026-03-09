@@ -1,10 +1,5 @@
-import { director, game, view } from '../src'
-import { ResolutionPolicy } from '../src/2d/core/platform/EGLView/ResolutionPolicy'
-import { Scene } from '../src/2d/core/scenes/Scene'
-import { Sprite } from '../src/2d/core/sprites/Sprite'
-import { global } from '../src/helper/global'
-import { loader } from '../src/helper/loader'
-import { sys } from '../src/helper/sys'
+import { director, game, global, loader, sys, view } from '../src'
+import { ResolutionPolicy, Scene, Sprite } from '../src/core'
 
 class BootScene extends Scene {
   // constructor() {

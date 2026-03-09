@@ -1,5 +1,5 @@
 import { game } from '..'
-import { CONCURRENCY_HTTP_REQUEST_COUNT } from '../2d/core/platform/Macro'
+import { CONCURRENCY_HTTP_REQUEST_COUNT } from '../core/platform/Macro'
 import { AsyncPool } from './AsyncPool'
 import { error, log } from './Debugger'
 import { _renderType } from './engine'

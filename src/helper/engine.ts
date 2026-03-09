@@ -1,5 +1,5 @@
 import { Game, game } from '..'
-import { ENGINE_VERSION } from '../2d/core/platform/Config'
+import { ENGINE_VERSION } from '../core/platform/Config'
 import { sys } from './sys'
 
 export let _renderType = 0
