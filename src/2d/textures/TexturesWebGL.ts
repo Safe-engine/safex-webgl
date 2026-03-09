@@ -5,6 +5,7 @@ import { size } from '../core/cocoa/Geometry'
 import { configuration } from '../core/Configuration'
 import { EventHelper } from '../core/event-manager/EventHelper'
 import { contentScaleFactor, SHADER_POSITION_TEXTURE, VERTEX_ATTRIB_POSITION, VERTEX_ATTRIB_TEX_COORDS } from '../core/platform/Macro'
+import { NextPOT } from '../render-texture/RenderTexture'
 import { glBindTexture2D } from '../shaders/GLStateCache'
 import { shaderCache } from '../shaders/ShaderCache'
 
@@ -210,6 +211,9 @@ export class Texture2D extends EventHelper {
   _webTextureObj: WebGLTexture
 
   url: any
+  _glProgramState: any
+  _vertexBuffer: WebGLBuffer
+  _texBuffer: WebGLBuffer
 
   // runtime-attached event helper methods (added by EventHelper.apply at runtime)
   // addEventListener?: (type: any, callback: any, target?: any) => void;
@@ -240,6 +244,9 @@ export class Texture2D extends EventHelper {
     // ctor behavior
     this._contentSize = size(0, 0)
     this._pixelFormat = Texture2D.defaultPixelFormat
+    const gl = _renderContext
+    this._vertexBuffer = gl.createBuffer()
+    this._texBuffer = gl.createBuffer()
   }
 
   // release texture
@@ -374,8 +381,7 @@ export class Texture2D extends EventHelper {
    * @return {string}
    */
   description() {
-    const _t: any = this
-    return `<Texture2D | Name = ${_t._name} | Dimensions = ${_t._pixelsWide} x ${_t._pixelsHigh} | Coordinates = (${_t.maxS}, ${_t.maxT})>`
+    return `<Texture2D | Name = ${this._name} | Dimensions = ${this._pixelsWide} x ${this._pixelsHigh} | Coordinates = (${this.maxS}, ${this.maxT})>`
   }
 
   /**
@@ -401,7 +407,6 @@ export class Texture2D extends EventHelper {
    * @return {Boolean}
    */
   initWithData(data: any, pixelFormat: any, pixelsWide: number, pixelsHigh: number, contentSize: any) {
-    const self: any = this
     const gl = _renderContext
     let format: number = gl.RGBA,
       type: number = gl.UNSIGNED_BYTE
@@ -419,8 +424,8 @@ export class Texture2D extends EventHelper {
       gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1)
     }
 
-    self._webTextureObj = gl.createTexture()
-    glBindTexture2D(self)
+    this._webTextureObj = gl.createTexture()
+    glBindTexture2D(this)
 
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
@@ -458,19 +463,19 @@ export class Texture2D extends EventHelper {
     }
     gl.texImage2D(gl.TEXTURE_2D, 0, format, pixelsWide, pixelsHigh, 0, format, type, data)
 
-    self._contentSize.width = contentSize.width
-    self._contentSize.height = contentSize.height
-    self._pixelsWide = pixelsWide
-    self._pixelsHigh = pixelsHigh
-    self._pixelFormat = pixelFormat
-    self.maxS = contentSize.width / pixelsWide
-    self.maxT = contentSize.height / pixelsHigh
+    this._contentSize.width = contentSize.width
+    this._contentSize.height = contentSize.height
+    this._pixelsWide = pixelsWide
+    this._pixelsHigh = pixelsHigh
+    this._pixelFormat = pixelFormat
+    this.maxS = contentSize.width / pixelsWide
+    this.maxT = contentSize.height / pixelsHigh
 
-    self._hasPremultipliedAlpha = false
-    self._hasMipmaps = false
-    self.shaderProgram = shaderCache.programForKey(SHADER_POSITION_TEXTURE)
+    this._hasPremultipliedAlpha = false
+    this._hasMipmaps = false
+    this.shaderProgram = shaderCache.programForKey(SHADER_POSITION_TEXTURE)
 
-    self._textureLoaded = true
+    this._textureLoaded = true
 
     return true
   }
@@ -484,37 +489,40 @@ export class Texture2D extends EventHelper {
    * @param {Point} point
    */
   drawAtPoint(point: any) {
-    const self: any = this
-    const coordinates = [0.0, self.maxT, self.maxS, self.maxT, 0.0, 0.0, self.maxS, 0.0],
-      gl = _renderContext
+    const gl = _renderContext
 
-    const width = self._pixelsWide * self.maxS,
-      height = self._pixelsHigh * self.maxT
+    const width = this._pixelsWide * this.maxS
+    const height = this._pixelsHigh * this.maxT
 
-    const vertices = [
+    const vertices = new Float32Array([
       point.x,
       point.y,
-      0.0,
-      width + point.x,
+      point.x + width,
       point.y,
-      0.0,
       point.x,
-      height + point.y,
-      0.0,
-      width + point.x,
-      height + point.y,
-      0.0,
-    ]
+      point.y + height,
+      point.x + width,
+      point.y + height,
+    ])
 
-    self._glProgramState.apply()
-    self._glProgramState._glprogram.setUniformsForBuiltins()
+    const coordinates = new Float32Array([0.0, this.maxT, this.maxS, this.maxT, 0.0, 0.0, this.maxS, 0.0])
 
-    glBindTexture2D(self)
+    this._glProgramState.apply()
+    this._glProgramState._glprogram.setUniformsForBuiltins()
 
+    glBindTexture2D(this)
+
+    // vertex buffer
+    gl.bindBuffer(gl.ARRAY_BUFFER, this._vertexBuffer)
+    gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.DYNAMIC_DRAW)
     gl.enableVertexAttribArray(VERTEX_ATTRIB_POSITION)
+    gl.vertexAttribPointer(VERTEX_ATTRIB_POSITION, 2, gl.FLOAT, false, 0, 0)
+
+    // texcoord buffer
+    gl.bindBuffer(gl.ARRAY_BUFFER, this._texBuffer)
+    gl.bufferData(gl.ARRAY_BUFFER, coordinates, gl.DYNAMIC_DRAW)
     gl.enableVertexAttribArray(VERTEX_ATTRIB_TEX_COORDS)
-    gl.vertexAttribPointer(VERTEX_ATTRIB_POSITION, 2, gl.FLOAT, false, 0, vertices)
-    gl.vertexAttribPointer(VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 0, coordinates)
+    gl.vertexAttribPointer(VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 0, 0)
 
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
   }
@@ -524,30 +532,37 @@ export class Texture2D extends EventHelper {
    * @param {Rect} rect
    */
   drawInRect(rect: any) {
-    const self: any = this
-    const coordinates = [0.0, self.maxT, self.maxS, self.maxT, 0.0, 0.0, self.maxS, 0.0]
-
-    const vertices = [
-      rect.x,
-      rect.y /*0.0,*/,
-      rect.x + rect.width,
-      rect.y /*0.0,*/,
-      rect.x,
-      rect.y + rect.height /*0.0,*/,
-      rect.x + rect.width,
-      rect.y + rect.height /*0.0*/,
-    ]
-
-    self._glProgramState.apply()
-    self._glProgramState._glprogram.setUniformsForBuiltins()
-
-    glBindTexture2D(self)
-
     const gl = _renderContext
+
+    const vertices = new Float32Array([
+      rect.x,
+      rect.y,
+      rect.x + rect.width,
+      rect.y,
+      rect.x,
+      rect.y + rect.height,
+      rect.x + rect.width,
+      rect.y + rect.height,
+    ])
+
+    const coordinates = new Float32Array([0.0, this.maxT, this.maxS, this.maxT, 0.0, 0.0, this.maxS, 0.0])
+
+    this._glProgramState.apply()
+    this._glProgramState._glprogram.setUniformsForBuiltins()
+
+    glBindTexture2D(this)
+
+    // vertex buffer
+    gl.bindBuffer(gl.ARRAY_BUFFER, this._vertexBuffer)
+    gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.DYNAMIC_DRAW)
     gl.enableVertexAttribArray(VERTEX_ATTRIB_POSITION)
+    gl.vertexAttribPointer(VERTEX_ATTRIB_POSITION, 2, gl.FLOAT, false, 0, 0)
+
+    // texcoord buffer
+    gl.bindBuffer(gl.ARRAY_BUFFER, this._texBuffer)
+    gl.bufferData(gl.ARRAY_BUFFER, coordinates, gl.DYNAMIC_DRAW)
     gl.enableVertexAttribArray(VERTEX_ATTRIB_TEX_COORDS)
-    gl.vertexAttribPointer(VERTEX_ATTRIB_POSITION, 2, gl.FLOAT, false, 0, vertices)
-    gl.vertexAttribPointer(VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 0, coordinates)
+    gl.vertexAttribPointer(VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 0, 0)
 
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
   }
@@ -612,50 +627,49 @@ export class Texture2D extends EventHelper {
    * @param {Boolean} [premultiplied=false]
    */
   handleLoadedTexture(premultiplied?: boolean) {
-    const self: any = this
-    premultiplied = premultiplied !== undefined ? premultiplied : self._hasPremultipliedAlpha
+    premultiplied = premultiplied !== undefined ? premultiplied : this._hasPremultipliedAlpha
     // Not sure about this ! Some texture need to be updated even after loaded
     if (!game._rendererInitialized) return
-    if (!self._htmlElementObj) return
-    if (!self._htmlElementObj.width || !self._htmlElementObj.height) return
+    if (!this._htmlElementObj) return
+    if (!this._htmlElementObj.width || !this._htmlElementObj.height) return
 
     //upload image to buffer
     const gl = _renderContext
 
-    glBindTexture2D(self)
+    glBindTexture2D(this)
 
     gl.pixelStorei(gl.UNPACK_ALIGNMENT, 4)
     if (premultiplied) gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 1)
 
     // Specify OpenGL texture image
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, self._htmlElementObj)
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this._htmlElementObj)
 
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
 
-    self.shaderProgram = shaderCache.programForKey(SHADER_POSITION_TEXTURE)
+    this.shaderProgram = shaderCache.programForKey(SHADER_POSITION_TEXTURE)
     glBindTexture2D(null)
     if (premultiplied) gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 0)
 
-    const pixelsWide = self._htmlElementObj.width
-    const pixelsHigh = self._htmlElementObj.height
+    const pixelsWide = this._htmlElementObj.width
+    const pixelsHigh = this._htmlElementObj.height
 
-    self._pixelsWide = self._contentSize.width = pixelsWide
-    self._pixelsHigh = self._contentSize.height = pixelsHigh
-    self._pixelFormat = (this.constructor as any).PIXEL_FORMAT_RGBA8888
-    self.maxS = 1
-    self.maxT = 1
+    this._pixelsWide = this._contentSize.width = pixelsWide
+    this._pixelsHigh = this._contentSize.height = pixelsHigh
+    this._pixelFormat = Texture2D.PIXEL_FORMAT_RGBA8888
+    this.maxS = 1
+    this.maxT = 1
 
-    self._hasPremultipliedAlpha = premultiplied
-    self._hasMipmaps = false
-    if ((window as any).ENABLE_IMAGE_POOL) {
-      self._htmlElementObj = null
+    this._hasPremultipliedAlpha = premultiplied
+    this._hasMipmaps = false
+    if (window.ENABLE_IMAGE_POOL) {
+      this._htmlElementObj = null
     }
 
     //dispatch load event to listener.
-    self.dispatchEvent('load')
+    this.dispatchEvent('load')
   }
 
   /**
@@ -682,18 +696,17 @@ export class Texture2D extends EventHelper {
   }
 
   setTexParameters(texParams: any, magFilter?: any, wrapS?: any, wrapT?: any) {
-    const _t: any = this
-    const gl: any = _renderContext
+    const gl = _renderContext
 
     if (magFilter !== undefined) texParams = { minFilter: texParams, magFilter: magFilter, wrapS: wrapS, wrapT: wrapT }
 
     assert(
-      (_t._pixelsWide === NextPOT(_t._pixelsWide) && _t._pixelsHigh === NextPOT(_t._pixelsHigh)) ||
+      (this._pixelsWide === NextPOT(this._pixelsWide) && this._pixelsHigh === NextPOT(this._pixelsHigh)) ||
         (texParams.wrapS === gl.CLAMP_TO_EDGE && texParams.wrapT === gl.CLAMP_TO_EDGE),
       'WebGLRenderingContext.CLAMP_TO_EDGE should be used in NPOT textures',
     )
 
-    glBindTexture2D(_t)
+    glBindTexture2D(this)
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, texParams.minFilter)
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, texParams.magFilter)
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, texParams.wrapS)
@@ -718,15 +731,14 @@ export class Texture2D extends EventHelper {
   }
 
   generateMipmap() {
-    const _t = this
     assert(
-      _t._pixelsWide === NextPOT(_t._pixelsWide) && _t._pixelsHigh === NextPOT(_t._pixelsHigh),
+      this._pixelsWide === NextPOT(this._pixelsWide) && this._pixelsHigh === NextPOT(this._pixelsHigh),
       'Mimpap texture only works in POT textures',
     )
 
-    glBindTexture2D(_t)
+    glBindTexture2D(this)
     _renderContext.generateMipmap(_renderContext.TEXTURE_2D)
-    _t._hasMipmaps = true
+    this._hasMipmaps = true
   }
 
   stringForFormat() {
@@ -744,8 +756,8 @@ export class Texture2D extends EventHelper {
   _initPremultipliedATextureWithImage(uiImage: any, width: any, height: any) {
     const tex2d: any = this.constructor as any
     let tempData: any = uiImage.getData()
-    let inPixel32: any = null
-    let inPixel8: any = null
+    let inPixel32: any
+    let inPixel8: any
 
     const hasAlpha: any = uiImage.hasAlpha()
     const imageSize: any = size(uiImage.getWidth(), uiImage.getHeight())
@@ -763,8 +775,8 @@ export class Texture2D extends EventHelper {
     }
 
     // Repack the pixel data into the right format
-    let i: any,
-      length: any = width * height
+    let i: any
+    const length: any = width * height
 
     if (pixelFormat === tex2d.PIXEL_FORMAT_RGB565) {
       if (hasAlpha) {
@@ -834,7 +846,7 @@ export class Texture2D extends EventHelper {
 
     this.initWithData(tempData, pixelFormat, width, height, imageSize)
 
-    if (tempData != uiImage.getData()) tempData = null
+    // if (tempData != uiImage.getData()) tempData = null
 
     this._hasPremultipliedAlpha = uiImage.isPremultipliedAlpha()
     return true

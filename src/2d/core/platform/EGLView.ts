@@ -9,8 +9,6 @@ import { ContentStrategy } from './EGLView/ContentStrategy'
 import { ResolutionPolicy } from './EGLView/ResolutionPolicy'
 import { visibleRect } from './VisibleRect'
 
-declare const gl: any
-
 export const Touches: any[] = []
 export const TouchesIntergerDict: any = {}
 
@@ -167,51 +165,50 @@ export class EGLView {
 
   // Resize helper functions
   _resizeEvent() {
-    const view: EGLView = this
-    if (view._orientationChanging) {
+    if (this._orientationChanging) {
       return
     }
 
     // Check frame size changed or not
-    const prevFrameW = view._frameSize.width
-    const prevFrameH = view._frameSize.height
-    const prevRotated = view._isRotated
+    const prevFrameW = this._frameSize.width
+    const prevFrameH = this._frameSize.height
+    const prevRotated = this._isRotated
     if (sys.isMobile) {
       const containerStyle = game.container!.style
       const margin = containerStyle.margin
       containerStyle.margin = '0'
       containerStyle.display = 'none'
-      view._initFrameSize()
+      this._initFrameSize()
       containerStyle.margin = margin
       containerStyle.display = 'block'
     } else {
-      view._initFrameSize()
+      this._initFrameSize()
     }
-    if (view._isRotated === prevRotated && view._frameSize.width === prevFrameW && view._frameSize.height === prevFrameH) return
+    if (this._isRotated === prevRotated && this._frameSize.width === prevFrameW && this._frameSize.height === prevFrameH) return
 
     // Frame size changed, do resize works
-    const width = view._originalDesignResolutionSize.width
-    const height = view._originalDesignResolutionSize.height
-    view._resizing = true
+    const width = this._originalDesignResolutionSize.width
+    const height = this._originalDesignResolutionSize.height
+    this._resizing = true
     if (width > 0) {
-      view.setDesignResolutionSize(width, height, view._resolutionPolicy)
+      this.setDesignResolutionSize(width, height, this._resolutionPolicy)
     }
-    view._resizing = false
+    this._resizing = false
 
     eventManager.dispatchCustomEvent('canvas-resize')
-    if (view._resizeCallback) {
-      view._resizeCallback.call(view)
+    if (this._resizeCallback) {
+      this._resizeCallback.call(this)
     }
   }
 
   _orientationChange() {
-    view._orientationChanging = true
+    this._orientationChanging = true
     if (sys.isMobile) {
       game.container!.style.display = 'none'
     }
-    setTimeout(function () {
-      view._orientationChanging = false
-      view._resizeEvent()
+    setTimeout(() => {
+      this._orientationChanging = false
+      this._resizeEvent()
     }, 300)
   }
 
@@ -345,6 +342,7 @@ export class EGLView {
       if (content.indexOf(key) === -1) {
         content += `,${key}=${metas[key]}`
       } else if (overwrite) {
+        // eslint-disable-next-line no-useless-escape
         pattern = new RegExp(`${key}\s*=\s*[^,]+`)
         content = content.replace(pattern, `${key}=${metas[key]}`)
       }
@@ -408,7 +406,10 @@ export class EGLView {
     if (enabled && enabled !== this._autoFullScreen && sys.isMobile && this._frame === document.documentElement) {
       // Automatically full screen when user touches on mobile version
       this._autoFullScreen = true
-      screen.autoFullScreen(this._frame as HTMLElement)
+      const frame = this._frame as HTMLElement
+      if (frame.requestFullscreen) {
+        frame.requestFullscreen()
+      }
     } else {
       this._autoFullScreen = false
     }
@@ -419,7 +420,7 @@ export class EGLView {
   }
 
   isOpenGLReady(): boolean {
-    return game.canvas && game._renderContext
+    return game.canvas && game._renderContext && true
   }
 
   setFrameZoomFactor(zoomFactor: number) {
@@ -580,7 +581,7 @@ export class EGLView {
       vb.y = -vp.y / this._scaleY
       vb.width = game.canvas!.width / this._scaleX
       vb.height = game.canvas!.height / this._scaleY
-      ;(_renderContext as any).setOffset && (_renderContext as any).setOffset(vp.x, -vp.y)
+      // _renderContext.setOffset(vp.x, -vp.y)
     }
 
     // reset director's member variables to fit visible rect
@@ -636,7 +637,7 @@ export class EGLView {
     const locFrameZoomFactor = this._frameZoomFactor
     const locScaleX = this._scaleX
     const locScaleY = this._scaleY
-    ;(_renderContext as any).viewport(
+    _renderContext.viewport(
       x * locScaleX * locFrameZoomFactor + this._viewPortRect.x * locFrameZoomFactor,
       y * locScaleY * locFrameZoomFactor + this._viewPortRect.y * locFrameZoomFactor,
       w * locScaleX * locFrameZoomFactor,
@@ -645,6 +646,7 @@ export class EGLView {
   }
 
   setScissorInPoints(x: number, y: number, w: number, h: number) {
+    const gl = _renderContext
     const locFrameZoomFactor = this._frameZoomFactor
     const locScaleX = this._scaleX
     const locScaleY = this._scaleY
@@ -663,7 +665,7 @@ export class EGLView {
       _scissorRect.y = sy
       _scissorRect.width = sw
       _scissorRect.height = sh
-      ;(_renderContext as any).scissor(sx, sy, sw, sh)
+      _renderContext.scissor(sx, sy, sw, sh)
     }
   }
 
@@ -672,10 +674,12 @@ export class EGLView {
    * @return
    */
   isScissorEnabled(): boolean {
-    return (_renderContext as any).isEnabled(gl.SCISSOR_TEST)
+    const gl = _renderContext
+    return gl.isEnabled(gl.SCISSOR_TEST)
   }
 
   getScissorRect(): Rect {
+    const gl = _renderContext
     if (!_scissorRect) {
       const boxArr = gl.getParameter(gl.SCISSOR_BOX)
       _scissorRect = rect(boxArr[0], boxArr[1], boxArr[2], boxArr[3])

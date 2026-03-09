@@ -75,9 +75,8 @@ export const eventManager = /** @lends eventManager# */ {
    * @param {Boolean} [recursive=false]
    */
   pauseTarget: function (node, recursive?) {
-    let listeners = this._nodeListenersMap[node.__instanceId],
-      i,
-      len
+    const listeners = this._nodeListenersMap[node.__instanceId]
+    let i, len
     if (listeners) {
       for (i = 0, len = listeners.length; i < len; i++) listeners[i]._setPaused(true)
     }
@@ -93,9 +92,8 @@ export const eventManager = /** @lends eventManager# */ {
    * @param {Boolean} [recursive=false]
    */
   resumeTarget: function (node, recursive?) {
-    let listeners = this._nodeListenersMap[node.__instanceId],
-      i,
-      len
+    const listeners = this._nodeListenersMap[node.__instanceId]
+    let i, len
     if (listeners) {
       for (i = 0, len = listeners.length; i < len; i++) listeners[i]._setPaused(false)
     }
@@ -138,10 +136,10 @@ export const eventManager = /** @lends eventManager# */ {
   _updateDirtyFlagForSceneGraph: function () {
     if (this._dirtyNodes.length === 0) return
 
-    let locDirtyNodes = this._dirtyNodes,
-      selListeners,
-      selListener,
-      locNodeListenersMap = this._nodeListenersMap
+    const locDirtyNodes = this._dirtyNodes
+    let selListeners
+    let selListener
+    const locNodeListenersMap = this._nodeListenersMap
     for (let i = 0, len = locDirtyNodes.length; i < len; i++) {
       selListeners = locNodeListenersMap[locDirtyNodes[i].__instanceId]
       if (selListeners) {
@@ -171,8 +169,8 @@ export const eventManager = /** @lends eventManager# */ {
   },
 
   _removeListenersForListenerID: function (listenerID) {
-    let listeners = this._listenersMap[listenerID],
-      i
+    const listeners = this._listenersMap[listenerID]
+    let i
     if (listeners) {
       const fixedPriorityListeners = listeners.getFixedPriorityListeners()
       const sceneGraphPriorityListeners = listeners.getSceneGraphPriorityListeners()
@@ -190,8 +188,8 @@ export const eventManager = /** @lends eventManager# */ {
       delete this._listenersMap[listenerID]
     }
 
-    let locToAddedListeners = this._toAddedListeners,
-      listener
+    const locToAddedListeners = this._toAddedListeners
+    let listener
     for (i = 0; i < locToAddedListeners.length; ) {
       listener = locToAddedListeners[i]
       if (listener && listener._getListenerID() === listenerID) arrayRemoveObject(locToAddedListeners, listener)
@@ -200,8 +198,8 @@ export const eventManager = /** @lends eventManager# */ {
   },
 
   _sortEventListeners: function (listenerID) {
-    let dirtyFlag = this.DIRTY_NONE,
-      locFlagMap = this._priorityDirtyFlagMap
+    let dirtyFlag = this.DIRTY_NONE
+    const locFlagMap = this._priorityDirtyFlagMap
     if (locFlagMap[listenerID]) dirtyFlag = locFlagMap[listenerID]
 
     if (dirtyFlag !== this.DIRTY_NONE) {
@@ -269,10 +267,10 @@ export const eventManager = /** @lends eventManager# */ {
   _onUpdateListeners: function (listeners) {
     const fixedPriorityListeners = listeners.getFixedPriorityListeners()
     const sceneGraphPriorityListeners = listeners.getSceneGraphPriorityListeners()
-    let i,
-      selListener,
-      idx,
-      toRemovedListeners = this._toRemovedListeners
+    let i
+    let selListener
+    let idx
+    const toRemovedListeners = this._toRemovedListeners
 
     if (sceneGraphPriorityListeners) {
       for (i = 0; i < sceneGraphPriorityListeners.length; ) {
@@ -359,9 +357,9 @@ export const eventManager = /** @lends eventManager# */ {
       const listeners = this._listenersMap[selListener._getListenerID()]
       if (!listeners) continue
 
-      var idx,
-        fixedPriorityListeners = listeners.getFixedPriorityListeners(),
-        sceneGraphPriorityListeners = listeners.getSceneGraphPriorityListeners()
+      let idx
+      const fixedPriorityListeners = listeners.getFixedPriorityListeners()
+      const sceneGraphPriorityListeners = listeners.getSceneGraphPriorityListeners()
 
       if (sceneGraphPriorityListeners) {
         idx = sceneGraphPriorityListeners.indexOf(selListener)
@@ -538,7 +536,7 @@ export const eventManager = /** @lends eventManager# */ {
       for (; i < fixedPriorityListeners.length; ++i) {
         selListener = fixedPriorityListeners[i]
         if (selListener.isEnabled() && !selListener._isPaused() && selListener._isRegistered() && onEvent(selListener, eventOrArgs)) {
-          shouldStopPropagation = true
+          // shouldStopPropagation = true
           break
         }
       }
@@ -552,8 +550,8 @@ export const eventManager = /** @lends eventManager# */ {
   },
 
   _visitTarget: function (node, isRootNode) {
-    let children = node.getChildren(),
-      i = 0
+    const children = node.getChildren()
+    let i = 0
     const childrenCount = children.length,
       locGlobalZOrderNodeMap = this._globalZOrderNodeMap,
       locNodeListenersMap = this._nodeListenersMap
@@ -589,10 +587,10 @@ export const eventManager = /** @lends eventManager# */ {
 
       globalZOrders.sort(this._sortNumberAsc)
 
-      let zOrdersLen = globalZOrders.length,
-        selZOrders,
-        j,
-        locNodePriorityMap = this._nodePriorityMap
+      const zOrdersLen = globalZOrders.length
+      let selZOrders
+      let j
+      const locNodePriorityMap = this._nodePriorityMap
       for (i = 0; i < zOrdersLen; i++) {
         selZOrders = locGlobalZOrderNodeMap[globalZOrders[i]]
         for (j = 0; j < selZOrders.length; j++) locNodePriorityMap[selZOrders[j]] = ++this._nodePriorityIndex
@@ -673,8 +671,8 @@ export const eventManager = /** @lends eventManager# */ {
   removeListener: function (listener) {
     if (listener == null) return
 
-    let isFound,
-      locListener = this._listenersMap
+    let isFound
+    const locListener = this._listenersMap
     for (const selKey in locListener) {
       const listeners = locListener[selKey]
       const fixedPriorityListeners = listeners.getFixedPriorityListeners(),
@@ -755,17 +753,16 @@ export const eventManager = /** @lends eventManager# */ {
    * @param {Boolean} [recursive=false]
    */
   removeListeners: function (listenerType, recursive?) {
-    const _t = this
     if (listenerType instanceof Node) {
       // Ensure the node is removed from these immediately also.
       // Don't want any dangling pointers or the possibility of dealing with deleted objects..
-      delete _t._nodePriorityMap[listenerType.__instanceId]
-      arrayRemoveObject(_t._dirtyNodes, listenerType)
-      let listeners = _t._nodeListenersMap[listenerType.__instanceId],
-        i
+      delete this._nodePriorityMap[listenerType.__instanceId]
+      arrayRemoveObject(this._dirtyNodes, listenerType)
+      const listeners = this._nodeListenersMap[listenerType.__instanceId]
+      let i
       if (listeners) {
         const listenersCopy = copyArray(listeners)
-        for (i = 0; i < listenersCopy.length; i++) _t.removeListener(listenersCopy[i])
+        for (i = 0; i < listenersCopy.length; i++) this.removeListener(listenersCopy[i])
         listenersCopy.length = 0
       }
 
@@ -774,7 +771,7 @@ export const eventManager = /** @lends eventManager# */ {
       // This is to catch the scenario where the node gets destroyed before it's listener
       // is added into the event dispatcher fully. This could happen if a node registers a listener
       // and gets destroyed while we are dispatching an event (touch etc.)
-      const locToAddedListeners = _t._toAddedListeners
+      const locToAddedListeners = this._toAddedListeners
       for (i = 0; i < locToAddedListeners.length; ) {
         const listener = locToAddedListeners[i]
         if (listener._getSceneGraphPriority() === listenerType) {
@@ -785,16 +782,16 @@ export const eventManager = /** @lends eventManager# */ {
       }
 
       if (recursive === true) {
-        let locChildren = listenerType.getChildren(),
-          len
-        for (i = 0, len = locChildren.length; i < len; i++) _t.removeListeners(locChildren[i], true)
+        const locChildren = listenerType.getChildren()
+        let len
+        for (i = 0, len = locChildren.length; i < len; i++) this.removeListeners(locChildren[i], true)
       }
     } else {
-      if (listenerType === EventListener.TOUCH_ONE_BY_ONE) _t._removeListenersForListenerID(EventListenerTouchOneByOne.LISTENER_ID)
-      else if (listenerType === EventListener.TOUCH_ALL_AT_ONCE) _t._removeListenersForListenerID(EventListenerTouchAllAtOnce.LISTENER_ID)
-      else if (listenerType === EventListener.MOUSE) _t._removeListenersForListenerID(EventListenerMouse.LISTENER_ID)
-      else if (listenerType === EventListener.ACCELERATION) _t._removeListenersForListenerID(EventListenerAcceleration.LISTENER_ID)
-      else if (listenerType === EventListener.KEYBOARD) _t._removeListenersForListenerID(EventListenerKeyboard.LISTENER_ID)
+      if (listenerType === EventListener.TOUCH_ONE_BY_ONE) this._removeListenersForListenerID(EventListenerTouchOneByOne.LISTENER_ID)
+      else if (listenerType === EventListener.TOUCH_ALL_AT_ONCE) this._removeListenersForListenerID(EventListenerTouchAllAtOnce.LISTENER_ID)
+      else if (listenerType === EventListener.MOUSE) this._removeListenersForListenerID(EventListenerMouse.LISTENER_ID)
+      else if (listenerType === EventListener.ACCELERATION) this._removeListenersForListenerID(EventListenerAcceleration.LISTENER_ID)
+      else if (listenerType === EventListener.KEYBOARD) this._removeListenersForListenerID(EventListenerKeyboard.LISTENER_ID)
       else log(_LogInfos.eventManager_removeListeners)
     }
   },
@@ -898,7 +895,7 @@ export const eventManager = /** @lends eventManager# */ {
    * @param {string} eventName
    * @param {*} optionalUserData
    */
-  dispatchCustomEvent: function (eventName, optionalUserData) {
+  dispatchCustomEvent: function (eventName, optionalUserData?) {
     const ev = new EventCustom(eventName)
     ev.setUserData(optionalUserData)
     this.dispatchEvent(ev)

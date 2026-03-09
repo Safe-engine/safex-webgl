@@ -10,7 +10,12 @@
       "DOM.Iterable"
     ],
     "types": [
-      "vite/client"
+      "vite/client",
+      "index"
+    ],
+    "typeRoots": [
+      "node_modules",
+      "./@types"
     ],
     "skipLibCheck": true,
     /* Bundler mode */

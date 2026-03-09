@@ -79,7 +79,7 @@ class NodeRenderCmd {
   _inverse: any = null
 
   _updateCurrentRegions?: () => void
-  _notifyRegionStatus?: (status: any) => void
+  // _notifyRegionStatus?: (status: any) => void
   _cacheDirty?: boolean
 
   constructor(renderable: Node) {
@@ -283,7 +283,7 @@ class NodeRenderCmd {
 
     if (this._updateCurrentRegions) {
       this._updateCurrentRegions()
-      this._notifyRegionStatus && this._notifyRegionStatus(Node.CanvasRenderCmd.RegionStatus.DirtyDouble)
+      // this._notifyRegionStatus && this._notifyRegionStatus(Node.CanvasRenderCmd.RegionStatus.DirtyDouble)
     }
 
     if (recursive) {
@@ -319,7 +319,7 @@ class NodeRenderCmd {
     const locDispColor = this._displayedColor,
       locRealColor = node._realColor
     let i, len, selChildren, item
-    this._notifyRegionStatus && this._notifyRegionStatus(Node.CanvasRenderCmd.RegionStatus.Dirty)
+    // this._notifyRegionStatus && this._notifyRegionStatus(Node.CanvasRenderCmd.RegionStatus.Dirty)
     if (this._cascadeColorEnabledDirty && !node._cascadeColorEnabled) {
       locDispColor.r = locRealColor.r
       locDispColor.g = locRealColor.g
@@ -357,7 +357,7 @@ class NodeRenderCmd {
   _updateDisplayOpacity(parentOpacity?: number): void {
     const node = this._node
     let i, len, selChildren, item
-    this._notifyRegionStatus && this._notifyRegionStatus(Node.CanvasRenderCmd.RegionStatus.Dirty)
+    // this._notifyRegionStatus && this._notifyRegionStatus(Node.CanvasRenderCmd.RegionStatus.Dirty)
     if (this._cascadeOpacityEnabledDirty && !node._cascadeOpacityEnabled) {
       this._displayedOpacity = node._realOpacity
       selChildren = node._children
@@ -433,7 +433,7 @@ class NodeRenderCmd {
       opacityDirty = locFlag & dirtyFlags.opacityDirty
 
     if (locFlag & dirtyFlags.contentDirty) {
-      this._notifyRegionStatus && this._notifyRegionStatus(Node.CanvasRenderCmd.RegionStatus.Dirty)
+      // this._notifyRegionStatus && this._notifyRegionStatus(Node.CanvasRenderCmd.RegionStatus.Dirty)
       this._dirtyFlag &= ~dirtyFlags.contentDirty
     }
 
@@ -455,8 +455,8 @@ class NodeRenderCmd {
   _syncStatus(parentCmd: any): void {
     //  In the visit logic does not restore the _dirtyFlag
     //  Because child elements need parent's _dirtyFlag to change himself
-    let locFlag = this._dirtyFlag,
-      parentNode = parentCmd ? parentCmd._node : null
+    let locFlag = this._dirtyFlag
+    const parentNode = parentCmd ? parentCmd._node : null
 
     //  There is a possibility:
     //    The parent element changed color, child element not change
@@ -507,6 +507,17 @@ class NodeRenderCmd {
 
   setGLProgramState(glProgramState: any): void {
     // do nothing
+  }
+  originTransform(parentCmd?: any, recursive?: boolean): void {
+    this.transform(parentCmd, recursive)
+  }
+
+  originUpdateStatus(): void {
+    this.updateStatus()
+  }
+
+  _originSyncStatus(parentCmd: any): void {
+    this._syncStatus(parentCmd)
   }
 }
 

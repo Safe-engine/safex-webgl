@@ -1,10 +1,12 @@
-import { _renderContext, Game, game } from '../..'
-import { isFunction, isString } from '../../helper/checkType'
+import { _renderContext } from '../..'
+import { isString } from '../../helper/checkType'
 import { _LogInfos, assert, log } from '../../helper/Debugger'
-import { _renderType } from '../../helper/engine'
-import { _tmp } from '../../helper/global'
+import { global } from '../../helper/global'
 import { TEXTURE_ATLAS_USE_TRIANGLE_STRIP } from '../core/platform/Config'
+import { VERTEX_ATTRIB_COLOR, VERTEX_ATTRIB_POSITION, VERTEX_ATTRIB_TEX_COORDS } from '../core/platform/Macro'
 import { V3F_C4B_T2F_Quad } from '../core/platform/Types'
+import { defineGetterSetter } from '../core/sprites/SpritesPropertyDefine'
+import { glBindTexture2D } from '../shaders/GLStateCache'
 import { textureCache } from './TextureCache'
 import { Texture2D } from './TexturesWebGL'
 
@@ -171,25 +173,25 @@ export class TextureAtlas {
     }
   }
 
-  _setupVBO(): void {
-    const gl = _renderContext
-    //create WebGLBuffer
-    this._buffersVBO![0] = gl.createBuffer()
-    this._buffersVBO![1] = gl.createBuffer()
+  // _setupVBO(): void {
+  //   const gl = _renderContext
+  //   //create WebGLBuffer
+  //   this._buffersVBO![0] = gl.createBuffer()
+  //   this._buffersVBO![1] = gl.createBuffer()
 
-    this._quadsWebBuffer = gl.createBuffer()
-    this._mapBuffers()
-  }
+  //   this._quadsWebBuffer = gl.createBuffer()
+  //   this._mapBuffers()
+  // }
 
-  _mapBuffers(): void {
-    const gl = _renderContext
+  // _mapBuffers(): void {
+  //   const gl = _renderContext
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, this._quadsWebBuffer)
-    gl.bufferData(gl.ARRAY_BUFFER, this._quadsArrayBuffer, gl.DYNAMIC_DRAW)
+  //   gl.bindBuffer(gl.ARRAY_BUFFER, this._quadsWebBuffer)
+  //   gl.bufferData(gl.ARRAY_BUFFER, this._quadsArrayBuffer, gl.DYNAMIC_DRAW)
 
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._buffersVBO![1])
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this._indices, gl.STATIC_DRAW)
-  }
+  //   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._buffersVBO![1])
+  //   gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this._indices, gl.STATIC_DRAW)
+  // }
 
   /**
    * <p>Initializes a TextureAtlas with a filename and with a certain capacity for Quads.<br />
@@ -594,6 +596,71 @@ export class TextureAtlas {
   set quads(quads: any[]) {
     this.setQuads(quads)
   }
+  _setupVBO() {
+    const gl = _renderContext
+    //create WebGLBuffer
+    this._buffersVBO[0] = gl.createBuffer()
+    this._buffersVBO[1] = gl.createBuffer()
+
+    this._quadsWebBuffer = gl.createBuffer()
+    this._mapBuffers()
+  }
+
+  _mapBuffers() {
+    const gl = _renderContext
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, this._quadsWebBuffer)
+    gl.bufferData(gl.ARRAY_BUFFER, this._quadsArrayBuffer, gl.DYNAMIC_DRAW)
+
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._buffersVBO[1])
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this._indices, gl.STATIC_DRAW)
+
+    //checkGLErrorDebug();
+  }
+
+  /**
+   * <p>Draws n quads from an index (offset). <br />
+   * n + start can't be greater than the capacity of the atlas</p>
+   * @param {Number} n
+   * @param {Number} start
+   */
+  drawNumberOfQuads(n, start) {
+    start = start || 0
+    if (0 === n || !this.texture || !this.texture.isLoaded()) return
+
+    const gl = _renderContext
+    glBindTexture2D(this.texture)
+
+    //
+    // Using VBO without VAO
+    //
+    //vertices
+    //gl.bindBuffer(gl.ARRAY_BUFFER, _t._buffersVBO[0]);
+    // XXX: update is done in draw... perhaps it should be done in a timer
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, this._quadsWebBuffer)
+    if (this.dirty) {
+      gl.bufferData(gl.ARRAY_BUFFER, this._quadsArrayBuffer, gl.DYNAMIC_DRAW)
+      this.dirty = false
+    }
+
+    gl.enableVertexAttribArray(VERTEX_ATTRIB_POSITION)
+    gl.enableVertexAttribArray(VERTEX_ATTRIB_COLOR)
+    gl.enableVertexAttribArray(VERTEX_ATTRIB_TEX_COORDS)
+
+    gl.vertexAttribPointer(VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0) // vertices
+    gl.vertexAttribPointer(VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, 12) // colors
+    gl.vertexAttribPointer(VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 24, 16) // tex coords
+
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._buffersVBO[1])
+
+    if (TEXTURE_ATLAS_USE_TRIANGLE_STRIP)
+      gl.drawElements(gl.TRIANGLE_STRIP, n * 6, gl.UNSIGNED_SHORT, start * 6 * this._indices.BYTES_PER_ELEMENT)
+    else gl.drawElements(gl.TRIANGLES, n * 6, gl.UNSIGNED_SHORT, start * 6 * this._indices.BYTES_PER_ELEMENT)
+
+    global.g_NumberOfDraws++
+    //checkGLErrorDebug();
+  }
 
   // Static methods
   static create(fileName: any, capacity: number): TextureAtlas {
@@ -605,14 +672,18 @@ export class TextureAtlas {
 
 // Assign to global cc
 
-game.addEventListener(Game.EVENT_RENDERER_INITD, function () {
-  if (_renderType === game.RENDER_TYPE_WEBGL) {
-    assert(isFunction(_tmp.WebGLTextureAtlas), _LogInfos.MissingFile, 'TexturesWebGL.js')
-    _tmp.WebGLTextureAtlas()
-    delete _tmp.WebGLTextureAtlas
-  }
-})
+// game.addEventListener(Game.EVENT_RENDERER_INITD, function () {
+//   if (_renderType === game.RENDER_TYPE_WEBGL) {
+//     assert(isFunction(_tmp.WebGLTextureAtlas), _LogInfos.MissingFile, 'TexturesWebGL.js')
+//     _tmp.WebGLTextureAtlas()
+//     delete _tmp.WebGLTextureAtlas
+//   }
+// })
 
-assert(isFunction(_tmp.PrototypeTextureAtlas), _LogInfos.MissingFile, 'TexturesPropertyDefine.js')
-_tmp.PrototypeTextureAtlas()
-delete _tmp.PrototypeTextureAtlas
+// assert(isFunction(_tmp.PrototypeTextureAtlas), _LogInfos.MissingFile, 'TexturesPropertyDefine.js')
+// _tmp.PrototypeTextureAtlas()
+// delete _tmp.PrototypeTextureAtlas
+const _p = TextureAtlas.prototype
+defineGetterSetter(_p, 'totalQuads', _p.getTotalQuads)
+defineGetterSetter(_p, 'capacity', _p.getCapacity)
+defineGetterSetter(_p, 'quads', _p.getQuads, _p.setQuads)

@@ -45,9 +45,9 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
     this._recursiveDirty = value
     this._dirty = value
     // recursively set dirty
-    let locChildren = this._node._children,
-      child,
-      l = locChildren ? locChildren.length : 0
+    const locChildren = this._node._children
+    let child
+    const l = locChildren ? locChildren.length : 0
     for (let i = 0; i < l; i++) {
       child = locChildren[i]
       child instanceof Sprite && child._renderCmd.setDirtyRecursively(value)
@@ -291,8 +291,8 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
   }
 
   uploadData(f32buffer: any, ui32buffer: any, vertexDataOffset: number): number {
-    const node = this._node,
-      locTexture = node._texture
+    const node = this._node
+    const locTexture = node._texture
     if (!(locTexture && locTexture._textureLoaded && node._rect.width && node._rect.height) || !this._displayedOpacity) return 0
 
     // Fill in vertex data with quad information (4 vertices for sprite)
@@ -310,9 +310,9 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
     const z = node._vertexZ
 
     const vertices = this._vertices
-    let i,
-      len = vertices.length,
-      vertex,
+    let i
+    const len = vertices.length
+    let vertex,
       offset = vertexDataOffset
     for (i = 0; i < len; ++i) {
       vertex = vertices[i]

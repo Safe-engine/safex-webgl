@@ -1,14 +1,13 @@
-/****************************************************************************
- * Converted to ES Module and TypeScript by GitHub Copilot
- ****************************************************************************/
-
 import { _renderContext } from '../..'
+import { cardinalSplineAt, getControlPointAt } from '../actions/ActionCatmullRom'
 import { GLProgramState } from '../shaders/GLProgramState'
 import { shaderCache } from '../shaders/ShaderCache'
+import { Point } from './cocoa/Geometry'
+import { Color } from './platform/Color'
 import { SHADER_POSITION_UCOLOR, VERTEX_ATTRIB_POSITION, contentScaleFactor, incrementGLDraws } from './platform/Macro'
 
-type Point = { x: number; y: number }
-type Color = { r: number; g: number; b: number; a: number }
+// type Point = { x: number; y: number }
+// type Color = { r: number; g: number; b: number; a: number }
 
 export class DrawingPrimitiveWebGL {
   private _renderContext: WebGLRenderingContext
@@ -277,9 +276,9 @@ export class DrawingPrimitiveWebGL {
     this.lazy_init()
 
     const vertices = new Float32Array((segments + 1) * 2)
-    let p: number,
-      lt: number,
-      deltaT = 1.0 / config.length
+    let p: number
+    let lt: number
+    const deltaT = 1.0 / config.length
     for (let i = 0; i < segments + 1; i++) {
       const dt = i / segments
       if (dt === 1) {
@@ -332,6 +331,3 @@ export class DrawingPrimitiveWebGL {
     if ((this._renderContext as any).lineWidth) (this._renderContext as any).lineWidth(width)
   }
 }
-
-// Optionally attach to cc namespace for compatibility
-DrawingPrimitiveWebGL

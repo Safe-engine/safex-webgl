@@ -1,60 +1,33 @@
+import { log } from '../../../helper/Debugger'
+import { Quaternion } from './quaternion'
+import { EPSILON } from './utility'
+import { Vec3 } from './vec3'
+
 /**
- Copyright (c) 2008-2010 Ricardo Quesada
- Copyright (c) 2011-2012 cocos2d-x.org
- Copyright (c) 2013-2014 Chukong Technologies Inc.
- Copyright (c) 2008, Luke Benstead.
- All rights reserved.
-
- Redistribution and use in source and binary forms, with or without modification,
- are permitted provided that the following conditions are met:
-
- Redistributions of source code must retain the above copyright notice,
- this list of conditions and the following disclaimer.
- Redistributions in binary form must reproduce the above copyright notice,
- this list of conditions and the following disclaimer in the documentation
- and/or other materials provided with the distribution.
-
- THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
- ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * <p>
+ * A 3x3 matrix                         </br>
+ * </p>
  */
+export class Matrix3 {
+  mat: Float32Array
 
-window.Uint16Array = window.Uint16Array || window.Array
-window.Float32Array = window.Float32Array || window.Array
-;(function (cc) {
-  /**
-   * <p>
-   * A 3x3 matrix                         </br>
-   * </p>
-   * @class
-   * @param {cc.math.Matrix3} [mat3]
-   */
-  cc.math.Matrix3 = function (mat3) {
+  constructor(mat3?: Matrix3) {
     if (mat3 && mat3.mat) {
       this.mat = new Float32Array(mat3.mat)
     } else {
       this.mat = new Float32Array(9)
     }
   }
-  cc.kmMat3 = cc.math.Matrix3
-  const _p = cc.math.Matrix3.prototype
+
+  static tmpMatrix = new Matrix3() // internal matrix
 
   /**
    * Copy matrix.
-   * @fn fill
-   * @memberof cc.math.Matrix3
-   * @param  {cc.math.Matrix3} mat3 Matrix to copy
-   * @return {cc.math.Matrix3} this
+   * @param  {Matrix3} mat3 Matrix to copy
+   * @return {Matrix3} this
    */
-  _p.fill = function (mat3) {
-    //cc.kmMat3Fill
+  fill(mat3: Matrix3): Matrix3 {
+    //kmMat3Fill
     const mat = this.mat,
       matIn = mat3.mat
     mat[0] = matIn[0]
@@ -69,8 +42,8 @@ window.Float32Array = window.Float32Array || window.Array
     return this
   }
 
-  _p.adjugate = function () {
-    //= cc.kmMat3Adjugate
+  adjugate(): Matrix3 {
+    //= kmMat3Adjugate
     const mat = this.mat
     const m0 = mat[0],
       m1 = mat[1],
@@ -97,32 +70,28 @@ window.Float32Array = window.Float32Array || window.Array
 
   /**
    * Sets pOut to an identity matrix returns pOut
-   * @memberof cc.math.Matrix3
-   * @param {cc.math.Matrix3} pOut - A pointer to the matrix to set to identity
-   * @return {cc.math.Matrix3} this
+   * @return {Matrix3} this
    */
-  _p.identity = function () {
-    //cc.kmMat3Identity
+  identity(): Matrix3 {
+    //kmMat3Identity
     const mat = this.mat
     mat[1] = mat[2] = mat[3] = mat[5] = mat[6] = mat[7] = 0
     mat[0] = mat[4] = mat[8] = 1.0
     return this
   }
 
-  const tmpMatrix = new cc.math.Matrix3() // internal matrix
-
-  _p.inverse = function (determinate) {
-    //cc.kmMat3Inverse
+  inverse(determinate: number): Matrix3 {
+    //kmMat3Inverse
     if (determinate === 0.0) return this
-    tmpMatrix.assignFrom(this)
+    Matrix3.tmpMatrix.assignFrom(this)
     const detInv = 1.0 / determinate
     this.adjugate()
     this.multiplyScalar(detInv)
     return this
   }
 
-  _p.isIdentity = function () {
-    //= cc.kmMat3IsIdentity
+  isIdentity(): boolean {
+    //= kmMat3IsIdentity
     const mat = this.mat
     return (
       mat[0] === 1 &&
@@ -137,8 +106,8 @@ window.Float32Array = window.Float32Array || window.Array
     )
   }
 
-  _p.transpose = function () {
-    // cc.kmMat3Transpose
+  transpose(): Matrix3 {
+    // kmMat3Transpose
     const mat = this.mat
     const m1 = mat[1],
       m2 = mat[2],
@@ -159,7 +128,7 @@ window.Float32Array = window.Float32Array || window.Array
     return this
   }
 
-  _p.determinant = function () {
+  determinant(): number {
     const mat = this.mat
     /*
          calculating the determinant following the rule of sarus,
@@ -174,7 +143,7 @@ window.Float32Array = window.Float32Array || window.Array
     return output
   }
 
-  _p.multiply = function (mat3) {
+  multiply(mat3: Matrix3): Matrix3 {
     const m1 = this.mat,
       m2 = mat3.mat
     const a0 = m1[0],
@@ -200,7 +169,7 @@ window.Float32Array = window.Float32Array || window.Array
     m1[1] = a1 * b0 + a4 * b1 + a7 * b2
     m1[2] = a2 * b0 + a5 * b1 + a8 * b2
 
-    m1[3] = a2 * b0 + a5 * b1 + a8 * b2
+    m1[3] = a0 * b3 + a3 * b4 + a6 * b5
     m1[4] = a1 * b3 + a4 * b4 + a7 * b5
     m1[5] = a2 * b3 + a5 * b4 + a8 * b5
 
@@ -210,7 +179,7 @@ window.Float32Array = window.Float32Array || window.Array
     return this
   }
 
-  _p.multiplyScalar = function (factor) {
+  multiplyScalar(factor: number): Matrix3 {
     const mat = this.mat
     mat[0] *= factor
     mat[1] *= factor
@@ -224,11 +193,11 @@ window.Float32Array = window.Float32Array || window.Array
     return this
   }
 
-  cc.math.Matrix3.rotationAxisAngle = function (axis, radians) {
-    //cc.kmMat3RotationAxisAngle
+  static rotationAxisAngle(axis: Vec3, radians: number): Matrix3 {
+    //kmMat3RotationAxisAngle
     const rcos = Math.cos(radians),
       rsin = Math.sin(radians)
-    const retMat = new cc.math.Matrix3()
+    const retMat = new Matrix3()
     const mat = retMat.mat
 
     mat[0] = rcos + axis.x * axis.x * (1 - rcos)
@@ -246,10 +215,10 @@ window.Float32Array = window.Float32Array || window.Array
     return retMat
   }
 
-  _p.assignFrom = function (matIn) {
-    // cc.kmMat3Assign
+  assignFrom(matIn: Matrix3): Matrix3 {
+    // kmMat3Assign
     if (this === matIn) {
-      cc.log('cc.math.Matrix3.assign(): current matrix equals matIn')
+      log('Matrix3.assign(): current matrix equals matIn')
       return this
     }
     const mat = this.mat,
@@ -266,10 +235,9 @@ window.Float32Array = window.Float32Array || window.Array
     return this
   }
 
-  _p.equals = function (mat3) {
+  equals(mat3: Matrix3): boolean {
     if (this === mat3) return true
-    const EPSILON = cc.math.EPSILON,
-      m1 = this.mat,
+    const m1 = this.mat,
       m2 = mat3.mat
     for (let i = 0; i < 9; ++i) {
       if (!(m1[i] + EPSILON > m2[i] && m1[i] - EPSILON < m2[i])) return false
@@ -277,8 +245,8 @@ window.Float32Array = window.Float32Array || window.Array
     return true
   }
 
-  cc.math.Matrix3.createByRotationX = function (radians) {
-    const retMat = new cc.math.Matrix3(),
+  static createByRotationX(radians: number): Matrix3 {
+    const retMat = new Matrix3(),
       mat = retMat.mat
     mat[0] = 1.0
     mat[1] = 0.0
@@ -294,13 +262,13 @@ window.Float32Array = window.Float32Array || window.Array
     return retMat
   }
 
-  cc.math.Matrix3.createByRotationY = function (radians) {
+  static createByRotationY(radians: number): Matrix3 {
     /*
          |  cos(A)  0   sin(A) |
          M = |  0       1   0      |
          | -sin(A)  0   cos(A) |
          */
-    const retMat = new cc.math.Matrix3(),
+    const retMat = new Matrix3(),
       mat = retMat.mat
     mat[0] = Math.cos(radians)
     mat[1] = 0.0
@@ -316,13 +284,13 @@ window.Float32Array = window.Float32Array || window.Array
     return retMat
   }
 
-  cc.math.Matrix3.createByRotationZ = function (radians) {
+  static createByRotationZ(radians: number): Matrix3 {
     /*
          |  cos(A)  -sin(A)   0  |
          M = |  sin(A)   cos(A)   0  |
          |  0        0        1  |
          */
-    const retMat = new cc.math.Matrix3(),
+    const retMat = new Matrix3(),
       mat = retMat.mat
     mat[0] = Math.cos(radians)
     mat[1] = -Math.sin(radians)
@@ -338,13 +306,13 @@ window.Float32Array = window.Float32Array || window.Array
     return retMat
   }
 
-  cc.math.Matrix3.createByRotation = function (radians) {
+  static createByRotation(radians: number): Matrix3 {
     /*
          |  cos(A)  -sin(A)   0  |
          M = |  sin(A)   cos(A)   0  |
          |  0        0        1  |
          */
-    const retMat = new cc.math.Matrix3(),
+    const retMat = new Matrix3(),
       mat = retMat.mat
     mat[0] = Math.cos(radians)
     mat[1] = Math.sin(radians)
@@ -360,27 +328,27 @@ window.Float32Array = window.Float32Array || window.Array
     return retMat
   }
 
-  cc.math.Matrix3.createByScale = function (x, y) {
-    const ret = new cc.math.Matrix3()
+  static createByScale(x: number, y: number): Matrix3 {
+    const ret = new Matrix3()
     ret.identity()
     ret.mat[0] = x
     ret.mat[4] = y
     return ret
   }
 
-  cc.math.Matrix3.createByTranslation = function (x, y) {
-    const ret = new cc.math.Matrix3()
+  static createByTranslation(x: number, y: number): Matrix3 {
+    const ret = new Matrix3()
     ret.identity()
     ret.mat[6] = x
     ret.mat[7] = y
     return ret
   }
 
-  cc.math.Matrix3.createByQuaternion = function (quaternion) {
-    //cc.kmMat3RotationQuaternion
+  static createByQuaternion(quaternion: Quaternion): Matrix3 | null {
+    //kmMat3RotationQuaternion
     if (!quaternion) return null
 
-    const ret = new cc.math.Matrix3(),
+    const ret = new Matrix3(),
       mat = ret.mat
     // First row
     mat[0] = 1.0 - 2.0 * (quaternion.y * quaternion.y + quaternion.z * quaternion.z)
@@ -399,8 +367,8 @@ window.Float32Array = window.Float32Array || window.Array
     return ret
   }
 
-  _p.rotationToAxisAngle = function () {
-    //cc.kmMat3RotationToAxisAngle
-    return cc.math.Quaternion.rotationMatrix(this).toAxisAndAngle()
+  rotationToAxisAngle(): { axis: Vec3; angle: number } {
+    //kmMat3RotationToAxisAngle
+    return Quaternion.rotationMatrix(this).toAxisAndAngle()
   }
-})(cc)
+}

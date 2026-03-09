@@ -25,17 +25,17 @@ export const PrototypeTexture2D = function () {
   defineGetterSetter(_p, 'height', _p._getHeight)
 }
 
-export const PrototypeTextureAtlas = function () {
-  const _p = TextureAtlas.prototype
+// export const PrototypeTextureAtlas = function () {
+//   const _p = TextureAtlas.prototype
 
-  // Extended properties
-  /** @expose */
-  _p.totalQuads
-  defineGetterSetter(_p, 'totalQuads', _p.getTotalQuads)
-  /** @expose */
-  _p.capacity
-  defineGetterSetter(_p, 'capacity', _p.getCapacity)
-  /** @expose */
-  _p.quads
-  defineGetterSetter(_p, 'quads', _p.getQuads, _p.setQuads)
-}
+//   // Extended properties
+//   /** @expose */
+//   _p.totalQuads
+//   defineGetterSetter(_p, 'totalQuads', _p.getTotalQuads)
+//   /** @expose */
+//   _p.capacity
+//   defineGetterSetter(_p, 'capacity', _p.getCapacity)
+//   /** @expose */
+//   _p.quads
+//   defineGetterSetter(_p, 'quads', _p.getQuads, _p.setQuads)
+// }

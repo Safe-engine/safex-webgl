@@ -100,6 +100,7 @@ export const rendererWebGL = (function () {
   }
 
   return {
+    _allNeedDraw: false,
     mat4Identity: null,
 
     childrenOrderDirty: true,

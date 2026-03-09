@@ -1,62 +1,37 @@
+import { degreesToRadians } from '../platform/Macro'
+import { EPSILON, square } from './utility'
+import { Vec3 } from './vec3'
+
 /**
- Copyright (c) 2008-2010 Ricardo Quesada
- Copyright (c) 2011-2012 cocos2d-x.org
- Copyright (c) 2013-2014 Chukong Technologies Inc.
- Copyright (c) 2008, Luke Benstead.
- All rights reserved.
-
- Redistribution and use in source and binary forms, with or without modification,
- are permitted provided that the following conditions are met:
-
- Redistributions of source code must retain the above copyright notice,
- this list of conditions and the following disclaimer.
- Redistributions in binary form must reproduce the above copyright notice,
- this list of conditions and the following disclaimer in the documentation
- and/or other materials provided with the distribution.
-
- THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
- ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * The Quaternion class
  */
+export class Quaternion {
+  x: number
+  y: number
+  z: number
+  w: number
 
-;(function (cc) {
-  /**
-   * The Quaternion class
-   * @param {Number|cc.math.Quaternion} [x=0]
-   * @param {Number} [y=0]
-   * @param {Number} [z=0]
-   * @param {Number} [w=0]
-   * @constructor
-   */
-  cc.math.Quaternion = function (x, y, z, w) {
+  constructor(x?: number | Quaternion, y?: number, z?: number, w?: number) {
     if (x && y === undefined) {
-      this.x = x.x
-      this.y = x.y
-      this.z = x.z
-      this.w = x.w
+      const q = x as Quaternion
+      this.x = q.x
+      this.y = q.y
+      this.z = q.z
+      this.w = q.w
     } else {
-      this.x = x || 0
+      this.x = (x as number) || 0
       this.y = y || 0
       this.z = z || 0
       this.w = w || 0
     }
   }
-  cc.kmQuaternion = cc.math.Quaternion
-  const proto = cc.math.Quaternion.prototype
 
   /**
    * Sets the conjugate of quaternion to self
-   * @param {cc.math.Quaternion} quaternion
+   * @param {Quaternion} quaternion
    */
-  proto.conjugate = function (quaternion) {
-    //= cc.kmQuaternionConjugate
+  conjugate(quaternion: Quaternion): Quaternion {
+    //= kmQuaternionConjugate
     this.x = -quaternion.x
     this.y = -quaternion.y
     this.z = -quaternion.z
@@ -69,26 +44,26 @@
    * @param quaternion
    * @returns {number}
    */
-  proto.dot = function (quaternion) {
-    // = cc.kmQuaternionDot
+  dot(quaternion: Quaternion): number {
+    // = kmQuaternionDot
     // A dot B = B dot A = AtBt + AxBx + AyBy + AzBz
     return this.w * quaternion.w + this.x * quaternion.x + this.y * quaternion.y + this.z * quaternion.z
   }
 
   /**
    * Returns the exponential of the quaternion, this function doesn't implemented.
-   * @returns {cc.math.Quaternion}
+   * @returns {Quaternion}
    */
-  proto.exponential = function () {
-    //=cc.kmQuaternionExp
+  exponential(): Quaternion {
+    //=kmQuaternionExp
     return this
   }
 
   /**
    * Makes the current quaternion an identity quaternion
    */
-  proto.identity = function () {
-    //=cc.kmQuaternionIdentity
+  identity(): Quaternion {
+    //=kmQuaternionIdentity
     this.x = 0.0
     this.y = 0.0
     this.z = 0.0
@@ -99,10 +74,10 @@
   /**
    * Inverses the value of current Quaternion
    */
-  proto.inverse = function () {
-    //=cc.kmQuaternionInverse
+  inverse(): Quaternion {
+    //=kmQuaternionInverse
     const len = this.length()
-    if (Math.abs(len) > cc.math.EPSILON) {
+    if (Math.abs(len) > EPSILON) {
       this.x = 0.0
       this.y = 0.0
       this.z = 0.0
@@ -119,8 +94,8 @@
    * Returns true if the quaternion is an identity quaternion
    * @returns {boolean}
    */
-  proto.isIdentity = function () {
-    //=cc.kmQuaternionIsIdentity
+  isIdentity(): boolean {
+    //=kmQuaternionIsIdentity
     return this.x === 0.0 && this.y === 0.0 && this.z === 0.0 && this.w === 1.0
   }
 
@@ -128,8 +103,8 @@
    * Returns the length of the quaternion
    * @returns {number}
    */
-  proto.length = function () {
-    //=cc.kmQuaternionLength
+  length(): number {
+    //=kmQuaternionLength
     return Math.sqrt(this.lengthSq())
   }
 
@@ -137,18 +112,18 @@
    * Returns the length of the quaternion squared (prevents a sqrt)
    * @returns {number}
    */
-  proto.lengthSq = function () {
-    //=cc.kmQuaternionLengthSq
+  lengthSq(): number {
+    //=kmQuaternionLengthSq
     return this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w
   }
 
   /**
    * Uses current quaternion multiplies other quaternion.
-   * @param {cc.math.Quaternion} quaternion
-   * @returns {cc.math.Quaternion}
+   * @param {Quaternion} quaternion
+   * @returns {Quaternion}
    */
-  proto.multiply = function (quaternion) {
-    //cc.kmQuaternionMultiply
+  multiply(quaternion: Quaternion): Quaternion {
+    //kmQuaternionMultiply
     const x = this.x,
       y = this.y,
       z = this.z,
@@ -162,23 +137,23 @@
 
   /**
    * Normalizes a quaternion
-   * @returns {cc.math.Quaternion}
+   * @returns {Quaternion}
    */
-  proto.normalize = function () {
-    //=cc.kmQuaternionNormalize
+  normalize(): Quaternion {
+    //=kmQuaternionNormalize
     const length = this.length()
-    if (Math.abs(length) <= cc.math.EPSILON) throw new Error('current quaternion is an invalid value')
+    if (Math.abs(length) <= EPSILON) throw new Error('current quaternion is an invalid value')
     this.scale(1.0 / length)
     return this
   }
 
   /**
    * Rotates a quaternion around an axis and an angle
-   * @param {cc.math.Vec3} axis
+   * @param {Vec3} axis
    * @param {Number} angle
    */
-  proto.rotationAxis = function (axis, angle) {
-    //cc.kmQuaternionRotationAxis
+  rotationAxis(axis: Vec3, angle: number): Quaternion {
+    //kmQuaternionRotationAxis
     const rad = angle * 0.5,
       scale = Math.sin(rad)
     this.w = Math.cos(rad)
@@ -193,23 +168,23 @@
    * @param mat3
    * @returns {*}
    */
-  cc.math.Quaternion.rotationMatrix = function (mat3) {
-    //cc.kmQuaternionRotationMatrix
+  static rotationMatrix(mat3: any): Quaternion | null {
+    //kmQuaternionRotationMatrix
     if (!mat3) return null
 
     let x, y, z, w
-    let m4x4 = [],
-      mat = mat3.mat,
-      scale = 0.0
+    const m4x4 = []
+    const mat = mat3.mat
+    let scale
 
     /*    0 3 6
-         1 4 7
-         2 5 8
+           1 4 7
+           2 5 8
 
-         0 1 2 3
-         4 5 6 7
-         8 9 10 11
-         12 13 14 15*/
+           0 1 2 3
+           4 5 6 7
+           8 9 10 11
+           12 13 14 15*/
     m4x4[0] = mat[0]
     m4x4[1] = mat[3]
     m4x4[2] = mat[6]
@@ -223,7 +198,7 @@
     const pMatrix = m4x4[0]
 
     const diagonal = pMatrix[0] + pMatrix[5] + pMatrix[10] + 1
-    if (diagonal > cc.math.EPSILON) {
+    if (diagonal > EPSILON) {
       // Calculate the scale of the diagonal
       scale = Math.sqrt(diagonal) * 2
 
@@ -267,7 +242,7 @@
         w = (pMatrix[4] - pMatrix[1]) / scale
       }
     }
-    return new cc.math.Quaternion(x, y, z, w)
+    return new Quaternion(x, y, z, w)
   }
 
   /**
@@ -275,29 +250,26 @@
    * @param yaw
    * @param pitch
    * @param roll
-   * @returns {cc.math.Quaternion}
+   * @returns {Quaternion}
    */
-  cc.math.Quaternion.rotationYawPitchRoll = function (yaw, pitch, roll) {
-    //cc.kmQuaternionRotationYawPitchRoll
-    let ex, ey, ez // temp half euler angles
-    let cr, cp, cy, sr, sp, sy, cpcy, spsy // temp vars in roll,pitch yaw
+  static rotationYawPitchRoll(yaw: number, pitch: number, roll: number): Quaternion {
+    //kmQuaternionRotationYawPitchRoll
+    const ex = degreesToRadians(pitch) / 2.0 // convert to rads and half them
+    const ey = degreesToRadians(yaw) / 2.0
+    const ez = degreesToRadians(roll) / 2.0
 
-    ex = cc.degreesToRadians(pitch) / 2.0 // convert to rads and half them
-    ey = cc.degreesToRadians(yaw) / 2.0
-    ez = cc.degreesToRadians(roll) / 2.0
+    const cr = Math.cos(ex)
+    const cp = Math.cos(ey)
+    const cy = Math.cos(ez)
 
-    cr = Math.cos(ex)
-    cp = Math.cos(ey)
-    cy = Math.cos(ez)
+    const sr = Math.sin(ex)
+    const sp = Math.sin(ey)
+    const sy = Math.sin(ez)
 
-    sr = Math.sin(ex)
-    sp = Math.sin(ey)
-    sy = Math.sin(ez)
+    const cpcy = cp * cy
+    const spsy = sp * sy
 
-    cpcy = cp * cy
-    spsy = sp * sy
-
-    const ret = new cc.math.Quaternion()
+    const ret = new Quaternion()
     ret.w = cr * cpcy + sr * spsy
     ret.x = sr * cpcy - cr * spsy
     ret.y = cr * sp * cy + sr * cp * sy
@@ -308,21 +280,21 @@
 
   /**
    * Interpolate with other quaternions
-   * @param {cc.math.Quaternion} quaternion
+   * @param {Quaternion} quaternion
    * @param {Number} t
-   * @returns {cc.math.Quaternion}
+   * @returns {Quaternion}
    */
-  proto.slerp = function (quaternion, t) {
-    //=cc.kmQuaternionSlerp
+  slerp(quaternion: Quaternion, t: number): Quaternion {
+    //=kmQuaternionSlerp
     if (this.x === quaternion.x && this.y === quaternion.y && this.z === quaternion.z && this.w === quaternion.w) {
       return this
     }
     const ct = this.dot(quaternion),
       theta = Math.acos(ct),
-      st = Math.sqrt(1.0 - cc.math.square(ct))
+      st = Math.sqrt(1.0 - square(ct))
     const stt = Math.sin(t * theta) / st,
       somt = Math.sin((1.0 - t) * theta) / st
-    const temp2 = new cc.math.Quaternion(quaternion)
+    const temp2 = new Quaternion(quaternion)
     this.scale(somt)
     temp2.scale(stt)
     this.add(temp2)
@@ -331,22 +303,17 @@
 
   /**
    * Get the axis and angle of rotation from a quaternion
-   * @returns {{axis: cc.math.Vec3, angle: number}}
+   * @returns {{axis: Vec3, angle: number}}
    */
-  proto.toAxisAndAngle = function () {
-    //=cc.kmQuaternionToAxisAngle
-    let tempAngle // temp angle
-    let scale // temp vars
-    let retAngle,
-      retAxis = new cc.math.Vec3()
+  toAxisAndAngle(): { axis: Vec3; angle: number } {
+    //=kmQuaternionToAxisAngle
+    let retAngle
+    const retAxis = new Vec3()
 
-    tempAngle = Math.acos(this.w)
-    scale = Math.sqrt(cc.math.square(this.x) + cc.math.square(this.y) + cc.math.square(this.z))
+    const tempAngle = Math.acos(this.w)
+    const scale = Math.sqrt(square(this.x) + square(this.y) + square(this.z))
 
-    if (
-      (scale > -cc.math.EPSILON && scale < cc.math.EPSILON) ||
-      (scale < 2 * Math.PI + cc.math.EPSILON && scale > 2 * Math.PI - cc.math.EPSILON)
-    ) {
+    if ((scale > -EPSILON && scale < EPSILON) || (scale < 2 * Math.PI + EPSILON && scale > 2 * Math.PI - EPSILON)) {
       // angle is 0 or 360 so just simply set axis to 0,0,1 with angle 0
       retAngle = 0.0
       retAxis.x = 0.0
@@ -366,8 +333,8 @@
    * Scale a quaternion
    * @param {Number} scale
    */
-  proto.scale = function (scale) {
-    //cc.kmQuaternionScale
+  scale(scale: number): Quaternion {
+    //kmQuaternionScale
     this.x *= scale
     this.y *= scale
     this.z *= scale
@@ -377,11 +344,11 @@
 
   /**
    * Assign current quaternion value from a quaternion.
-   * @param {cc.math.Quaternion} quaternion
-   * @returns {cc.math.Quaternion}  current quaternion
+   * @param {Quaternion} quaternion
+   * @returns {Quaternion}  current quaternion
    */
-  proto.assignFrom = function (quaternion) {
-    //=cc.kmQuaternionAssign
+  assignFrom(quaternion: Quaternion): Quaternion {
+    //=kmQuaternionAssign
     this.x = quaternion.x
     this.y = quaternion.y
     this.z = quaternion.z
@@ -391,11 +358,11 @@
 
   /**
    * Adds other quaternion
-   * @param {cc.math.Quaternion} quaternion
-   * @returns {cc.math.Quaternion}
+   * @param {Quaternion} quaternion
+   * @returns {Quaternion}
    */
-  proto.add = function (quaternion) {
-    //cc.kmQuaternionAdd
+  add(quaternion: Quaternion): Quaternion {
+    //kmQuaternionAdd
     this.x += quaternion.x
     this.y += quaternion.y
     this.z += quaternion.z
@@ -412,19 +379,19 @@
    *     of this vector, we will rotate 180 degrees around the 'fallbackAxis'                     <br/>
    *     (if specified, or a generated axis if not) since in this case ANY axis of rotation is valid.
    * </p>
-   * @param {cc.math.Vec3} vec1
-   * @param {cc.math.Vec3} vec2
-   * @param {cc.math.Vec3} fallback
-   * @returns {cc.math.Quaternion}
+   * @param {Vec3} vec1
+   * @param {Vec3} vec2
+   * @param {Vec3} fallback
+   * @returns {Quaternion}
    */
-  cc.math.Quaternion.rotationBetweenVec3 = function (vec1, vec2, fallback) {
-    //cc.kmQuaternionRotationBetweenVec3
-    const v1 = new cc.math.Vec3(vec1),
-      v2 = new cc.math.Vec3(vec2)
+  static rotationBetweenVec3(vec1: Vec3, vec2: Vec3, fallback?: Vec3): Quaternion {
+    //kmQuaternionRotationBetweenVec3
+    const v1 = new Vec3(vec1),
+      v2 = new Vec3(vec2)
     v1.normalize()
     v2.normalize()
     const a = v1.dot(v2),
-      quaternion = new cc.math.Quaternion()
+      quaternion = new Quaternion()
 
     if (a >= 1.0) {
       quaternion.identity()
@@ -432,14 +399,14 @@
     }
 
     if (a < 1e-6 - 1.0) {
-      if (Math.abs(fallback.lengthSq()) < cc.math.EPSILON) {
+      if (fallback && Math.abs(fallback.lengthSq()) < EPSILON) {
         quaternion.rotationAxis(fallback, Math.PI)
       } else {
-        const axis = new cc.math.Vec3(1.0, 0.0, 0.0)
+        const axis = new Vec3(1.0, 0.0, 0.0)
         axis.cross(vec1)
 
         //If axis is zero
-        if (Math.abs(axis.lengthSq()) < cc.math.EPSILON) {
+        if (Math.abs(axis.lengthSq()) < EPSILON) {
           axis.fill(0.0, 1.0, 0.0)
           axis.cross(vec1)
         }
@@ -461,24 +428,27 @@
 
   /**
    * Current quaternion multiplies a vec3
-   * @param {cc.math.Vec3} vec
-   * @returns {cc.math.Vec3}
+   * @param {Vec3} vec
+   * @returns {Vec3}
    */
-  proto.multiplyVec3 = function (vec) {
-    //=cc.kmQuaternionMultiplyVec3
+  multiplyVec3(vec: Vec3): Vec3 {
+    //=kmQuaternionMultiplyVec3
     const x = this.x,
       y = this.y,
       z = this.z,
-      retVec = new cc.math.Vec3(vec)
-    const uv = new cc.math.Vec3(x, y, z),
-      uuv = new cc.math.Vec3(x, y, z)
+      w = this.w
+    const retVec = new Vec3(vec)
+    const uv = new Vec3(x, y, z),
+      uuv = new Vec3(x, y, z)
     uv.cross(vec)
     uuv.cross(uv)
-    uv.scale(2.0 * q.w)
+    uv.scale(2.0 * w)
     uuv.scale(2.0)
 
     retVec.add(uv)
     retVec.add(uuv)
     return retVec
   }
-})(cc)
+}
+
+// kmQuaternion = Quaternion
