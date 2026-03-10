@@ -1,350 +1,338 @@
-import { game, renderer } from "../..";
-import { pAdd, pLength, pMult, pSub } from "../../core";
-import { p, size } from "../../core/cocoa/Geometry";
-import { color } from "../../core/platform";
-import { defineGetterSetter } from "../../core/sprites/SpritesPropertyDefine";
-import { assert, log } from "../../helper/Debugger";
-import { _renderType } from "../../helper/engine";
+import { game, renderer } from '../..'
+import { pAdd, pLength, pMult, pSub } from '../../core'
+import { p, size } from '../../core/cocoa/Geometry'
+import { color } from '../../core/platform'
+import { assert, log } from '../../helper/Debugger'
+import { _renderType } from '../../helper/engine'
+import { Widget } from '../base/UIWidget'
+import { Layout } from '../layout/UILayout'
 
 /**
  * The ScrollView control of Cocos UI
  * @class
- * @extends ccui.Layout
+ * @extends Layout
  *
  * @property {Number}               innerWidth              - Inner container width of the scroll view
  * @property {Number}               innerHeight             - Inner container height of the scroll view
- * @property {ccui.ScrollView.DIR_NONE | ccui.ScrollView.DIR_VERTICAL | ccui.ScrollView.DIR_HORIZONTAL | ccui.ScrollView.DIR_BOTH}    direction               - Scroll direction of the scroll view
+ * @property {ScrollView.DIR_NONE | ScrollView.DIR_VERTICAL | ScrollView.DIR_HORIZONTAL | ScrollView.DIR_BOTH}    direction               - Scroll direction of the scroll view
  * @property {Boolean}              bounceEnabled           - Indicate whether bounce is enabled
  * @property {Boolean}              inertiaScrollEnabled    - Indicate whether inertiaScroll is enabled
  * @property {Number}               touchTotalTimeThreshold - Touch total time threshold
  */
-export const ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
-  _innerContainer: null,
-  _direction: null,
+export class ScrollView extends Layout {
+  _innerContainer: any = null
+  _direction: any = null
 
-  _topBoundary: 0,
-  _bottomBoundary: 0,
-  _leftBoundary: 0,
-  _rightBoundary: 0,
+  _topBoundary = 0
+  _bottomBoundary = 0
+  _leftBoundary = 0
+  _rightBoundary = 0
 
-  _touchMoveDisplacements: null,
-  _touchMoveTimeDeltas: null,
-  _touchMovePreviousTimestamp: 0,
-  _touchTotalTimeThreshold: 0.5,
+  _touchMoveDisplacements: any[] = []
+  _touchMoveTimeDeltas: any[] = []
+  _touchMovePreviousTimestamp = 0
+  _touchTotalTimeThreshold = 0.5
 
-  _autoScrolling: false,
-  _autoScrollTargetDelta: null,
-  _autoScrollAttenuate: true,
-  _autoScrollStartPosition: null,
-  _autoScrollTotalTime: 0,
-  _autoScrollAccumulatedTime: 0,
-  _autoScrollCurrentlyOutOfBoundary: false,
-  _autoScrollBraking: false,
-  _autoScrollBrakingStartPosition: null,
+  _autoScrolling = false
+  _autoScrollTargetDelta: any = null
+  _autoScrollAttenuate = true
+  _autoScrollStartPosition: any = null
+  _autoScrollTotalTime = 0
+  _autoScrollAccumulatedTime = 0
+  _autoScrollCurrentlyOutOfBoundary = false
+  _autoScrollBraking = false
+  _autoScrollBrakingStartPosition: any = null
 
-  _bePressed: false,
+  _bePressed = false
 
-  _childFocusCancelOffset: 0,
+  _childFocusCancelOffset = 0
 
-  bounceEnabled: false,
+  bounceEnabled = false
 
-  _outOfBoundaryAmount: null,
-  _outOfBoundaryAmountDirty: true,
+  _outOfBoundaryAmount: any = null
+  _outOfBoundaryAmountDirty = true
 
-  inertiaScrollEnabled: false,
+  inertiaScrollEnabled = false
 
-  _scrollBarEnabled: true,
-  _verticalScrollBar: null,
-  _horizontalScrollBar: null,
+  _scrollBarEnabled = true
+  _verticalScrollBar: any = null
+  _horizontalScrollBar: any = null
 
-  _scrollViewEventListener: null,
-  _scrollViewEventSelector: null,
-  _className: "ScrollView",
+  _scrollViewEventListener: any = null
+  _scrollViewEventSelector: any = null
+  _className = 'ScrollView'
 
   /**
    * Allocates and initializes a UIScrollView.
-   * Constructor of ccui.ScrollView. override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
+   * Constructor of ScrollView. override it to extend the construction behavior, remember to call "super()" in the extended constructor.
    * @example
    * // example
-   * var uiScrollView = new ccui.ScrollView();
+   * var uiScrollView = new ScrollView();
    */
-  ctor: function () {
-    ccui.Layout.prototype.ctor.call(this);
-    this.setClippingEnabled(true);
-    this._innerContainer.setTouchEnabled(false);
+  constructor() {
+    super()
+    this.setClippingEnabled(true)
+    this._innerContainer.setTouchEnabled(false)
 
-    this._direction = ccui.ScrollView.DIR_NONE;
+    this._direction = ScrollView.DIR_NONE
 
-    this._childFocusCancelOffset = 5;
-    this.inertiaScrollEnabled = true;
+    this._childFocusCancelOffset = 5
+    this.inertiaScrollEnabled = true
 
-    this._outOfBoundaryAmount = p(0, 0);
-    this._autoScrollTargetDelta = p(0, 0);
-    this._autoScrollStartPosition = p(0, 0);
-    this._autoScrollBrakingStartPosition = p(0, 0);
-    this._touchMoveDisplacements = [];
-    this._touchMoveTimeDeltas = [];
-    this._touchMovePreviousTimestamp = 0;
+    this._outOfBoundaryAmount = p(0, 0)
+    this._autoScrollTargetDelta = p(0, 0)
+    this._autoScrollStartPosition = p(0, 0)
+    this._autoScrollBrakingStartPosition = p(0, 0)
+    this._touchMoveDisplacements = []
+    this._touchMoveTimeDeltas = []
+    this._touchMovePreviousTimestamp = 0
 
-    this._scrollBarEnabled = true;
-    this._initScrollBar();
+    this._scrollBarEnabled = true
+    this._initScrollBar()
 
-    this.setTouchEnabled(true);
-  },
+    this.setTouchEnabled(true)
+  }
 
   /**
    * Calls the parent class' onEnter and schedules update function.
    * @override
    */
-  onEnter: function () {
-    ccui.Layout.prototype.onEnter.call(this);
-    this.scheduleUpdate();
-  },
+  onEnter(): void {
+    super.onEnter()
+    this.scheduleUpdate()
+  }
 
-  onExit: function () {
-    renderer._removeCache(this.__instanceId);
-    ccui.Layout.prototype.onExit.call(this);
-  },
+  onExit(): void {
+    renderer._removeCache(this.__instanceId)
+    super.onExit()
+  }
 
-  visit: function (parent) {
-    var cmd = this._renderCmd, parentCmd = parent ? parent._renderCmd : null;
+  visit(parent: any): void {
+    const cmd = this._renderCmd,
+      parentCmd = parent ? parent._renderCmd : null
 
     // quick return if not visible
     if (!this._visible) {
-      cmd._propagateFlagsDown(parentCmd);
-      return;
+      cmd._propagateFlagsDown(parentCmd)
+      return
     }
 
-    this._adaptRenderers();
-    this._doLayout();
+    this._adaptRenderers()
+    this._doLayout()
 
-    var renderer = renderer;
-    cmd.visit(parentCmd);
+    cmd.visit(parentCmd)
 
-    renderer.pushRenderCommand(cmd);
-    if (cmd instanceof ccui.ScrollView.WebGLRenderCmd) {
-      var currentID = this.__instanceId;
-      renderer._turnToCacheMode(currentID);
+    renderer.pushRenderCommand(cmd)
+    if (cmd instanceof ScrollView.WebGLRenderCmd) {
+      const currentID = this.__instanceId
+      renderer._turnToCacheMode(currentID)
     }
 
-    var stencilClipping = this._clippingEnabled && this._clippingType === ccui.Layout.CLIPPING_STENCIL;
-    var scissorClipping = this._clippingEnabled && this._clippingType === ccui.Layout.CLIPPING_SCISSOR;
+    const stencilClipping = this._clippingEnabled && this._clippingType === Layout.CLIPPING_STENCIL
+    const scissorClipping = this._clippingEnabled && this._clippingType === Layout.CLIPPING_SCISSOR
 
     if (stencilClipping) {
-      cmd.stencilClippingVisit(parentCmd);
-    }
-    else if (scissorClipping) {
-      cmd.scissorClippingVisit(parentCmd);
+      cmd.stencilClippingVisit(parentCmd)
+    } else if (scissorClipping) {
+      cmd.scissorClippingVisit(parentCmd)
     }
 
-    var i, children = this._children, len = children.length, child;
-    var j, pChildren = this._protectedChildren, pLen = pChildren.length, pChild;
+    let i,
+      children = this._children,
+      len = children.length,
+      child
+    let j,
+      pChildren = this._protectedChildren,
+      pLen = pChildren.length,
+      pChild
 
-    if (this._reorderChildDirty) this.sortAllChildren();
-    if (this._reorderProtectedChildDirty) this.sortAllProtectedChildren();
+    if (this._reorderChildDirty) this.sortAllChildren()
+    if (this._reorderProtectedChildDirty) this.sortAllProtectedChildren()
     for (i = 0; i < len; i++) {
-      child = children[i];
+      child = children[i]
       if (child && child._visible) {
-        child.visit(this);
+        child.visit(this)
       }
     }
     for (j = 0; j < pLen; j++) {
-      pChild = pChildren[j];
+      pChild = pChildren[j]
       if (pChild && pChild._visible) {
-        cmd._changeProtectedChild(pChild);
-        pChild.visit(this);
+        cmd._changeProtectedChild(pChild)
+        pChild.visit(this)
       }
     }
 
     if (stencilClipping) {
-      cmd.postStencilVisit();
-    }
-    else if (scissorClipping) {
-      cmd.postScissorVisit();
+      cmd.postStencilVisit()
+    } else if (scissorClipping) {
+      cmd.postScissorVisit()
     }
 
-    if (cmd instanceof ccui.ScrollView.WebGLRenderCmd) {
-      renderer._turnToNormalMode();
+    if (cmd instanceof ScrollView.WebGLRenderCmd) {
+      renderer._turnToNormalMode()
     }
 
     // Need to update children after do layout
-    this.updateChildren();
+    this.updateChildren()
 
-    cmd._dirtyFlag = 0;
-  },
+    cmd._dirtyFlag = 0
+  }
 
   /**
    * When a widget is in a layout, you could call this method to get the next focused widget within a specified _direction.             <br/>
    * If the widget is not in a layout, it will return itself
    *
    * @param {Number} _direction the _direction to look for the next focused widget in a layout
-   * @param {ccui.Widget} current the current focused widget
-   * @returns {ccui.Widget}
+   * @param {Widget} current the current focused widget
+   * @returns {Widget}
    */
-  findNextFocusedWidget: function (direction, current) {
-    if (this.getLayoutType() === ccui.Layout.LINEAR_VERTICAL
-      || this.getLayoutType() === ccui.Layout.LINEAR_HORIZONTAL) {
-      return this._innerContainer.findNextFocusedWidget(direction, current);
-    } else
-      return ccui.Widget.prototype.findNextFocusedWidget.call(this, direction, current);
-  },
+  findNextFocusedWidget(direction: any, current: any): any {
+    if (this.getLayoutType() === Layout.LINEAR_VERTICAL || this.getLayoutType() === Layout.LINEAR_HORIZONTAL) {
+      return this._innerContainer.findNextFocusedWidget(direction, current)
+    } else return super.findNextFocusedWidget(direction, current)
+  }
 
-  _initRenderer: function () {
-    ccui.Layout.prototype._initRenderer.call(this);
+  _initRenderer(): void {
+    super._initRenderer()
 
-    this._innerContainer = new ccui.Layout();
-    this._innerContainer.setColor(color(255, 255, 255));
-    this._innerContainer.setOpacity(255);
-    this._innerContainer.setCascadeColorEnabled(true);
-    this._innerContainer.setCascadeOpacityEnabled(true);
+    this._innerContainer = new Layout()
+    this._innerContainer.setColor(color(255, 255, 255))
+    this._innerContainer.setOpacity(255)
+    this._innerContainer.setCascadeColorEnabled(true)
+    this._innerContainer.setCascadeOpacityEnabled(true)
 
-    this.addProtectedChild(this._innerContainer, 1, 1);
-  },
+    this.addProtectedChild(this._innerContainer, 1, 1)
+  }
 
-  _createRenderCmd: function () {
-    if (_renderType === game.RENDER_TYPE_WEBGL)
-      return new ccui.ScrollView.WebGLRenderCmd(this);
-    else
-      return new ccui.ScrollView.CanvasRenderCmd(this);
-  },
+  _createRenderCmd(): any {
+    if (_renderType === game.RENDER_TYPE_WEBGL) return new ScrollView.WebGLRenderCmd(this)
+    else return new ScrollView.CanvasRenderCmd(this)
+  }
 
-  _onSizeChanged: function () {
-    ccui.Layout.prototype._onSizeChanged.call(this);
-    var locSize = this._contentSize;
-    this._topBoundary = locSize.height;
-    this._rightBoundary = locSize.width;
-    var innerSize = this._innerContainer.getContentSize();
-    this._innerContainer.setContentSize(size(Math.max(innerSize.width, locSize.width), Math.max(innerSize.height, locSize.height)));
-    this._innerContainer.setPosition(0, locSize.height - this._innerContainer.getContentSize().height);
+  _onSizeChanged(): void {
+    super._onSizeChanged()
+    const locSize = this._contentSize
+    this._topBoundary = locSize.height
+    this._rightBoundary = locSize.width
+    const innerSize = this._innerContainer.getContentSize()
+    this._innerContainer.setContentSize(size(Math.max(innerSize.width, locSize.width), Math.max(innerSize.height, locSize.height)))
+    this._innerContainer.setPosition(0, locSize.height - this._innerContainer.getContentSize().height)
 
-    if (this._verticalScrollBar)
-      this._verticalScrollBar.onScrolled(this._getHowMuchOutOfBoundary());
+    if (this._verticalScrollBar) this._verticalScrollBar.onScrolled(this._getHowMuchOutOfBoundary())
 
-    if (this._horizontalScrollBar)
-      this._horizontalScrollBar.onScrolled(this._getHowMuchOutOfBoundary());
-  },
+    if (this._horizontalScrollBar) this._horizontalScrollBar.onScrolled(this._getHowMuchOutOfBoundary())
+  }
 
   /**
    * Changes inner container size of ScrollView.     <br/>
    * Inner container size must be larger than or equal the size of ScrollView.
    * @param {Size} size inner container size.
    */
-  setInnerContainerSize: function (size) {
-    var innerContainer = this._innerContainer,
+  setInnerContainerSize(size: any): void {
+    let innerContainer = this._innerContainer,
       locSize = this._contentSize,
-      innerSizeWidth = locSize.width, innerSizeHeight = locSize.height;
+      innerSizeWidth = locSize.width,
+      innerSizeHeight = locSize.height
 
-    if (size.width < locSize.width)
-      log("Inner width <= ScrollView width, it will be force sized!");
-    else
-      innerSizeWidth = size.width;
+    if (size.width < locSize.width) log('Inner width <= ScrollView width, it will be force sized!')
+    else innerSizeWidth = size.width
 
-    if (size.height < locSize.height)
-      log("Inner height <= ScrollView height, it will be force sized!");
-    else
-      innerSizeHeight = size.height;
+    if (size.height < locSize.height) log('Inner height <= ScrollView height, it will be force sized!')
+    else innerSizeHeight = size.height
 
-    innerContainer.setContentSize(size(innerSizeWidth, innerSizeHeight));
+    innerContainer.setContentSize(size(innerSizeWidth, innerSizeHeight))
 
-    var pos = this._innerContainer.getPosition();
-    var contAP = this._innerContainer.getAnchorPoint();
+    const pos = this._innerContainer.getPosition()
+    const contAP = this._innerContainer.getAnchorPoint()
 
     if (this._innerContainer.getLeftBoundary() != 0.0) {
-      pos.x = contAP.x * innerSizeWidth;
+      pos.x = contAP.x * innerSizeWidth
     }
     if (this._innerContainer.getTopBoundary() != this._contentSize.height) {
-      pos.y = this._contentSize.height - (1.0 - contAP.y) * innerSizeHeight;
+      pos.y = this._contentSize.height - (1.0 - contAP.y) * innerSizeHeight
     }
-    this.setInnerContainerPosition(pos);
+    this.setInnerContainerPosition(pos)
 
-    this._updateScrollBar(p(0, 0));
-  },
+    this._updateScrollBar(p(0, 0))
+  }
 
-  _setInnerWidth: function (width) {
-    var locW = this._contentSize.width,
+  _setInnerWidth(width: number): void {
+    let locW = this._contentSize.width,
       innerWidth = locW,
       container = this._innerContainer,
-      oldInnerWidth = container.width;
-    if (width < locW)
-      log("Inner width <= scrollview width, it will be force sized!");
-    else
-      innerWidth = width;
-    container.width = innerWidth;
+      oldInnerWidth = container.width
+    if (width < locW) log('Inner width <= scrollview width, it will be force sized!')
+    else innerWidth = width
+    container.width = innerWidth
 
     switch (this._direction) {
-      case ccui.ScrollView.DIR_HORIZONTAL:
-      case ccui.ScrollView.DIR_BOTH:
+      case ScrollView.DIR_HORIZONTAL:
+      case ScrollView.DIR_BOTH:
         if (container.getRightBoundary() <= locW) {
-          var newInnerWidth = container.width;
-          var offset = oldInnerWidth - newInnerWidth;
-          this._scrollChildren(offset, 0);
+          const newInnerWidth = container.width
+          const offset = oldInnerWidth - newInnerWidth
+          this._scrollChildren(offset, 0)
         }
-        break;
+        break
     }
-    var innerAX = container.anchorX;
-    if (container.getLeftBoundary() > 0.0)
-      container.x = innerAX * innerWidth;
-    if (container.getRightBoundary() < locW)
-      container.x = locW - ((1.0 - innerAX) * innerWidth);
-  },
+    const innerAX = container.anchorX
+    if (container.getLeftBoundary() > 0.0) container.x = innerAX * innerWidth
+    if (container.getRightBoundary() < locW) container.x = locW - (1.0 - innerAX) * innerWidth
+  }
 
-  _setInnerHeight: function (height) {
-    var locH = this._contentSize.height,
+  _setInnerHeight(height: number): void {
+    let locH = this._contentSize.height,
       innerHeight = locH,
       container = this._innerContainer,
-      oldInnerHeight = container.height;
-    if (height < locH)
-      log("Inner height <= scrollview height, it will be force sized!");
-    else
-      innerHeight = height;
-    container.height = innerHeight;
+      oldInnerHeight = container.height
+    if (height < locH) log('Inner height <= scrollview height, it will be force sized!')
+    else innerHeight = height
+    container.height = innerHeight
 
     switch (this._direction) {
-      case ccui.ScrollView.DIR_VERTICAL:
-      case ccui.ScrollView.DIR_BOTH:
-        var newInnerHeight = innerHeight;
-        var offset = oldInnerHeight - newInnerHeight;
-        this._scrollChildren(0, offset);
-        break;
+      case ScrollView.DIR_VERTICAL:
+      case ScrollView.DIR_BOTH:
+        var newInnerHeight = innerHeight
+        var offset = oldInnerHeight - newInnerHeight
+        this._scrollChildren(0, offset)
+        break
     }
-    var innerAY = container.anchorY;
-    if (container.getLeftBoundary() > 0.0)
-      container.y = innerAY * innerHeight;
-    if (container.getRightBoundary() < locH)
-      container.y = locH - ((1.0 - innerAY) * innerHeight);
-  },
+    const innerAY = container.anchorY
+    if (container.getLeftBoundary() > 0.0) container.y = innerAY * innerHeight
+    if (container.getRightBoundary() < locH) container.y = locH - (1.0 - innerAY) * innerHeight
+  }
   /**
    * Set inner container position
    *
    * @param {Point} position Inner container position.
    */
-  setInnerContainerPosition: function (position) {
+  setInnerContainerPosition(position: any): void {
     if (position.x === this._innerContainer.getPositionX() && position.y === this._innerContainer.getPositionY()) {
-      return;
+      return
     }
-    this._innerContainer.setPosition(position);
-    this._outOfBoundaryAmountDirty = true;
+    this._innerContainer.setPosition(position)
+    this._outOfBoundaryAmountDirty = true
 
     // Process bouncing events
     if (this.bounceEnabled) {
-      for (var _direction = ccui.ScrollView.MOVEDIR_TOP; _direction < ccui.ScrollView.MOVEDIR_RIGHT; ++_direction) {
+      for (let _direction = ScrollView.MOVEDIR_TOP; _direction < ScrollView.MOVEDIR_RIGHT; ++_direction) {
         if (this._isOutOfBoundary(_direction)) {
-          this._processScrollEvent(_direction, true);
+          this._processScrollEvent(_direction, true)
         }
       }
     }
 
-    this._dispatchEvent(ccui.ScrollView.EVENT_CONTAINER_MOVED);
-  },
+    this._dispatchEvent(ScrollView.EVENT_CONTAINER_MOVED)
+  }
 
   /**
    * Get inner container position
    *
    * @return The inner container position.
    */
-  getInnerContainerPosition: function () {
-    return this._innerContainer.getPosition();
-  },
+  getInnerContainerPosition(): any {
+    return this._innerContainer.getPosition()
+  }
 
   /**
    * Returns inner container size of ScrollView.     <br/>
@@ -352,25 +340,27 @@ export const ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
    *
    * @return {Size} inner container size.
    */
-  getInnerContainerSize: function () {
-    return this._innerContainer.getContentSize();
-  },
-  _getInnerWidth: function () {
-    return this._innerContainer.width;
-  },
-  _getInnerHeight: function () {
-    return this._innerContainer.height;
-  },
+  getInnerContainerSize(): any {
+    return this._innerContainer.getContentSize()
+  }
 
-  _isInContainer: function (widget) {
-    if (!this._clippingEnabled)
-      return true;
-    var wPos = widget._position,
+  _getInnerWidth(): number {
+    return this._innerContainer.width
+  }
+
+  _getInnerHeight(): number {
+    return this._innerContainer.height
+  }
+
+  _isInContainer(widget): any {
+    if (!this._clippingEnabled) return true
+    let wPos = widget._position,
       wSize = widget._contentSize,
       wAnchor = widget._anchorPoint,
       size = this._customSize,
       pos = this._innerContainer._position,
-      bottom = 0, left = 0;
+      bottom = 0,
+      left = 0
     if (
       // Top
       (bottom = wPos.y - wAnchor.y * wSize.height) >= size.height - pos.y ||
@@ -381,523 +371,521 @@ export const ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
       // left
       left + wSize.width <= -pos.x
     )
-      return false;
-    else return true;
-  },
+      return false
+    else return true
+  }
 
-  updateChildren: function () {
-    var child, i, l;
-    var childrenArray = this._innerContainer._children;
+  updateChildren(): any {
+    let child, i, l
+    const childrenArray = this._innerContainer._children
     for (i = 0, l = childrenArray.length; i < l; i++) {
-      child = childrenArray[i];
-      if (child._inViewRect === true && this._isInContainer(child) === false)
-        child._inViewRect = false;
-      else if (child._inViewRect === false && this._isInContainer(child) === true)
-        child._inViewRect = true;
+      child = childrenArray[i]
+      if (child._inViewRect === true && this._isInContainer(child) === false) child._inViewRect = false
+      else if (child._inViewRect === false && this._isInContainer(child) === true) child._inViewRect = true
     }
-  },
+  }
   /**
-   * Add child to ccui.ScrollView.
+   * Add child to ScrollView.
    * @param {Node} widget
    * @param {Number} [zOrder]
    * @param {Number|string} [tag] tag or name
    * @returns {boolean}
    */
-  addChild: function (widget, zOrder, tag) {
-    if (!widget)
-      return false;
-    if (this._isInContainer(widget) === false)
-      widget._inViewRect = false;
-    zOrder = zOrder || widget.getLocalZOrder();
-    tag = tag || widget.getTag();
-    return this._innerContainer.addChild(widget, zOrder, tag);
-  },
+  addChild(widget, zOrder, tag): any {
+    if (!widget) return false
+    if (this._isInContainer(widget) === false) widget._inViewRect = false
+    zOrder = zOrder || widget.getLocalZOrder()
+    tag = tag || widget.getTag()
+    return this._innerContainer.addChild(widget, zOrder, tag)
+  }
 
   /**
    * Removes all children.
    */
-  removeAllChildren: function () {
-    this.removeAllChildrenWithCleanup(true);
-  },
+  removeAllChildren(): any {
+    this.removeAllChildrenWithCleanup(true)
+  }
 
   /**
    * Removes all children.
    * @param {Boolean} cleanup
    */
-  removeAllChildrenWithCleanup: function (cleanup) {
-    this._innerContainer.removeAllChildrenWithCleanup(cleanup);
-  },
+  removeAllChildrenWithCleanup(cleanup): any {
+    this._innerContainer.removeAllChildrenWithCleanup(cleanup)
+  }
 
   /**
    * Removes widget child
    * @override
-   * @param {ccui.Widget} child
+   * @param {Widget} child
    * @param {Boolean} cleanup
    * @returns {boolean}
    */
-  removeChild: function (child, cleanup) {
-    return this._innerContainer.removeChild(child, cleanup);
-  },
+  removeChild(child, cleanup): any {
+    return this._innerContainer.removeChild(child, cleanup)
+  }
 
   /**
    * Returns inner container's children
    * @returns {Array}
    */
-  getChildren: function () {
-    return this._innerContainer.getChildren();
-  },
+  getChildren(): any {
+    return this._innerContainer.getChildren()
+  }
 
   /**
    * Gets the count of inner container's children
    * @returns {Number}
    */
-  getChildrenCount: function () {
-    return this._innerContainer.getChildrenCount();
-  },
+  getChildrenCount(): any {
+    return this._innerContainer.getChildrenCount()
+  }
 
   /**
    * Gets a child from the container given its tag
    * @param {Number} tag
-   * @returns {ccui.Widget}
+   * @returns {Widget}
    */
-  getChildByTag: function (tag) {
-    return this._innerContainer.getChildByTag(tag);
-  },
+  getChildByTag(tag): any {
+    return this._innerContainer.getChildByTag(tag)
+  }
 
   /**
    * Gets a child from the container given its name
    * @param {String} name
-   * @returns {ccui.Widget}
+   * @returns {Widget}
    */
-  getChildByName: function (name) {
-    return this._innerContainer.getChildByName(name);
-  },
+  getChildByName(name): any {
+    return this._innerContainer.getChildByName(name)
+  }
 
-  _flattenVectorByDirection: function (vector) {
-    var result = p(0, 0);
-    result.x = (this._direction === ccui.ScrollView.DIR_VERTICAL ? 0 : vector.x);
-    result.y = (this._direction === ccui.ScrollView.DIR_HORIZONTAL ? 0 : vector.y);
-    return result;
-  },
+  _flattenVectorByDirection(vector): any {
+    const result = p(0, 0)
+    result.x = this._direction === ScrollView.DIR_VERTICAL ? 0 : vector.x
+    result.y = this._direction === ScrollView.DIR_HORIZONTAL ? 0 : vector.y
+    return result
+  }
 
-  _getHowMuchOutOfBoundary: function (addition) {
-    if (addition === undefined)
-      addition = p(0, 0);
+  _getHowMuchOutOfBoundary(addition): any {
+    if (addition === undefined) addition = p(0, 0)
 
     if (addition.x === 0 && addition.y === 0 && !this._outOfBoundaryAmountDirty) {
-      return this._outOfBoundaryAmount;
+      return this._outOfBoundaryAmount
     }
 
-    var outOfBoundaryAmount = p(0, 0);
+    const outOfBoundaryAmount = p(0, 0)
 
     if (this._innerContainer.getLeftBoundary() + addition.x > this._leftBoundary) {
-      outOfBoundaryAmount.x = this._leftBoundary - (this._innerContainer.getLeftBoundary() + addition.x);
-    }
-    else if (this._innerContainer.getRightBoundary() + addition.x < this._rightBoundary) {
-      outOfBoundaryAmount.x = this._rightBoundary - (this._innerContainer.getRightBoundary() + addition.x);
+      outOfBoundaryAmount.x = this._leftBoundary - (this._innerContainer.getLeftBoundary() + addition.x)
+    } else if (this._innerContainer.getRightBoundary() + addition.x < this._rightBoundary) {
+      outOfBoundaryAmount.x = this._rightBoundary - (this._innerContainer.getRightBoundary() + addition.x)
     }
 
     if (this._innerContainer.getTopBoundary() + addition.y < this._topBoundary) {
-      outOfBoundaryAmount.y = this._topBoundary - (this._innerContainer.getTopBoundary() + addition.y);
-    }
-    else if (this._innerContainer.getBottomBoundary() + addition.y > this._bottomBoundary) {
-      outOfBoundaryAmount.y = this._bottomBoundary - (this._innerContainer.getBottomBoundary() + addition.y);
+      outOfBoundaryAmount.y = this._topBoundary - (this._innerContainer.getTopBoundary() + addition.y)
+    } else if (this._innerContainer.getBottomBoundary() + addition.y > this._bottomBoundary) {
+      outOfBoundaryAmount.y = this._bottomBoundary - (this._innerContainer.getBottomBoundary() + addition.y)
     }
 
     if (addition.x === 0 && addition.y === 0) {
-      this._outOfBoundaryAmount = outOfBoundaryAmount;
-      this._outOfBoundaryAmountDirty = false;
+      this._outOfBoundaryAmount = outOfBoundaryAmount
+      this._outOfBoundaryAmountDirty = false
     }
-    return outOfBoundaryAmount;
-  },
+    return outOfBoundaryAmount
+  }
 
-  _isOutOfBoundary: function (dir) {
-    var outOfBoundary = this._getHowMuchOutOfBoundary();
+  _isOutOfBoundary(dir): any {
+    const outOfBoundary = this._getHowMuchOutOfBoundary()
     if (dir !== undefined) {
       switch (dir) {
-        case ccui.ScrollView.MOVEDIR_TOP:
-          return outOfBoundary.y > 0;
-        case ccui.ScrollView.MOVEDIR_BOTTOM:
-          return outOfBoundary.y < 0;
-        case ccui.ScrollView.MOVEDIR_LEFT:
-          return outOfBoundary.x < 0;
-        case ccui.ScrollView.MOVEDIR_RIGHT:
-          return outOfBoundary.x > 0;
+        case ScrollView.MOVEDIR_TOP:
+          return outOfBoundary.y > 0
+        case ScrollView.MOVEDIR_BOTTOM:
+          return outOfBoundary.y < 0
+        case ScrollView.MOVEDIR_LEFT:
+          return outOfBoundary.x < 0
+        case ScrollView.MOVEDIR_RIGHT:
+          return outOfBoundary.x > 0
       }
+    } else {
+      return !this._fltEqualZero(outOfBoundary)
     }
-    else {
-      return !this._fltEqualZero(outOfBoundary);
-    }
 
-    return false;
-  },
+    return false
+  }
 
+  _moveInnerContainer(deltaMove, canStartBounceBack): any {
+    const adjustedMove = this._flattenVectorByDirection(deltaMove)
 
-  _moveInnerContainer: function (deltaMove, canStartBounceBack) {
-    var adjustedMove = this._flattenVectorByDirection(deltaMove);
+    this.setInnerContainerPosition(pAdd(this.getInnerContainerPosition(), adjustedMove))
 
-    this.setInnerContainerPosition(pAdd(this.getInnerContainerPosition(), adjustedMove));
-
-    var outOfBoundary = this._getHowMuchOutOfBoundary();
-    this._updateScrollBar(outOfBoundary);
+    const outOfBoundary = this._getHowMuchOutOfBoundary()
+    this._updateScrollBar(outOfBoundary)
 
     if (this.bounceEnabled && canStartBounceBack) {
-      this._startBounceBackIfNeeded();
+      this._startBounceBackIfNeeded()
     }
-  },
+  }
 
-  _updateScrollBar: function (outOfBoundary) {
+  _updateScrollBar(outOfBoundary): any {
     if (this._verticalScrollBar) {
-      this._verticalScrollBar.onScrolled(outOfBoundary);
+      this._verticalScrollBar.onScrolled(outOfBoundary)
     }
     if (this._horizontalScrollBar) {
-      this._horizontalScrollBar.onScrolled(outOfBoundary);
+      this._horizontalScrollBar.onScrolled(outOfBoundary)
     }
-  },
+  }
 
-  _calculateTouchMoveVelocity: function () {
-    var totalTime = 0;
+  _calculateTouchMoveVelocity(): any {
+    let totalTime = 0
     for (var i = 0; i < this._touchMoveTimeDeltas.length; ++i) {
-      totalTime += this._touchMoveTimeDeltas[i];
+      totalTime += this._touchMoveTimeDeltas[i]
     }
     if (totalTime == 0 || totalTime >= this._touchTotalTimeThreshold) {
-      return p(0, 0);
+      return p(0, 0)
     }
 
-    var totalMovement = p(0, 0);
+    const totalMovement = p(0, 0)
 
     for (var i = 0; i < this._touchMoveDisplacements.length; ++i) {
-      totalMovement.x += this._touchMoveDisplacements[i].x;
-      totalMovement.y += this._touchMoveDisplacements[i].y;
+      totalMovement.x += this._touchMoveDisplacements[i].x
+      totalMovement.y += this._touchMoveDisplacements[i].y
     }
 
-    return pMult(totalMovement, 1 / totalTime);
-  },
+    return pMult(totalMovement, 1 / totalTime)
+  }
 
   /**
    * Set the touch total time threshold
    * @param {Number} touchTotalTimeThreshold
    */
-  setTouchTotalTimeThreshold: function (touchTotalTimeThreshold) {
-    this._touchTotalTimeThreshold = touchTotalTimeThreshold;
-  },
-
+  setTouchTotalTimeThreshold(touchTotalTimeThreshold): any {
+    this._touchTotalTimeThreshold = touchTotalTimeThreshold
+  }
 
   /**
    * Get the touch total time threshold
    * @returns {Number}
    */
-  getTouchTotalTimeThreshold: function () {
-    return this._touchTotalTimeThreshold;
-  },
+  getTouchTotalTimeThreshold(): any {
+    return this._touchTotalTimeThreshold
+  }
 
-  _startInertiaScroll: function (touchMoveVelocity) {
-    var MOVEMENT_FACTOR = 0.7;
-    var inertiaTotalMovement = pMult(touchMoveVelocity, MOVEMENT_FACTOR);
-    this._startAttenuatingAutoScroll(inertiaTotalMovement, touchMoveVelocity);
-  },
+  _startInertiaScroll(touchMoveVelocity): any {
+    const MOVEMENT_FACTOR = 0.7
+    const inertiaTotalMovement = pMult(touchMoveVelocity, MOVEMENT_FACTOR)
+    this._startAttenuatingAutoScroll(inertiaTotalMovement, touchMoveVelocity)
+  }
 
-  _startBounceBackIfNeeded: function () {
+  _startBounceBackIfNeeded(): any {
     if (!this.bounceEnabled) {
-      return false;
+      return false
     }
-    var bounceBackAmount = this._getHowMuchOutOfBoundary();
+    const bounceBackAmount = this._getHowMuchOutOfBoundary()
     if (this._fltEqualZero(bounceBackAmount)) {
-      return false;
+      return false
     }
 
-    var BOUNCE_BACK_DURATION = 1.0;
-    this._startAutoScroll(bounceBackAmount, BOUNCE_BACK_DURATION, true);
-    return true;
-  },
+    const BOUNCE_BACK_DURATION = 1.0
+    this._startAutoScroll(bounceBackAmount, BOUNCE_BACK_DURATION, true)
+    return true
+  }
 
-  _startAutoScrollToDestination: function (destination, timeInSec, attenuated) {
-    this._startAutoScroll(pSub(destination, this._innerContainer.getPosition()), timeInSec, attenuated);
-  },
+  _startAutoScrollToDestination(destination, timeInSec, attenuated): any {
+    this._startAutoScroll(pSub(destination, this._innerContainer.getPosition()), timeInSec, attenuated)
+  }
 
-  _calculateAutoScrollTimeByInitialSpeed: function (initialSpeed) {
+  _calculateAutoScrollTimeByInitialSpeed(initialSpeed): any {
     // Calculate the time from the initial speed according to quintic polynomial.
-    return Math.sqrt(Math.sqrt(initialSpeed / 5));
-  },
+    return Math.sqrt(Math.sqrt(initialSpeed / 5))
+  }
 
-  _startAttenuatingAutoScroll: function (deltaMove, initialVelocity) {
-    var time = this._calculateAutoScrollTimeByInitialSpeed(pLength(initialVelocity));
-    this._startAutoScroll(deltaMove, time, true);
-  },
+  _startAttenuatingAutoScroll(deltaMove, initialVelocity): any {
+    const time = this._calculateAutoScrollTimeByInitialSpeed(pLength(initialVelocity))
+    this._startAutoScroll(deltaMove, time, true)
+  }
 
-  _startAutoScroll: function (deltaMove, timeInSec, attenuated) {
-    var adjustedDeltaMove = this._flattenVectorByDirection(deltaMove);
+  _startAutoScroll(deltaMove, timeInSec, attenuated): any {
+    const adjustedDeltaMove = this._flattenVectorByDirection(deltaMove)
 
-    this._autoScrolling = true;
-    this._autoScrollTargetDelta = adjustedDeltaMove;
-    this._autoScrollAttenuate = attenuated;
-    this._autoScrollStartPosition = this._innerContainer.getPosition();
-    this._autoScrollTotalTime = timeInSec;
-    this._autoScrollAccumulatedTime = 0;
-    this._autoScrollBraking = false;
-    this._autoScrollBrakingStartPosition = p(0, 0);
+    this._autoScrolling = true
+    this._autoScrollTargetDelta = adjustedDeltaMove
+    this._autoScrollAttenuate = attenuated
+    this._autoScrollStartPosition = this._innerContainer.getPosition()
+    this._autoScrollTotalTime = timeInSec
+    this._autoScrollAccumulatedTime = 0
+    this._autoScrollBraking = false
+    this._autoScrollBrakingStartPosition = p(0, 0)
 
     // If the destination is also out of boundary of same side, start brake from beggining.
-    var currentOutOfBoundary = this._getHowMuchOutOfBoundary();
+    const currentOutOfBoundary = this._getHowMuchOutOfBoundary()
     if (!this._fltEqualZero(currentOutOfBoundary)) {
-      this._autoScrollCurrentlyOutOfBoundary = true;
-      var afterOutOfBoundary = this._getHowMuchOutOfBoundary(adjustedDeltaMove);
+      this._autoScrollCurrentlyOutOfBoundary = true
+      const afterOutOfBoundary = this._getHowMuchOutOfBoundary(adjustedDeltaMove)
       if (currentOutOfBoundary.x * afterOutOfBoundary.x > 0 || currentOutOfBoundary.y * afterOutOfBoundary.y > 0) {
-        this._autoScrollBraking = true;
+        this._autoScrollBraking = true
       }
     }
-  },
+  }
 
   /**
    * Immediately stops inner container scroll initiated by any of the "scrollTo*" member functions
    */
-  stopAutoScroll: function () {
-    this._autoScrolling = false;
-    this._autoScrollAttenuate = true;
-    this._autoScrollTotalTime = 0;
-    this._autoScrollAccumulatedTime = 0;
-  },
+  stopAutoScroll(): any {
+    this._autoScrolling = false
+    this._autoScrollAttenuate = true
+    this._autoScrollTotalTime = 0
+    this._autoScrollAccumulatedTime = 0
+  }
 
-  _isNecessaryAutoScrollBrake: function () {
+  _isNecessaryAutoScrollBrake(): any {
     if (this._autoScrollBraking) {
-      return true;
+      return true
     }
 
     if (this._isOutOfBoundary()) {
       // It just went out of boundary.
       if (!this._autoScrollCurrentlyOutOfBoundary) {
-        this._autoScrollCurrentlyOutOfBoundary = true;
-        this._autoScrollBraking = true;
-        this._autoScrollBrakingStartPosition = this.getInnerContainerPosition();
-        return true;
+        this._autoScrollCurrentlyOutOfBoundary = true
+        this._autoScrollBraking = true
+        this._autoScrollBrakingStartPosition = this.getInnerContainerPosition()
+        return true
       }
+    } else {
+      this._autoScrollCurrentlyOutOfBoundary = false
     }
-    else {
-      this._autoScrollCurrentlyOutOfBoundary = false;
-    }
-    return false;
-  },
+    return false
+  }
 
-  _getAutoScrollStopEpsilon: function () {
-    return 0.0001;
-  },
+  _getAutoScrollStopEpsilon(): any {
+    return 0.0001
+  }
 
-  _fltEqualZero: function (point) {
-    return (Math.abs(point.x) <= 0.0001 && Math.abs(point.y) <= 0.0001);
-  },
+  _fltEqualZero(point): any {
+    return Math.abs(point.x) <= 0.0001 && Math.abs(point.y) <= 0.0001
+  }
 
-  _processAutoScrolling: function (deltaTime) {
-    var OUT_OF_BOUNDARY_BREAKING_FACTOR = 0.05;
+  _processAutoScrolling(deltaTime): any {
+    const OUT_OF_BOUNDARY_BREAKING_FACTOR = 0.05
     // Make auto scroll shorter if it needs to deaccelerate.
-    var brakingFactor = (this._isNecessaryAutoScrollBrake() ? OUT_OF_BOUNDARY_BREAKING_FACTOR : 1);
+    const brakingFactor = this._isNecessaryAutoScrollBrake() ? OUT_OF_BOUNDARY_BREAKING_FACTOR : 1
 
     // Elapsed time
-    this._autoScrollAccumulatedTime += deltaTime * (1 / brakingFactor);
+    this._autoScrollAccumulatedTime += deltaTime * (1 / brakingFactor)
 
     // Calculate the progress percentage
-    var percentage = Math.min(1, this._autoScrollAccumulatedTime / this._autoScrollTotalTime);
+    let percentage = Math.min(1, this._autoScrollAccumulatedTime / this._autoScrollTotalTime)
     if (this._autoScrollAttenuate) {
-      percentage -= 1;
-      percentage = percentage * percentage * percentage * percentage * percentage + 1;
+      percentage -= 1
+      percentage = percentage * percentage * percentage * percentage * percentage + 1
     }
 
     // Calculate the new position
-    var newPosition = pAdd(this._autoScrollStartPosition, pMult(this._autoScrollTargetDelta, percentage));
-    var reachedEnd = Math.abs(percentage - 1) <= this._getAutoScrollStopEpsilon();
+    let newPosition = pAdd(this._autoScrollStartPosition, pMult(this._autoScrollTargetDelta, percentage))
+    let reachedEnd = Math.abs(percentage - 1) <= this._getAutoScrollStopEpsilon()
 
     if (this.bounceEnabled) {
       // The new position is adjusted if out of boundary
-      newPosition = pAdd(this._autoScrollBrakingStartPosition, pMult(pSub(newPosition, this._autoScrollBrakingStartPosition), brakingFactor));
-    }
-    else {
+      newPosition = pAdd(
+        this._autoScrollBrakingStartPosition,
+        pMult(pSub(newPosition, this._autoScrollBrakingStartPosition), brakingFactor),
+      )
+    } else {
       // Don't let go out of boundary
-      var moveDelta = pSub(newPosition, this.getInnerContainerPosition());
-      var outOfBoundary = this._getHowMuchOutOfBoundary(moveDelta);
+      const moveDelta = pSub(newPosition, this.getInnerContainerPosition())
+      const outOfBoundary = this._getHowMuchOutOfBoundary(moveDelta)
       if (!this._fltEqualZero(outOfBoundary)) {
-        newPosition.x += outOfBoundary.x;
-        newPosition.y += outOfBoundary.y;
+        newPosition.x += outOfBoundary.x
+        newPosition.y += outOfBoundary.y
 
-        reachedEnd = true;
+        reachedEnd = true
       }
     }
 
     // Finish auto scroll if it ended
     if (reachedEnd) {
-      this._autoScrolling = false;
-      this._dispatchEvent(ccui.ScrollView.EVENT_AUTOSCROLL_ENDED);
+      this._autoScrolling = false
+      this._dispatchEvent(ScrollView.EVENT_AUTOSCROLL_ENDED)
     }
 
-    this._moveInnerContainer(pSub(newPosition, this.getInnerContainerPosition()), reachedEnd);
-  },
+    this._moveInnerContainer(pSub(newPosition, this.getInnerContainerPosition()), reachedEnd)
+  }
 
-  _jumpToDestination: function (desOrX, y) {
+  _jumpToDestination(desOrX, y): any {
     if (desOrX.x === undefined) {
-      desOrX = p(desOrX, y);
+      desOrX = p(desOrX, y)
     }
 
-    this._autoScrolling = false;
-    this._moveInnerContainer(pSub(desOrX, this.getInnerContainerPosition()), true);
-  },
+    this._autoScrolling = false
+    this._moveInnerContainer(pSub(desOrX, this.getInnerContainerPosition()), true)
+  }
 
-  _scrollChildren: function (deltaMove) {
-    var realMove = deltaMove;
+  _scrollChildren(deltaMove): any {
+    const realMove = deltaMove
     if (this.bounceEnabled) {
       // If the position of the inner container is out of the boundary, the offsets should be divided by two.
-      var outOfBoundary = this._getHowMuchOutOfBoundary();
-      realMove.x *= (outOfBoundary.x == 0 ? 1 : 0.5);
-      realMove.y *= (outOfBoundary.y == 0 ? 1 : 0.5);
+      var outOfBoundary = this._getHowMuchOutOfBoundary()
+      realMove.x *= outOfBoundary.x == 0 ? 1 : 0.5
+      realMove.y *= outOfBoundary.y == 0 ? 1 : 0.5
     }
 
     if (!this.bounceEnabled) {
-      var outOfBoundary = this._getHowMuchOutOfBoundary(realMove);
-      realMove.x += outOfBoundary.x;
-      realMove.y += outOfBoundary.y;
+      var outOfBoundary = this._getHowMuchOutOfBoundary(realMove)
+      realMove.x += outOfBoundary.x
+      realMove.y += outOfBoundary.y
     }
 
-    var scrolledToLeft = false;
-    var scrolledToRight = false;
-    var scrolledToTop = false;
-    var scrolledToBottom = false;
+    let scrolledToLeft = false
+    let scrolledToRight = false
+    let scrolledToTop = false
+    let scrolledToBottom = false
 
     if (realMove.y > 0.0) // up
     {
-      var icBottomPos = this._innerContainer.getBottomBoundary();
+      const icBottomPos = this._innerContainer.getBottomBoundary()
       if (icBottomPos + realMove.y >= this._bottomBoundary) {
-        scrolledToBottom = true;
+        scrolledToBottom = true
       }
-    }
-    else if (realMove.y < 0.0) // down
+    } else if (realMove.y < 0.0) // down
     {
-      var icTopPos = this._innerContainer.getTopBoundary();
+      const icTopPos = this._innerContainer.getTopBoundary()
       if (icTopPos + realMove.y <= this._topBoundary) {
-        scrolledToTop = true;
+        scrolledToTop = true
       }
     }
 
     if (realMove.x < 0.0) // left
     {
-      var icRightPos = this._innerContainer.getRightBoundary();
+      const icRightPos = this._innerContainer.getRightBoundary()
       if (icRightPos + realMove.x <= this._rightBoundary) {
-        scrolledToRight = true;
+        scrolledToRight = true
       }
-    }
-    else if (realMove.x > 0.0) // right
+    } else if (realMove.x > 0.0) // right
     {
-      var icLeftPos = this._innerContainer.getLeftBoundary();
+      const icLeftPos = this._innerContainer.getLeftBoundary()
       if (icLeftPos + realMove.x >= this._leftBoundary) {
-        scrolledToLeft = true;
+        scrolledToLeft = true
       }
     }
-    this._moveInnerContainer(realMove, false);
+    this._moveInnerContainer(realMove, false)
 
     if (realMove.x != 0 || realMove.y != 0) {
-      this._processScrollingEvent();
+      this._processScrollingEvent()
     }
     if (scrolledToBottom) {
-      this._processScrollEvent(ccui.ScrollView.MOVEDIR_BOTTOM, false);
+      this._processScrollEvent(ScrollView.MOVEDIR_BOTTOM, false)
     }
     if (scrolledToTop) {
-      this._processScrollEvent(ccui.ScrollView.MOVEDIR_TOP, false);
+      this._processScrollEvent(ScrollView.MOVEDIR_TOP, false)
     }
     if (scrolledToLeft) {
-      this._processScrollEvent(ccui.ScrollView.MOVEDIR_LEFT, false);
+      this._processScrollEvent(ScrollView.MOVEDIR_LEFT, false)
     }
     if (scrolledToRight) {
-      this._processScrollEvent(ccui.ScrollView.MOVEDIR_RIGHT, false);
+      this._processScrollEvent(ScrollView.MOVEDIR_RIGHT, false)
     }
-  },
+  }
 
   /**
    * Scroll inner container to bottom boundary of ScrollView.
    * @param {Number} time
    * @param {Boolean} attenuated
    */
-  scrollToBottom: function (time, attenuated) {
-    this._startAutoScrollToDestination(p(this._innerContainer.getPositionX(), 0), time, attenuated);
-  },
+  scrollToBottom(time, attenuated): any {
+    this._startAutoScrollToDestination(p(this._innerContainer.getPositionX(), 0), time, attenuated)
+  }
 
   /**
    * Scroll inner container to top boundary of ScrollView.
    * @param {Number} time
    * @param {Boolean} attenuated
    */
-  scrollToTop: function (time, attenuated) {
+  scrollToTop(time, attenuated): any {
     this._startAutoScrollToDestination(
-      p(this._innerContainer.getPositionX(), this._contentSize.height - this._innerContainer.getContentSize().height), time, attenuated);
-  },
+      p(this._innerContainer.getPositionX(), this._contentSize.height - this._innerContainer.getContentSize().height),
+      time,
+      attenuated,
+    )
+  }
 
   /**
    * Scroll inner container to left boundary of ScrollView.
    * @param {Number} time
    * @param {Boolean} attenuated
    */
-  scrollToLeft: function (time, attenuated) {
-    this._startAutoScrollToDestination(p(0, this._innerContainer.getPositionY()), time, attenuated);
-  },
+  scrollToLeft(time, attenuated): any {
+    this._startAutoScrollToDestination(p(0, this._innerContainer.getPositionY()), time, attenuated)
+  }
 
   /**
    * Scroll inner container to right boundary of ScrollView.
    * @param {Number} time
    * @param {Boolean} attenuated
    */
-  scrollToRight: function (time, attenuated) {
+  scrollToRight(time, attenuated): any {
     this._startAutoScrollToDestination(
-      p(this._contentSize.width - this._innerContainer.getContentSize().width, this._innerContainer.getPositionY()), time, attenuated);
-  },
+      p(this._contentSize.width - this._innerContainer.getContentSize().width, this._innerContainer.getPositionY()),
+      time,
+      attenuated,
+    )
+  }
 
   /**
    * Scroll inner container to top and left boundary of ScrollView.
    * @param {Number} time
    * @param {Boolean} attenuated
    */
-  scrollToTopLeft: function (time, attenuated) {
-    if (this._direction !== ccui.ScrollView.DIR_BOTH) {
-      log("Scroll direction is not both!");
-      return;
+  scrollToTopLeft(time, attenuated): any {
+    if (this._direction !== ScrollView.DIR_BOTH) {
+      log('Scroll direction is not both!')
+      return
     }
-    this._startAutoScrollToDestination(p(0, this._contentSize.height - this._innerContainer.getContentSize().height), time, attenuated);
-  },
+    this._startAutoScrollToDestination(p(0, this._contentSize.height - this._innerContainer.getContentSize().height), time, attenuated)
+  }
 
   /**
    * Scroll inner container to top and right boundary of ScrollView.
    * @param {Number} time
    * @param {Boolean} attenuated
    */
-  scrollToTopRight: function (time, attenuated) {
-    if (this._direction !== ccui.ScrollView.DIR_BOTH) {
-      log("Scroll direction is not both!");
-      return;
+  scrollToTopRight(time, attenuated): any {
+    if (this._direction !== ScrollView.DIR_BOTH) {
+      log('Scroll direction is not both!')
+      return
     }
-    var inSize = this._innerContainer.getContentSize();
-    this._startAutoScrollToDestination(p(this._contentSize.width - inSize.width,
-      this._contentSize.height - inSize.height), time, attenuated);
-  },
+    const inSize = this._innerContainer.getContentSize()
+    this._startAutoScrollToDestination(
+      p(this._contentSize.width - inSize.width, this._contentSize.height - inSize.height),
+      time,
+      attenuated,
+    )
+  }
 
   /**
    * Scroll inner container to bottom and left boundary of ScrollView.
    * @param {Number} time
    * @param {Boolean} attenuated
    */
-  scrollToBottomLeft: function (time, attenuated) {
-    if (this._direction !== ccui.ScrollView.DIR_BOTH) {
-      log("Scroll direction is not both!");
-      return;
+  scrollToBottomLeft(time, attenuated): any {
+    if (this._direction !== ScrollView.DIR_BOTH) {
+      log('Scroll direction is not both!')
+      return
     }
-    this._startAutoScrollToDestination(p(0, 0), time, attenuated);
-  },
+    this._startAutoScrollToDestination(p(0, 0), time, attenuated)
+  }
 
   /**
    * Scroll inner container to bottom and right boundary of ScrollView.
    * @param {Number} time
    * @param {Boolean} attenuated
    */
-  scrollToBottomRight: function (time, attenuated) {
-    if (this._direction !== ccui.ScrollView.DIR_BOTH) {
-      log("Scroll direction is not both!");
-      return;
+  scrollToBottomRight(time, attenuated): any {
+    if (this._direction !== ScrollView.DIR_BOTH) {
+      log('Scroll direction is not both!')
+      return
     }
-    this._startAutoScrollToDestination(p(this._contentSize.width - this._innerContainer.getContentSize().width, 0), time, attenuated);
-  },
+    this._startAutoScrollToDestination(p(this._contentSize.width - this._innerContainer.getContentSize().width, 0), time, attenuated)
+  }
 
   /**
    * Scroll inner container to vertical percent position of ScrollView.
@@ -905,11 +893,11 @@ export const ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
    * @param {Number} time
    * @param {Boolean} attenuated
    */
-  scrollToPercentVertical: function (percent, time, attenuated) {
-    var minY = this._contentSize.height - this._innerContainer.getContentSize().height;
-    var h = -minY;
-    this._startAutoScrollToDestination(p(this._innerContainer.getPositionX(), minY + percent * h / 100), time, attenuated);
-  },
+  scrollToPercentVertical(percent, time, attenuated): any {
+    const minY = this._contentSize.height - this._innerContainer.getContentSize().height
+    const h = -minY
+    this._startAutoScrollToDestination(p(this._innerContainer.getPositionX(), minY + (percent * h) / 100), time, attenuated)
+  }
 
   /**
    * Scroll inner container to horizontal percent position of ScrollView.
@@ -917,10 +905,10 @@ export const ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
    * @param {Number} time
    * @param {Boolean} attenuated
    */
-  scrollToPercentHorizontal: function (percent, time, attenuated) {
-    var w = this._innerContainer.getContentSize().width - this._contentSize.width;
-    this._startAutoScrollToDestination(p(-(percent * w / 100), this._innerContainer.getPositionY()), time, attenuated);
-  },
+  scrollToPercentHorizontal(percent, time, attenuated): any {
+    const w = this._innerContainer.getContentSize().width - this._contentSize.width
+    this._startAutoScrollToDestination(p(-((percent * w) / 100), this._innerContainer.getPositionY()), time, attenuated)
+  }
 
   /**
    * Scroll inner container to both _direction percent position of ScrollView.
@@ -928,326 +916,312 @@ export const ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
    * @param {Number} time
    * @param {Boolean} attenuated
    */
-  scrollToPercentBothDirection: function (percent, time, attenuated) {
-    if (this._direction !== ccui.ScrollView.DIR_BOTH)
-      return;
-    var minY = this._contentSize.height - this._innerContainer.getContentSize().height;
-    var h = -minY;
-    var w = this._innerContainer.getContentSize().width - this._contentSize.width;
-    this._startAutoScrollToDestination(p(-(percent.x * w / 100), minY + percent.y * h / 100), time, attenuated);
-  },
+  scrollToPercentBothDirection(percent, time, attenuated): any {
+    if (this._direction !== ScrollView.DIR_BOTH) return
+    const minY = this._contentSize.height - this._innerContainer.getContentSize().height
+    const h = -minY
+    const w = this._innerContainer.getContentSize().width - this._contentSize.width
+    this._startAutoScrollToDestination(p(-((percent.x * w) / 100), minY + (percent.y * h) / 100), time, attenuated)
+  }
 
   /**
    * Move inner container to bottom boundary of ScrollView.
    */
-  jumpToBottom: function () {
-    this._jumpToDestination(this._innerContainer.getPositionX(), 0);
-  },
+  jumpToBottom(): any {
+    this._jumpToDestination(this._innerContainer.getPositionX(), 0)
+  }
 
   /**
    * Move inner container to top boundary of ScrollView.
    */
-  jumpToTop: function () {
-    this._jumpToDestination(this._innerContainer.getPositionX(), this._contentSize.height - this._innerContainer.getContentSize().height);
-  },
+  jumpToTop(): any {
+    this._jumpToDestination(this._innerContainer.getPositionX(), this._contentSize.height - this._innerContainer.getContentSize().height)
+  }
 
   /**
    * Move inner container to left boundary of ScrollView.
    */
-  jumpToLeft: function () {
-    this._jumpToDestination(0, this._innerContainer.getPositionY());
-  },
+  jumpToLeft(): any {
+    this._jumpToDestination(0, this._innerContainer.getPositionY())
+  }
 
   /**
    * Move inner container to right boundary of ScrollView.
    */
-  jumpToRight: function () {
-    this._jumpToDestination(this._contentSize.width - this._innerContainer.getContentSize().width, this._innerContainer.getPositionY());
-  },
+  jumpToRight(): any {
+    this._jumpToDestination(this._contentSize.width - this._innerContainer.getContentSize().width, this._innerContainer.getPositionY())
+  }
 
   /**
    * Move inner container to top and left boundary of ScrollView.
    */
-  jumpToTopLeft: function () {
-    if (this._direction !== ccui.ScrollView.DIR_BOTH) {
-      log("Scroll _direction is not both!");
-      return;
+  jumpToTopLeft(): any {
+    if (this._direction !== ScrollView.DIR_BOTH) {
+      log('Scroll _direction is not both!')
+      return
     }
-    this._jumpToDestination(0, this._contentSize.height - this._innerContainer.getContentSize().height);
-  },
+    this._jumpToDestination(0, this._contentSize.height - this._innerContainer.getContentSize().height)
+  }
 
   /**
    * Move inner container to top and right boundary of ScrollView.
    */
-  jumpToTopRight: function () {
-    if (this._direction !== ccui.ScrollView.DIR_BOTH) {
-      log("Scroll _direction is not both!");
-      return;
+  jumpToTopRight(): any {
+    if (this._direction !== ScrollView.DIR_BOTH) {
+      log('Scroll _direction is not both!')
+      return
     }
-    var inSize = this._innerContainer.getContentSize();
-    this._jumpToDestination(this._contentSize.width - inSize.width, this._contentSize.height - inSize.height);
-  },
+    const inSize = this._innerContainer.getContentSize()
+    this._jumpToDestination(this._contentSize.width - inSize.width, this._contentSize.height - inSize.height)
+  }
 
   /**
    * Move inner container to bottom and left boundary of ScrollView.
    */
-  jumpToBottomLeft: function () {
-    if (this._direction !== ccui.ScrollView.DIR_BOTH) {
-      log("Scroll _direction is not both!");
-      return;
+  jumpToBottomLeft(): any {
+    if (this._direction !== ScrollView.DIR_BOTH) {
+      log('Scroll _direction is not both!')
+      return
     }
-    this._jumpToDestination(0, 0);
-  },
+    this._jumpToDestination(0, 0)
+  }
 
   /**
    * Move inner container to bottom and right boundary of ScrollView.
    */
-  jumpToBottomRight: function () {
-    if (this._direction !== ccui.ScrollView.DIR_BOTH) {
-      log("Scroll _direction is not both!");
-      return;
+  jumpToBottomRight(): any {
+    if (this._direction !== ScrollView.DIR_BOTH) {
+      log('Scroll _direction is not both!')
+      return
     }
-    this._jumpToDestination(this._contentSize.width - this._innerContainer.getContentSize().width, 0);
-  },
+    this._jumpToDestination(this._contentSize.width - this._innerContainer.getContentSize().width, 0)
+  }
 
   /**
    * Move inner container to vertical percent position of ScrollView.
    * @param {Number} percent The destination vertical percent, accept value between 0 - 100
    */
-  jumpToPercentVertical: function (percent) {
-    var minY = this._contentSize.height - this._innerContainer.getContentSize().height;
-    var h = -minY;
-    this._jumpToDestination(this._innerContainer.getPositionX(), minY + percent * h / 100);
-  },
+  jumpToPercentVertical(percent): any {
+    const minY = this._contentSize.height - this._innerContainer.getContentSize().height
+    const h = -minY
+    this._jumpToDestination(this._innerContainer.getPositionX(), minY + (percent * h) / 100)
+  }
 
   /**
    * Move inner container to horizontal percent position of ScrollView.
    * @param {Number} percent The destination vertical percent, accept value between 0 - 100
    */
-  jumpToPercentHorizontal: function (percent) {
-    var w = this._innerContainer.getContentSize().width - this._contentSize.width;
-    this._jumpToDestination(-(percent * w / 100), this._innerContainer.getPositionY());
-  },
+  jumpToPercentHorizontal(percent): any {
+    const w = this._innerContainer.getContentSize().width - this._contentSize.width
+    this._jumpToDestination(-((percent * w) / 100), this._innerContainer.getPositionY())
+  }
 
   /**
    * Move inner container to both _direction percent position of ScrollView.
    * @param {Point} percent The destination vertical percent, accept value between 0 - 100
    */
-  jumpToPercentBothDirection: function (percent) {
-    if (this._direction !== ccui.ScrollView.DIR_BOTH)
-      return;
-    var inSize = this._innerContainer.getContentSize();
-    var minY = this._contentSize.height - inSize.height;
-    var h = -minY;
-    var w = inSize.width - this._contentSize.width;
-    this._jumpToDestination(-(percent.x * w / 100), minY + percent.y * h / 100);
-  },
+  jumpToPercentBothDirection(percent): any {
+    if (this._direction !== ScrollView.DIR_BOTH) return
+    const inSize = this._innerContainer.getContentSize()
+    const minY = this._contentSize.height - inSize.height
+    const h = -minY
+    const w = inSize.width - this._contentSize.width
+    this._jumpToDestination(-((percent.x * w) / 100), minY + (percent.y * h) / 100)
+  }
 
-  _gatherTouchMove: function (delta) {
-    var NUMBER_OF_GATHERED_TOUCHES_FOR_MOVE_SPEED = 5;
+  _gatherTouchMove(delta): any {
+    const NUMBER_OF_GATHERED_TOUCHES_FOR_MOVE_SPEED = 5
     while (this._touchMoveDisplacements.length >= NUMBER_OF_GATHERED_TOUCHES_FOR_MOVE_SPEED) {
-      this._touchMoveDisplacements.splice(0, 1);
+      this._touchMoveDisplacements.splice(0, 1)
       this._touchMoveTimeDeltas.splice(0, 1)
     }
-    this._touchMoveDisplacements.push(delta);
+    this._touchMoveDisplacements.push(delta)
 
-    var timestamp = (new Date()).getTime();
-    this._touchMoveTimeDeltas.push((timestamp - this._touchMovePreviousTimestamp) / 1000);
-    this._touchMovePreviousTimestamp = timestamp;
-  },
+    const timestamp = new Date().getTime()
+    this._touchMoveTimeDeltas.push((timestamp - this._touchMovePreviousTimestamp) / 1000)
+    this._touchMovePreviousTimestamp = timestamp
+  }
 
-  _handlePressLogic: function (touch) {
-    this._bePressed = true;
-    this._autoScrolling = false;
+  _handlePressLogic(touch): any {
+    this._bePressed = true
+    this._autoScrolling = false
 
     // Clear gathered touch move information
 
-    this._touchMovePreviousTimestamp = (new Date()).getTime();
-    this._touchMoveDisplacements.length = 0;
-    this._touchMoveTimeDeltas.length = 0;
-
+    this._touchMovePreviousTimestamp = new Date().getTime()
+    this._touchMoveDisplacements.length = 0
+    this._touchMoveTimeDeltas.length = 0
 
     if (this._verticalScrollBar) {
-      this._verticalScrollBar.onTouchBegan();
+      this._verticalScrollBar.onTouchBegan()
     }
     if (this._horizontalScrollBar) {
-      this._horizontalScrollBar.onTouchBegan();
+      this._horizontalScrollBar.onTouchBegan()
     }
-  },
+  }
 
-  _handleMoveLogic: function (touch) {
-    var touchPositionInNodeSpace = this.convertToNodeSpace(touch.getLocation()),
-      previousTouchPositionInNodeSpace = this.convertToNodeSpace(touch.getPreviousLocation());
-    var delta = pSub(touchPositionInNodeSpace, previousTouchPositionInNodeSpace);
+  _handleMoveLogic(touch): any {
+    const touchPositionInNodeSpace = this.convertToNodeSpace(touch.getLocation()),
+      previousTouchPositionInNodeSpace = this.convertToNodeSpace(touch.getPreviousLocation())
+    const delta = pSub(touchPositionInNodeSpace, previousTouchPositionInNodeSpace)
 
-    this._scrollChildren(delta);
-    this._gatherTouchMove(delta);
-  },
+    this._scrollChildren(delta)
+    this._gatherTouchMove(delta)
+  }
 
-  _handleReleaseLogic: function (touch) {
+  _handleReleaseLogic(touch): any {
+    const touchPositionInNodeSpace = this.convertToNodeSpace(touch.getLocation()),
+      previousTouchPositionInNodeSpace = this.convertToNodeSpace(touch.getPreviousLocation())
+    const delta = pSub(touchPositionInNodeSpace, previousTouchPositionInNodeSpace)
 
-    var touchPositionInNodeSpace = this.convertToNodeSpace(touch.getLocation()),
-      previousTouchPositionInNodeSpace = this.convertToNodeSpace(touch.getPreviousLocation());
-    var delta = pSub(touchPositionInNodeSpace, previousTouchPositionInNodeSpace);
+    this._gatherTouchMove(delta)
 
-    this._gatherTouchMove(delta);
+    this._bePressed = false
 
-    this._bePressed = false;
-
-    var bounceBackStarted = this._startBounceBackIfNeeded();
+    const bounceBackStarted = this._startBounceBackIfNeeded()
     if (!bounceBackStarted && this.inertiaScrollEnabled) {
-      var touchMoveVelocity = this._calculateTouchMoveVelocity();
+      const touchMoveVelocity = this._calculateTouchMoveVelocity()
       if (touchMoveVelocity.x !== 0 || touchMoveVelocity.y !== 0) {
-        this._startInertiaScroll(touchMoveVelocity);
+        this._startInertiaScroll(touchMoveVelocity)
       }
     }
 
     if (this._verticalScrollBar) {
-      this._verticalScrollBar.onTouchEnded();
+      this._verticalScrollBar.onTouchEnded()
     }
     if (this._horizontalScrollBar) {
-      this._horizontalScrollBar.onTouchEnded();
+      this._horizontalScrollBar.onTouchEnded()
     }
-  },
+  }
 
   /**
-   * The touch began event callback handler of ccui.ScrollView.
+   * The touch began event callback handler of ScrollView.
    * @param {Touch} touch
    * @param {Event} event
    * @returns {boolean}
    */
-  onTouchBegan: function (touch, event) {
-    var pass = ccui.Layout.prototype.onTouchBegan.call(this, touch, event);
+  onTouchBegan(touch, event): any {
+    const pass = Layout.prototype.onTouchBegan.call(this, touch, event)
     if (!this._isInterceptTouch) {
-      if (this._hit)
-        this._handlePressLogic(touch);
+      if (this._hit) this._handlePressLogic(touch)
     }
-    return pass;
-  },
+    return pass
+  }
 
   /**
-   * The touch moved event callback handler of ccui.ScrollView.
+   * The touch moved event callback handler of ScrollView.
    * @param {Touch} touch
    * @param {Event} event
    */
-  onTouchMoved: function (touch, event) {
-    ccui.Layout.prototype.onTouchMoved.call(this, touch, event);
-    if (!this._isInterceptTouch)
-      this._handleMoveLogic(touch);
-  },
+  onTouchMoved(touch, event): any {
+    Layout.prototype.onTouchMoved.call(this, touch, event)
+    if (!this._isInterceptTouch) this._handleMoveLogic(touch)
+  }
 
   /**
-   * The touch ended event callback handler of ccui.ScrollView.
+   * The touch ended event callback handler of ScrollView.
    * @param {Touch} touch
    * @param {Event} event
    */
-  onTouchEnded: function (touch, event) {
-    ccui.Layout.prototype.onTouchEnded.call(this, touch, event);
-    if (!this._isInterceptTouch)
-      this._handleReleaseLogic(touch);
-    this._isInterceptTouch = false;
-  },
+  onTouchEnded(touch, event): any {
+    Layout.prototype.onTouchEnded.call(this, touch, event)
+    if (!this._isInterceptTouch) this._handleReleaseLogic(touch)
+    this._isInterceptTouch = false
+  }
 
   /**
-   * The touch canceled event callback of ccui.ScrollView.
+   * The touch canceled event callback of ScrollView.
    * @param {Touch} touch
    * @param {Event} event
    */
-  onTouchCancelled: function (touch, event) {
-    ccui.Layout.prototype.onTouchCancelled.call(this, touch, event);
-    if (!this._isInterceptTouch)
-      this._handleReleaseLogic(touch);
-    this._isInterceptTouch = false;
-  },
+  onTouchCancelled(touch, event): any {
+    Layout.prototype.onTouchCancelled.call(this, touch, event)
+    if (!this._isInterceptTouch) this._handleReleaseLogic(touch)
+    this._isInterceptTouch = false
+  }
 
   /**
    * The update callback handler.
    * @param {Number} dt
    */
-  update: function (dt) {
-    if (this._autoScrolling)
-      this._processAutoScrolling(dt);
-  },
+  update(dt): any {
+    if (this._autoScrolling) this._processAutoScrolling(dt)
+  }
 
   /**
    * Intercept touch event, handle its child's touch event.
    * @override
    * @param {number} event event type
-   * @param {ccui.Widget} sender
+   * @param {Widget} sender
    * @param {Touch} touch
    */
-  interceptTouchEvent: function (event, sender, touch) {
+  interceptTouchEvent(event, sender, touch): any {
     if (!this._touchEnabled) {
-      ccui.Layout.prototype.interceptTouchEvent.call(this, event, sender, touch);
-      return;
+      Layout.prototype.interceptTouchEvent.call(this, event, sender, touch)
+      return
     }
 
-    if (this._direction === ccui.ScrollView.DIR_NONE)
-      return;
+    if (this._direction === ScrollView.DIR_NONE) return
 
-    var touchPoint = touch.getLocation();
+    const touchPoint = touch.getLocation()
     switch (event) {
-      case ccui.Widget.TOUCH_BEGAN:
-        this._isInterceptTouch = true;
-        this._touchBeganPosition.x = touchPoint.x;
-        this._touchBeganPosition.y = touchPoint.y;
-        this._handlePressLogic(touch);
-        break;
-      case ccui.Widget.TOUCH_MOVED:
-        var offset = pLength(pSub(sender.getTouchBeganPosition(), touchPoint));
-        this._touchMovePosition.x = touchPoint.x;
-        this._touchMovePosition.y = touchPoint.y;
+      case Widget.TOUCH_BEGAN:
+        this._isInterceptTouch = true
+        this._touchBeganPosition.x = touchPoint.x
+        this._touchBeganPosition.y = touchPoint.y
+        this._handlePressLogic(touch)
+        break
+      case Widget.TOUCH_MOVED:
+        var offset = pLength(pSub(sender.getTouchBeganPosition(), touchPoint))
+        this._touchMovePosition.x = touchPoint.x
+        this._touchMovePosition.y = touchPoint.y
         if (offset > this._childFocusCancelOffset) {
-          sender.setHighlighted(false);
-          this._handleMoveLogic(touch);
+          sender.setHighlighted(false)
+          this._handleMoveLogic(touch)
         }
-        break;
-      case ccui.Widget.TOUCH_CANCELED:
-      case ccui.Widget.TOUCH_ENDED:
-        this._touchEndPosition.x = touchPoint.x;
-        this._touchEndPosition.y = touchPoint.y;
-        this._handleReleaseLogic(touch);
-        if (sender.isSwallowTouches())
-          this._isInterceptTouch = false;
-        break;
+        break
+      case Widget.TOUCH_CANCELED:
+      case Widget.TOUCH_ENDED:
+        this._touchEndPosition.x = touchPoint.x
+        this._touchEndPosition.y = touchPoint.y
+        this._handleReleaseLogic(touch)
+        if (sender.isSwallowTouches()) this._isInterceptTouch = false
+        break
     }
-  },
+  }
 
-  _processScrollEvent: function (_directionEvent, bounce) {
-    var event = 0;
+  _processScrollEvent(_directionEvent, bounce): any {
+    let event = 0
 
     switch (_directionEvent) {
-      case ccui.ScrollView.MOVEDIR_TOP:
-        event = (bounce ? ccui.ScrollView.EVENT_BOUNCE_TOP : ccui.ScrollView.EVENT_SCROLL_TO_TOP);
-        break;
-      case ccui.ScrollView.MOVEDIR_BOTTOM:
-        event = (bounce ? ccui.ScrollView.EVENT_BOUNCE_BOTTOM : ccui.ScrollView.EVENT_SCROLL_TO_BOTTOM);
-        break;
-      case ccui.ScrollView.MOVEDIR_LEFT:
-        event = (bounce ? ccui.ScrollView.EVENT_BOUNCE_LEFT : ccui.ScrollView.EVENT_SCROLL_TO_LEFT);
-        break;
-      case ccui.ScrollView.MOVEDIR_RIGHT:
-        event = (bounce ? ccui.ScrollView.EVENT_BOUNCE_RIGHT : ccui.ScrollView.EVENT_SCROLL_TO_RIGHT);
-        break;
+      case ScrollView.MOVEDIR_TOP:
+        event = bounce ? ScrollView.EVENT_BOUNCE_TOP : ScrollView.EVENT_SCROLL_TO_TOP
+        break
+      case ScrollView.MOVEDIR_BOTTOM:
+        event = bounce ? ScrollView.EVENT_BOUNCE_BOTTOM : ScrollView.EVENT_SCROLL_TO_BOTTOM
+        break
+      case ScrollView.MOVEDIR_LEFT:
+        event = bounce ? ScrollView.EVENT_BOUNCE_LEFT : ScrollView.EVENT_SCROLL_TO_LEFT
+        break
+      case ScrollView.MOVEDIR_RIGHT:
+        event = bounce ? ScrollView.EVENT_BOUNCE_RIGHT : ScrollView.EVENT_SCROLL_TO_RIGHT
+        break
     }
 
-    this._dispatchEvent(event);
-  },
+    this._dispatchEvent(event)
+  }
 
-  _processScrollingEvent: function () {
-    this._dispatchEvent(ccui.ScrollView.EVENT_SCROLLING);
-  },
+  _processScrollingEvent(): any {
+    this._dispatchEvent(ScrollView.EVENT_SCROLLING)
+  }
 
-  _dispatchEvent: function (event) {
+  _dispatchEvent(event): any {
     if (this._scrollViewEventSelector) {
-      if (this._scrollViewEventListener)
-        this._scrollViewEventSelector.call(this._scrollViewEventListener, this, event);
-      else
-        this._scrollViewEventSelector(this, event);
+      if (this._scrollViewEventListener) this._scrollViewEventSelector.call(this._scrollViewEventListener, this, event)
+      else this._scrollViewEventSelector(this, event)
     }
-    if (this._ccEventCallback)
-      this._ccEventCallback(this, event);
-  },
+    if (this._ccEventCallback) this._ccEventCallback(this, event)
+  }
 
   /**
    * Adds callback function called ScrollView event triggered
@@ -1255,412 +1229,411 @@ export const ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
    * @param {Object} [target=]
    * @deprecated since v3.0, please use addEventListener instead.
    */
-  addEventListenerScrollView: function (selector, target) {
-    this._scrollViewEventSelector = selector;
-    this._scrollViewEventListener = target;
-  },
+  addEventListenerScrollView(selector, target): any {
+    this._scrollViewEventSelector = selector
+    this._scrollViewEventListener = target
+  }
 
   /**
    * Adds callback function called ScrollView event triggered
    * @param {Function} selector
    */
-  addEventListener: function (selector) {
-    this._ccEventCallback = selector;
-  },
+  addEventListener(selector): any {
+    this._ccEventCallback = selector
+  }
 
   /**
    * Changes scroll _direction of ScrollView.
-   * @param {ccui.ScrollView.DIR_NONE | ccui.ScrollView.DIR_VERTICAL | ccui.ScrollView.DIR_HORIZONTAL | ccui.ScrollView.DIR_BOTH} dir
+   * @param {ScrollView.DIR_NONE | ScrollView.DIR_VERTICAL | ScrollView.DIR_HORIZONTAL | ScrollView.DIR_BOTH} dir
    *   Direction::VERTICAL means vertical scroll, Direction::HORIZONTAL means horizontal scroll
    */
-  setDirection: function (dir) {
-    this._direction = dir;
+  setDirection(dir): any {
+    this._direction = dir
 
     if (this._scrollBarEnabled) {
-      this._removeScrollBar();
-      this._initScrollBar();
+      this._removeScrollBar()
+      this._initScrollBar()
     }
-  },
+  }
 
   /**
    * Returns scroll direction of ScrollView.
-   * @returns {ccui.ScrollView.DIR_NONE | ccui.ScrollView.DIR_VERTICAL | ccui.ScrollView.DIR_HORIZONTAL | ccui.ScrollView.DIR_BOTH}
+   * @returns {ScrollView.DIR_NONE | ScrollView.DIR_VERTICAL | ScrollView.DIR_HORIZONTAL | ScrollView.DIR_BOTH}
    */
-  getDirection: function () {
-    return this._direction;
-  },
+  getDirection(): any {
+    return this._direction
+  }
 
   /**
    * Sets bounce enabled
    * @param {Boolean} enabled
    */
-  setBounceEnabled: function (enabled) {
-    this.bounceEnabled = enabled;
-  },
+  setBounceEnabled(enabled): any {
+    this.bounceEnabled = enabled
+  }
 
   /**
    * Returns whether bounce is enabled
    * @returns {boolean}
    */
-  isBounceEnabled: function () {
-    return this.bounceEnabled;
-  },
+  isBounceEnabled(): any {
+    return this.bounceEnabled
+  }
 
   /**
    * Sets inertiaScroll enabled
    * @param {boolean} enabled
    */
-  setInertiaScrollEnabled: function (enabled) {
-    this.inertiaScrollEnabled = enabled;
-  },
+  setInertiaScrollEnabled(enabled): any {
+    this.inertiaScrollEnabled = enabled
+  }
 
   /**
    * Returns whether inertiaScroll is enabled
    * @returns {boolean}
    */
-  isInertiaScrollEnabled: function () {
-    return this.inertiaScrollEnabled;
-  },
+  isInertiaScrollEnabled(): any {
+    return this.inertiaScrollEnabled
+  }
 
   /**
    * Toggle scroll bar enabled.
    * @param {boolean} enabled True if enable scroll bar, false otherwise.
    */
-  setScrollBarEnabled: function (enabled) {
+  setScrollBarEnabled(enabled): any {
     if (this._scrollBarEnabled === enabled) {
-      return;
+      return
     }
 
     if (this._scrollBarEnabled) {
-      this._removeScrollBar();
+      this._removeScrollBar()
     }
-    this._scrollBarEnabled = enabled;
+    this._scrollBarEnabled = enabled
     if (this._scrollBarEnabled) {
-      this._initScrollBar();
+      this._initScrollBar()
     }
-  },
+  }
   /**
    * Query scroll bar state.
    * @returns {boolean} True if scroll bar is enabled, false otherwise.
    */
-  isScrollBarEnabled: function () {
-    return this._scrollBarEnabled;
-  },
+  isScrollBarEnabled(): any {
+    return this._scrollBarEnabled
+  }
 
   /**
    * Set the scroll bar positions from the left-bottom corner (horizontal) and right-top corner (vertical).
    * @param {Point} positionFromCorner The position from the left-bottom corner (horizontal) and right-top corner (vertical).
    */
-  setScrollBarPositionFromCorner: function (positionFromCorner) {
-    if (this._direction !== ccui.ScrollView.DIR_HORIZONTAL) {
-      this.setScrollBarPositionFromCornerForVertical(positionFromCorner);
+  setScrollBarPositionFromCorner(positionFromCorner): any {
+    if (this._direction !== ScrollView.DIR_HORIZONTAL) {
+      this.setScrollBarPositionFromCornerForVertical(positionFromCorner)
     }
-    if (this._direction !== ccui.ScrollView.DIR_VERTICAL) {
-      this.setScrollBarPositionFromCornerForHorizontal(positionFromCorner);
+    if (this._direction !== ScrollView.DIR_VERTICAL) {
+      this.setScrollBarPositionFromCornerForHorizontal(positionFromCorner)
     }
-  },
+  }
 
   /**
    * Set the vertical scroll bar position from right-top corner.
    * @param {Point} positionFromCorner The position from right-top corner
    */
-  setScrollBarPositionFromCornerForVertical: function (positionFromCorner) {
-    assert(this._scrollBarEnabled, "Scroll bar should be enabled!");
-    assert(this._direction !== ccui.ScrollView.DIR_HORIZONTAL, "Scroll view doesn't have a vertical scroll bar!");
-    this._verticalScrollBar.setPositionFromCorner(positionFromCorner);
-  },
+  setScrollBarPositionFromCornerForVertical(positionFromCorner): any {
+    assert(this._scrollBarEnabled, 'Scroll bar should be enabled!')
+    assert(this._direction !== ScrollView.DIR_HORIZONTAL, "Scroll view doesn't have a vertical scroll bar!")
+    this._verticalScrollBar.setPositionFromCorner(positionFromCorner)
+  }
 
   /**
    * Get the vertical scroll bar's position from right-top corner.
    * @returns {Point}
    */
-  getScrollBarPositionFromCornerForVertical: function () {
-    assert(this._scrollBarEnabled, "Scroll bar should be enabled!");
-    assert(this._direction !== ccui.ScrollView.DIR_HORIZONTAL, "Scroll view doesn't have a vertical scroll bar!");
-    return this._verticalScrollBar.getPositionFromCorner();
-  },
+  getScrollBarPositionFromCornerForVertical(): any {
+    assert(this._scrollBarEnabled, 'Scroll bar should be enabled!')
+    assert(this._direction !== ScrollView.DIR_HORIZONTAL, "Scroll view doesn't have a vertical scroll bar!")
+    return this._verticalScrollBar.getPositionFromCorner()
+  }
 
   /**
    * Set the horizontal scroll bar position from left-bottom corner.
    * @param {Point} positionFromCorner The position from left-bottom corner
    */
-  setScrollBarPositionFromCornerForHorizontal: function (positionFromCorner) {
-    assert(this._scrollBarEnabled, "Scroll bar should be enabled!");
-    assert(this._direction !== ccui.ScrollView.DIR_VERTICAL, "Scroll view doesn't have a horizontal scroll bar!");
-    this._horizontalScrollBar.setPositionFromCorner(positionFromCorner);
-  },
+  setScrollBarPositionFromCornerForHorizontal(positionFromCorner): any {
+    assert(this._scrollBarEnabled, 'Scroll bar should be enabled!')
+    assert(this._direction !== ScrollView.DIR_VERTICAL, "Scroll view doesn't have a horizontal scroll bar!")
+    this._horizontalScrollBar.setPositionFromCorner(positionFromCorner)
+  }
 
   /**
    * Get the horizontal scroll bar's position from right-top corner.
    * @returns {Point}
    */
-  getScrollBarPositionFromCornerForHorizontal: function () {
-    assert(this._scrollBarEnabled, "Scroll bar should be enabled!");
-    assert(this._direction !== ccui.ScrollView.DIR_VERTICAL, "Scroll view doesn't have a horizontal scroll bar!");
-    return this._horizontalScrollBar.getPositionFromCorner();
-  },
+  getScrollBarPositionFromCornerForHorizontal(): any {
+    assert(this._scrollBarEnabled, 'Scroll bar should be enabled!')
+    assert(this._direction !== ScrollView.DIR_VERTICAL, "Scroll view doesn't have a horizontal scroll bar!")
+    return this._horizontalScrollBar.getPositionFromCorner()
+  }
 
   /**
    * Set the scroll bar's width
    * @param {number} width The scroll bar's width
    */
-  setScrollBarWidth: function (width) {
-    assert(this._scrollBarEnabled, "Scroll bar should be enabled!");
+  setScrollBarWidth(width): any {
+    assert(this._scrollBarEnabled, 'Scroll bar should be enabled!')
     if (this._verticalScrollBar) {
-      this._verticalScrollBar.setWidth(width);
+      this._verticalScrollBar.setWidth(width)
     }
     if (this._horizontalScrollBar) {
-      this._horizontalScrollBar.setWidth(width);
+      this._horizontalScrollBar.setWidth(width)
     }
-  },
+  }
 
   /**
    * Get the scroll bar's width
    * @returns {number} the scroll bar's width
    */
-  getScrollBarWidth: function () {
-    assert(this._scrollBarEnabled, "Scroll bar should be enabled!");
+  getScrollBarWidth(): any {
+    assert(this._scrollBarEnabled, 'Scroll bar should be enabled!')
     if (this._verticalScrollBar) {
-      return this._verticalScrollBar.getWidth();
+      return this._verticalScrollBar.getWidth()
     }
     if (this._horizontalScrollBar) {
-      return this._horizontalScrollBar.getWidth();
+      return this._horizontalScrollBar.getWidth()
     }
-    return 0;
-  },
+    return 0
+  }
 
   /**
    * Set the scroll bar's color
    * @param {Color} color the scroll bar's color
    */
-  setScrollBarColor: function (color) {
-    assert(this._scrollBarEnabled, "Scroll bar should be enabled!");
+  setScrollBarColor(color): any {
+    assert(this._scrollBarEnabled, 'Scroll bar should be enabled!')
     if (this._verticalScrollBar) {
-      this._verticalScrollBar.setColor(color);
+      this._verticalScrollBar.setColor(color)
     }
     if (this._horizontalScrollBar) {
-      this._horizontalScrollBar.setColor(color);
+      this._horizontalScrollBar.setColor(color)
     }
-  },
+  }
 
   /**
    * Get the scroll bar's color
    * @returns {Color} the scroll bar's color
    */
-  getScrollBarColor: function () {
-    assert(this._scrollBarEnabled, "Scroll bar should be enabled!");
+  getScrollBarColor(): any {
+    assert(this._scrollBarEnabled, 'Scroll bar should be enabled!')
     if (this._verticalScrollBar) {
-      this._verticalScrollBar.getColor();
+      this._verticalScrollBar.getColor()
     }
     if (this._horizontalScrollBar) {
-      this._horizontalScrollBar.getColor();
+      this._horizontalScrollBar.getColor()
     }
-    return color.WHITE;
-  },
+    return color.WHITE
+  }
 
   /**
    * Set the scroll bar's opacity
    * @param {number} opacity the scroll bar's opacity
    */
-  setScrollBarOpacity: function (opacity) {
-    assert(this._scrollBarEnabled, "Scroll bar should be enabled!");
+  setScrollBarOpacity(opacity): any {
+    assert(this._scrollBarEnabled, 'Scroll bar should be enabled!')
     if (this._verticalScrollBar) {
-      this._verticalScrollBar.opacity = opacity;
+      this._verticalScrollBar.opacity = opacity
     }
     if (this._horizontalScrollBar) {
-      this._horizontalScrollBar.opacity = opacity;
+      this._horizontalScrollBar.opacity = opacity
     }
-  },
+  }
 
   /**
    * Get the scroll bar's opacity
    * @returns {number}
    */
-  getScrollBarOpacity: function () {
-    assert(this._scrollBarEnabled, "Scroll bar should be enabled!");
+  getScrollBarOpacity(): any {
+    assert(this._scrollBarEnabled, 'Scroll bar should be enabled!')
     if (this._verticalScrollBar) {
-      return this._verticalScrollBar.opacity;
+      return this._verticalScrollBar.opacity
     }
     if (this._horizontalScrollBar) {
-      return this._horizontalScrollBar.opacity;
+      return this._horizontalScrollBar.opacity
     }
-    return -1;
-  },
+    return -1
+  }
 
   /**
    * Set scroll bar auto hide state
    * @param {boolean} autoHideEnabled scroll bar auto hide state
    */
-  setScrollBarAutoHideEnabled: function (autoHideEnabled) {
-    assert(this._scrollBarEnabled, "Scroll bar should be enabled!");
+  setScrollBarAutoHideEnabled(autoHideEnabled): any {
+    assert(this._scrollBarEnabled, 'Scroll bar should be enabled!')
     if (this._verticalScrollBar) {
-      this._verticalScrollBar.autoHideEnabled = autoHideEnabled;
+      this._verticalScrollBar.autoHideEnabled = autoHideEnabled
     }
     if (this._horizontalScrollBar) {
-      this._horizontalScrollBar.autoHideEnabled = autoHideEnabled;
+      this._horizontalScrollBar.autoHideEnabled = autoHideEnabled
     }
-  },
+  }
 
   /**
    * Query scroll bar auto hide state
    * @returns {boolean}
    */
-  isScrollBarAutoHideEnabled: function () {
-    assert(this._scrollBarEnabled, "Scroll bar should be enabled!");
+  isScrollBarAutoHideEnabled(): any {
+    assert(this._scrollBarEnabled, 'Scroll bar should be enabled!')
     if (this._verticalScrollBar) {
-      return this._verticalScrollBar.autoHideEnabled;
+      return this._verticalScrollBar.autoHideEnabled
     }
     if (this._horizontalScrollBar) {
-      return this._horizontalScrollBar.autoHideEnabled;
+      return this._horizontalScrollBar.autoHideEnabled
     }
-    return false;
-  },
+    return false
+  }
 
   /**
    * Set scroll bar auto hide time
    * @param {number} autoHideTime scroll bar auto hide state
    */
-  setScrollBarAutoHideTime: function (autoHideTime) {
-    assert(this._scrollBarEnabled, "Scroll bar should be enabled!");
+  setScrollBarAutoHideTime(autoHideTime): any {
+    assert(this._scrollBarEnabled, 'Scroll bar should be enabled!')
     if (this._verticalScrollBar) {
-      this._verticalScrollBar.autoHideTime = autoHideTime;
+      this._verticalScrollBar.autoHideTime = autoHideTime
     }
     if (this._horizontalScrollBar) {
-      this._horizontalScrollBar.autoHideTime = autoHideTime;
+      this._horizontalScrollBar.autoHideTime = autoHideTime
     }
-  },
+  }
 
   /**
    * Get the scroll bar's auto hide time
    * @returns {number}
    */
-  getScrollBarAutoHideTime: function () {
-    assert(this._scrollBarEnabled, "Scroll bar should be enabled!");
+  getScrollBarAutoHideTime(): any {
+    assert(this._scrollBarEnabled, 'Scroll bar should be enabled!')
     if (this._verticalScrollBar) {
-      return this._verticalScrollBar.autoHideTime;
+      return this._verticalScrollBar.autoHideTime
     }
     if (this._horizontalScrollBar) {
-      return this._horizontalScrollBar.autoHideTime;
+      return this._horizontalScrollBar.autoHideTime
     }
-    return 0;
-  },
+    return 0
+  }
 
   /**
    * Gets inner container of ScrollView. Inner container is the container of ScrollView's children.
-   * @returns {ccui.Layout}
+   * @returns {Layout}
    */
-  getInnerContainer: function () {
-    return this._innerContainer;
-  },
+  getInnerContainer(): any {
+    return this._innerContainer
+  }
 
   /**
-   * Sets LayoutType of ccui.ScrollView.
-   * @param {ccui.Layout.ABSOLUTE|ccui.Layout.LINEAR_VERTICAL|ccui.Layout.LINEAR_HORIZONTAL|ccui.Layout.RELATIVE} type
+   * Sets LayoutType of ScrollView.
+   * @param {Layout.ABSOLUTE|Layout.LINEAR_VERTICAL|Layout.LINEAR_HORIZONTAL|Layout.RELATIVE} type
    */
-  setLayoutType: function (type) {
-    this._innerContainer.setLayoutType(type);
-  },
+  setLayoutType(type): any {
+    this._innerContainer.setLayoutType(type)
+  }
 
   /**
-   * Returns the layout type of ccui.ScrollView.
-   * @returns {ccui.Layout.ABSOLUTE|ccui.Layout.LINEAR_VERTICAL|ccui.Layout.LINEAR_HORIZONTAL|ccui.Layout.RELATIVE}
+   * Returns the layout type of ScrollView.
+   * @returns {Layout.ABSOLUTE|Layout.LINEAR_VERTICAL|Layout.LINEAR_HORIZONTAL|Layout.RELATIVE}
    */
-  getLayoutType: function () {
-    return this._innerContainer.getLayoutType();
-  },
+  getLayoutType(): any {
+    return this._innerContainer.getLayoutType()
+  }
 
-  _doLayout: function () {
-    if (!this._doLayoutDirty)
-      return;
-    this._doLayoutDirty = false;
-  },
+  _doLayout(): any {
+    if (!this._doLayoutDirty) return
+    this._doLayoutDirty = false
+  }
 
   /**
-   * Returns the "class name" of ccui.ScrollView.
+   * Returns the "class name" of ScrollView.
    * @returns {string}
    */
-  getDescription: function () {
-    return "ScrollView";
-  },
+  getDescription(): any {
+    return 'ScrollView'
+  }
 
-  _createCloneInstance: function () {
-    return new ccui.ScrollView();
-  },
+  _createCloneInstance(): any {
+    return new ScrollView()
+  }
 
-  _copyClonedWidgetChildren: function (model) {
-    ccui.Layout.prototype._copyClonedWidgetChildren.call(this, model);
-  },
+  _copyClonedWidgetChildren(model): any {
+    Layout.prototype._copyClonedWidgetChildren.call(this, model)
+  }
 
-  _copySpecialProperties: function (scrollView) {
-    if (scrollView instanceof ccui.ScrollView) {
-      ccui.Layout.prototype._copySpecialProperties.call(this, scrollView);
-      this.setInnerContainerSize(scrollView.getInnerContainerSize());
-      this.setInnerContainerPosition(scrollView.getInnerContainerPosition());
-      this.setDirection(scrollView._direction);
+  _copySpecialProperties(scrollView): any {
+    if (scrollView instanceof ScrollView) {
+      Layout.prototype._copySpecialProperties.call(this, scrollView)
+      this.setInnerContainerSize(scrollView.getInnerContainerSize())
+      this.setInnerContainerPosition(scrollView.getInnerContainerPosition())
+      this.setDirection(scrollView._direction)
 
-      this._topBoundary = scrollView._topBoundary;
-      this._bottomBoundary = scrollView._bottomBoundary;
-      this._leftBoundary = scrollView._leftBoundary;
-      this._rightBoundary = scrollView._rightBoundary;
-      this._bePressed = scrollView._bePressed;
-      this._childFocusCancelOffset = scrollView._childFocusCancelOffset;
-      this._touchMoveDisplacements = scrollView._touchMoveDisplacements;
-      this._touchMoveTimeDeltas = scrollView._touchMoveTimeDeltas;
-      this._touchMovePreviousTimestamp = scrollView._touchMovePreviousTimestamp;
-      this._autoScrolling = scrollView._autoScrolling;
-      this._autoScrollAttenuate = scrollView._autoScrollAttenuate;
-      this._autoScrollStartPosition = scrollView._autoScrollStartPosition;
-      this._autoScrollTargetDelta = scrollView._autoScrollTargetDelta;
-      this._autoScrollTotalTime = scrollView._autoScrollTotalTime;
-      this._autoScrollAccumulatedTime = scrollView._autoScrollAccumulatedTime;
-      this._autoScrollCurrentlyOutOfBoundary = scrollView._autoScrollCurrentlyOutOfBoundary;
-      this._autoScrollBraking = scrollView._autoScrollBraking;
-      this._autoScrollBrakingStartPosition = scrollView._autoScrollBrakingStartPosition;
+      this._topBoundary = scrollView._topBoundary
+      this._bottomBoundary = scrollView._bottomBoundary
+      this._leftBoundary = scrollView._leftBoundary
+      this._rightBoundary = scrollView._rightBoundary
+      this._bePressed = scrollView._bePressed
+      this._childFocusCancelOffset = scrollView._childFocusCancelOffset
+      this._touchMoveDisplacements = scrollView._touchMoveDisplacements
+      this._touchMoveTimeDeltas = scrollView._touchMoveTimeDeltas
+      this._touchMovePreviousTimestamp = scrollView._touchMovePreviousTimestamp
+      this._autoScrolling = scrollView._autoScrolling
+      this._autoScrollAttenuate = scrollView._autoScrollAttenuate
+      this._autoScrollStartPosition = scrollView._autoScrollStartPosition
+      this._autoScrollTargetDelta = scrollView._autoScrollTargetDelta
+      this._autoScrollTotalTime = scrollView._autoScrollTotalTime
+      this._autoScrollAccumulatedTime = scrollView._autoScrollAccumulatedTime
+      this._autoScrollCurrentlyOutOfBoundary = scrollView._autoScrollCurrentlyOutOfBoundary
+      this._autoScrollBraking = scrollView._autoScrollBraking
+      this._autoScrollBrakingStartPosition = scrollView._autoScrollBrakingStartPosition
 
-      this.setBounceEnabled(scrollView.bounceEnabled);
-      this.setInertiaScrollEnabled(scrollView.inertiaScrollEnabled);
+      this.setBounceEnabled(scrollView.bounceEnabled)
+      this.setInertiaScrollEnabled(scrollView.inertiaScrollEnabled)
 
-      this._scrollViewEventListener = scrollView._scrollViewEventListener;
-      this._scrollViewEventSelector = scrollView._scrollViewEventSelector;
-      this._ccEventCallback = scrollView._ccEventCallback;
+      this._scrollViewEventListener = scrollView._scrollViewEventListener
+      this._scrollViewEventSelector = scrollView._scrollViewEventSelector
+      this._ccEventCallback = scrollView._ccEventCallback
 
-      this.setScrollBarEnabled(scrollView.isScrollBarEnabled());
+      this.setScrollBarEnabled(scrollView.isScrollBarEnabled())
       if (this.isScrollBarEnabled()) {
-        if (this._direction !== ccui.ScrollView.DIR_HORIZONTAL) {
-          this.setScrollBarPositionFromCornerForVertical(scrollView.getScrollBarPositionFromCornerForVertical());
+        if (this._direction !== ScrollView.DIR_HORIZONTAL) {
+          this.setScrollBarPositionFromCornerForVertical(scrollView.getScrollBarPositionFromCornerForVertical())
         }
-        if (this._direction !== ccui.ScrollView.DIR_VERTICAL) {
-          this.setScrollBarPositionFromCornerForHorizontal(scrollView.getScrollBarPositionFromCornerForHorizontal());
+        if (this._direction !== ScrollView.DIR_VERTICAL) {
+          this.setScrollBarPositionFromCornerForHorizontal(scrollView.getScrollBarPositionFromCornerForHorizontal())
         }
-        this.setScrollBarWidth(scrollView.getScrollBarWidth());
-        this.setScrollBarColor(scrollView.getScrollBarColor());
-        this.setScrollBarAutoHideEnabled(scrollView.isScrollBarAutoHideEnabled());
-        this.setScrollBarAutoHideTime(scrollView.getScrollBarAutoHideTime());
+        this.setScrollBarWidth(scrollView.getScrollBarWidth())
+        this.setScrollBarColor(scrollView.getScrollBarColor())
+        this.setScrollBarAutoHideEnabled(scrollView.isScrollBarAutoHideEnabled())
+        this.setScrollBarAutoHideTime(scrollView.getScrollBarAutoHideTime())
       }
     }
-  },
+  }
 
-  _initScrollBar: function () {
-    if (this._direction !== ccui.ScrollView.DIR_HORIZONTAL && !this._verticalScrollBar) {
-      this._verticalScrollBar = new ccui.ScrollViewBar(this, ccui.ScrollView.DIR_VERTICAL);
-      this.addProtectedChild(this._verticalScrollBar, 2);
+  _initScrollBar(): any {
+    if (this._direction !== ScrollView.DIR_HORIZONTAL && !this._verticalScrollBar) {
+      this._verticalScrollBar = new ScrollViewBar(this, ScrollView.DIR_VERTICAL)
+      this.addProtectedChild(this._verticalScrollBar, 2)
     }
-    if (this._direction !== ccui.ScrollView.DIR_VERTICAL && !this._horizontalScrollBar) {
-      this._horizontalScrollBar = new ccui.ScrollViewBar(this, ccui.ScrollView.DIR_HORIZONTAL);
-      this.addProtectedChild(this._horizontalScrollBar, 2);
+    if (this._direction !== ScrollView.DIR_VERTICAL && !this._horizontalScrollBar) {
+      this._horizontalScrollBar = new ScrollViewBar(this, ScrollView.DIR_HORIZONTAL)
+      this.addProtectedChild(this._horizontalScrollBar, 2)
     }
-  },
+  }
 
-  _removeScrollBar: function () {
+  _removeScrollBar(): any {
     if (this._verticalScrollBar) {
-      this.removeProtectedChild(this._verticalScrollBar);
-      this._verticalScrollBar = null;
+      this.removeProtectedChild(this._verticalScrollBar)
+      this._verticalScrollBar = null
     }
     if (this._horizontalScrollBar) {
-      this.removeProtectedChild(this._horizontalScrollBar);
-      this._horizontalScrollBar = null;
+      this.removeProtectedChild(this._horizontalScrollBar)
+      this._horizontalScrollBar = null
     }
-  },
+  }
 
   /**
    * Returns a node by tag
@@ -1668,44 +1641,44 @@ export const ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
    * @returns {Node}
    * @deprecated  since v3.0, please use getChildByTag instead.
    */
-  getNodeByTag: function (tag) {
-    return this._innerContainer.getNodeByTag(tag);
-  },
+  getNodeByTag(tag): any {
+    return this._innerContainer.getNodeByTag(tag)
+  }
 
   /**
    * Returns all nodes of inner container
    * @returns {Array}
    * @deprecated since v3.0, please use getChildren instead.
    */
-  getNodes: function () {
-    return this._innerContainer.getNodes();
-  },
+  getNodes(): any {
+    return this._innerContainer.getNodes()
+  }
 
   /**
-   * Removes a node from ccui.ScrollView.
+   * Removes a node from ScrollView.
    * @param {Node} node
    * @deprecated since v3.0, please use removeChild instead.
    */
-  removeNode: function (node) {
-    this._innerContainer.removeNode(node);
-  },
+  removeNode(node): any {
+    this._innerContainer.removeNode(node)
+  }
 
   /**
    * Removes a node by tag
    * @param {Number} tag
    * @deprecated since v3.0, please use removeChildByTag instead.
    */
-  removeNodeByTag: function (tag) {
-    this._innerContainer.removeNodeByTag(tag);
-  },
+  removeNodeByTag(tag): any {
+    this._innerContainer.removeNodeByTag(tag)
+  }
 
   /**
-   * Remove all node from ccui.ScrollView.
+   * Remove all node from ScrollView.
    * @deprecated since v3.0, please use removeAllChildren instead.
    */
-  removeAllNodes: function () {
-    this._innerContainer.removeAllNodes();
-  },
+  removeAllNodes(): any {
+    this._innerContainer.removeAllNodes()
+  }
 
   /**
    * Add node for scrollView
@@ -1714,129 +1687,148 @@ export const ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
    * @param {Number} tag
    * @deprecated since v3.0, please use addChild instead.
    */
-  addNode: function (node, zOrder, tag) {
-    this._innerContainer.addNode(node, zOrder, tag);
+  addNode(node: any, zOrder: number, tag: number): any {
+    this._innerContainer.addNode(node, zOrder, tag)
   }
-});
+}
 
-var _p = ccui.ScrollView.prototype;
+// Extended properties with getter/setter
+Object.defineProperty(ScrollView.prototype, 'innerWidth', {
+  get: function () {
+    return this._getInnerWidth()
+  },
+  set: function (val) {
+    this._setInnerWidth(val)
+  },
+})
 
-// Extended properties
-/** @expose */
-_p.innerWidth;
-defineGetterSetter(_p, "innerWidth", _p._getInnerWidth, _p._setInnerWidth);
-/** @expose */
-_p.innerHeight;
-defineGetterSetter(_p, "innerHeight", _p._getInnerHeight, _p._setInnerHeight);
-/** @expose */
-_p.direction;
-defineGetterSetter(_p, "direction", _p.getDirection, _p.setDirection);
-/** @expose */
-_p.touchTotalTimeThreshold;
-defineGetterSetter(_p, "touchTotalTimeThreshold", _p.getTouchTotalTimeThreshold, _p.setTouchTotalTimeThreshold);
-_p = null;
+Object.defineProperty(ScrollView.prototype, 'innerHeight', {
+  get: function () {
+    return this._getInnerHeight()
+  },
+  set: function (val) {
+    this._setInnerHeight(val)
+  },
+})
 
+Object.defineProperty(ScrollView.prototype, 'direction', {
+  get: function () {
+    return this.getDirection()
+  },
+  set: function (val) {
+    this.setDirection(val)
+  },
+})
+
+Object.defineProperty(ScrollView.prototype, 'touchTotalTimeThreshold', {
+  get: function () {
+    return this.getTouchTotalTimeThreshold()
+  },
+  set: function (val) {
+    this.setTouchTotalTimeThreshold(val)
+  },
+})
 
 // Constants
 //ScrollView direction
 /**
- * The none flag of ccui.ScrollView's direction.
+ * The none flag of ScrollView's direction.
  * @constant
  * @type {number}
  */
-ccui.ScrollView.DIR_NONE = 0;
+ScrollView.DIR_NONE = 0
 /**
- * The vertical flag of ccui.ScrollView's direction.
+ * The vertical flag of ScrollView's direction.
  * @constant
  * @type {number}
  */
-ccui.ScrollView.DIR_VERTICAL = 1;
+ScrollView.DIR_VERTICAL = 1
 /**
- * The horizontal flag of ccui.ScrollView's direction.
+ * The horizontal flag of ScrollView's direction.
  * @constant
  * @type {number}
  */
-ccui.ScrollView.DIR_HORIZONTAL = 2;
+ScrollView.DIR_HORIZONTAL = 2
 /**
- * The both flag of ccui.ScrollView's direction.
+ * The both flag of ScrollView's direction.
  * @constant
  * @type {number}
  */
-ccui.ScrollView.DIR_BOTH = 3;
+ScrollView.DIR_BOTH = 3
 
 //ScrollView event
 /**
- * The flag scroll to top of ccui.ScrollView's event.
+ * The flag scroll to top of ScrollView's event.
  * @constant
  * @type {number}
  */
-ccui.ScrollView.EVENT_SCROLL_TO_TOP = 0;
+ScrollView.EVENT_SCROLL_TO_TOP = 0
 /**
- * The flag scroll to bottom of ccui.ScrollView's event.
+ * The flag scroll to bottom of ScrollView's event.
  * @constant
  * @type {number}
  */
-ccui.ScrollView.EVENT_SCROLL_TO_BOTTOM = 1;
+ScrollView.EVENT_SCROLL_TO_BOTTOM = 1
 /**
- * The flag scroll to left of ccui.ScrollView's event.
+ * The flag scroll to left of ScrollView's event.
  * @constant
  * @type {number}
  */
-ccui.ScrollView.EVENT_SCROLL_TO_LEFT = 2;
+ScrollView.EVENT_SCROLL_TO_LEFT = 2
 /**
- * The flag scroll to right of ccui.ScrollView's event.
+ * The flag scroll to right of ScrollView's event.
  * @constant
  * @type {number}
  */
-ccui.ScrollView.EVENT_SCROLL_TO_RIGHT = 3;
+ScrollView.EVENT_SCROLL_TO_RIGHT = 3
 /**
- * The scrolling flag of ccui.ScrollView's event.
+ * The scrolling flag of ScrollView's event.
  * @constant
  * @type {number}
  */
-ccui.ScrollView.EVENT_SCROLLING = 4;
+ScrollView.EVENT_SCROLLING = 4
 /**
- * The flag bounce top of ccui.ScrollView's event.
+ * The flag bounce top of ScrollView's event.
  * @constant
  * @type {number}
  */
-ccui.ScrollView.EVENT_BOUNCE_TOP = 5;
+ScrollView.EVENT_BOUNCE_TOP = 5
 /**
- * The flag bounce bottom of ccui.ScrollView's event.
+ * The flag bounce bottom of ScrollView's event.
  * @constant
  * @type {number}
  */
-ccui.ScrollView.EVENT_BOUNCE_BOTTOM = 6;
+ScrollView.EVENT_BOUNCE_BOTTOM = 6
 /**
- * The flag bounce left of ccui.ScrollView's event.
+ * The flag bounce left of ScrollView's event.
  * @constant
  * @type {number}
  */
-ccui.ScrollView.EVENT_BOUNCE_LEFT = 7;
+ScrollView.EVENT_BOUNCE_LEFT = 7
 /**
- * The flag bounce right of ccui.ScrollView's event.
+ * The flag bounce right of ScrollView's event.
  * @constant
  * @type {number}
  */
-ccui.ScrollView.EVENT_BOUNCE_RIGHT = 8;
+ScrollView.EVENT_BOUNCE_RIGHT = 8
 /**
- * The flag container moved of ccui.ScrollView's event.
+ * The flag container moved of ScrollView's event.
  * @constant
  * @type {number}
  */
-ccui.ScrollView.EVENT_CONTAINER_MOVED = 9;
+ScrollView.EVENT_CONTAINER_MOVED = 9
 /**
- * The flag autoscroll ended of ccui.ScrollView's event.
+ * The flag autoscroll ended of ScrollView's event.
  * @constant
  * @type {number}
  */
-ccui.ScrollView.EVENT_AUTOSCROLL_ENDED = 10;
+ScrollView.EVENT_AUTOSCROLL_ENDED = 10
 
 /**
  * @ignore
  */
 
-ccui.ScrollView.MOVEDIR_TOP = 0;
-ccui.ScrollView.MOVEDIR_BOTTOM = 1;
-ccui.ScrollView.MOVEDIR_LEFT = 2;
-ccui.ScrollView.MOVEDIR_RIGHT = 3;
+ScrollView.MOVEDIR_TOP = 0
+ScrollView.MOVEDIR_BOTTOM = 1
+ScrollView.MOVEDIR_LEFT = 2
+ScrollView.MOVEDIR_RIGHT = 3

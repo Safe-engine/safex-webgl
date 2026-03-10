@@ -5,7 +5,7 @@ import { color, Color } from '../platform/Color'
 import { Node } from './Node'
 
 const ONE_DEGREE = Math.PI / 180
-const dirtyFlags = {
+export const dirtyFlags = {
   transformDirty: 1 << 0,
   visibleDirty: 1 << 1,
   colorDirty: 1 << 2,

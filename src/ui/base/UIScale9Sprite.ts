@@ -445,8 +445,8 @@ export class Scale9Sprite extends Node {
 
   initWithFile(file, rect, capInsets) {
     if (file instanceof Rect) {
-      file = arguments[1]
-      capInsets = arguments[0]
+      file = rect
+      capInsets = file
       rect = rect(0, 0, 0, 0)
     } else {
       rect = rect || rect(0, 0, 0, 0)
@@ -656,7 +656,7 @@ export class Scale9Sprite extends Node {
   }
 
   // overrides
-  setContentSize(width, height) {
+  setContentSize(width, height?) {
     if (height === undefined) {
       height = width.height
       width = width.width
@@ -815,10 +815,10 @@ export class Scale9Sprite extends Node {
 
     this._isTriangle = false
     switch (this._renderingType) {
-      case RenderingType.SIMPLE:
+      case Scale9Sprite.RenderingType.SIMPLE:
         simpleQuadGenerator._rebuildQuads_base(this, this._spriteFrame, this._contentSize, this._isTrimmedContentSize)
         break
-      case RenderingType.SLICED:
+      case Scale9Sprite.RenderingType.SLICED:
         scale9QuadGenerator._rebuildQuads_base(
           this,
           this._spriteFrame,
@@ -841,8 +841,7 @@ export class Scale9Sprite extends Node {
   }
 
   _createRenderCmd() {
-    if (_renderType === game.RENDER_TYPE_CANVAS) return new Scale9Sprite.CanvasRenderCmd(this)
-    else return new Scale9Sprite.WebGLRenderCmd(this)
+    return new Scale9SpriteWebGLRenderCmd(this)
   }
 
   get preferredSize() {
@@ -913,19 +912,6 @@ export class Scale9Sprite extends Node {
      * @property {Number} SLICED
      */
     SLICED: 1,
-  }
-
-  /**
-   * Creates a 9-slice sprite with a texture file, a delimitation zone and
-   * with the specified cap insets.
-   * @deprecated since v3.0, please use new Scale9Sprite(file, rect, capInsets) instead.
-   * @param {String|SpriteFrame} file file name of texture or a Sprite object
-   * @param {Rect} rect the rect of the texture
-   * @param {Rect} capInsets the cap insets of Scale9Sprite
-   * @returns {Scale9Sprite}
-   */
-  static create(file, rect, capInsets) {
-    return new Scale9Sprite(file, rect, capInsets)
   }
 
   /**

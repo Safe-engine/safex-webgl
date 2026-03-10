@@ -17,6 +17,7 @@ import { Color, color } from '../platform/Color'
 import { arrayRemoveObject } from '../platform/Macro'
 import { Scheduler } from '../Scheduler'
 import { pAdd, pSub } from '../support/PointExtension'
+import { dirtyFlags } from './NodeRenderCmd'
 import { NodeWebGLRenderCmd } from './NodeWebGLRenderCmd'
 
 export const NODE_TAG_INVALID = -1
@@ -53,7 +54,7 @@ export class Node extends EventHelper {
   static _stateCallbackType: any = { onEnter: 1, onExit: 2, cleanup: 3, onEnterTransitionDidFinish: 4, onExitTransitionDidStart: 5, max: 6 }
   static _performStacks: any[] = [[]]
   static _performing = 0
-  static _dirtyFlags = { transformDirty: 1, colorDirty: 2, opacityDirty: 4, orderDirty: 8 }
+  static _dirtyFlags = dirtyFlags
 
   // instance id used by scheduler keys
   __instanceId = Math.random().toString(36).slice(2)
