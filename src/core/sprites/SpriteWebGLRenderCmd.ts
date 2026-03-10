@@ -2,9 +2,9 @@ import { renderer } from '../..'
 import { _LogInfos, error, log } from '../../helper/Debugger'
 import { shaderCache } from '../../shaders/ShaderCache'
 import { NodeWebGLRenderCmd } from '../base-nodes/NodeWebGLRenderCmd'
-import { pointEqualToPoint, rect, rectEqualToRect } from '../cocoa/Geometry'
+import { pointEqualToPoint, Rect, rect, rectEqualToRect, rectEqualToZero } from '../cocoa/Geometry'
 import { FIX_ARTIFACTS_BY_STRECHING_TEXEL } from '../platform/Config'
-import { BLEND_DST, ONE, SHADER_SPRITE_POSITION_TEXTURECOLOR, SRC_ALPHA, rectPointsToPixels } from '../platform/Macro'
+import { BLEND_DST, ONE, rectPointsToPixels, SHADER_SPRITE_POSITION_TEXTURECOLOR, SRC_ALPHA } from '../platform/Macro'
 import { Sprite } from './Sprite'
 
 //Sprite's WebGL render command
@@ -14,6 +14,9 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
   _dirty: boolean
   _recursiveDirty: boolean
   _spriteCmdCtor: any
+  _textureLoaded: any
+  _rect: Rect
+  texture: any
 
   constructor(renderable: Sprite) {
     super(renderable)
@@ -90,7 +93,7 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
     let locRect = this._rect
     if (!locRect) {
       locRect = rect(0, 0, sender.width, sender.height)
-    } else if (_rectEqualToZero(locRect)) {
+    } else if (rectEqualToZero(locRect)) {
       locRect.width = sender.width
       locRect.height = sender.height
     }
@@ -105,6 +108,21 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
 
     // Force refresh the render command list
     renderer.childrenOrderDirty = true
+  }
+  setTextureRect(locRect: any, _rectRotated: any) {
+    throw new Error('Method not implemented.')
+  }
+  _rectRotated(locRect: any, _rectRotated: any) {
+    throw new Error('Method not implemented.')
+  }
+  setBatchNode(_batchNode: any) {
+    throw new Error('Method not implemented.')
+  }
+  _batchNode(_batchNode: any) {
+    throw new Error('Method not implemented.')
+  }
+  dispatchEvent(arg0: string) {
+    throw new Error('Method not implemented.')
   }
 
   _setTextureCoords(rect: any, needConvert?: boolean): void {

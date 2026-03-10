@@ -11,66 +11,67 @@ import { Vertex2F } from './Vertex2F'
  * @param {Number} offset
  * @constructor
  */
-export const Quad2 = function (tl, tr, bl, br, arrayBuffer, offset) {
-  this._arrayBuffer = arrayBuffer || new ArrayBuffer(Quad2.BYTES_PER_ELEMENT)
-  this._offset = offset || 0
+export class Quad2 {
+  static BYTES_PER_ELEMENT = 32
 
-  const locArrayBuffer = this._arrayBuffer
-  let locOffset = this._offset
-  const locElementLen = Vertex2F.BYTES_PER_ELEMENT
-  this._tl = tl ? new Vertex2F(tl.x, tl.y, locArrayBuffer, locOffset) : new Vertex2F(0, 0, locArrayBuffer, locOffset)
-  locOffset += locElementLen
-  this._tr = tr ? new Vertex2F(tr.x, tr.y, locArrayBuffer, locOffset) : new Vertex2F(0, 0, locArrayBuffer, locOffset)
-  locOffset += locElementLen
-  this._bl = bl ? new Vertex2F(bl.x, bl.y, locArrayBuffer, locOffset) : new Vertex2F(0, 0, locArrayBuffer, locOffset)
-  locOffset += locElementLen
-  this._br = br ? new Vertex2F(br.x, br.y, locArrayBuffer, locOffset) : new Vertex2F(0, 0, locArrayBuffer, locOffset)
-}
-/**
- * @constant
- * @type {number}
- */
-Quad2.BYTES_PER_ELEMENT = 32
+  _arrayBuffer: ArrayBuffer
+  _offset: number
+  _tl: Vertex2F
+  _tr: Vertex2F
+  _bl: Vertex2F
+  _br: Vertex2F
 
-_p = Quad2.prototype
-_p._getTL = function () {
-  return this._tl
-}
-_p._setTL = function (tlValue) {
-  this._tl._view[0] = tlValue.x
-  this._tl._view[1] = tlValue.y
-}
-_p._getTR = function () {
-  return this._tr
-}
-_p._setTR = function (trValue) {
-  this._tr._view[0] = trValue.x
-  this._tr._view[1] = trValue.y
-}
-_p._getBL = function () {
-  return this._bl
-}
-_p._setBL = function (blValue) {
-  this._bl._view[0] = blValue.x
-  this._bl._view[1] = blValue.y
-}
-_p._getBR = function () {
-  return this._br
-}
-_p._setBR = function (brValue) {
-  this._br._view[0] = brValue.x
-  this._br._view[1] = brValue.y
+  constructor(tl?: Vertex2F, tr?: Vertex2F, bl?: Vertex2F, br?: Vertex2F, arrayBuffer?: ArrayBuffer, offset?: number) {
+    this._arrayBuffer = arrayBuffer || new ArrayBuffer(Quad2.BYTES_PER_ELEMENT)
+    this._offset = offset || 0
+
+    const locArrayBuffer = this._arrayBuffer
+    let locOffset = this._offset
+    const locElementLen = Vertex2F.BYTES_PER_ELEMENT
+
+    this._tl = tl ? new Vertex2F(tl.x, tl.y, locArrayBuffer, locOffset) : new Vertex2F(0, 0, locArrayBuffer, locOffset)
+    locOffset += locElementLen
+    this._tr = tr ? new Vertex2F(tr.x, tr.y, locArrayBuffer, locOffset) : new Vertex2F(0, 0, locArrayBuffer, locOffset)
+    locOffset += locElementLen
+    this._bl = bl ? new Vertex2F(bl.x, bl.y, locArrayBuffer, locOffset) : new Vertex2F(0, 0, locArrayBuffer, locOffset)
+    locOffset += locElementLen
+    this._br = br ? new Vertex2F(br.x, br.y, locArrayBuffer, locOffset) : new Vertex2F(0, 0, locArrayBuffer, locOffset)
+  }
+
+  _getTL() {
+    return this._tl
+  }
+  _setTL(tlValue: Vertex2F) {
+    this._tl._view[0] = tlValue.x
+    this._tl._view[1] = tlValue.y
+  }
+
+  _getTR() {
+    return this._tr
+  }
+  _setTR(trValue: Vertex2F) {
+    this._tr._view[0] = trValue.x
+    this._tr._view[1] = trValue.y
+  }
+
+  _getBL() {
+    return this._bl
+  }
+  _setBL(blValue: Vertex2F) {
+    this._bl._view[0] = blValue.x
+    this._bl._view[1] = blValue.y
+  }
+
+  _getBR() {
+    return this._br
+  }
+  _setBR(brValue: Vertex2F) {
+    this._br._view[0] = brValue.x
+    this._br._view[1] = brValue.y
+  }
 }
 
-/** @expose */
-_p.tl
-defineGetterSetter(_p, 'tl', _p._getTL, _p._setTL)
-/** @expose */
-_p.tr
-defineGetterSetter(_p, 'tr', _p._getTR, _p._setTR)
-/** @expose */
-_p.bl
-defineGetterSetter(_p, 'bl', _p._getBL, _p._setBL)
-/** @expose */
-_p.br
-defineGetterSetter(_p, 'br', _p._getBR, _p._setBR)
+defineGetterSetter(Quad2.prototype, 'tl', Quad2.prototype._getTL, Quad2.prototype._setTL)
+defineGetterSetter(Quad2.prototype, 'tr', Quad2.prototype._getTR, Quad2.prototype._setTR)
+defineGetterSetter(Quad2.prototype, 'bl', Quad2.prototype._getBL, Quad2.prototype._setBL)
+defineGetterSetter(Quad2.prototype, 'br', Quad2.prototype._getBR, Quad2.prototype._setBR)

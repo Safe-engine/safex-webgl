@@ -1,5 +1,9 @@
 import { log } from '../../helper/Debugger'
 import { degreesToRadians } from '../platform/Macro'
+import { Matrix3 } from './mat3'
+import { Plane } from './plane'
+import { Quaternion } from './quaternion'
+import { EPSILON } from './utility'
 import { Vec3 } from './vec3'
 
 export const Matrix4 = function (mat4?) {
@@ -74,10 +78,10 @@ Matrix4._gaussj = function (a, b) {
     j,
     k,
     l,
-    ll,
-    n = 4,
-    m = 4,
-    selElement
+    ll
+  const n = 4
+  const m = 4
+  let selElement
   let big, dumb, pivinv
   const indxc = [0, 0, 0, 0],
     indxr = [0, 0, 0, 0],
@@ -457,9 +461,8 @@ proto.equals = function (mat4) {
     log('kmMat4AreEqual(): pMat1 and pMat2 are same object.')
     return true
   }
-  var matA = this.mat,
-    matB = mat4.mat,
-    EPSILON = EPSILON
+  const matA = this.mat
+  const matB = mat4.mat
   for (let i = 0; i < 16; i++) {
     if (!(matA[i] + EPSILON > matB[i] && matA[i] - EPSILON < matB[i])) return false
   }
@@ -711,7 +714,7 @@ export const kmMat4Translation = function (pOut, x, y, z) {
  * @param {Matrix4} [matrix] if matrix is undefined, creates a new matrix.
  * @returns {Matrix4}
  */
-Matrix4.createByTranslation = function (x, y, z, matrix) {
+Matrix4.createByTranslation = function (x, y, z, matrix?) {
   //kmMat4Translation
   matrix = matrix || new Matrix4()
   matrix.identity()

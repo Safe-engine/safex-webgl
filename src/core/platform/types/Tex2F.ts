@@ -8,36 +8,38 @@ import { defineGetterSetter } from '../../sprites/SpritesPropertyDefine'
  * @param {Number} offset
  * @constructor
  */
-export const Tex2F = function (u, v, arrayBuffer, offset) {
-  this._arrayBuffer = arrayBuffer || new ArrayBuffer(Tex2F.BYTES_PER_ELEMENT)
-  this._offset = offset || 0
+export class Tex2F {
+  static BYTES_PER_ELEMENT = 8
 
-  this._view = new Float32Array(this._arrayBuffer, this._offset, 2)
-  this._view[0] = u || 0
-  this._view[1] = v || 0
-}
-/**
- * @constants
- * @type {number}
- */
-Tex2F.BYTES_PER_ELEMENT = 8
+  _arrayBuffer: ArrayBuffer
+  _offset: number
+  _view: Float32Array
 
-_p = Tex2F.prototype
-_p._getU = function () {
-  return this._view[0]
+  constructor(u?: number, v?: number, arrayBuffer?: ArrayBuffer, offset?: number) {
+    this._arrayBuffer = arrayBuffer || new ArrayBuffer(Tex2F.BYTES_PER_ELEMENT)
+    this._offset = offset || 0
+
+    this._view = new Float32Array(this._arrayBuffer, this._offset, 2)
+    this._view[0] = u || 0
+    this._view[1] = v || 0
+  }
+
+  _getU() {
+    return this._view[0]
+  }
+
+  _setU(xValue: number) {
+    this._view[0] = xValue
+  }
+
+  _getV() {
+    return this._view[1]
+  }
+
+  _setV(yValue: number) {
+    this._view[1] = yValue
+  }
 }
-_p._setU = function (xValue) {
-  this._view[0] = xValue
-}
-_p._getV = function () {
-  return this._view[1]
-}
-_p._setV = function (yValue) {
-  this._view[1] = yValue
-}
-/** @expose */
-_p.u
-defineGetterSetter(_p, 'u', _p._getU, _p._setU)
-/** @expose */
-_p.v
-defineGetterSetter(_p, 'v', _p._getV, _p._setV)
+
+defineGetterSetter(Tex2F.prototype, 'u', Tex2F.prototype._getU, Tex2F.prototype._setU)
+defineGetterSetter(Tex2F.prototype, 'v', Tex2F.prototype._getV, Tex2F.prototype._setV)

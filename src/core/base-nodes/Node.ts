@@ -10,7 +10,7 @@ import {
   rectApplyAffineTransform,
   rectApplyAffineTransformIn,
 } from '../cocoa/AffineTransform'
-import { p, Point, rect, rectUnion, Size, size } from '../cocoa/Geometry'
+import { p, Point, Rect, rect, rectUnion, Size, size } from '../cocoa/Geometry'
 import { EventHelper } from '../event-manager/EventHelper'
 import { eventManager } from '../event-manager/EventManager'
 import { Color, color } from '../platform/Color'
@@ -23,7 +23,26 @@ export const NODE_TAG_INVALID = -1
 export let s_globalOrderOfArrival = 1
 
 export class Node extends EventHelper {
+  _setReorderChildDirtyRecursively() {
+    throw new Error('Method not implemented.')
+  }
+  _rect: Rect
+  _unflippedOffsetPositionFromCenter: Point
+  setTextureRect(rt: Rect) {
+    throw new Error('Method not implemented.')
+  }
   static RenderCmd: (renderable: any) => void
+  _batchNode: any
+  textureAtlas: any
+  _texture: any
+  _rectRotated: any
+  _flippedX: any
+  _flippedY: any
+  _blendFunc: any
+  opacityModifyRGB: boolean
+  _textureLoaded: any
+  _offsetPosition: any
+  _opacityModifyRGB: any
   // Static members
   static create(): Node {
     return new Node()

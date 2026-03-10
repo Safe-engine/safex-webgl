@@ -1,6 +1,14 @@
 export class Color {
   _val: number
   static WHITE = new Color(255, 255, 255, 255)
+  static YELLOW = color(255, 255, 0)
+  static BLUE = new Color(0, 0, 255, 255)
+  static GREEN = new Color(0, 255, 0, 255)
+  static RED = new Color(255, 0, 0, 255)
+  static MAGENTA = new Color(255, 0, 255, 255)
+  static BLACK = new Color(0, 0, 0, 255)
+  static ORANGE = new Color(255, 127, 0, 255)
+  static GRAY = new Color(166, 166, 166, 255)
 
   constructor(r?: number, g?: number, b?: number, a?: number) {
     r = r || 0

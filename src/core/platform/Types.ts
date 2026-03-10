@@ -4,6 +4,9 @@ import { Vertex2F } from './types/Vertex2F'
 import { Vertex3F } from './types/Vertex3F'
 import { _WebGLColor } from './types/WebGLColor'
 
+// helper for prototype manipulation used later
+let _p: any
+
 /**
  * the device accelerometer reports values for each axis in units of g-force
  * @class Acceleration
@@ -29,66 +32,71 @@ export const Acceleration = function (x, y, z, timestamp) {
  * @param {Number} offset
  * @constructor
  */
-export const V3F_C4B_T2F = function (vertices, colors, texCoords, arrayBuffer, offset) {
-  this._arrayBuffer = arrayBuffer || new ArrayBuffer(V3F_C4B_T2F.BYTES_PER_ELEMENT)
-  this._offset = offset || 0
+export class V3F_C4B_T2F {
+  static BYTES_PER_ELEMENT = 24
 
-  const locArrayBuffer = this._arrayBuffer
-  let locOffset = this._offset
-  this._vertices = vertices
-    ? new Vertex3F(vertices.x, vertices.y, vertices.z, locArrayBuffer, locOffset)
-    : new Vertex3F(0, 0, 0, locArrayBuffer, locOffset)
+  _arrayBuffer: ArrayBuffer
+  _offset: number
+  _vertices: any
+  _colors: any
+  _texCoords: any
 
-  locOffset += Vertex3F.BYTES_PER_ELEMENT
-  this._colors = colors
-    ? new _WebGLColor(colors.r, colors.g, colors.b, colors.a, locArrayBuffer, locOffset)
-    : new _WebGLColor(0, 0, 0, 0, locArrayBuffer, locOffset)
+  constructor(
+    vertices?: any | null,
+    colors?: { r: number; g: number; b: number; a: number } | null,
+    texCoords?: { u: number; v: number } | null,
+    arrayBuffer?: ArrayBuffer,
+    offset?: number,
+  ) {
+    this._arrayBuffer = arrayBuffer || new ArrayBuffer(V3F_C4B_T2F.BYTES_PER_ELEMENT)
+    this._offset = offset || 0
 
-  locOffset += _WebGLColor.BYTES_PER_ELEMENT
-  this._texCoords = texCoords ? new Tex2F(texCoords.u, texCoords.v, locArrayBuffer, locOffset) : new Tex2F(0, 0, locArrayBuffer, locOffset)
-}
-/**
- * @constant
- * @type {number}
- */
-V3F_C4B_T2F.BYTES_PER_ELEMENT = 24
+    const locArrayBuffer = this._arrayBuffer
+    let locOffset = this._offset
+    this._vertices = vertices
+      ? new Vertex3F(vertices.x, vertices.y, vertices.z, locArrayBuffer, locOffset)
+      : new Vertex3F(0, 0, 0, locArrayBuffer, locOffset)
 
-_p = V3F_C4B_T2F.prototype
-_p._getVertices = function () {
-  return this._vertices
+    locOffset += Vertex3F.BYTES_PER_ELEMENT
+    this._colors = colors
+      ? new _WebGLColor(colors.r, colors.g, colors.b, colors.a, locArrayBuffer, locOffset)
+      : new _WebGLColor(0, 0, 0, 0, locArrayBuffer, locOffset)
+
+    locOffset += _WebGLColor.BYTES_PER_ELEMENT
+    this._texCoords = texCoords
+      ? new Tex2F(texCoords.u, texCoords.v, locArrayBuffer, locOffset)
+      : new Tex2F(0, 0, locArrayBuffer, locOffset)
+  }
+
+  get vertices(): any {
+    return this._vertices
+  }
+  set vertices(verticesValue: { x: number; y: number; z: number }) {
+    const locVertices = this._vertices
+    locVertices._view[0] = verticesValue.x
+    locVertices._view[1] = verticesValue.y
+    locVertices._view[2] = verticesValue.z
+  }
+
+  get colors(): any {
+    return this._colors
+  }
+  set colors(colorValue: { r: number; g: number; b: number; a: number }) {
+    const locColors = this._colors
+    locColors._view[0] = colorValue.r
+    locColors._view[1] = colorValue.g
+    locColors._view[2] = colorValue.b
+    locColors._view[3] = colorValue.a
+  }
+
+  get texCoords(): any {
+    return this._texCoords
+  }
+  set texCoords(texValue: { u: number; v: number }) {
+    this._texCoords._view[0] = texValue.u
+    this._texCoords._view[1] = texValue.v
+  }
 }
-_p._setVertices = function (verticesValue) {
-  const locVertices = this._vertices
-  locVertices._view[0] = verticesValue.x
-  locVertices._view[1] = verticesValue.y
-  locVertices._view[2] = verticesValue.z
-}
-_p._getColor = function () {
-  return this._colors
-}
-_p._setColor = function (colorValue) {
-  const locColors = this._colors
-  locColors._view[0] = colorValue.r
-  locColors._view[1] = colorValue.g
-  locColors._view[2] = colorValue.b
-  locColors._view[3] = colorValue.a
-}
-_p._getTexCoords = function () {
-  return this._texCoords
-}
-_p._setTexCoords = function (texValue) {
-  this._texCoords._view[0] = texValue.u
-  this._texCoords._view[1] = texValue.v
-}
-/** @expose */
-_p.vertices
-defineGetterSetter(_p, 'vertices', _p._getVertices, _p._setVertices)
-/** @expose */
-_p.colors
-defineGetterSetter(_p, 'colors', _p._getColor, _p._setColor)
-/** @expose */
-_p.texCoords
-defineGetterSetter(_p, 'texCoords', _p._getTexCoords, _p._setTexCoords)
 
 /**
  * @class V3F_C4B_T2F_Quad
@@ -190,7 +198,8 @@ defineGetterSetter(_p, 'arrayBuffer', _p._getArrayBuffer, null)
  * @returns {V3F_C4B_T2F_Quad}
  */
 export const V3F_C4B_T2F_QuadZero = function () {
-  return new V3F_C4B_T2F_Quad()
+  // constructor accepts six optional parameters; provide nulls to satisfy TypeScript
+  return new V3F_C4B_T2F_Quad(null, null, null, null, undefined, undefined)
 }
 
 /**
@@ -259,8 +268,8 @@ export const V2F_C4B_T2F = function (vertices, colors, texCoords, arrayBuffer, o
   this._arrayBuffer = arrayBuffer || new ArrayBuffer(V2F_C4B_T2F.BYTES_PER_ELEMENT)
   this._offset = offset || 0
 
-  let locArrayBuffer = this._arrayBuffer,
-    locOffset = this._offset
+  const locArrayBuffer = this._arrayBuffer
+  let locOffset = this._offset
   this._vertices = vertices
     ? new Vertex2F(vertices.x, vertices.y, locArrayBuffer, locOffset)
     : new Vertex2F(0, 0, locArrayBuffer, locOffset)
@@ -371,9 +380,9 @@ _p._getC = function () {
 }
 _p._setC = function (cValue) {
   const locC = this._c
-  lovertices = cValue.vertices
-  locolors = cValue.colors
-  lotexCoords = cValue.texCoords
+  locC.vertices = cValue.vertices
+  locC.colors = cValue.colors
+  locC.texCoords = cValue.texCoords
 }
 
 /** @expose */
