@@ -397,16 +397,3 @@ export class RenderTexture extends Node {
     this.setClearColor(clearColor)
   }
 }
-
-/**
- * creates a RenderTexture object with width and height in Points and a pixel format, only RGB and RGBA formats are valid
- * @deprecated since v3.0 please use new RenderTexture() instead.
- * @param {Number} width
- * @param {Number} height
- * @param {IMAGE_FORMAT_JPEG|IMAGE_FORMAT_PNG|IMAGE_FORMAT_RAWDATA} format
- * @param {Number} depthStencilFormat
- * @return {RenderTexture}
- */
-;(RenderTexture as any).create = function (width: number, height: number, format?: number, depthStencilFormat?: number) {
-  return new RenderTexture(width, height, format, depthStencilFormat)
-}
