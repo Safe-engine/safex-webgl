@@ -3,6 +3,15 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./*": {
+      "import": "./dist/*/index.js",
+      "types": "./dist/*/index.d.ts"
+    }
+  },
   "scripts": {
     "dev": "vite",
     "compile": "tsc",

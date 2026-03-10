@@ -13,11 +13,11 @@ export const Vec4 = function (x, y?, z?, w?) {
     this.w = w || 0
   }
 }
-// cc.kmVec4 = Vec4;
+// kmVec4 = Vec4;
 const proto = Vec4.prototype
 
 proto.fill = function (x, y, z, w) {
-  //=cc.kmVec4Fill
+  //=kmVec4Fill
   if (x && y === undefined) {
     this.x = x.x
     this.y = x.y
@@ -32,7 +32,7 @@ proto.fill = function (x, y, z, w) {
 }
 
 proto.add = function (vec) {
-  //cc.kmVec4Add
+  //kmVec4Add
   if (!vec) return this
   this.x += vec.x
   this.y += vec.y
@@ -42,28 +42,28 @@ proto.add = function (vec) {
 }
 
 proto.dot = function (vec) {
-  //cc.kmVec4Dot
+  //kmVec4Dot
   return this.x * vec.x + this.y * vec.y + this.z * vec.z + this.w * vec.w
 }
 
 proto.length = function () {
-  //=cc.kmVec4Length
+  //=kmVec4Length
   return Math.sqrt(square(this.x) + square(this.y) + square(this.z) + square(this.w))
 }
 
 proto.lengthSq = function () {
-  //=cc.kmVec4LengthSq
+  //=kmVec4LengthSq
   return square(this.x) + square(this.y) + square(this.z) + square(this.w)
 }
 
 proto.lerp = function (vec, t) {
-  //= cc.kmVec4Lerp
+  //= kmVec4Lerp
   //not implemented
   return this
 }
 
 proto.normalize = function () {
-  // cc.kmVec4Normalize
+  // kmVec4Normalize
   const l = 1.0 / this.length()
   this.x *= l
   this.y *= l
@@ -73,7 +73,7 @@ proto.normalize = function () {
 }
 
 proto.scale = function (scale) {
-  //= cc.kmVec4Scale
+  //= kmVec4Scale
   /// Scales a vector to the required length. This performs a Normalize before multiplying by S.
   this.normalize()
   this.x *= scale
@@ -114,7 +114,7 @@ Vec4.transformArray = function (vecArray, mat4) {
 }
 
 proto.equals = function (vec) {
-  //=cc.kmVec4AreEqual
+  //=kmVec4AreEqual
   var EPSILON = EPSILON
   return (
     this.x < vec.x + EPSILON &&
@@ -129,7 +129,7 @@ proto.equals = function (vec) {
 }
 
 proto.assignFrom = function (vec) {
-  //= cc.kmVec4Assign
+  //= kmVec4Assign
   this.x = vec.x
   this.y = vec.y
   this.z = vec.z
@@ -138,7 +138,7 @@ proto.assignFrom = function (vec) {
 }
 
 proto.toTypeArray = function () {
-  //cc.kmVec4ToTypeArray
+  //kmVec4ToTypeArray
   const tyArr = new Float32Array(4)
   tyArr[0] = this.x
   tyArr[1] = this.y

@@ -9,6 +9,13 @@ export default [
   ...tseslint.configs.recommended,
   prettierConfig,
   {
+    parser: "@typescript-eslint/parser",
+    parserOptions: {
+      project: ["./tsconfig.json"],
+      tsconfigRootDir: __dirname,
+    },
+  },
+  {
     files: ['**/*.{js,mjs,cjs,ts,mts,cts}'],
     languageOptions: {
       globals: globals.browser,

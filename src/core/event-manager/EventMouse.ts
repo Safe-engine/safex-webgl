@@ -59,7 +59,7 @@ export class EventMouse extends Event {
 
   /**
    * Returns cursor location
-   * @return {cc.Point} location
+   * @return {Point} location
    */
   getLocation() {
     return { x: this._x, y: this._y }
@@ -67,7 +67,7 @@ export class EventMouse extends Event {
 
   /**
    * Returns the current cursor location in screen coordinates
-   * @return {cc.Point}
+   * @return {Point}
    */
   getLocationInView() {
     return { x: this._x, y: EGLView.getInstance().getDesignResolutionSize().height - this._y }
@@ -80,7 +80,7 @@ export class EventMouse extends Event {
 
   /**
    * Returns the delta distance from the previous location to current location
-   * @return {cc.Point}
+   * @return {Point}
    */
   getDelta() {
     return { x: this._x - this._prevX, y: this._y - this._prevY }

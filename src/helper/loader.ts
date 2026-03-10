@@ -165,7 +165,7 @@ export const loader = (function () {
             const result = JSON.parse(txt)
             cb(null, result)
           } catch (e) {
-            throw new Error(`parse json [${url}] failed :`, { cause: e })
+            throw new Error(`parse json [${url}] failed : ${e.message}`)
           }
         }
       })
