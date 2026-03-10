@@ -1,6 +1,5 @@
-import { defineGetterSetter } from '../../sprites/SpritesPropertyDefine'
 
-export class _WebGLColor {
+export class WebGLColor {
   static BYTES_PER_ELEMENT = 4
 
   _arrayBuffer: ArrayBuffer
@@ -9,7 +8,7 @@ export class _WebGLColor {
   a_undefined?: boolean
 
   constructor(r?: number, g?: number, b?: number, a?: number, arrayBuffer?: ArrayBuffer, offset?: number) {
-    this._arrayBuffer = arrayBuffer || new ArrayBuffer(_WebGLColor.BYTES_PER_ELEMENT)
+    this._arrayBuffer = arrayBuffer || new ArrayBuffer(WebGLColor.BYTES_PER_ELEMENT)
     this._offset = offset || 0
 
     const locArrayBuffer = this._arrayBuffer,
@@ -24,43 +23,35 @@ export class _WebGLColor {
     if (a === undefined) this.a_undefined = true
   }
 
-  _getR() {
+  get r() {
     return this._view[0]
   }
 
-  _setR(value: number) {
+  set r(value: number) {
     this._view[0] = value < 0 ? 0 : value
   }
 
-  _getG() {
+  get g () {
     return this._view[1]
   }
 
-  _setG(value: number) {
+  set g(value: number) {
     this._view[1] = value < 0 ? 0 : value
   }
 
-  _getB() {
+  get b() {
     return this._view[2]
   }
 
-  _setB(value: number) {
+  set b(value: number) {
     this._view[2] = value < 0 ? 0 : value
   }
 
-  _getA() {
+  get a() {
     return this._view[3]
   }
 
-  _setA(value: number) {
+  set a(value: number) {
     this._view[3] = value < 0 ? 0 : value
   }
 }
-
-// attach property accessors to prototype
-const _pProto = _WebGLColor.prototype
-
-defineGetterSetter(_pProto, 'r', _pProto._getR, _pProto._setR)
-defineGetterSetter(_pProto, 'g', _pProto._getG, _pProto._setG)
-defineGetterSetter(_pProto, 'b', _pProto._getB, _pProto._setB)
-defineGetterSetter(_pProto, 'a', _pProto._getA, _pProto._setA)

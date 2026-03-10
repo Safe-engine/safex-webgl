@@ -1,7 +1,7 @@
 export class Color {
   _val: number
   static WHITE = new Color(255, 255, 255, 255)
-  static YELLOW = color(255, 255, 0)
+  static YELLOW = new Color(255, 255, 0)
   static BLUE = new Color(0, 0, 255, 255)
   static GREEN = new Color(0, 255, 0, 255)
   static RED = new Color(255, 0, 0, 255)
@@ -55,15 +55,11 @@ export class Color {
   }
 }
 
-// Expose to globalThis for compatibility with scripts expecting globals
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-;(globalThis as any).Color = Color
-
 export function color(r?: number | { r: number; g: number; b: number; a?: number } | string, g?: number, b?: number, a?: number): Color {
   if (r === undefined) return new Color(0, 0, 0, 255)
-  if (typeof r === 'object') return new Color((r as any).r, (r as any).g, (r as any).b, (r as any).a == null ? 255 : (r as any).a)
+  if (typeof r === 'object') return new Color(r.r, r.g, r.b, r.a ?? 255)
   if (typeof r === 'string') return hexToColor(r as string)
-  return new Color(r as number, g as number, b as number, a == null ? 255 : a)
+  return new Color(r , g , b , a ?? 255)
 }
 
 export function colorEqual(color1: Color, color2: Color): boolean {

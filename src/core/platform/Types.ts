@@ -2,7 +2,7 @@ import { defineGetterSetter } from '../sprites/SpritesPropertyDefine'
 import { Tex2F } from './types/Tex2F'
 import { Vertex2F } from './types/Vertex2F'
 import { Vertex3F } from './types/Vertex3F'
-import { _WebGLColor } from './types/WebGLColor'
+import { WebGLColor } from './types/WebGLColor'
 
 // helper for prototype manipulation used later
 let _p: any
@@ -59,10 +59,10 @@ export class V3F_C4B_T2F {
 
     locOffset += Vertex3F.BYTES_PER_ELEMENT
     this._colors = colors
-      ? new _WebGLColor(colors.r, colors.g, colors.b, colors.a, locArrayBuffer, locOffset)
-      : new _WebGLColor(0, 0, 0, 0, locArrayBuffer, locOffset)
+      ? new WebGLColor(colors.r, colors.g, colors.b, colors.a, locArrayBuffer, locOffset)
+      : new WebGLColor(0, 0, 0, 0, locArrayBuffer, locOffset)
 
-    locOffset += _WebGLColor.BYTES_PER_ELEMENT
+    locOffset += WebGLColor.BYTES_PER_ELEMENT
     this._texCoords = texCoords
       ? new Tex2F(texCoords.u, texCoords.v, locArrayBuffer, locOffset)
       : new Tex2F(0, 0, locArrayBuffer, locOffset)
@@ -275,9 +275,9 @@ export const V2F_C4B_T2F = function (vertices, colors, texCoords, arrayBuffer, o
     : new Vertex2F(0, 0, locArrayBuffer, locOffset)
   locOffset += Vertex2F.BYTES_PER_ELEMENT
   this._colors = colors
-    ? new _WebGLColor(colors.r, colors.g, colors.b, colors.a, locArrayBuffer, locOffset)
-    : new _WebGLColor(0, 0, 0, 0, locArrayBuffer, locOffset)
-  locOffset += _WebGLColor.BYTES_PER_ELEMENT
+    ? new WebGLColor(colors.r, colors.g, colors.b, colors.a, locArrayBuffer, locOffset)
+    : new WebGLColor(0, 0, 0, 0, locArrayBuffer, locOffset)
+  locOffset += WebGLColor.BYTES_PER_ELEMENT
   this._texCoords = texCoords ? new Tex2F(texCoords.u, texCoords.v, locArrayBuffer, locOffset) : new Tex2F(0, 0, locArrayBuffer, locOffset)
 }
 
