@@ -1,29 +1,27 @@
-import { game } from "../..";
+import { game, renderer } from "../..";
 import { Node, NODE_TAG_INVALID, s_globalOrderOfArrival, s_globalOrderOfArrivalPP } from "../../core/base-nodes/Node";
 import { assert, log } from "../../helper/Debugger";
 import { _renderType } from "../../helper/engine";
 
-export const ProtectedNode = Node.extend(/** @lends ProtectedNode# */{
-    _protectedChildren: null,
-    _reorderProtectedChildDirty: false,
+export class ProtectedNode extends Node {
+    _protectedChildren: any;
+    _reorderProtectedChildDirty: boolean;
 
-    _insertProtectedChild: function (child, z) {
+    constructor() {
+        super();
+        this._protectedChildren = [];
+        this._reorderProtectedChildDirty = false;
+    }
+
+    _insertProtectedChild(child, z) {
         this._reorderProtectedChildDirty = true;
         this._protectedChildren.push(child);
         child._setLocalZOrder(z);
-    },
+    }
 
-    /**
-     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
-     * @function
-     */
-    ctor: function () {
-        Node.prototype.ctor.call(this);
-        this._protectedChildren = [];
-    },
-
-    visit: function (parent) {
-        var cmd = this._renderCmd, parentCmd = parent ? parent._renderCmd : null;
+    visit(parent) {
+        const cmd = this._renderCmd;
+        const parentCmd = parent ? parent._renderCmd : null;
 
         // quick return if not visible
         if (!this._visible) {
@@ -31,13 +29,19 @@ export const ProtectedNode = Node.extend(/** @lends ProtectedNode# */{
             return;
         }
 
-        var renderer = renderer;
-        var i, children = this._children, len = children.length, child;
-        var j, pChildren = this._protectedChildren, pLen = pChildren.length, pChild;
+        const rendererRef = renderer;
+        let i;
+        const children = this._children;
+        const len = children.length;
+        let child;
+        let j;
+        const pChildren = this._protectedChildren;
+        const pLen = pChildren.length;
+        let pChild;
 
         cmd.visit(parentCmd);
 
-        var locGrid = this.grid;
+        const locGrid = this.grid;
         if (locGrid && locGrid._active)
             locGrid.beforeDraw();
 
@@ -64,7 +68,7 @@ export const ProtectedNode = Node.extend(/** @lends ProtectedNode# */{
                 break;
         }
 
-        renderer.pushRenderCommand(cmd);
+        rendererRef.pushRenderCommand(cmd);
 
         for (; i < len; i++) {
             children[i].visit(this);
@@ -80,7 +84,7 @@ export const ProtectedNode = Node.extend(/** @lends ProtectedNode# */{
             locGrid.afterDraw(this);
 
         cmd._dirtyFlag = 0;
-    },
+    }
 
     /**
      * <p>
@@ -91,7 +95,7 @@ export const ProtectedNode = Node.extend(/** @lends ProtectedNode# */{
      * @param {Number} [localZOrder]  Z order for drawing priority. Please refer to `setLocalZOrder(int)`
      * @param {Number} [tag]  An integer to identify the node easily. Please refer to `setTag(int)`
      */
-    addProtectedChild: function (child, localZOrder, tag) {
+    addProtectedChild(child, localZOrder?, tag?) {
         assert(child != null, "child must be non-nil");
         assert(!child.parent, "child already added. It can't be added again");
 
@@ -113,34 +117,34 @@ export const ProtectedNode = Node.extend(/** @lends ProtectedNode# */{
             this._renderCmd.setCascadeColorEnabledDirty();
         if (this._cascadeOpacityEnabled)
             this._renderCmd.setCascadeOpacityEnabledDirty();
-    },
+    }
 
     /**
      * Gets a child from the container with its tag
      * @param {Number} tag An identifier to find the child node.
      * @return {Node} a Node object whose tag equals to the input parameter
      */
-    getProtectedChildByTag: function (tag) {
+    getProtectedChildByTag(tag) {
         assert(tag !== NODE_TAG_INVALID, "Invalid tag");
-        var locChildren = this._protectedChildren;
-        for (var i = 0, len = locChildren.length; i < len; i++)
+        const locChildren = this._protectedChildren;
+        for (let i = 0, len = locChildren.length; i < len; i++)
             if (locChildren.getTag() === tag)
                 return locChildren[i];
         return null;
-    },
+    }
 
     /**
      * Removes a child from the container. It will also cleanup all running actions depending on the cleanup parameter.
      * @param {Node} child  The child node which will be removed.
      * @param {Boolean} [cleanup=true] true if all running actions and callbacks on the child node will be cleanup, false otherwise.
      */
-    removeProtectedChild: function (child, cleanup) {
+    removeProtectedChild(child, cleanup?) {
         if (cleanup == null)
             cleanup = true;
-        var locChildren = this._protectedChildren;
+        const locChildren = this._protectedChildren;
         if (locChildren.length === 0)
             return;
-        var idx = locChildren.indexOf(child);
+        const idx = locChildren.indexOf(child);
         if (idx > -1) {
             if (this._running) {
                 child._performRecursive(Node._stateCallbackType.onExitTransitionDidStart);
@@ -156,7 +160,7 @@ export const ProtectedNode = Node.extend(/** @lends ProtectedNode# */{
             child.setParent(null);
             locChildren.splice(idx, 1);
         }
-    },
+    }
 
     /**
      * Removes a child from the container by tag value.                                    <br/>
@@ -164,39 +168,39 @@ export const ProtectedNode = Node.extend(/** @lends ProtectedNode# */{
      * @param {Number} tag
      * @param {Boolean} [cleanup=true]
      */
-    removeProtectedChildByTag: function (tag, cleanup) {
+    removeProtectedChildByTag(tag, cleanup?) {
         assert(tag !== NODE_TAG_INVALID, "Invalid tag");
 
         if (cleanup == null)
             cleanup = true;
 
-        var child = this.getProtectedChildByTag(tag);
+        const child = this.getProtectedChildByTag(tag);
 
         if (child == null)
             log("cocos2d: removeChildByTag(tag = %d): child not found!", tag);
         else
             this.removeProtectedChild(child, cleanup);
-    },
+    }
 
     /**
      * Removes all children from the container with a cleanup.
      * @see ProtectedNode#removeAllProtectedChildrenWithCleanup
      */
-    removeAllProtectedChildren: function () {
+    removeAllProtectedChildren() {
         this.removeAllProtectedChildrenWithCleanup(true);
-    },
+    }
 
     /**
      * Removes all children from the container, and do a cleanup to all running actions depending on the cleanup parameter.
      * @param {Boolean} [cleanup=true] true if all running actions on all children nodes should be cleanup, false otherwise.
      */
-    removeAllProtectedChildrenWithCleanup: function (cleanup) {
+    removeAllProtectedChildrenWithCleanup(cleanup?) {
         if (cleanup == null)
             cleanup = true;
-        var locChildren = this._protectedChildren;
+        const locChildren = this._protectedChildren;
         // not using detachChild improves speed here
-        for (var i = 0, len = locChildren.length; i < len; i++) {
-            var child = locChildren[i];
+        for (let i = 0, len = locChildren.length; i < len; i++) {
+            const child = locChildren[i];
             // IMPORTANT:
             //  -1st do onExit
             //  -2nd cleanup
@@ -211,19 +215,19 @@ export const ProtectedNode = Node.extend(/** @lends ProtectedNode# */{
             child.setParent(null);
         }
         locChildren.length = 0;
-    },
+    }
 
     /**
      * Reorders a child according to a new z value.
      * @param {Node} child An already added child node. It MUST be already added.
      * @param {Number} localZOrder Z order for drawing priority. Please refer to setLocalZOrder(int)
      */
-    reorderProtectedChild: function (child, localZOrder) {
+    reorderProtectedChild(child, localZOrder) {
         assert(child != null, "Child must be non-nil");
         this._reorderProtectedChildDirty = true;
         child.setOrderOfArrival(s_globalOrderOfArrivalPP());
         child._setLocalZOrder(localZOrder);
-    },
+    }
 
     /**
      * <p>
@@ -232,12 +236,15 @@ export const ProtectedNode = Node.extend(/** @lends ProtectedNode# */{
      *     @note Don't call this manually unless a child added needs to be removed in the same frame
      * </p>
      */
-    sortAllProtectedChildren: function () {
+    sortAllProtectedChildren() {
         if (this._reorderProtectedChildDirty) {
-            var _children = this._protectedChildren;
+            const _children = this._protectedChildren;
 
             // insertion sort
-            var i, j, len = _children.length, tmp;
+            let i;
+            let j;
+            const len = _children.length;
+            let tmp;
             for (i = 1; i < len; i++) {
                 tmp = _children[i];
                 j = i - 1;
@@ -258,24 +265,24 @@ export const ProtectedNode = Node.extend(/** @lends ProtectedNode# */{
             //don't need to check children recursively, that's done in visit of each child
             this._reorderProtectedChildDirty = false;
         }
-    },
+    }
 
-    _changePosition: function () {
-    },
+    _changePosition() {
+    }
 
-    _createRenderCmd: function () {
+    _createRenderCmd() {
         if (_renderType === game.RENDER_TYPE_CANVAS)
             return new ProtectedNode.CanvasRenderCmd(this);
         else
             return new ProtectedNode.WebGLRenderCmd(this);
     }
-});
 
-/**
- * create a ProtectedNode object;
- * @deprecated since v3.0, please use new ProtectedNode() instead.
- * @return ProtectedNode
- */
-ProtectedNode.create = function () {
-    return new ProtectedNode();
-};
+    /**
+     * create a ProtectedNode object;
+     * @deprecated since v3.0, please use new ProtectedNode() instead.
+     * @return ProtectedNode
+     */
+    static create() {
+        return new ProtectedNode();
+    }
+}
