@@ -1,4 +1,5 @@
 import { arrayVerifyType } from '../core/platform/Macro'
+import { Animation, AnimationFrame } from '../core/sprites/Animation'
 import { ActionInterval } from './ActionInterval'
 
 /**  Animates a sprite given the name of an Animation

@@ -76,7 +76,7 @@ const audioLoader = {
     }
     if (request.ontimeout === undefined) {
       request._timeoutId = setTimeout(function () {
-        request.ontimeout()
+        request.ontimeout(undefined)
       }, request.timeout)
     }
     request.ontimeout = function () {

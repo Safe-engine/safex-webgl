@@ -39,7 +39,7 @@ export class TintTo extends ActionInterval {
    * @param {Number} blue 0-255
    * @return {Boolean}
    */
-  initWithDuration(duration: number, red: number, green: number, blue: number): boolean {
+  initWithDuration(duration: number, red: number, green?: number, blue?: number): boolean {
     if (super.initWithDuration(duration)) {
       this._to = color(red, green, blue)
       return true
@@ -141,7 +141,7 @@ export class TintBy extends ActionInterval {
    * @param {Number} deltaBlue 0-255
    * @return {Boolean}
    */
-  initWithDuration(duration: number, deltaRed: number, deltaGreen: number, deltaBlue: number): boolean {
+  initWithDuration(duration: number, deltaRed: number, deltaGreen?: number, deltaBlue?: number): boolean {
     if (super.initWithDuration(duration)) {
       this._deltaR = deltaRed
       this._deltaG = deltaGreen

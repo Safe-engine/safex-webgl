@@ -49,7 +49,7 @@ export class SkewTo extends ActionInterval {
    * @param {Number} sy
    * @return {Boolean}
    */
-  initWithDuration(t: number, sx: number, sy: number): boolean {
+  initWithDuration(t: number, sx: number, sy?: number): boolean {
     let ret = false
     if (super.initWithDuration(t)) {
       this._endSkewX = sx
@@ -143,7 +143,7 @@ export class SkewBy extends SkewTo {
    * @param {Number} deltaSkewY  skew in degrees for Y axis
    * @return {Boolean}
    */
-  initWithDuration(t: number, deltaSkewX: number, deltaSkewY: number): boolean {
+  initWithDuration(t: number, deltaSkewX: number, deltaSkewY?: number): boolean {
     let ret = false
     if (super.initWithDuration(t, deltaSkewX, deltaSkewY)) {
       this._skewX = deltaSkewX

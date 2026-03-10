@@ -1,3 +1,4 @@
+import { ActionInstant } from './ActionInstant'
 import { ActionInterval } from './ActionInterval'
 
 /**

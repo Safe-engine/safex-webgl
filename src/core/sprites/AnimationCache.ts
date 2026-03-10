@@ -2,6 +2,7 @@ import { _LogInfos, assert, log } from '../../helper/Debugger'
 import { loader } from '../../helper/loader'
 import { path } from '../../helper/path'
 import { REPEAT_FOREVER } from '../platform/Macro'
+import { Animation, AnimationFrame } from './Animation'
 import { spriteFrameCache } from './SpriteFrameCache'
 
 export const animationCache = {
