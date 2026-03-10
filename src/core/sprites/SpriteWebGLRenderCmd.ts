@@ -7,7 +7,6 @@ import { FIX_ARTIFACTS_BY_STRECHING_TEXEL } from '../platform/Config'
 import { BLEND_DST, ONE, rectPointsToPixels, SHADER_SPRITE_POSITION_TEXTURECOLOR, SRC_ALPHA } from '../platform/Macro'
 import { Sprite } from './Sprite'
 
-//Sprite's WebGL render command
 export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
   _vertices: any[]
   _color: Uint32Array
@@ -112,15 +111,11 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
   setTextureRect(locRect: any, _rectRotated: any) {
     throw new Error('Method not implemented.')
   }
-  _rectRotated(locRect: any, _rectRotated: any) {
-    throw new Error('Method not implemented.')
-  }
+  _rectRotated: boolean
   setBatchNode(_batchNode: any) {
     throw new Error('Method not implemented.')
   }
-  _batchNode(_batchNode: any) {
-    throw new Error('Method not implemented.')
-  }
+  _batchNode: any
   dispatchEvent(arg0: string) {
     throw new Error('Method not implemented.')
   }

@@ -21,6 +21,9 @@ import { NodeWebGLRenderCmd } from './NodeWebGLRenderCmd'
 
 export const NODE_TAG_INVALID = -1
 export let s_globalOrderOfArrival = 1
+export function s_globalOrderOfArrivalPP() {
+  return s_globalOrderOfArrival++
+}
 
 export class Node extends EventHelper {
   _setReorderChildDirtyRecursively() {
