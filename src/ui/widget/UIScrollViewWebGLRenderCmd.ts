@@ -1,5 +1,5 @@
 import { _renderContext, renderer } from '../..'
-import { Layout } from '../layout/UILayout'
+import { LayoutWebGLRenderCmd } from '../layout/UILayoutWebGLRenderCmd'
 
 export const ScrollViewWebGLRenderCmd = function (renderable) {
   this._layoutCmdCtor(renderable)
@@ -7,7 +7,7 @@ export const ScrollViewWebGLRenderCmd = function (renderable) {
   this._dirty = false
 }
 
-const proto = (ScrollViewWebGLRenderCmd.prototype = Object.create(Layout.WebGLRenderCmd.prototype))
+const proto = (ScrollViewWebGLRenderCmd.prototype = Object.create(LayoutWebGLRenderCmd.prototype))
 proto.constructor = ScrollViewWebGLRenderCmd
 
 proto.rendering = function (ctx) {

@@ -1,3 +1,4 @@
+/* eslint-disable no-misleading-character-class */
 import { renderer, view } from '../..'
 import { _LogInfos, log } from '../../helper/Debugger'
 import { Node } from '../base-nodes/Node'
@@ -49,6 +50,18 @@ import { LabelTTFWebGLRenderCmd } from './LabelTTFWebGLRenderCmd'
  * @property {Number}       shadowBlur      - The blur size of shadow
  */
 export class LabelTTF extends Sprite {
+  static _wordRex = /([a-zA-Z0-9\-¿¡«À-ÖØ-öø-ʯ\u0300-\u034e\u0350-\u036FͰ-ԯ\u2011‵-‷‹⁅]+|\S)/
+  static _symbolRex = /^[!,.:;}\]%?>、‘“》»？。，！\u2010′-‴›‼⁆⁇-⁉]/
+  static _lastWordRex = /([a-zA-Z0-9\-¿¡«À-ÖØ-öø-ʯ\u0300-\u034e\u0350-\u036FͰ-ԯ\u2011‵-‷‹⁅]+|\S)$/
+  static _lastEnglish = /[a-zA-Z0-9\-¿¡«À-ÖØ-öø-ʯ\u0300-\u034e\u0350-\u036FͰ-ԯ\u2011‵-‷‹⁅]+$/
+  static _firstEnglish = /^[a-zA-Z0-9\-¿¡«À-ÖØ-öø-ʯ\u0300-\u034e\u0350-\u036FͰ-ԯ\u2011‵-‷‹⁅]/
+
+  static _textAlign = ['left', 'center', 'right']
+  static _textBaseline = ['top', 'middle', 'bottom']
+
+  //check the first character
+  static wrapInspection = true
+
   _dimensions = null
   _hAlignment = TEXT_ALIGNMENT_CENTER
   _vAlignment = VERTICAL_TEXT_ALIGNMENT_TOP
@@ -840,7 +853,7 @@ export class LabelTTF extends Sprite {
    * @returns {number}
    * @private
    */
-  static __getFontHeightByDiv = function (fontName, fontSize) {
+  static __getFontHeightByDiv = function (fontName, fontSize?) {
     let clientHeight
     const labelDiv = __labelHeightDiv
     if (fontName instanceof FontDefinition) {

@@ -1,12 +1,12 @@
-import { game, renderer } from '../..'
+import { renderer } from '../..'
 import { pAdd, pLength, pMult, pSub } from '../../core'
 import { p, Size } from '../../core/cocoa/Geometry'
 import { Color, color } from '../../core/platform'
 import { assert, log } from '../../helper/Debugger'
-import { _renderType } from '../../helper/engine'
 import { Widget } from '../base/UIWidget'
 import { Layout } from '../layout/UILayout'
 import { ScrollViewBar } from './UIScrollViewBar'
+import { ScrollViewWebGLRenderCmd } from './UIScrollViewWebGLRenderCmd'
 
 export class ScrollView extends Layout {
   static DIR_NONE = 0
@@ -133,7 +133,7 @@ export class ScrollView extends Layout {
     cmd.visit(parentCmd)
 
     renderer.pushRenderCommand(cmd)
-    if (cmd instanceof ScrollView.WebGLRenderCmd) {
+    if (cmd instanceof ScrollViewWebGLRenderCmd) {
       const currentID = this.__instanceId
       renderer._turnToCacheMode(currentID)
     }
@@ -178,7 +178,7 @@ export class ScrollView extends Layout {
       cmd.postScissorVisit()
     }
 
-    if (cmd instanceof ScrollView.WebGLRenderCmd) {
+    if (cmd instanceof ScrollViewWebGLRenderCmd) {
       renderer._turnToNormalMode()
     }
 
@@ -214,9 +214,8 @@ export class ScrollView extends Layout {
     this.addProtectedChild(this._innerContainer, 1, 1)
   }
 
-  _createRenderCmd(): any {
-    if (_renderType === game.RENDER_TYPE_WEBGL) return new ScrollView.WebGLRenderCmd(this)
-    else return new ScrollView.CanvasRenderCmd(this)
+  _createRenderCmd() {
+    return new ScrollViewWebGLRenderCmd(this)
   }
 
   _onSizeChanged(): void {

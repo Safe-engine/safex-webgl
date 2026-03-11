@@ -1,5 +1,5 @@
 import { NodeWebGLRenderCmd } from '../../core/base-nodes/NodeWebGLRenderCmd'
-import { ProtectedNode } from './ProtectedNode'
+import { ProtectedNodeRenderCmd } from './ProtectedNodeRenderCmd'
 
 export const ProtectedNodeWebGLRenderCmd = function (renderable) {
   this._rootCtor(renderable)
@@ -8,7 +8,7 @@ export function inject(srcPrototype, destPrototype) {
   for (const key in srcPrototype) destPrototype[key] = srcPrototype[key]
 }
 const proto = (ProtectedNodeWebGLRenderCmd.prototype = Object.create(NodeWebGLRenderCmd.prototype))
-inject(ProtectedNode.RenderCmd, proto)
+inject(ProtectedNodeRenderCmd, proto)
 proto.constructor = ProtectedNodeWebGLRenderCmd
 proto._pNodeCmdCtor = ProtectedNodeWebGLRenderCmd
 

@@ -2,7 +2,7 @@ import { Texture2D } from '../../textures'
 import { inject } from '../../ui/base/ProtectedNodeWebGLRenderCmd'
 import { Node } from '../base-nodes/Node'
 import { rect } from '../cocoa/Geometry'
-import { LabelTTF } from './LabelTTF'
+import { LabelTTFRenderCmd } from './LabelTTFRenderCmd'
 
 export const LabelTTFCacheRenderCmd = function () {
   this._labelCmdCtor()
@@ -12,8 +12,8 @@ export const LabelTTFCacheRenderCmd = function () {
   this._labelContext = locCanvas.getContext('2d')
 }
 
-LabelTTFCacheRenderCmd.prototype = Object.create(LabelTTF.RenderCmd.prototype)
-inject(LabelTTF.RenderCmd.prototype, LabelTTFCacheRenderCmd.prototype)
+LabelTTFCacheRenderCmd.prototype = Object.create(LabelTTFRenderCmd.prototype)
+inject(LabelTTFRenderCmd.prototype, LabelTTFCacheRenderCmd.prototype)
 
 const proto = LabelTTFCacheRenderCmd.prototype
 proto.constructor = LabelTTFCacheRenderCmd

@@ -45,7 +45,6 @@ export class Node extends EventHelper {
   setTextureRect(rt: Rect) {
     throw new Error('Method not implemented.')
   }
-  static RenderCmd: (renderable: any) => void
   _batchNode: any
   textureAtlas: any
   _texture: any

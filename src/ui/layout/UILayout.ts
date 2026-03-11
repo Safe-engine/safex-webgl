@@ -1,14 +1,13 @@
-import { game } from '../..'
 import { pLength, pSub, Sprite } from '../../core'
 import { Node } from '../../core/base-nodes/Node'
 import { p, rect, Size } from '../../core/cocoa/Geometry'
 import { Color, color, FLT_MAX } from '../../core/platform'
 import { assert, log } from '../../helper/Debugger'
-import { _renderType } from '../../helper/engine'
 import { DrawNode } from '../../shape-nodes/DrawNode'
 import { Scale9Sprite } from '../base/UIScale9Sprite'
 import { Widget } from '../base/UIWidget'
 import { LayoutParameter, LinearLayoutParameter, RelativeLayoutParameter } from './UILayoutParameter'
+import { LayoutWebGLRenderCmd } from './UILayoutWebGLRenderCmd'
 
 export class Layout extends Widget {
   _clippingEnabled = false
@@ -53,8 +52,6 @@ export class Layout extends Widget {
    * @param {Widget} current
    */
   onPassFocusToChild = null
-  static WebGLRenderCmd: any
-  static CanvasRenderCmd: any
 
   /**
    * Allocates and initializes an UILayout.
@@ -811,6 +808,9 @@ export class Layout extends Widget {
   getLayoutType() {
     return this._layoutType
   }
+  isLayout() {
+    return this._layoutType !== null
+  }
 
   /**
    * request to refresh widget layout, it will do layout at visit calls
@@ -1375,21 +1375,8 @@ export class Layout extends Widget {
   }
 
   _createRenderCmd() {
-    if (_renderType === game.RENDER_TYPE_WEBGL) return new Layout.WebGLRenderCmd(this)
-    else return new Layout.CanvasRenderCmd(this)
+    return new LayoutWebGLRenderCmd(this)
   }
-
-  // Static properties
-  /**
-   * allocates and initializes a UILayout.
-   * @deprecated since v3.0, please use new Layout() instead.
-   * @return {Layout}
-   */
-  static create() {
-    return new Layout()
-  }
-
-  // Constants
 
   //layoutBackGround color type
   /**

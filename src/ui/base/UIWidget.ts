@@ -7,7 +7,7 @@ import { eventManager } from '../../core/event-manager/EventManager'
 import { arrayRemoveObject, SHADER_SPRITE_POSITION_TEXTURECOLOR, SHADER_SPRITE_POSITION_TEXTURECOLOR_GRAY } from '../../core/platform'
 import { log } from '../../helper/Debugger'
 import { shaderCache } from '../../shaders/ShaderCache'
-import { Layout } from '../layout/UILayout'
+// import { Layout } from '../layout/UILayout'
 import { LayoutParameter } from '../layout/UILayoutParameter'
 import { FocusNavigationController } from './FocusNavigationController'
 import { ProtectedNode } from './ProtectedNode'
@@ -657,10 +657,10 @@ export class Widget extends ProtectedNode {
    */
   findNextFocusedWidget(direction, current) {
     if (null === this.onNextFocusedWidget || null == this.onNextFocusedWidget(direction)) {
-      const isLayout = current instanceof Layout
+      const isLayout = current.isLayout()
       if (this.isFocused() || isLayout) {
-        const layout = this.getParent()
-        if (null === layout || !(layout instanceof Layout)) {
+        const layout: any = this.getParent()
+        if (null === layout || !layout.isLayout()) {
           //the outer layout's default behaviour is : loop focus
           if (isLayout) return current.findNextFocusedWidget(direction, current)
           return current
@@ -947,10 +947,10 @@ export class Widget extends ProtectedNode {
    */
   isClippingParentContainsPoint(pt) {
     this._affectByClipping = false
-    let parent = this.getParent()
+    let parent: any = this.getParent()
     let clippingParent = null
     while (parent) {
-      if (parent instanceof Layout) {
+      if (parent.isLayout()) {
         if (parent.isClippingEnabled()) {
           this._affectByClipping = true
           clippingParent = parent
