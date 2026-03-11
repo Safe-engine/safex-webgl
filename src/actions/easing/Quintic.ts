@@ -1,3 +1,4 @@
+import { ActionInterval } from '../ActionInterval'
 import { ActionEase } from './ActionEase'
 
 /**
@@ -15,42 +16,44 @@ import { ActionEase } from './ActionEase'
  * //The new usage
  * action.easing(easeQuinticActionIn());
  */
-export const EaseQuinticActionIn = ActionEase.extend(
-  /** @lends EaseQuinticActionIn# */ {
-    _updateTime: function (time) {
-      return time * time * time * time * time
-    },
+export class EaseQuinticActionIn extends ActionEase {
+  constructor(action?: ActionInterval) {
+    super(action)
+  }
 
-    /**
-     * Called once per frame. Time is the number of seconds of a frame interval.
-     *
-     * @param {Number} dt
-     */
-    update: function (dt) {
-      this._inner.update(this._updateTime(dt))
-    },
+  _updateTime(time: number): number {
+    return time * time * time * time * time
+  }
 
-    /**
-     * to copy object with deep copy.
-     * returns a clone of action.
-     *
-     * @returns {EaseQuinticActionIn}
-     */
-    clone: function () {
-      const action = new EaseQuinticActionIn()
-      action.initWithAction(this._inner.clone())
-      return action
-    },
+  /**
+   * Called once per frame. Time is the number of seconds of a frame interval.
+   *
+   * @param {Number} dt
+   */
+  update(dt: number): void {
+    this._inner!.update(this._updateTime(dt))
+  }
 
-    /**
-     * Create a action. Opposite with the original motion trajectory.
-     * @return {EaseQuinticActionIn}
-     */
-    reverse: function () {
-      return new EaseQuinticActionIn(this._inner.reverse())
-    },
-  },
-)
+  /**
+   * to copy object with deep copy.
+   * returns a clone of action.
+   *
+   * @returns {EaseQuinticActionIn}
+   */
+  clone(): EaseQuinticActionIn {
+    const action = new EaseQuinticActionIn()
+    action.initWithAction(this._inner!.clone() as ActionInterval)
+    return action
+  }
+
+  /**
+   * Create a action. Opposite with the original motion trajectory.
+   * @return {EaseQuinticActionIn}
+   */
+  reverse(): EaseQuinticActionIn {
+    return new EaseQuinticActionIn(this._inner!.reverse() as ActionInterval)
+  }
+}
 
 export const _easeQuinticActionIn = {
   easing: EaseQuinticActionIn.prototype._updateTime,
@@ -88,43 +91,45 @@ export const easeQuinticActionIn = function () {
  * //The new usage
  * action.easing(easeQuadraticActionOut());
  */
-export const EaseQuinticActionOut = ActionEase.extend(
-  /** @lends EaseQuinticActionOut# */ {
-    _updateTime: function (time) {
-      time -= 1
-      return time * time * time * time * time + 1
-    },
+export class EaseQuinticActionOut extends ActionEase {
+  constructor(action?: ActionInterval) {
+    super(action)
+  }
 
-    /**
-     * Called once per frame. Time is the number of seconds of a frame interval.
-     *
-     * @param {Number} dt
-     */
-    update: function (dt) {
-      this._inner.update(this._updateTime(dt))
-    },
+  _updateTime(time: number): number {
+    time -= 1
+    return time * time * time * time * time + 1
+  }
 
-    /**
-     * to copy object with deep copy.
-     * returns a clone of action.
-     *
-     * @returns {EaseQuinticActionOut}
-     */
-    clone: function () {
-      const action = new EaseQuinticActionOut()
-      action.initWithAction(this._inner.clone())
-      return action
-    },
+  /**
+   * Called once per frame. Time is the number of seconds of a frame interval.
+   *
+   * @param {Number} dt
+   */
+  update(dt: number): void {
+    this._inner!.update(this._updateTime(dt))
+  }
 
-    /**
-     * Create a action. Opposite with the original motion trajectory.
-     * @return {EaseQuinticActionOut}
-     */
-    reverse: function () {
-      return new EaseQuinticActionOut(this._inner.reverse())
-    },
-  },
-)
+  /**
+   * to copy object with deep copy.
+   * returns a clone of action.
+   *
+   * @returns {EaseQuinticActionOut}
+   */
+  clone(): EaseQuinticActionOut {
+    const action = new EaseQuinticActionOut()
+    action.initWithAction(this._inner!.clone() as ActionInterval)
+    return action
+  }
+
+  /**
+   * Create a action. Opposite with the original motion trajectory.
+   * @return {EaseQuinticActionOut}
+   */
+  reverse(): EaseQuinticActionOut {
+    return new EaseQuinticActionOut(this._inner!.reverse() as ActionInterval)
+  }
+}
 
 export const _easeQuinticActionOut = {
   easing: EaseQuinticActionOut.prototype._updateTime,
@@ -162,45 +167,47 @@ export const easeQuinticActionOut = function () {
  * //The new usage
  * action.easing(easeQuinticActionInOut());
  */
-export const EaseQuinticActionInOut = ActionEase.extend(
-  /** @lends EaseQuinticActionInOut# */ {
-    _updateTime: function (time) {
-      time = time * 2
-      if (time < 1) return 0.5 * time * time * time * time * time
-      time -= 2
-      return 0.5 * (time * time * time * time * time + 2)
-    },
+export class EaseQuinticActionInOut extends ActionEase {
+  constructor(action?: ActionInterval) {
+    super(action)
+  }
 
-    /**
-     * Called once per frame. Time is the number of seconds of a frame interval.
-     *
-     * @param {Number} dt
-     */
-    update: function (dt) {
-      this._inner.update(this._updateTime(dt))
-    },
+  _updateTime(time: number): number {
+    time = time * 2
+    if (time < 1) return 0.5 * time * time * time * time * time
+    time -= 2
+    return 0.5 * (time * time * time * time * time + 2)
+  }
 
-    /**
-     * to copy object with deep copy.
-     * returns a clone of action.
-     *
-     * @returns {EaseQuinticActionInOut}
-     */
-    clone: function () {
-      const action = new EaseQuinticActionInOut()
-      action.initWithAction(this._inner.clone())
-      return action
-    },
+  /**
+   * Called once per frame. Time is the number of seconds of a frame interval.
+   *
+   * @param {Number} dt
+   */
+  update(dt: number): void {
+    this._inner!.update(this._updateTime(dt))
+  }
 
-    /**
-     * Create a action. Opposite with the original motion trajectory.
-     * @return {EaseQuinticActionInOut}
-     */
-    reverse: function () {
-      return new EaseQuinticActionInOut(this._inner.reverse())
-    },
-  },
-)
+  /**
+   * to copy object with deep copy.
+   * returns a clone of action.
+   *
+   * @returns {EaseQuinticActionInOut}
+   */
+  clone(): EaseQuinticActionInOut {
+    const action = new EaseQuinticActionInOut()
+    action.initWithAction(this._inner!.clone() as ActionInterval)
+    return action
+  }
+
+  /**
+   * Create a action. Opposite with the original motion trajectory.
+   * @return {EaseQuinticActionInOut}
+   */
+  reverse(): EaseQuinticActionInOut {
+    return new EaseQuinticActionInOut(this._inner!.reverse() as ActionInterval)
+  }
+}
 
 export const _easeQuinticActionInOut = {
   easing: EaseQuinticActionInOut.prototype._updateTime,

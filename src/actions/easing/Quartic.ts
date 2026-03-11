@@ -1,3 +1,4 @@
+import { ActionInterval } from '../ActionInterval'
 import { ActionEase } from './ActionEase'
 
 /**
@@ -15,42 +16,25 @@ import { ActionEase } from './ActionEase'
  * //The new usage
  * action.easing(easeQuadraticActionIn());
  */
-export const EaseQuadraticActionIn = ActionEase.extend(
-  /** @lends EaseQuadraticActionIn# */ {
-    _updateTime: function (time) {
-      return Math.pow(time, 2)
-    },
+export class EaseQuadraticActionIn extends ActionEase {
+  _updateTime(time: number): number {
+    return Math.pow(time, 2)
+  }
 
-    /**
-     * Called once per frame. Time is the number of seconds of a frame interval.
-     *
-     * @param {Number} dt
-     */
-    update: function (dt) {
-      this._inner.update(this._updateTime(dt))
-    },
+  update(dt: number): void {
+    this._inner!.update(this._updateTime(dt))
+  }
 
-    /**
-     * to copy object with deep copy.
-     * returns a clone of action.
-     *
-     * @returns {EaseQuadraticActionIn}
-     */
-    clone: function () {
-      const action = new EaseQuadraticActionIn()
-      action.initWithAction(this._inner.clone())
-      return action
-    },
+  clone(): EaseQuadraticActionIn {
+    const action = new EaseQuadraticActionIn()
+    action.initWithAction(this._inner!.clone() as ActionInterval)
+    return action
+  }
 
-    /**
-     * Create a action. Opposite with the original motion trajectory.
-     * @return {EaseQuadraticActionIn}
-     */
-    reverse: function () {
-      return new EaseQuadraticActionIn(this._inner.reverse())
-    },
-  },
-)
+  reverse(): EaseQuadraticActionIn {
+    return new EaseQuadraticActionIn(this._inner!.reverse() as ActionInterval)
+  }
+}
 
 export const _easeQuadraticActionIn = {
   easing: EaseQuadraticActionIn.prototype._updateTime,
@@ -87,42 +71,25 @@ export const easeQuadraticActionIn = function () {
  * //The new usage
  * action.easing(easeQuadraticActionOut());
  */
-export const EaseQuadraticActionOut = ActionEase.extend(
-  /** @lends EaseQuadraticActionOut# */ {
-    _updateTime: function (time) {
-      return -time * (time - 2)
-    },
+export class EaseQuadraticActionOut extends ActionEase {
+  _updateTime(time: number): number {
+    return -time * (time - 2)
+  }
 
-    /**
-     * Called once per frame. Time is the number of seconds of a frame interval.
-     *
-     * @param {Number} dt
-     */
-    update: function (dt) {
-      this._inner.update(this._updateTime(dt))
-    },
+  update(dt: number): void {
+    this._inner!.update(this._updateTime(dt))
+  }
 
-    /**
-     * to copy object with deep copy.
-     * returns a clone of action.
-     *
-     * @returns {EaseQuadraticActionOut}
-     */
-    clone: function () {
-      const action = new EaseQuadraticActionOut()
-      action.initWithAction()
-      return action
-    },
+  clone(): EaseQuadraticActionOut {
+    const action = new EaseQuadraticActionOut()
+    action.initWithAction(this._inner!.clone() as ActionInterval)
+    return action
+  }
 
-    /**
-     * Create a action. Opposite with the original motion trajectory.
-     * @return {EaseQuadraticActionOut}
-     */
-    reverse: function () {
-      return new EaseQuadraticActionOut(this._inner.reverse())
-    },
-  },
-)
+  reverse(): EaseQuadraticActionOut {
+    return new EaseQuadraticActionOut(this._inner!.reverse() as ActionInterval)
+  }
+}
 
 export const _easeQuadraticActionOut = {
   easing: EaseQuadraticActionOut.prototype._updateTime,
@@ -159,50 +126,33 @@ export const easeQuadraticActionOut = function () {
  * //The new usage
  * action.easing(easeQuadraticActionInOut());
  */
-export const EaseQuadraticActionInOut = ActionEase.extend(
-  /** @lends EaseQuadraticActionInOut# */ {
-    _updateTime: function (time) {
-      let resultTime = time
-      time *= 2
-      if (time < 1) {
-        resultTime = time * time * 0.5
-      } else {
-        --time
-        resultTime = -0.5 * (time * (time - 2) - 1)
-      }
-      return resultTime
-    },
+export class EaseQuadraticActionInOut extends ActionEase {
+  _updateTime(time: number): number {
+    let resultTime
+    time *= 2
+    if (time < 1) {
+      resultTime = time * time * 0.5
+    } else {
+      --time
+      resultTime = -0.5 * (time * (time - 2) - 1)
+    }
+    return resultTime
+  }
 
-    /**
-     * Called once per frame. Time is the number of seconds of a frame interval.
-     *
-     * @param {Number} dt
-     */
-    update: function (dt) {
-      this._inner.update(this._updateTime(dt))
-    },
+  update(dt: number): void {
+    this._inner!.update(this._updateTime(dt))
+  }
 
-    /**
-     * to copy object with deep copy.
-     * returns a clone of action.
-     *
-     * @returns {EaseQuadraticActionInOut}
-     */
-    clone: function () {
-      const action = new EaseQuadraticActionInOut()
-      action.initWithAction(this._inner.clone())
-      return action
-    },
+  clone(): EaseQuadraticActionInOut {
+    const action = new EaseQuadraticActionInOut()
+    action.initWithAction(this._inner!.clone() as ActionInterval)
+    return action
+  }
 
-    /**
-     * Create a action. Opposite with the original motion trajectory.
-     * @return {EaseQuadraticActionInOut}
-     */
-    reverse: function () {
-      return new EaseQuadraticActionInOut(this._inner.reverse())
-    },
-  },
-)
+  reverse(): EaseQuadraticActionInOut {
+    return new EaseQuadraticActionInOut(this._inner!.reverse() as ActionInterval)
+  }
+}
 
 export const _easeQuadraticActionInOut = {
   easing: EaseQuadraticActionInOut.prototype._updateTime,
@@ -240,42 +190,25 @@ export const easeQuadraticActionInOut = function () {
  * //The new usage
  * action.easing(easeQuarticActionIn());
  */
-export const EaseQuarticActionIn = ActionEase.extend(
-  /** @lends EaseQuarticActionIn# */ {
-    _updateTime: function (time) {
-      return time * time * time * time
-    },
+export class EaseQuarticActionIn extends ActionEase {
+  _updateTime(time: number): number {
+    return time * time * time * time
+  }
 
-    /**
-     * Called once per frame. Time is the number of seconds of a frame interval.
-     *
-     * @param {Number} dt
-     */
-    update: function (dt) {
-      this._inner.update(this._updateTime(dt))
-    },
+  update(dt: number): void {
+    this._inner!.update(this._updateTime(dt))
+  }
 
-    /**
-     * to copy object with deep copy.
-     * returns a clone of action.
-     *
-     * @returns {EaseQuarticActionIn}
-     */
-    clone: function () {
-      const action = new EaseQuarticActionIn()
-      action.initWithAction(this._inner.clone())
-      return action
-    },
+  clone(): EaseQuarticActionIn {
+    const action = new EaseQuarticActionIn()
+    action.initWithAction(this._inner!.clone() as ActionInterval)
+    return action
+  }
 
-    /**
-     * Create a action. Opposite with the original motion trajectory.
-     * @return {EaseQuarticActionIn}
-     */
-    reverse: function () {
-      return new EaseQuarticActionIn(this._inner.reverse())
-    },
-  },
-)
+  reverse(): EaseQuarticActionIn {
+    return new EaseQuarticActionIn(this._inner!.reverse() as ActionInterval)
+  }
+}
 
 export const _easeQuarticActionIn = {
   easing: EaseQuarticActionIn.prototype._updateTime,
@@ -312,43 +245,26 @@ export const easeQuarticActionIn = function () {
  * //The new usage
  * action.easing(EaseQuarticActionOut());
  */
-export const EaseQuarticActionOut = ActionEase.extend(
-  /** @lends EaseQuarticActionOut# */ {
-    _updateTime: function (time) {
-      time -= 1
-      return -(time * time * time * time - 1)
-    },
+export class EaseQuarticActionOut extends ActionEase {
+  _updateTime(time: number): number {
+    time -= 1
+    return -(time * time * time * time - 1)
+  }
 
-    /**
-     * Called once per frame. Time is the number of seconds of a frame interval.
-     *
-     * @param {Number} dt
-     */
-    update: function (dt) {
-      this._inner.update(this._updateTime(dt))
-    },
+  update(dt: number): void {
+    this._inner!.update(this._updateTime(dt))
+  }
 
-    /**
-     * to copy object with deep copy.
-     * returns a clone of action.
-     *
-     * @returns {EaseQuarticActionOut}
-     */
-    clone: function () {
-      const action = new EaseQuarticActionOut()
-      action.initWithAction(this._inner.clone())
-      return action
-    },
+  clone(): EaseQuarticActionOut {
+    const action = new EaseQuarticActionOut()
+    action.initWithAction(this._inner!.clone() as ActionInterval)
+    return action
+  }
 
-    /**
-     * Create a action. Opposite with the original motion trajectory.
-     * @return {EaseQuarticActionOut}
-     */
-    reverse: function () {
-      return new EaseQuarticActionOut(this._inner.reverse())
-    },
-  },
-)
+  reverse(): EaseQuarticActionOut {
+    return new EaseQuarticActionOut(this._inner!.reverse() as ActionInterval)
+  }
+}
 
 export const _easeQuarticActionOut = {
   easing: EaseQuarticActionOut.prototype._updateTime,
@@ -386,45 +302,28 @@ export const easeQuarticActionOut = function () {
  * //The new usage
  * action.easing(easeQuarticActionInOut());
  */
-export const EaseQuarticActionInOut = ActionEase.extend(
-  /** @lends EaseQuarticActionInOut# */ {
-    _updateTime: function (time) {
-      time = time * 2
-      if (time < 1) return 0.5 * time * time * time * time
-      time -= 2
-      return -0.5 * (time * time * time * time - 2)
-    },
+export class EaseQuarticActionInOut extends ActionEase {
+  _updateTime(time: number): number {
+    time = time * 2
+    if (time < 1) return 0.5 * time * time * time * time
+    time -= 2
+    return -0.5 * (time * time * time * time - 2)
+  }
 
-    /**
-     * Called once per frame. Time is the number of seconds of a frame interval.
-     *
-     * @param {Number} dt
-     */
-    update: function (dt) {
-      this._inner.update(this._updateTime(dt))
-    },
+  update(dt: number): void {
+    this._inner!.update(this._updateTime(dt))
+  }
 
-    /**
-     * to copy object with deep copy.
-     * returns a clone of action.
-     *
-     * @returns {EaseQuarticActionInOut}
-     */
-    clone: function () {
-      const action = new EaseQuarticActionInOut()
-      action.initWithAction(this._inner.clone())
-      return action
-    },
+  clone(): EaseQuarticActionInOut {
+    const action = new EaseQuarticActionInOut()
+    action.initWithAction(this._inner!.clone() as ActionInterval)
+    return action
+  }
 
-    /**
-     * Create a action. Opposite with the original motion trajectory.
-     * @return {EaseQuarticActionInOut}
-     */
-    reverse: function () {
-      return new EaseQuarticActionInOut(this._inner.reverse())
-    },
-  },
-)
+  reverse(): EaseQuarticActionInOut {
+    return new EaseQuarticActionInOut(this._inner!.reverse() as ActionInterval)
+  }
+}
 
 export const _easeQuarticActionInOut = {
   easing: EaseQuarticActionInOut.prototype._updateTime,

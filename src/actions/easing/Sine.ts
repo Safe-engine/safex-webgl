@@ -1,3 +1,4 @@
+import { ActionInterval } from '../ActionInterval'
 import { ActionEase } from './ActionEase'
 
 /**
@@ -15,42 +16,44 @@ import { ActionEase } from './ActionEase'
  * //The new usage
  * action.easing(easeSineIn());
  */
-export const EaseSineIn = ActionEase.extend(
-  /** @lends EaseSineIn# */ {
-    /**
-     * Called once per frame. Time is the number of seconds of a frame interval.
-     *
-     * @param {Number} dt
-     */
-    update: function (dt) {
-      dt = dt === 0 || dt === 1 ? dt : -1 * Math.cos((dt * Math.PI) / 2) + 1
-      this._inner.update(dt)
-    },
+export class EaseSineIn extends ActionEase {
+  constructor(action?: ActionInterval) {
+    super(action)
+  }
 
-    /**
-     * Create a EaseSineOut action. Opposite with the original motion trajectory.
-     * @return {EaseSineOut}
-     */
-    reverse: function () {
-      return new EaseSineOut(this._inner.reverse())
-    },
+  /**
+   * Called once per frame. Time is the number of seconds of a frame interval.
+   *
+   * @param {Number} dt
+   */
+  update(dt: number): void {
+    dt = dt === 0 || dt === 1 ? dt : -1 * Math.cos((dt * Math.PI) / 2) + 1
+    this._inner!.update(dt)
+  }
 
-    /**
-     * to copy object with deep copy.
-     * returns a clone of action.
-     *
-     * @returns {EaseSineIn}
-     */
-    clone: function () {
-      const action = new EaseSineIn()
-      action.initWithAction(this._inner.clone())
-      return action
-    },
-  },
-)
+  /**
+   * Create a EaseSineOut action. Opposite with the original motion trajectory.
+   * @return {EaseSineOut}
+   */
+  reverse(): EaseSineOut {
+    return new EaseSineOut(this._inner!.reverse() as ActionInterval)
+  }
+
+  /**
+   * to copy object with deep copy.
+   * returns a clone of action.
+   *
+   * @returns {EaseSineIn}
+   */
+  clone(): EaseSineIn {
+    const action = new EaseSineIn()
+    action.initWithAction(this._inner!.clone() as ActionInterval)
+    return action
+  }
+}
 
 export const _easeSineInObj = {
-  easing: function (dt) {
+  easing: function (dt: number) {
     return dt === 0 || dt === 1 ? dt : -1 * Math.cos((dt * Math.PI) / 2) + 1
   },
   reverse: function () {
@@ -86,42 +89,44 @@ export const easeSineIn = function () {
  * //The new usage
  * action.easing(easeSineOut());
  */
-export const EaseSineOut = ActionEase.extend(
-  /** @lends EaseSineOut# */ {
-    /**
-     * Called once per frame. Time is the number of seconds of a frame interval.
-     *
-     * @param {Number} dt
-     */
-    update: function (dt) {
-      dt = dt === 0 || dt === 1 ? dt : Math.sin((dt * Math.PI) / 2)
-      this._inner.update(dt)
-    },
+export class EaseSineOut extends ActionEase {
+  constructor(action?: ActionInterval) {
+    super(action)
+  }
 
-    /**
-     * Create a EaseSineIn action. Opposite with the original motion trajectory.
-     * @return {EaseSineIn}
-     */
-    reverse: function () {
-      return new EaseSineIn(this._inner.reverse())
-    },
+  /**
+   * Called once per frame. Time is the number of seconds of a frame interval.
+   *
+   * @param {Number} dt
+   */
+  update(dt: number): void {
+    dt = dt === 0 || dt === 1 ? dt : Math.sin((dt * Math.PI) / 2)
+    this._inner!.update(dt)
+  }
 
-    /**
-     * to copy object with deep copy.
-     * returns a clone of action.
-     *
-     * @returns {EaseSineOut}
-     */
-    clone: function () {
-      const action = new EaseSineOut()
-      action.initWithAction(this._inner.clone())
-      return action
-    },
-  },
-)
+  /**
+   * Create a EaseSineIn action. Opposite with the original motion trajectory.
+   * @return {EaseSineIn}
+   */
+  reverse(): EaseSineIn {
+    return new EaseSineIn(this._inner!.reverse() as ActionInterval)
+  }
+
+  /**
+   * to copy object with deep copy.
+   * returns a clone of action.
+   *
+   * @returns {EaseSineOut}
+   */
+  clone(): EaseSineOut {
+    const action = new EaseSineOut()
+    action.initWithAction(this._inner!.clone() as ActionInterval)
+    return action
+  }
+}
 
 export const _easeSineOutObj = {
-  easing: function (dt) {
+  easing: function (dt: number) {
     return dt === 0 || dt === 1 ? dt : Math.sin((dt * Math.PI) / 2)
   },
   reverse: function () {
@@ -158,42 +163,44 @@ export const easeSineOut = function () {
  * //The new usage
  * action.easing(easeSineInOut());
  */
-export const EaseSineInOut = ActionEase.extend(
-  /** @lends EaseSineInOut# */ {
-    /**
-     * Called once per frame. Time is the number of seconds of a frame interval.
-     *
-     * @param {Number} dt
-     */
-    update: function (dt) {
-      dt = dt === 0 || dt === 1 ? dt : -0.5 * (Math.cos(Math.PI * dt) - 1)
-      this._inner.update(dt)
-    },
+export class EaseSineInOut extends ActionEase {
+  constructor(action?: ActionInterval) {
+    super(action)
+  }
 
-    /**
-     * to copy object with deep copy.
-     * returns a clone of action.
-     *
-     * @returns {EaseSineInOut}
-     */
-    clone: function () {
-      const action = new EaseSineInOut()
-      action.initWithAction(this._inner.clone())
-      return action
-    },
+  /**
+   * Called once per frame. Time is the number of seconds of a frame interval.
+   *
+   * @param {Number} dt
+   */
+  update(dt: number): void {
+    dt = dt === 0 || dt === 1 ? dt : -0.5 * (Math.cos(Math.PI * dt) - 1)
+    this._inner!.update(dt)
+  }
 
-    /**
-     * Create a EaseSineInOut action. Opposite with the original motion trajectory.
-     * @return {EaseSineInOut}
-     */
-    reverse: function () {
-      return new EaseSineInOut(this._inner.reverse())
-    },
-  },
-)
+  /**
+   * to copy object with deep copy.
+   * returns a clone of action.
+   *
+   * @returns {EaseSineInOut}
+   */
+  clone(): EaseSineInOut {
+    const action = new EaseSineInOut()
+    action.initWithAction(this._inner!.clone() as ActionInterval)
+    return action
+  }
+
+  /**
+   * Create a EaseSineInOut action. Opposite with the original motion trajectory.
+   * @return {EaseSineInOut}
+   */
+  reverse(): EaseSineInOut {
+    return new EaseSineInOut(this._inner!.reverse() as ActionInterval)
+  }
+}
 
 export const _easeSineInOutObj = {
-  easing: function (dt) {
+  easing: function (dt: number) {
     return dt === 0 || dt === 1 ? dt : -0.5 * (Math.cos(Math.PI * dt) - 1)
   },
   reverse: function () {

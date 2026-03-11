@@ -1,3 +1,6 @@
+import { ActionEase } from './ActionEase'
+import { ActionInterval } from '../ActionInterval'
+
 /**
  * EaseCircleActionIn action. <br />
  * Reference easeInCirc: <br />
@@ -13,47 +16,48 @@
  * //The new usage
  * action.easing(easeCircleActionIn());
  */
-export const EaseCircleActionIn = ActionEase.extend(
-  /** @lends EaseCircleActionIn# */ {
-    _updateTime: function (time) {
-      return -1 * (Math.sqrt(1 - time * time) - 1)
-    },
+export class EaseCircleActionIn extends ActionEase {
+  constructor(action?: ActionInterval) {
+    super()
+    action && this.initWithAction(action)
+  }
 
-    /**
-     * Called once per frame. Time is the number of seconds of a frame interval.
-     *
-     * @param {Number} dt
-     */
-    update: function (dt) {
-      this._inner.update(this._updateTime(dt))
-    },
+  /**
+   * Called once per frame. Time is the number of seconds of a frame interval.
+   *
+   * @param {Number} dt
+   */
+  update(dt: number): void {
+    this._inner!.update(-1 * (Math.sqrt(1 - dt * dt) - 1))
+  }
 
-    /**
-     * to copy object with deep copy.
-     * returns a clone of action.
-     *
-     * @returns {EaseCircleActionIn}
-     */
-    clone: function () {
-      const action = new EaseCircleActionIn()
-      action.initWithAction(this._inner.clone())
-      return action
-    },
+  /**
+   * to copy object with deep copy.
+   * returns a clone of action.
+   *
+   * @returns {EaseCircleActionIn}
+   */
+  clone(): EaseCircleActionIn {
+    const action = new EaseCircleActionIn()
+    action.initWithAction(this._inner!.clone() as ActionInterval)
+    return action
+  }
 
-    /**
-     * Create a action. Opposite with the original motion trajectory.
-     * @return {EaseCircleActionIn}
-     */
-    reverse: function () {
-      return new EaseCircleActionIn(this._inner.reverse())
-    },
-  },
-)
+  /**
+   * Create a action. Opposite with the original motion trajectory.
+   * @return {EaseCircleActionIn}
+   */
+  reverse(): EaseCircleActionOut {
+    return new EaseCircleActionOut(this._inner!.reverse() as ActionInterval)
+  }
+}
 
 export const _easeCircleActionIn = {
-  easing: EaseCircleActionIn.prototype._updateTime,
+  easing: function (time: number) {
+    return -1 * (Math.sqrt(1 - time * time) - 1)
+  },
   reverse: function () {
-    return _easeCircleActionIn
+    return _easeCircleActionOut
   },
 }
 
@@ -86,48 +90,50 @@ export const easeCircleActionIn = function () {
  * //The new usage
  * action.easing(easeCircleActionOut());
  */
-export const EaseCircleActionOut = ActionEase.extend(
-  /** @lends EaseCircleActionOut# */ {
-    _updateTime: function (time) {
-      time = time - 1
-      return Math.sqrt(1 - time * time)
-    },
+export class EaseCircleActionOut extends ActionEase {
+  constructor(action?: ActionInterval) {
+    super()
+    action && this.initWithAction(action)
+  }
 
-    /**
-     * Called once per frame. Time is the number of seconds of a frame interval.
-     *
-     * @param {Number} dt
-     */
-    update: function (dt) {
-      this._inner.update(this._updateTime(dt))
-    },
+  /**
+   * Called once per frame. Time is the number of seconds of a frame interval.
+   *
+   * @param {Number} dt
+   */
+  update(dt: number): void {
+    const time = dt - 1
+    this._inner!.update(Math.sqrt(1 - time * time))
+  }
 
-    /**
-     * to copy object with deep copy.
-     * returns a clone of action.
-     *
-     * @returns {EaseCircleActionOut}
-     */
-    clone: function () {
-      const action = new EaseCircleActionOut()
-      action.initWithAction(this._inner.clone())
-      return action
-    },
+  /**
+   * to copy object with deep copy.
+   * returns a clone of action.
+   *
+   * @returns {EaseCircleActionOut}
+   */
+  clone(): EaseCircleActionOut {
+    const action = new EaseCircleActionOut()
+    action.initWithAction(this._inner!.clone() as ActionInterval)
+    return action
+  }
 
-    /**
-     * Create a action. Opposite with the original motion trajectory.
-     * @return {EaseCircleActionOut}
-     */
-    reverse: function () {
-      return new EaseCircleActionOut(this._inner.reverse())
-    },
-  },
-)
+  /**
+   * Create a action. Opposite with the original motion trajectory.
+   * @return {EaseCircleActionOut}
+   */
+  reverse(): EaseCircleActionIn {
+    return new EaseCircleActionIn(this._inner!.reverse() as ActionInterval)
+  }
+}
 
 export const _easeCircleActionOut = {
-  easing: EaseCircleActionOut.prototype._updateTime,
+  easing: function (time: number) {
+    const t = time - 1
+    return Math.sqrt(1 - t * t)
+  },
   reverse: function () {
-    return _easeCircleActionOut
+    return _easeCircleActionIn
   },
 }
 
@@ -137,9 +143,9 @@ export const _easeCircleActionOut = {
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
  * @function
  * @returns {Object}
- * @exampple
+ * @example
  * //example
- * actioneasing(easeCircleActionOut());
+ * action.easing(easeCircleActionOut());
  */
 export const easeCircleActionOut = function () {
   return _easeCircleActionOut
@@ -160,48 +166,55 @@ export const easeCircleActionOut = function () {
  * //The new usage
  * action.easing(easeCircleActionInOut());
  */
-export const EaseCircleActionInOut = ActionEase.extend(
-  /** @lends EaseCircleActionInOut# */ {
-    _updateTime: function (time) {
-      time = time * 2
-      if (time < 1) return -0.5 * (Math.sqrt(1 - time * time) - 1)
+export class EaseCircleActionInOut extends ActionEase {
+  constructor(action?: ActionInterval) {
+    super()
+    action && this.initWithAction(action)
+  }
+
+  /**
+   * Called once per frame. Time is the number of seconds of a frame interval.
+   *
+   * @param {Number} dt
+   */
+  update(dt: number): void {
+    let time = dt * 2
+    if (time < 1) {
+      this._inner!.update(-0.5 * (Math.sqrt(1 - time * time) - 1))
+    } else {
       time -= 2
-      return 0.5 * (Math.sqrt(1 - time * time) + 1)
-    },
+      this._inner!.update(0.5 * (Math.sqrt(1 - time * time) + 1))
+    }
+  }
 
-    /**
-     * Called once per frame. Time is the number of seconds of a frame interval.
-     *
-     * @param {Number} dt
-     */
-    update: function (dt) {
-      this._inner.update(this._updateTime(dt))
-    },
+  /**
+   * to copy object with deep copy.
+   * returns a clone of action.
+   *
+   * @returns {EaseCircleActionInOut}
+   */
+  clone(): EaseCircleActionInOut {
+    const action = new EaseCircleActionInOut()
+    action.initWithAction(this._inner!.clone() as ActionInterval)
+    return action
+  }
 
-    /**
-     * to copy object with deep copy.
-     * returns a clone of action.
-     *
-     * @returns {EaseCircleActionInOut}
-     */
-    clone: function () {
-      const action = new EaseCircleActionInOut()
-      action.initWithAction(this._inner.clone())
-      return action
-    },
-
-    /**
-     * Create a action. Opposite with the original motion trajectory.
-     * @return {EaseCircleActionInOut}
-     */
-    reverse: function () {
-      return new EaseCircleActionInOut(this._inner.reverse())
-    },
-  },
-)
+  /**
+   * Create a action. Opposite with the original motion trajectory.
+   * @return {EaseCircleActionInOut}
+   */
+  reverse(): EaseCircleActionInOut {
+    return new EaseCircleActionInOut(this._inner!.reverse() as ActionInterval)
+  }
+}
 
 export const _easeCircleActionInOut = {
-  easing: EaseCircleActionInOut.prototype._updateTime,
+  easing: function (time: number) {
+    let t = time * 2
+    if (t < 1) return -0.5 * (Math.sqrt(1 - t * t) - 1)
+    t -= 2
+    return 0.5 * (Math.sqrt(1 - t * t) + 1)
+  },
   reverse: function () {
     return _easeCircleActionInOut
   },

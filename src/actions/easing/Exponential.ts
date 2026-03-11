@@ -1,3 +1,4 @@
+import { ActionInterval } from '../ActionInterval'
 import { ActionEase } from './ActionEase'
 
 /**
@@ -15,43 +16,47 @@ import { ActionEase } from './ActionEase'
  * //The new usage
  * action.easing(easeExponentialIn());
  */
-export const EaseExponentialIn = ActionEase.extend(
-  /** @lends EaseExponentialIn# */ {
-    /**
-     * Called once per frame. Time is the number of seconds of a frame interval.
-     *
-     * @param {Number} dt
-     */
-    update: function (dt) {
-      this._inner.update(dt === 0 ? 0 : Math.pow(2, 10 * (dt - 1)))
-    },
+export class EaseExponentialIn extends ActionEase {
+  constructor(action?: ActionInterval) {
+    super(action)
+  }
 
-    /**
-     * Create a EaseExponentialOut action. Opposite with the original motion trajectory.
-     * @return {EaseExponentialOut}
-     */
-    reverse: function () {
-      return new EaseExponentialOut(this._inner.reverse())
-    },
+  _updateTime(time: number): number {
+    return time === 0 ? 0 : Math.pow(2, 10 * (time - 1))
+  }
 
-    /**
-     * to copy object with deep copy.
-     * returns a clone of action.
-     *
-     * @returns {EaseExponentialIn}
-     */
-    clone: function () {
-      const action = new EaseExponentialIn()
-      action.initWithAction(this._inner.clone())
-      return action
-    },
-  },
-)
+  /**
+   * Called once per frame. Time is the number of seconds of a frame interval.
+   *
+   * @param {Number} dt
+   */
+  update(dt: number): void {
+    this._inner!.update(this._updateTime(dt))
+  }
+
+  /**
+   * Create a EaseExponentialOut action. Opposite with the original motion trajectory.
+   * @return {EaseExponentialOut}
+   */
+  reverse(): EaseExponentialOut {
+    return new EaseExponentialOut(this._inner!.reverse() as ActionInterval)
+  }
+
+  /**
+   * to copy object with deep copy.
+   * returns a clone of action.
+   *
+   * @returns {EaseExponentialIn}
+   */
+  clone(): EaseExponentialIn {
+    const action = new EaseExponentialIn()
+    action.initWithAction(this._inner!.clone() as ActionInterval)
+    return action
+  }
+}
 
 export const _easeExponentialInObj = {
-  easing: function (dt) {
-    return dt === 0 ? 0 : Math.pow(2, 10 * (dt - 1))
-  },
+  easing: EaseExponentialIn.prototype._updateTime,
   reverse: function () {
     return _easeExponentialOutObj
   },
@@ -86,43 +91,47 @@ export const easeExponentialIn = function () {
  * //The new usage
  * action.easing(easeExponentialOut());
  */
-export const EaseExponentialOut = ActionEase.extend(
-  /** @lends EaseExponentialOut# */ {
-    /**
-     * Called once per frame. Time is the number of seconds of a frame interval.
-     *
-     * @param {Number} dt
-     */
-    update: function (dt) {
-      this._inner.update(dt === 1 ? 1 : -Math.pow(2, -10 * dt) + 1)
-    },
+export class EaseExponentialOut extends ActionEase {
+  constructor(action?: ActionInterval) {
+    super(action)
+  }
 
-    /**
-     * Create a EaseExponentialIn action. Opposite with the original motion trajectory.
-     * @return {EaseExponentialIn}
-     */
-    reverse: function () {
-      return new EaseExponentialIn(this._inner.reverse())
-    },
+  _updateTime(time: number): number {
+    return time === 1 ? 1 : -Math.pow(2, -10 * time) + 1
+  }
 
-    /**
-     * to copy object with deep copy.
-     * returns a clone of action.
-     *
-     * @returns {EaseExponentialOut}
-     */
-    clone: function () {
-      const action = new EaseExponentialOut()
-      action.initWithAction(this._inner.clone())
-      return action
-    },
-  },
-)
+  /**
+   * Called once per frame. Time is the number of seconds of a frame interval.
+   *
+   * @param {Number} dt
+   */
+  update(dt: number): void {
+    this._inner!.update(this._updateTime(dt))
+  }
+
+  /**
+   * Create a EaseExponentialIn action. Opposite with the original motion trajectory.
+   * @return {EaseExponentialIn}
+   */
+  reverse(): EaseExponentialIn {
+    return new EaseExponentialIn(this._inner!.reverse() as ActionInterval)
+  }
+
+  /**
+   * to copy object with deep copy.
+   * returns a clone of action.
+   *
+   * @returns {EaseExponentialOut}
+   */
+  clone(): EaseExponentialOut {
+    const action = new EaseExponentialOut()
+    action.initWithAction(this._inner!.clone() as ActionInterval)
+    return action
+  }
+}
 
 export const _easeExponentialOutObj = {
-  easing: function (dt) {
-    return dt === 1 ? 1 : -Math.pow(2, -10 * dt) + 1
-  },
+  easing: EaseExponentialOut.prototype._updateTime,
   reverse: function () {
     return _easeExponentialInObj
   },
@@ -158,53 +167,52 @@ export const easeExponentialOut = function () {
  * //The new usage
  * action.easing(easeExponentialInOut());
  */
-export const EaseExponentialInOut = ActionEase.extend(
-  /** @lends EaseExponentialInOut# */ {
-    /**
-     * Called once per frame. Time is the number of seconds of a frame interval.
-     *
-     * @param {Number} dt
-     */
-    update: function (dt) {
-      if (dt !== 1 && dt !== 0) {
-        dt *= 2
-        if (dt < 1) dt = 0.5 * Math.pow(2, 10 * (dt - 1))
-        else dt = 0.5 * (-Math.pow(2, -10 * (dt - 1)) + 2)
-      }
-      this._inner.update(dt)
-    },
+export class EaseExponentialInOut extends ActionEase {
+  constructor(action?: ActionInterval) {
+    super(action)
+  }
 
-    /**
-     * Create a EaseExponentialInOut action. Opposite with the original motion trajectory.
-     * @return {EaseExponentialInOut}
-     */
-    reverse: function () {
-      return new EaseExponentialInOut(this._inner.reverse())
-    },
+  _updateTime(time: number): number {
+    if (time !== 1 && time !== 0) {
+      time *= 2
+      if (time < 1) return 0.5 * Math.pow(2, 10 * (time - 1))
+      return 0.5 * (-Math.pow(2, -10 * (time - 1)) + 2)
+    }
+    return time
+  }
 
-    /**
-     * to copy object with deep copy.
-     * returns a clone of action.
-     *
-     * @returns {EaseExponentialInOut}
-     */
-    clone: function () {
-      const action = new EaseExponentialInOut()
-      action.initWithAction(this._inner.clone())
-      return action
-    },
-  },
-)
+  /**
+   * Called once per frame. Time is the number of seconds of a frame interval.
+   *
+   * @param {Number} dt
+   */
+  update(dt: number): void {
+    this._inner!.update(this._updateTime(dt))
+  }
+
+  /**
+   * Create a EaseExponentialInOut action. Opposite with the original motion trajectory.
+   * @return {EaseExponentialInOut}
+   */
+  reverse(): EaseExponentialInOut {
+    return new EaseExponentialInOut(this._inner!.reverse() as ActionInterval)
+  }
+
+  /**
+   * to copy object with deep copy.
+   * returns a clone of action.
+   *
+   * @returns {EaseExponentialInOut}
+   */
+  clone(): EaseExponentialInOut {
+    const action = new EaseExponentialInOut()
+    action.initWithAction(this._inner!.clone() as ActionInterval)
+    return action
+  }
+}
 
 export const _easeExponentialInOutObj = {
-  easing: function (dt) {
-    if (dt !== 1 && dt !== 0) {
-      dt *= 2
-      if (dt < 1) return 0.5 * Math.pow(2, 10 * (dt - 1))
-      else return 0.5 * (-Math.pow(2, -10 * (dt - 1)) + 2)
-    }
-    return dt
-  },
+  easing: EaseExponentialInOut.prototype._updateTime,
   reverse: function () {
     return _easeExponentialInOutObj
   },

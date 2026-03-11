@@ -1,3 +1,6 @@
+import { ActionEase } from './ActionEase'
+import { ActionInterval } from '../ActionInterval'
+
 /**
  * EaseBackIn action. <br />
  * In the opposite direction to move slowly, and then accelerated to the right direction.
@@ -13,40 +16,43 @@
  * //The new usage
  * action.easing(easeBackIn());
  */
-export const EaseBackIn = ActionEase.extend(
-  /** @lends EaseBackIn# */ {
-    /**
-     * Called once per frame. Time is the number of seconds of a frame interval.
-     *
-     * @param {Number} dt
-     */
-    update: function (dt) {
-      const overshoot = 1.70158
-      dt = dt === 0 || dt === 1 ? dt : dt * dt * ((overshoot + 1) * dt - overshoot)
-      this._inner.update(dt)
-    },
+export class EaseBackIn extends ActionEase {
+  constructor(action?: ActionInterval) {
+    super()
+    action && this.initWithAction(action)
+  }
 
-    /**
-     * Create a action. Opposite with the original motion trajectory.
-     * @return {EaseBackOut}
-     */
-    reverse: function () {
-      return new EaseBackOut(this._inner.reverse())
-    },
+  /**
+   * Called once per frame. Time is the number of seconds of a frame interval.
+   *
+   * @param {Number} dt
+   */
+  update(dt: number): void {
+    const overshoot = 1.70158
+    dt = dt === 0 || dt === 1 ? dt : dt * dt * ((overshoot + 1) * dt - overshoot)
+    this._inner!.update(dt)
+  }
 
-    /**
-     * to copy object with deep copy.
-     * returns a clone of action.
-     *
-     * @returns {EaseBackIn}
-     */
-    clone: function () {
-      const action = new EaseBackIn()
-      action.initWithAction(this._inner.clone())
-      return action
-    },
-  },
-)
+  /**
+   * Create a action. Opposite with the original motion trajectory.
+   * @return {EaseBackOut}
+   */
+  reverse(): EaseBackOut {
+    return new EaseBackOut(this._inner!.reverse() as ActionInterval)
+  }
+
+  /**
+   * to copy object with deep copy.
+   * returns a clone of action.
+   *
+   * @returns {EaseBackIn}
+   */
+  clone(): EaseBackIn {
+    const action = new EaseBackIn()
+    action.initWithAction(this._inner!.clone() as ActionInterval)
+    return action
+  }
+}
 
 export const _easeBackInObj = {
   easing: function (time1) {
@@ -86,40 +92,43 @@ export const easeBackIn = function () {
  * //The new usage
  * action.easing(easeBackOut());
  */
-export const EaseBackOut = ActionEase.extend(
-  /** @lends EaseBackOut# */ {
-    /**
-     * Called once per frame. Time is the number of seconds of a frame interval.
-     *
-     * @param {Number} dt
-     */
-    update: function (dt) {
-      const overshoot = 1.70158
-      dt = dt - 1
-      this._inner.update(dt * dt * ((overshoot + 1) * dt + overshoot) + 1)
-    },
+export class EaseBackOut extends ActionEase {
+  constructor(action?: ActionInterval) {
+    super()
+    action && this.initWithAction(action)
+  }
 
-    /**
-     * Create a action. Opposite with the original motion trajectory.
-     * @return {EaseBackIn}
-     */
-    reverse: function () {
-      return new EaseBackIn(this._inner.reverse())
-    },
+  /**
+   * Called once per frame. Time is the number of seconds of a frame interval.
+   *
+   * @param {Number} dt
+   */
+  update(dt: number): void {
+    const overshoot = 1.70158
+    dt = dt - 1
+    this._inner!.update(dt * dt * ((overshoot + 1) * dt + overshoot) + 1)
+  }
 
-    /**
-     * to copy object with deep copy.
-     * returns a clone of action.
-     *
-     * @returns {EaseBackOut}
-     */
-    clone: function () {
-      const action = new EaseBackOut()
-      action.initWithAction(this._inner.clone())
-      return action
-    },
-  },
-)
+  /**
+   * Create a action. Opposite with the original motion trajectory.
+   * @return {EaseBackIn}
+   */
+  reverse(): EaseBackIn {
+    return new EaseBackIn(this._inner!.reverse() as ActionInterval)
+  }
+
+  /**
+   * to copy object with deep copy.
+   * returns a clone of action.
+   *
+   * @returns {EaseBackOut}
+   */
+  clone(): EaseBackOut {
+    const action = new EaseBackOut()
+    action.initWithAction(this._inner!.clone() as ActionInterval)
+    return action
+  }
+}
 
 export const _easeBackOutObj = {
   easing: function (time1) {
@@ -160,45 +169,48 @@ export const easeBackOut = function () {
  * //The new usage
  * action.easing(easeBackInOut());
  */
-export const EaseBackInOut = ActionEase.extend(
-  /** @lends EaseBackInOut# */ {
-    /**
-     * Called once per frame. Time is the number of seconds of a frame interval.
-     *
-     * @param {Number} dt
-     */
-    update: function (dt) {
-      const overshoot = 1.70158 * 1.525
-      dt = dt * 2
-      if (dt < 1) {
-        this._inner.update((dt * dt * ((overshoot + 1) * dt - overshoot)) / 2)
-      } else {
-        dt = dt - 2
-        this._inner.update((dt * dt * ((overshoot + 1) * dt + overshoot)) / 2 + 1)
-      }
-    },
+export class EaseBackInOut extends ActionEase {
+  constructor(action?: ActionInterval) {
+    super()
+    action && this.initWithAction(action)
+  }
 
-    /**
-     * to copy object with deep copy.
-     * returns a clone of action.
-     *
-     * @returns {EaseBackInOut}
-     */
-    clone: function () {
-      const action = new EaseBackInOut()
-      action.initWithAction(this._inner.clone())
-      return action
-    },
+  /**
+   * Called once per frame. Time is the number of seconds of a frame interval.
+   *
+   * @param {Number} dt
+   */
+  update(dt: number): void {
+    const overshoot = 1.70158 * 1.525
+    dt = dt * 2
+    if (dt < 1) {
+      this._inner!.update((dt * dt * ((overshoot + 1) * dt - overshoot)) / 2)
+    } else {
+      dt = dt - 2
+      this._inner!.update((dt * dt * ((overshoot + 1) * dt + overshoot)) / 2 + 1)
+    }
+  }
 
-    /**
-     * Create a action. Opposite with the original motion trajectory.
-     * @return {EaseBackInOut}
-     */
-    reverse: function () {
-      return new EaseBackInOut(this._inner.reverse())
-    },
-  },
-)
+  /**
+   * to copy object with deep copy.
+   * returns a clone of action.
+   *
+   * @returns {EaseBackInOut}
+   */
+  clone(): EaseBackInOut {
+    const action = new EaseBackInOut()
+    action.initWithAction(this._inner!.clone() as ActionInterval)
+    return action
+  }
+
+  /**
+   * Create a action. Opposite with the original motion trajectory.
+   * @return {EaseBackInOut}
+   */
+  reverse(): EaseBackInOut {
+    return new EaseBackInOut(this._inner!.reverse() as ActionInterval)
+  }
+}
 
 export const _easeBackInOutObj = {
   easing: function (time1) {

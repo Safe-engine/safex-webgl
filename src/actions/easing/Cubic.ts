@@ -1,3 +1,4 @@
+import { ActionInterval } from '../ActionInterval'
 import { ActionEase } from './ActionEase'
 
 /**
@@ -15,42 +16,44 @@ import { ActionEase } from './ActionEase'
  * //The new usage
  * action.easing(easeCubicActionIn());
  */
-export const EaseCubicActionIn = ActionEase.extend(
-  /** @lends EaseCubicActionIn# */ {
-    _updateTime: function (time) {
-      return time * time * time
-    },
+export class EaseCubicActionIn extends ActionEase {
+  constructor(action?: ActionInterval) {
+    super(action)
+  }
 
-    /**
-     * Called once per frame. Time is the number of seconds of a frame interval.
-     *
-     * @param {Number} dt
-     */
-    update: function (dt) {
-      this._inner.update(this._updateTime(dt))
-    },
+  _updateTime(time: number): number {
+    return time * time * time
+  }
 
-    /**
-     * to copy object with deep copy.
-     * returns a clone of action.
-     *
-     * @returns {EaseCubicActionIn}
-     */
-    clone: function () {
-      const action = new EaseCubicActionIn()
-      action.initWithAction(this._inner.clone())
-      return action
-    },
+  /**
+   * Called once per frame. Time is the number of seconds of a frame interval.
+   *
+   * @param {Number} dt
+   */
+  update(dt: number): void {
+    this._inner!.update(this._updateTime(dt))
+  }
 
-    /**
-     * Create a action. Opposite with the original motion trajectory.
-     * @return {EaseCubicActionIn}
-     */
-    reverse: function () {
-      return new EaseCubicActionIn(this._inner.reverse())
-    },
-  },
-)
+  /**
+   * to copy object with deep copy.
+   * returns a clone of action.
+   *
+   * @returns {EaseCubicActionIn}
+   */
+  clone(): EaseCubicActionIn {
+    const action = new EaseCubicActionIn()
+    action.initWithAction(this._inner!.clone() as ActionInterval)
+    return action
+  }
+
+  /**
+   * Create a action. Opposite with the original motion trajectory.
+   * @return {EaseCubicActionIn}
+   */
+  reverse(): EaseCubicActionIn {
+    return new EaseCubicActionIn(this._inner!.reverse() as ActionInterval)
+  }
+}
 
 export const _easeCubicActionIn = {
   easing: EaseCubicActionIn.prototype._updateTime,
@@ -88,43 +91,45 @@ export const easeCubicActionIn = function () {
  * //The new usage
  * action.easing(easeCubicActionOut());
  */
-export const EaseCubicActionOut = ActionEase.extend(
-  /** @lends EaseCubicActionOut# */ {
-    _updateTime: function (time) {
-      time -= 1
-      return time * time * time + 1
-    },
+export class EaseCubicActionOut extends ActionEase {
+  constructor(action?: ActionInterval) {
+    super(action)
+  }
 
-    /**
-     * Called once per frame. Time is the number of seconds of a frame interval.
-     *
-     * @param {Number} dt
-     */
-    update: function (dt) {
-      this._inner.update(this._updateTime(dt))
-    },
+  _updateTime(time: number): number {
+    time -= 1
+    return time * time * time + 1
+  }
 
-    /**
-     * to copy object with deep copy.
-     * returns a clone of action.
-     *
-     * @returns {EaseCubicActionOut}
-     */
-    clone: function () {
-      const action = new EaseCubicActionOut()
-      action.initWithAction(this._inner.clone())
-      return action
-    },
+  /**
+   * Called once per frame. Time is the number of seconds of a frame interval.
+   *
+   * @param {Number} dt
+   */
+  update(dt: number): void {
+    this._inner!.update(this._updateTime(dt))
+  }
 
-    /**
-     * Create a action. Opposite with the original motion trajectory.
-     * @return {EaseCubicActionOut}
-     */
-    reverse: function () {
-      return new EaseCubicActionOut(this._inner.reverse())
-    },
-  },
-)
+  /**
+   * to copy object with deep copy.
+   * returns a clone of action.
+   *
+   * @returns {EaseCubicActionOut}
+   */
+  clone(): EaseCubicActionOut {
+    const action = new EaseCubicActionOut()
+    action.initWithAction(this._inner!.clone() as ActionInterval)
+    return action
+  }
+
+  /**
+   * Create a action. Opposite with the original motion trajectory.
+   * @return {EaseCubicActionOut}
+   */
+  reverse(): EaseCubicActionOut {
+    return new EaseCubicActionOut(this._inner!.reverse() as ActionInterval)
+  }
+}
 
 export const _easeCubicActionOut = {
   easing: EaseCubicActionOut.prototype._updateTime,
@@ -162,45 +167,47 @@ export const easeCubicActionOut = function () {
  * //The new usage
  * action.easing(easeCubicActionInOut());
  */
-export const EaseCubicActionInOut = ActionEase.extend(
-  /** @lends EaseCubicActionInOut# */ {
-    _updateTime: function (time) {
-      time = time * 2
-      if (time < 1) return 0.5 * time * time * time
-      time -= 2
-      return 0.5 * (time * time * time + 2)
-    },
+export class EaseCubicActionInOut extends ActionEase {
+  constructor(action?: ActionInterval) {
+    super(action)
+  }
 
-    /**
-     * Called once per frame. Time is the number of seconds of a frame interval.
-     *
-     * @param {Number} dt
-     */
-    update: function (dt) {
-      this._inner.update(this._updateTime(dt))
-    },
+  _updateTime(time: number): number {
+    time = time * 2
+    if (time < 1) return 0.5 * time * time * time
+    time -= 2
+    return 0.5 * (time * time * time + 2)
+  }
 
-    /**
-     * to copy object with deep copy.
-     * returns a clone of action.
-     *
-     * @returns {EaseCubicActionInOut}
-     */
-    clone: function () {
-      const action = new EaseCubicActionInOut()
-      action.initWithAction(this._inner.clone())
-      return action
-    },
+  /**
+   * Called once per frame. Time is the number of seconds of a frame interval.
+   *
+   * @param {Number} dt
+   */
+  update(dt: number): void {
+    this._inner!.update(this._updateTime(dt))
+  }
 
-    /**
-     * Create a action. Opposite with the original motion trajectory.
-     * @return {EaseCubicActionInOut}
-     */
-    reverse: function () {
-      return new EaseCubicActionInOut(this._inner.reverse())
-    },
-  },
-)
+  /**
+   * to copy object with deep copy.
+   * returns a clone of action.
+   *
+   * @returns {EaseCubicActionInOut}
+   */
+  clone(): EaseCubicActionInOut {
+    const action = new EaseCubicActionInOut()
+    action.initWithAction(this._inner!.clone() as ActionInterval)
+    return action
+  }
+
+  /**
+   * Create a action. Opposite with the original motion trajectory.
+   * @return {EaseCubicActionInOut}
+   */
+  reverse(): EaseCubicActionInOut {
+    return new EaseCubicActionInOut(this._inner!.reverse() as ActionInterval)
+  }
+}
 
 export const _easeCubicActionInOut = {
   easing: EaseCubicActionInOut.prototype._updateTime,
