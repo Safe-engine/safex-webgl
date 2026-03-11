@@ -1,1 +1,17 @@
+export * from './Action'
+export * from './ActionBezier'
+export * from './ActionBlink'
+export * from './ActionCatmullRom'
+export * from './ActionFade'
+export * from './ActionInterval'
+export * from './ActionJump'
 export * from './ActionMove'
+export * from './ActionRotate'
+export * from './ActionScale'
+export * from './ActionSkew'
+export * from './ActionTint'
+
+export * from './easing/Back'
+export * from './easing/InOut'
+
+export * from './easing/Bezier'
