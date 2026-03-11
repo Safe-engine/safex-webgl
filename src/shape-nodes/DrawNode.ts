@@ -194,7 +194,7 @@ export class DrawNode extends Node {
     }
   }
 
-  drawRect(origin, destination, fillColor, lineWidth, lineColor) {
+  drawRect(origin, destination, fillColor, lineWidth?, lineColor?) {
     lineWidth = lineWidth == null ? this._lineWidth : lineWidth
     lineColor = lineColor || this._drawColor
     this._vertices.length = 0

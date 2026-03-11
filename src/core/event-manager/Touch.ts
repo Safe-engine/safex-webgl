@@ -1,6 +1,6 @@
-import { view } from '../..'
+import { Vec2, view } from '../..'
 import { log } from '../../helper/Debugger'
-import { p, Point } from '../cocoa/Geometry'
+import { Point } from '../cocoa/Geometry'
 import { pSub } from '../support/PointExtension'
 
 /**
@@ -20,8 +20,8 @@ export class Touch {
   }
 
   /** Returns the current touch location in OpenGL coordinates */
-  getLocation(): Point {
-    return p(this._point.x, this._point.y)
+  getLocation() {
+    return Vec2(this._point.x, this._point.y)
   }
 
   /** Returns X axis location value */
@@ -36,12 +36,12 @@ export class Touch {
 
   /** Returns the previous touch location in OpenGL coordinates */
   getPreviousLocation(): Point {
-    return p(this._prevPoint.x, this._prevPoint.y)
+    return Vec2(this._prevPoint.x, this._prevPoint.y)
   }
 
   /** Returns the start touch location in OpenGL coordinates */
   getStartLocation(): Point {
-    return p(this._startPoint.x, this._startPoint.y)
+    return Vec2(this._startPoint.x, this._startPoint.y)
   }
 
   /** Returns the delta distance from the previous touch to the current one in screen coordinates */
@@ -51,17 +51,17 @@ export class Touch {
 
   /** Returns the current touch location in screen coordinates */
   getLocationInView(): Point {
-    return p(this._point.x, this._point.y)
+    return Vec2(this._point.x, this._point.y)
   }
 
   /** Returns the previous touch location in screen coordinates */
   getPreviousLocationInView(): Point {
-    return p(this._prevPoint.x, this._prevPoint.y)
+    return Vec2(this._prevPoint.x, this._prevPoint.y)
   }
 
   /** Returns the start touch location in screen coordinates */
   getStartLocationInView(): Point {
-    return p(this._startPoint.x, this._startPoint.y)
+    return Vec2(this._startPoint.x, this._startPoint.y)
   }
 
   /** Returns the id of Touch */
@@ -78,10 +78,10 @@ export class Touch {
   /** Sets information to touch */
   setTouchInfo(id: number, x?: number, y?: number): void {
     this._prevPoint = this._point
-    this._point = p(x || 0, y || 0)
+    this._point = Vec2(x || 0, y || 0)
     this._id = id
     if (!this._startPointCaptured) {
-      this._startPoint = p(this._point.x, this._point.y)
+      this._startPoint = Vec2(this._point.x, this._point.y)
       view._convertPointWithScale(this._startPoint)
       this._startPointCaptured = true
     }
@@ -99,9 +99,9 @@ export class Touch {
 
   _setPrevPoint(x: number | Point, y?: number): void {
     if (y === undefined) {
-      this._prevPoint = p((x as Point).x, (x as Point).y)
+      this._prevPoint = Vec2((x as Point).x, (x as Point).y)
     } else {
-      this._prevPoint = p((x as number) || 0, y || 0)
+      this._prevPoint = Vec2((x as number) || 0, y || 0)
     }
   }
 }
