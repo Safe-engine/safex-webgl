@@ -27,6 +27,15 @@ export function s_globalOrderOfArrivalPP() {
 }
 
 export class Node extends EventHelper {
+  findNextFocusedWidget(direction: any, arg1: this) {
+    throw new Error('Method not implemented.')
+  }
+  width: any
+  height: any
+  _imageRenderer: any
+  _doLayout: any
+  _doLayoutDirty: boolean
+  _isFocusPassing: boolean
   _setReorderChildDirtyRecursively() {
     throw new Error('Method not implemented.')
   }

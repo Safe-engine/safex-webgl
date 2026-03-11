@@ -1,17 +1,18 @@
-import { log } from "../helper/Debugger";
-import type { ActionInterval } from "./ActionInterval";
+import { log } from '../../helper/Debugger'
+import { ActionInterval } from '../ActionInterval'
 
-export const ActionEase = ActionInterval.extend(/** @lends ActionEase# */{
-    _inner:null,
+export const ActionEase = ActionInterval.extend(
+  /** @lends ActionEase# */ {
+    _inner: null,
 
-	/**
+    /**
      * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
-	 * creates the action of ActionEase.
-	 * @param {ActionInterval} action
-	 */
+     * creates the action of ActionEase.
+     * @param {ActionInterval} action
+     */
     ctor: function (action) {
-        ActionInterval.prototype.ctor.call(this);
-        action && this.initWithAction(action);
+      ActionInterval.prototype.ctor.call(this)
+      action && this.initWithAction(action)
     },
 
     /**
@@ -20,15 +21,14 @@ export const ActionEase = ActionInterval.extend(/** @lends ActionEase# */{
      * @param {ActionInterval} action
      * @return {Boolean}
      */
-    initWithAction:function (action) {
-        if(!action)
-            throw new Error("ActionEase.initWithAction(): action must be non nil");
+    initWithAction: function (action) {
+      if (!action) throw new Error('ActionEase.initWithAction(): action must be non nil')
 
-        if (this.initWithDuration(action.getDuration())) {
-            this._inner = action;
-            return true;
-        }
-        return false;
+      if (this.initWithDuration(action.getDuration())) {
+        this._inner = action
+        return true
+      }
+      return false
     },
 
     /**
@@ -37,10 +37,10 @@ export const ActionEase = ActionInterval.extend(/** @lends ActionEase# */{
      *
      * @returns {ActionEase}
      */
-    clone:function(){
-       var action = new ActionEase();
-        action.initWithAction(this._inner.clone());
-        return action;
+    clone: function () {
+      const action = new ActionEase()
+      action.initWithAction(this._inner.clone())
+      return action
     },
 
     /**
@@ -48,17 +48,17 @@ export const ActionEase = ActionInterval.extend(/** @lends ActionEase# */{
      *
      * @param {Node} target
      */
-    startWithTarget:function (target) {
-        ActionInterval.prototype.startWithTarget.call(this, target);
-        this._inner.startWithTarget(this.target);
+    startWithTarget: function (target) {
+      ActionInterval.prototype.startWithTarget.call(this, target)
+      this._inner.startWithTarget(this.target)
     },
 
     /**
      * Stop the action.
      */
-    stop:function () {
-        this._inner.stop();
-        ActionInterval.prototype.stop.call(this);
+    stop: function () {
+      this._inner.stop()
+      ActionInterval.prototype.stop.call(this)
     },
 
     /**
@@ -66,8 +66,8 @@ export const ActionEase = ActionInterval.extend(/** @lends ActionEase# */{
      *
      * @param {Number} dt
      */
-    update:function (dt) {
-        this._inner.update(dt);
+    update: function (dt) {
+      this._inner.update(dt)
     },
 
     /**
@@ -78,8 +78,8 @@ export const ActionEase = ActionInterval.extend(/** @lends ActionEase# */{
      * - Will be rewritten
      * @return {ActionEase}
      */
-    reverse:function () {
-        return new ActionEase(this._inner.reverse());
+    reverse: function () {
+      return new ActionEase(this._inner.reverse())
     },
 
     /**
@@ -87,10 +87,11 @@ export const ActionEase = ActionInterval.extend(/** @lends ActionEase# */{
      *
      * @return {ActionInterval}
      */
-    getInnerAction:function(){
-       return this._inner;
-    }
-});
+    getInnerAction: function () {
+      return this._inner
+    },
+  },
+)
 
 /**
  * creates the action of ActionEase
@@ -102,8 +103,8 @@ export const ActionEase = ActionInterval.extend(/** @lends ActionEase# */{
  * var moveEase = actionEase(action);
  */
 export const actionEase = function (action) {
-    return new ActionEase(action);
-};
+  return new ActionEase(action)
+}
 
 /**
  * Base class for Easing actions with rate parameters
@@ -121,34 +122,35 @@ export const actionEase = function (action) {
  * //The new usage
  * var moveEaseRateAction = easeRateAction(action, 3.0);
  */
-export const EaseRateAction = ActionEase.extend(/** @lends EaseRateAction# */{
-    _rate:0,
+export const EaseRateAction = ActionEase.extend(
+  /** @lends EaseRateAction# */ {
+    _rate: 0,
 
-	/**
+    /**
      * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
-	 * Creates the action with the inner action and the rate parameter.
-	 * @param {ActionInterval} action
-	 * @param {Number} rate
-	 */
-    ctor: function(action, rate){
-        ActionEase.prototype.ctor.call(this);
+     * Creates the action with the inner action and the rate parameter.
+     * @param {ActionInterval} action
+     * @param {Number} rate
+     */
+    ctor: function (action, rate) {
+      ActionEase.prototype.ctor.call(this)
 
-		rate !== undefined && this.initWithAction(action, rate);
+      rate !== undefined && this.initWithAction(action, rate)
     },
 
     /**
      * set rate value for the actions
      * @param {Number} rate
      */
-    setRate:function (rate) {
-        this._rate = rate;
+    setRate: function (rate) {
+      this._rate = rate
     },
 
     /** get rate value for the actions
      * @return {Number}
      */
-    getRate:function () {
-        return this._rate;
+    getRate: function () {
+      return this._rate
     },
 
     /**
@@ -157,12 +159,12 @@ export const EaseRateAction = ActionEase.extend(/** @lends EaseRateAction# */{
      * @param {Number} rate
      * @return {Boolean}
      */
-    initWithAction:function (action, rate) {
-        if (ActionEase.prototype.initWithAction.call(this, action)) {
-            this._rate = rate;
-            return true;
-        }
-        return false;
+    initWithAction: function (action, rate) {
+      if (ActionEase.prototype.initWithAction.call(this, action)) {
+        this._rate = rate
+        return true
+      }
+      return false
     },
 
     /**
@@ -171,10 +173,10 @@ export const EaseRateAction = ActionEase.extend(/** @lends EaseRateAction# */{
      *
      * @returns {EaseRateAction}
      */
-    clone:function(){
-        var action = new EaseRateAction();
-        action.initWithAction(this._inner.clone(), this._rate);
-        return action;
+    clone: function () {
+      const action = new EaseRateAction()
+      action.initWithAction(this._inner.clone(), this._rate)
+      return action
     },
 
     /**
@@ -185,10 +187,11 @@ export const EaseRateAction = ActionEase.extend(/** @lends EaseRateAction# */{
      * - Will be rewritten
      * @return {EaseRateAction}
      */
-    reverse:function () {
-        return new EaseRateAction(this._inner.reverse(), 1 / this._rate);
-    }
-});
+    reverse: function () {
+      return new EaseRateAction(this._inner.reverse(), 1 / this._rate)
+    },
+  },
+)
 
 /**
  * Creates the action with the inner action and the rate parameter.
@@ -201,8 +204,8 @@ export const EaseRateAction = ActionEase.extend(/** @lends EaseRateAction# */{
  * var moveEaseRateAction = easeRateAction(action, 3.0);
  */
 export const easeRateAction = function (action, rate) {
-    return new EaseRateAction(action, rate);
-};
+  return new EaseRateAction(action, rate)
+}
 
 /**
  * EaseIn action with a rate. From slow to fast.
@@ -218,23 +221,23 @@ export const easeRateAction = function (action, rate) {
  * //The new usage
  * action.easing(easeIn(3.0));
  */
-export const EaseIn = EaseRateAction.extend(/** @lends EaseIn# */{
-
+export const EaseIn = EaseRateAction.extend(
+  /** @lends EaseIn# */ {
     /**
      * Called once per frame. Time is the number of seconds of a frame interval.
      *
      * @param {Number} dt
      */
-    update:function (dt) {
-        this._inner.update(Math.pow(dt, this._rate));
+    update: function (dt) {
+      this._inner.update(Math.pow(dt, this._rate))
     },
 
     /**
      * Create a easeIn action. Opposite with the original motion trajectory.
      * @return {EaseIn}
      */
-    reverse:function () {
-        return new EaseIn(this._inner.reverse(), 1 / this._rate);
+    reverse: function () {
+      return new EaseIn(this._inner.reverse(), 1 / this._rate)
     },
 
     /**
@@ -243,12 +246,13 @@ export const EaseIn = EaseRateAction.extend(/** @lends EaseIn# */{
      *
      * @returns {EaseIn}
      */
-    clone:function(){
-        var action = new EaseIn();
-        action.initWithAction(this._inner.clone(), this._rate);
-        return action;
-    }
-});
+    clone: function () {
+      const action = new EaseIn()
+      action.initWithAction(this._inner.clone(), this._rate)
+      return action
+    },
+  },
+)
 
 /**
  * Creates the action with the inner action and the rate parameter. <br />
@@ -268,8 +272,8 @@ export const EaseIn = EaseRateAction.extend(/** @lends EaseIn# */{
  * @return {EaseIn}
  */
 EaseIn.create = function (action, rate) {
-    return new EaseIn(action, rate);
-};
+  return new EaseIn(action, rate)
+}
 
 /**
  * Creates the action easing object with the rate parameter. <br />
@@ -283,16 +287,16 @@ EaseIn.create = function (action, rate) {
  * action.easing(easeIn(3.0));
  */
 export const easeIn = function (rate) {
-    return {
-        _rate: rate,
-        easing: function (dt) {
-            return Math.pow(dt, this._rate);
-        },
-        reverse: function(){
-            return easeIn(1 / this._rate);
-        }
-    };
-};
+  return {
+    _rate: rate,
+    easing: function (dt) {
+      return Math.pow(dt, this._rate)
+    },
+    reverse: function () {
+      return easeIn(1 / this._rate)
+    },
+  }
+}
 
 /**
  * EaseOut action with a rate. From fast to slow.
@@ -308,22 +312,23 @@ export const easeIn = function (rate) {
  * //The new usage
  * action.easing(easeOut(3.0));
  */
-export const EaseOut = EaseRateAction.extend(/** @lends EaseOut# */{
+export const EaseOut = EaseRateAction.extend(
+  /** @lends EaseOut# */ {
     /**
      * Called once per frame. Time is the number of seconds of a frame interval.
      *
      * @param {Number} dt
      */
-    update:function (dt) {
-        this._inner.update(Math.pow(dt, 1 / this._rate));
+    update: function (dt) {
+      this._inner.update(Math.pow(dt, 1 / this._rate))
     },
 
     /**
      * Create a easeIn action. Opposite with the original motion trajectory.
      * @return {EaseOut}
      */
-    reverse:function () {
-        return new EaseOut(this._inner.reverse(), 1 / this._rate);
+    reverse: function () {
+      return new EaseOut(this._inner.reverse(), 1 / this._rate)
     },
 
     /**
@@ -332,12 +337,13 @@ export const EaseOut = EaseRateAction.extend(/** @lends EaseOut# */{
      *
      * @returns {EaseOut}
      */
-    clone:function(){
-        var action = new EaseOut();
-        action.initWithAction(this._inner.clone(),this._rate);
-        return action;
-    }
-});
+    clone: function () {
+      const action = new EaseOut()
+      action.initWithAction(this._inner.clone(), this._rate)
+      return action
+    },
+  },
+)
 
 /**
  * Creates the action easing object with the rate parameter. <br />
@@ -351,16 +357,16 @@ export const EaseOut = EaseRateAction.extend(/** @lends EaseOut# */{
  * action.easing(easeOut(3.0));
  */
 export const easeOut = function (rate) {
-    return {
-        _rate: rate,
-        easing: function (dt) {
-            return Math.pow(dt, 1 / this._rate);
-        },
-        reverse: function(){
-            return easeOut(1 / this._rate)
-        }
-    };
-};
+  return {
+    _rate: rate,
+    easing: function (dt) {
+      return Math.pow(dt, 1 / this._rate)
+    },
+    reverse: function () {
+      return easeOut(1 / this._rate)
+    },
+  }
+}
 
 /**
  * EaseInOut action with a rate. <br />
@@ -376,18 +382,17 @@ export const easeOut = function (rate) {
  * //The new usage
  * action.easing(easeInOut(3.0));
  */
-export const EaseInOut = EaseRateAction.extend(/** @lends EaseInOut# */{
+export const EaseInOut = EaseRateAction.extend(
+  /** @lends EaseInOut# */ {
     /**
      * Called once per frame. Time is the number of seconds of a frame interval.
      *
      * @param {Number} dt
      */
-    update:function (dt) {
-        dt *= 2;
-        if (dt < 1)
-            this._inner.update(0.5 * Math.pow(dt, this._rate));
-        else
-            this._inner.update(1.0 - 0.5 * Math.pow(2 - dt, this._rate));
+    update: function (dt) {
+      dt *= 2
+      if (dt < 1) this._inner.update(0.5 * Math.pow(dt, this._rate))
+      else this._inner.update(1.0 - 0.5 * Math.pow(2 - dt, this._rate))
     },
 
     /**
@@ -396,20 +401,21 @@ export const EaseInOut = EaseRateAction.extend(/** @lends EaseInOut# */{
      *
      * @returns {EaseInOut}
      */
-    clone:function(){
-        var action = new EaseInOut();
-        action.initWithAction(this._inner.clone(), this._rate);
-        return action;
+    clone: function () {
+      const action = new EaseInOut()
+      action.initWithAction(this._inner.clone(), this._rate)
+      return action
     },
 
     /**
      * Create a EaseInOut action. Opposite with the original motion trajectory.
      * @return {EaseInOut}
      */
-    reverse:function () {
-        return new EaseInOut(this._inner.reverse(), this._rate);
-    }
-});
+    reverse: function () {
+      return new EaseInOut(this._inner.reverse(), this._rate)
+    },
+  },
+)
 
 /**
  * Creates the action with the inner action and the rate parameter.
@@ -428,8 +434,8 @@ export const EaseInOut = EaseRateAction.extend(/** @lends EaseInOut# */{
  * @return {EaseInOut}
  */
 EaseInOut.create = function (action, rate) {
-    return new EaseInOut(action, rate);
-};
+  return new EaseInOut(action, rate)
+}
 
 /**
  * Creates the action easing object with the rate parameter. <br />
@@ -443,20 +449,18 @@ EaseInOut.create = function (action, rate) {
  * action.easing(easeInOut(3.0));
  */
 export const easeInOut = function (rate) {
-    return {
-        _rate: rate,
-        easing: function (dt) {
-            dt *= 2;
-            if (dt < 1)
-                return 0.5 * Math.pow(dt, this._rate);
-            else
-                return 1.0 - 0.5 * Math.pow(2 - dt, this._rate);
-        },
-        reverse: function(){
-            return easeInOut(this._rate);
-        }
-    };
-};
+  return {
+    _rate: rate,
+    easing: function (dt) {
+      dt *= 2
+      if (dt < 1) return 0.5 * Math.pow(dt, this._rate)
+      else return 1.0 - 0.5 * Math.pow(2 - dt, this._rate)
+    },
+    reverse: function () {
+      return easeInOut(this._rate)
+    },
+  }
+}
 
 /**
  * Ease Exponential In. Slow to Fast. <br />
@@ -473,22 +477,23 @@ export const easeInOut = function (rate) {
  * //The new usage
  * action.easing(easeExponentialIn());
  */
-export const EaseExponentialIn = ActionEase.extend(/** @lends EaseExponentialIn# */{
+export const EaseExponentialIn = ActionEase.extend(
+  /** @lends EaseExponentialIn# */ {
     /**
      * Called once per frame. Time is the number of seconds of a frame interval.
      *
      * @param {Number} dt
      */
-    update:function (dt) {
-        this._inner.update(dt === 0 ? 0 : Math.pow(2, 10 * (dt - 1)));
+    update: function (dt) {
+      this._inner.update(dt === 0 ? 0 : Math.pow(2, 10 * (dt - 1)))
     },
 
     /**
      * Create a EaseExponentialOut action. Opposite with the original motion trajectory.
      * @return {EaseExponentialOut}
      */
-    reverse:function () {
-        return new EaseExponentialOut(this._inner.reverse());
+    reverse: function () {
+      return new EaseExponentialOut(this._inner.reverse())
     },
 
     /**
@@ -497,21 +502,22 @@ export const EaseExponentialIn = ActionEase.extend(/** @lends EaseExponentialIn#
      *
      * @returns {EaseExponentialIn}
      */
-    clone:function(){
-        var action = new EaseExponentialIn();
-        action.initWithAction(this._inner.clone());
-        return action;
-    }
-});
+    clone: function () {
+      const action = new EaseExponentialIn()
+      action.initWithAction(this._inner.clone())
+      return action
+    },
+  },
+)
 
 export const _easeExponentialInObj = {
-    easing: function(dt){
-        return dt === 0 ? 0 : Math.pow(2, 10 * (dt - 1));
-    },
-    reverse: function(){
-        return _easeExponentialOutObj;
-    }
-};
+  easing: function (dt) {
+    return dt === 0 ? 0 : Math.pow(2, 10 * (dt - 1))
+  },
+  reverse: function () {
+    return _easeExponentialOutObj
+  },
+}
 
 /**
  * Creates the action easing object with the rate parameter. <br />
@@ -523,9 +529,9 @@ export const _easeExponentialInObj = {
  * // example
  * action.easing(easeExponentialIn());
  */
-export const easeExponentialIn = function(){
-    return _easeExponentialInObj;
-};
+export const easeExponentialIn = function () {
+  return _easeExponentialInObj
+}
 
 /**
  * Ease Exponential Out. <br />
@@ -542,22 +548,23 @@ export const easeExponentialIn = function(){
  * //The new usage
  * action.easing(easeExponentialOut());
  */
-export const EaseExponentialOut = ActionEase.extend(/** @lends EaseExponentialOut# */{
+export const EaseExponentialOut = ActionEase.extend(
+  /** @lends EaseExponentialOut# */ {
     /**
      * Called once per frame. Time is the number of seconds of a frame interval.
      *
      * @param {Number} dt
      */
-    update:function (dt) {
-        this._inner.update(dt === 1 ? 1 : (-(Math.pow(2, -10 * dt)) + 1));
+    update: function (dt) {
+      this._inner.update(dt === 1 ? 1 : -Math.pow(2, -10 * dt) + 1)
     },
 
     /**
      * Create a EaseExponentialIn action. Opposite with the original motion trajectory.
      * @return {EaseExponentialIn}
      */
-    reverse:function () {
-        return new EaseExponentialIn(this._inner.reverse());
+    reverse: function () {
+      return new EaseExponentialIn(this._inner.reverse())
     },
 
     /**
@@ -566,21 +573,22 @@ export const EaseExponentialOut = ActionEase.extend(/** @lends EaseExponentialOu
      *
      * @returns {EaseExponentialOut}
      */
-    clone:function(){
-        var action = new EaseExponentialOut();
-        action.initWithAction(this._inner.clone());
-        return action;
-    }
-});
+    clone: function () {
+      const action = new EaseExponentialOut()
+      action.initWithAction(this._inner.clone())
+      return action
+    },
+  },
+)
 
 export const _easeExponentialOutObj = {
-    easing: function(dt){
-        return dt === 1 ? 1 : (-(Math.pow(2, -10 * dt)) + 1);
-    },
-    reverse: function(){
-        return _easeExponentialInObj;
-    }
-};
+  easing: function (dt) {
+    return dt === 1 ? 1 : -Math.pow(2, -10 * dt) + 1
+  },
+  reverse: function () {
+    return _easeExponentialInObj
+  },
+}
 
 /**
  * creates the action easing object. <br />
@@ -592,9 +600,9 @@ export const _easeExponentialOutObj = {
  * // example
  * action.easing(easeExponentialOut());
  */
-export const easeExponentialOut = function(){
-    return _easeExponentialOutObj;
-};
+export const easeExponentialOut = function () {
+  return _easeExponentialOutObj
+}
 
 /**
  * Ease Exponential InOut. <br />
@@ -612,29 +620,28 @@ export const easeExponentialOut = function(){
  * //The new usage
  * action.easing(easeExponentialInOut());
  */
-export const EaseExponentialInOut = ActionEase.extend(/** @lends EaseExponentialInOut# */{
+export const EaseExponentialInOut = ActionEase.extend(
+  /** @lends EaseExponentialInOut# */ {
     /**
      * Called once per frame. Time is the number of seconds of a frame interval.
      *
      * @param {Number} dt
      */
-    update:function (dt) {
-        if( dt !== 1 && dt !== 0) {
-            dt *= 2;
-            if (dt < 1)
-                dt = 0.5 * Math.pow(2, 10 * (dt - 1));
-            else
-                dt = 0.5 * (-Math.pow(2, -10 * (dt - 1)) + 2);
-        }
-        this._inner.update(dt);
+    update: function (dt) {
+      if (dt !== 1 && dt !== 0) {
+        dt *= 2
+        if (dt < 1) dt = 0.5 * Math.pow(2, 10 * (dt - 1))
+        else dt = 0.5 * (-Math.pow(2, -10 * (dt - 1)) + 2)
+      }
+      this._inner.update(dt)
     },
 
     /**
      * Create a EaseExponentialInOut action. Opposite with the original motion trajectory.
      * @return {EaseExponentialInOut}
      */
-    reverse:function () {
-        return new EaseExponentialInOut(this._inner.reverse());
+    reverse: function () {
+      return new EaseExponentialInOut(this._inner.reverse())
     },
 
     /**
@@ -643,28 +650,27 @@ export const EaseExponentialInOut = ActionEase.extend(/** @lends EaseExponential
      *
      * @returns {EaseExponentialInOut}
      */
-    clone:function(){
-        var action = new EaseExponentialInOut();
-        action.initWithAction(this._inner.clone());
-        return action;
-    }
-});
+    clone: function () {
+      const action = new EaseExponentialInOut()
+      action.initWithAction(this._inner.clone())
+      return action
+    },
+  },
+)
 
 export const _easeExponentialInOutObj = {
-    easing: function(dt){
-        if( dt !== 1 && dt !== 0) {
-            dt *= 2;
-            if (dt < 1)
-                return 0.5 * Math.pow(2, 10 * (dt - 1));
-            else
-                return 0.5 * (-Math.pow(2, -10 * (dt - 1)) + 2);
-        }
-        return dt;
-    },
-    reverse: function(){
-        return _easeExponentialInOutObj;
+  easing: function (dt) {
+    if (dt !== 1 && dt !== 0) {
+      dt *= 2
+      if (dt < 1) return 0.5 * Math.pow(2, 10 * (dt - 1))
+      else return 0.5 * (-Math.pow(2, -10 * (dt - 1)) + 2)
     }
-};
+    return dt
+  },
+  reverse: function () {
+    return _easeExponentialInOutObj
+  },
+}
 
 /**
  * creates an EaseExponentialInOut action easing object. <br />
@@ -676,9 +682,9 @@ export const _easeExponentialInOutObj = {
  * // example
  * action.easing(easeExponentialInOut());
  */
-export const easeExponentialInOut = function(){
-    return _easeExponentialInOutObj;
-};
+export const easeExponentialInOut = function () {
+  return _easeExponentialInOutObj
+}
 
 /**
  * Ease Sine In. <br />
@@ -695,23 +701,24 @@ export const easeExponentialInOut = function(){
  * //The new usage
  * action.easing(easeSineIn());
  */
-export const EaseSineIn = ActionEase.extend(/** @lends EaseSineIn# */{
+export const EaseSineIn = ActionEase.extend(
+  /** @lends EaseSineIn# */ {
     /**
      * Called once per frame. Time is the number of seconds of a frame interval.
      *
      * @param {Number} dt
      */
-    update:function (dt) {
-        dt = dt===0 || dt===1 ? dt : -1 * Math.cos(dt * Math.PI / 2) + 1;
-        this._inner.update(dt);
+    update: function (dt) {
+      dt = dt === 0 || dt === 1 ? dt : -1 * Math.cos((dt * Math.PI) / 2) + 1
+      this._inner.update(dt)
     },
 
     /**
      * Create a EaseSineOut action. Opposite with the original motion trajectory.
      * @return {EaseSineOut}
      */
-    reverse:function () {
-        return new EaseSineOut(this._inner.reverse());
+    reverse: function () {
+      return new EaseSineOut(this._inner.reverse())
     },
 
     /**
@@ -720,21 +727,22 @@ export const EaseSineIn = ActionEase.extend(/** @lends EaseSineIn# */{
      *
      * @returns {EaseSineIn}
      */
-    clone:function(){
-        var action = new EaseSineIn();
-        action.initWithAction(this._inner.clone());
-        return action;
-    }
-});
+    clone: function () {
+      const action = new EaseSineIn()
+      action.initWithAction(this._inner.clone())
+      return action
+    },
+  },
+)
 
 export const _easeSineInObj = {
-    easing: function(dt){
-        return (dt===0 || dt===1) ? dt : -1 * Math.cos(dt * Math.PI / 2) + 1;
-    },
-    reverse: function(){
-        return _easeSineOutObj;
-    }
-};
+  easing: function (dt) {
+    return dt === 0 || dt === 1 ? dt : -1 * Math.cos((dt * Math.PI) / 2) + 1
+  },
+  reverse: function () {
+    return _easeSineOutObj
+  },
+}
 /**
  * creates an EaseSineIn action. <br />
  * Reference easeInSine: <br />
@@ -745,9 +753,9 @@ export const _easeSineInObj = {
  * // example
  * action.easing(easeSineIn());
  */
-export const easeSineIn = function(){
-    return _easeSineInObj;
-};
+export const easeSineIn = function () {
+  return _easeSineInObj
+}
 
 /**
  * Ease Sine Out. <br />
@@ -764,23 +772,24 @@ export const easeSineIn = function(){
  * //The new usage
  * action.easing(easeSineOut());
  */
-export const EaseSineOut = ActionEase.extend(/** @lends EaseSineOut# */{
+export const EaseSineOut = ActionEase.extend(
+  /** @lends EaseSineOut# */ {
     /**
      * Called once per frame. Time is the number of seconds of a frame interval.
      *
      * @param {Number} dt
      */
-    update:function (dt) {
-        dt = dt===0 || dt===1 ? dt : Math.sin(dt * Math.PI / 2);
-        this._inner.update(dt);
+    update: function (dt) {
+      dt = dt === 0 || dt === 1 ? dt : Math.sin((dt * Math.PI) / 2)
+      this._inner.update(dt)
     },
 
     /**
      * Create a EaseSineIn action. Opposite with the original motion trajectory.
      * @return {EaseSineIn}
      */
-    reverse:function () {
-        return new EaseSineIn(this._inner.reverse());
+    reverse: function () {
+      return new EaseSineIn(this._inner.reverse())
     },
 
     /**
@@ -789,21 +798,22 @@ export const EaseSineOut = ActionEase.extend(/** @lends EaseSineOut# */{
      *
      * @returns {EaseSineOut}
      */
-    clone:function(){
-        var action = new EaseSineOut();
-        action.initWithAction(this._inner.clone());
-        return action;
-    }
-});
+    clone: function () {
+      const action = new EaseSineOut()
+      action.initWithAction(this._inner.clone())
+      return action
+    },
+  },
+)
 
 export const _easeSineOutObj = {
-    easing: function(dt){
-        return (dt===0 || dt===1) ? dt : Math.sin(dt * Math.PI / 2);
-    },
-    reverse: function(){
-        return _easeSineInObj;
-    }
-};
+  easing: function (dt) {
+    return dt === 0 || dt === 1 ? dt : Math.sin((dt * Math.PI) / 2)
+  },
+  reverse: function () {
+    return _easeSineInObj
+  },
+}
 
 /**
  * Creates an EaseSineOut action easing object. <br />
@@ -815,9 +825,9 @@ export const _easeSineOutObj = {
  * // example
  * action.easing(easeSineOut());
  */
-export const easeSineOut = function(){
-    return _easeSineOutObj;
-};
+export const easeSineOut = function () {
+  return _easeSineOutObj
+}
 
 /**
  * Ease Sine InOut. <br />
@@ -834,15 +844,16 @@ export const easeSineOut = function(){
  * //The new usage
  * action.easing(easeSineInOut());
  */
-export const EaseSineInOut = ActionEase.extend(/** @lends EaseSineInOut# */{
+export const EaseSineInOut = ActionEase.extend(
+  /** @lends EaseSineInOut# */ {
     /**
      * Called once per frame. Time is the number of seconds of a frame interval.
      *
      * @param {Number} dt
      */
-    update:function (dt) {
-        dt = dt===0 || dt===1 ? dt : -0.5 * (Math.cos(Math.PI * dt) - 1);
-        this._inner.update(dt);
+    update: function (dt) {
+      dt = dt === 0 || dt === 1 ? dt : -0.5 * (Math.cos(Math.PI * dt) - 1)
+      this._inner.update(dt)
     },
 
     /**
@@ -851,29 +862,30 @@ export const EaseSineInOut = ActionEase.extend(/** @lends EaseSineInOut# */{
      *
      * @returns {EaseSineInOut}
      */
-    clone:function(){
-        var action = new EaseSineInOut();
-        action.initWithAction(this._inner.clone());
-        return action;
+    clone: function () {
+      const action = new EaseSineInOut()
+      action.initWithAction(this._inner.clone())
+      return action
     },
 
     /**
      * Create a EaseSineInOut action. Opposite with the original motion trajectory.
      * @return {EaseSineInOut}
      */
-    reverse:function () {
-        return new EaseSineInOut(this._inner.reverse());
-    }
-});
+    reverse: function () {
+      return new EaseSineInOut(this._inner.reverse())
+    },
+  },
+)
 
 export const _easeSineInOutObj = {
-    easing: function(dt){
-        return (dt === 0 || dt === 1) ? dt : -0.5 * (Math.cos(Math.PI * dt) - 1);
-    },
-    reverse: function(){
-        return _easeSineInOutObj;
-    }
-};
+  easing: function (dt) {
+    return dt === 0 || dt === 1 ? dt : -0.5 * (Math.cos(Math.PI * dt) - 1)
+  },
+  reverse: function () {
+    return _easeSineInOutObj
+  },
+}
 
 /**
  * creates the action easing object. <br />
@@ -884,9 +896,9 @@ export const _easeSineInOutObj = {
  * // example
  * action.easing(easeSineInOut());
  */
-export const easeSineInOut = function(){
-    return _easeSineInOutObj;
-};
+export const easeSineInOut = function () {
+  return _easeSineInOutObj
+}
 
 /**
  * Ease Elastic abstract class.
@@ -897,35 +909,36 @@ export const easeSineInOut = function(){
  *
  * @deprecated since v3.0 Does not recommend the use of the base object.
  */
-export const EaseElastic = ActionEase.extend(/** @lends EaseElastic# */{
+export const EaseElastic = ActionEase.extend(
+  /** @lends EaseElastic# */ {
     _period: 0.3,
 
-	/**
+    /**
      * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
      * Creates the action with the inner action and the period in radians (default is 0.3).
-	 * @param {ActionInterval} action
-	 * @param {Number} [period=0.3]
-	 */
-    ctor:function(action, period){
-        ActionEase.prototype.ctor.call(this);
+     * @param {ActionInterval} action
+     * @param {Number} [period=0.3]
+     */
+    ctor: function (action, period) {
+      ActionEase.prototype.ctor.call(this)
 
-		action && this.initWithAction(action, period);
+      action && this.initWithAction(action, period)
     },
 
     /**
      * get period of the wave in radians. default is 0.3
      * @return {Number}
      */
-    getPeriod:function () {
-        return this._period;
+    getPeriod: function () {
+      return this._period
     },
 
     /**
      * set period of the wave in radians.
      * @param {Number} period
      */
-    setPeriod:function (period) {
-        this._period = period;
+    setPeriod: function (period) {
+      this._period = period
     },
 
     /**
@@ -934,10 +947,10 @@ export const EaseElastic = ActionEase.extend(/** @lends EaseElastic# */{
      * @param {Number} [period=0.3]
      * @return {Boolean}
      */
-    initWithAction:function (action, period) {
-        ActionEase.prototype.initWithAction.call(this, action);
-        this._period = (period == null) ? 0.3 : period;
-        return true;
+    initWithAction: function (action, period) {
+      ActionEase.prototype.initWithAction.call(this, action)
+      this._period = period == null ? 0.3 : period
+      return true
     },
 
     /**
@@ -945,9 +958,9 @@ export const EaseElastic = ActionEase.extend(/** @lends EaseElastic# */{
      * Will be overwrite.
      * @return {?Action}
      */
-    reverse:function () {
-        log("EaseElastic.reverse(): it should be overridden in subclass.");
-        return null;
+    reverse: function () {
+      log('EaseElastic.reverse(): it should be overridden in subclass.')
+      return null
     },
 
     /**
@@ -956,12 +969,13 @@ export const EaseElastic = ActionEase.extend(/** @lends EaseElastic# */{
      *
      * @returns {EaseElastic}
      */
-    clone:function(){
-        var action = new EaseElastic();
-        action.initWithAction(this._inner.clone(), this._period);
-        return action;
-    }
-});
+    clone: function () {
+      const action = new EaseElastic()
+      action.initWithAction(this._inner.clone(), this._period)
+      return action
+    },
+  },
+)
 
 /**
  * Ease Elastic In action. <br />
@@ -979,30 +993,31 @@ export const EaseElastic = ActionEase.extend(/** @lends EaseElastic# */{
  * //The new usage
  * action.easing(easeElasticIn(period));
  */
-export const EaseElasticIn = EaseElastic.extend(/** @lends EaseElasticIn# */{
+export const EaseElasticIn = EaseElastic.extend(
+  /** @lends EaseElasticIn# */ {
     /**
      * Called once per frame. Time is the number of seconds of a frame interval.
      *
      * @param {Number} dt
      */
-    update:function (dt) {
-        var newT = 0;
-        if (dt === 0 || dt === 1) {
-            newT = dt;
-        } else {
-            var s = this._period / 4;
-            dt = dt - 1;
-            newT = -Math.pow(2, 10 * dt) * Math.sin((dt - s) * Math.PI * 2 / this._period);
-        }
-        this._inner.update(newT);
+    update: function (dt) {
+      let newT = 0
+      if (dt === 0 || dt === 1) {
+        newT = dt
+      } else {
+        const s = this._period / 4
+        dt = dt - 1
+        newT = -Math.pow(2, 10 * dt) * Math.sin(((dt - s) * Math.PI * 2) / this._period)
+      }
+      this._inner.update(newT)
     },
 
     /**
      * Create a action. Opposite with the original motion trajectory.
      * @return {EaseElasticOut}
      */
-    reverse:function () {
-        return new EaseElasticOut(this._inner.reverse(), this._period);
+    reverse: function () {
+      return new EaseElasticOut(this._inner.reverse(), this._period)
     },
 
     /**
@@ -1011,25 +1026,25 @@ export const EaseElasticIn = EaseElastic.extend(/** @lends EaseElasticIn# */{
      *
      * @returns {EaseElasticIn}
      */
-    clone:function(){
-        var action = new EaseElasticIn();
-        action.initWithAction(this._inner.clone(), this._period);
-        return action;
-    }
-});
+    clone: function () {
+      const action = new EaseElasticIn()
+      action.initWithAction(this._inner.clone(), this._period)
+      return action
+    },
+  },
+)
 
 //default ease elastic in object (period = 0.3)
 export const _easeElasticInObj = {
-   easing:function(dt){
-       if (dt === 0 || dt === 1)
-           return dt;
-       dt = dt - 1;
-       return -Math.pow(2, 10 * dt) * Math.sin((dt - (0.3 / 4)) * Math.PI * 2 / 0.3);
-   },
-    reverse:function(){
-        return _easeElasticOutObj;
-    }
-};
+  easing: function (dt) {
+    if (dt === 0 || dt === 1) return dt
+    dt = dt - 1
+    return -Math.pow(2, 10 * dt) * Math.sin(((dt - 0.3 / 4) * Math.PI * 2) / 0.3)
+  },
+  reverse: function () {
+    return _easeElasticOutObj
+  },
+}
 
 /**
  * Creates the action easing obejct with the period in radians (default is 0.3). <br />
@@ -1043,22 +1058,21 @@ export const _easeElasticInObj = {
  * action.easing(easeElasticIn(3.0));
  */
 export const easeElasticIn = function (period) {
-    if(period && period !== 0.3){
-        return {
-            _period: period,
-            easing: function (dt) {
-                if (dt === 0 || dt === 1)
-                    return dt;
-                dt = dt - 1;
-                return -Math.pow(2, 10 * dt) * Math.sin((dt - (this._period / 4)) * Math.PI * 2 / this._period);
-            },
-            reverse:function () {
-                return easeElasticOut(this._period);
-            }
-        };
+  if (period && period !== 0.3) {
+    return {
+      _period: period,
+      easing: function (dt) {
+        if (dt === 0 || dt === 1) return dt
+        dt = dt - 1
+        return -Math.pow(2, 10 * dt) * Math.sin(((dt - this._period / 4) * Math.PI * 2) / this._period)
+      },
+      reverse: function () {
+        return easeElasticOut(this._period)
+      },
     }
-    return _easeElasticInObj;
-};
+  }
+  return _easeElasticInObj
+}
 
 /**
  * Ease Elastic Out action. <br />
@@ -1076,30 +1090,31 @@ export const easeElasticIn = function (period) {
  * //The new usage
  * action.easing(easeElasticOut(period));
  */
-export const EaseElasticOut = EaseElastic.extend(/** @lends EaseElasticOut# */{
+export const EaseElasticOut = EaseElastic.extend(
+  /** @lends EaseElasticOut# */ {
     /**
      * Called once per frame. Time is the number of seconds of a frame interval.
      *
      * @param {Number} dt
      */
-    update:function (dt) {
-        var newT = 0;
-        if (dt === 0 || dt === 1) {
-            newT = dt;
-        } else {
-            var s = this._period / 4;
-            newT = Math.pow(2, -10 * dt) * Math.sin((dt - s) * Math.PI * 2 / this._period) + 1;
-        }
+    update: function (dt) {
+      let newT = 0
+      if (dt === 0 || dt === 1) {
+        newT = dt
+      } else {
+        const s = this._period / 4
+        newT = Math.pow(2, -10 * dt) * Math.sin(((dt - s) * Math.PI * 2) / this._period) + 1
+      }
 
-        this._inner.update(newT);
+      this._inner.update(newT)
     },
 
     /**
      * Create a action. Opposite with the original motion trajectory.
      * @return {EaseElasticIn}
      */
-    reverse:function () {
-        return new EaseElasticIn(this._inner.reverse(), this._period);
+    reverse: function () {
+      return new EaseElasticIn(this._inner.reverse(), this._period)
     },
 
     /**
@@ -1108,22 +1123,23 @@ export const EaseElasticOut = EaseElastic.extend(/** @lends EaseElasticOut# */{
      *
      * @returns {EaseElasticOut}
      */
-    clone:function(){
-        var action = new EaseElasticOut();
-        action.initWithAction(this._inner.clone(), this._period);
-        return action;
-    }
-});
+    clone: function () {
+      const action = new EaseElasticOut()
+      action.initWithAction(this._inner.clone(), this._period)
+      return action
+    },
+  },
+)
 
 //default ease elastic out object (period = 0.3)
 export const _easeElasticOutObj = {
-    easing: function (dt) {
-        return (dt === 0 || dt === 1) ? dt : Math.pow(2, -10 * dt) * Math.sin((dt - (0.3 / 4)) * Math.PI * 2 / 0.3) + 1;
-    },
-    reverse:function(){
-        return _easeElasticInObj;
-    }
-};
+  easing: function (dt) {
+    return dt === 0 || dt === 1 ? dt : Math.pow(2, -10 * dt) * Math.sin(((dt - 0.3 / 4) * Math.PI * 2) / 0.3) + 1
+  },
+  reverse: function () {
+    return _easeElasticInObj
+  },
+}
 /**
  * Creates the action easing object with the period in radians (default is 0.3). <br />
  * Reference easeOutElastic: <br />
@@ -1136,19 +1152,19 @@ export const _easeElasticOutObj = {
  * action.easing(easeElasticOut(3.0));
  */
 export const easeElasticOut = function (period) {
-    if(period && period !== 0.3){
-        return {
-            _period: period,
-            easing: function (dt) {
-                return (dt === 0 || dt === 1) ? dt : Math.pow(2, -10 * dt) * Math.sin((dt - (this._period / 4)) * Math.PI * 2 / this._period) + 1;
-            },
-            reverse:function(){
-                return easeElasticIn(this._period);
-            }
-        };
+  if (period && period !== 0.3) {
+    return {
+      _period: period,
+      easing: function (dt) {
+        return dt === 0 || dt === 1 ? dt : Math.pow(2, -10 * dt) * Math.sin(((dt - this._period / 4) * Math.PI * 2) / this._period) + 1
+      },
+      reverse: function () {
+        return easeElasticIn(this._period)
+      },
     }
-    return _easeElasticOutObj;
-};
+  }
+  return _easeElasticOutObj
+}
 
 /**
  * Ease Elastic InOut action. <br />
@@ -1166,38 +1182,36 @@ export const easeElasticOut = function (period) {
  * //The new usage
  * action.easing(easeElasticInOut(period));
  */
-export const EaseElasticInOut = EaseElastic.extend(/** @lends EaseElasticInOut# */{
+export const EaseElasticInOut = EaseElastic.extend(
+  /** @lends EaseElasticInOut# */ {
     /**
      * Called once per frame. Time is the number of seconds of a frame interval.
      *
      * @param {Number} dt
      */
-    update:function (dt) {
-        var newT = 0;
-        var locPeriod = this._period;
-        if (dt === 0 || dt === 1) {
-            newT = dt;
-        } else {
-            dt = dt * 2;
-            if (!locPeriod)
-                locPeriod = this._period = 0.3 * 1.5;
+    update: function (dt) {
+      let newT = 0
+      let locPeriod = this._period
+      if (dt === 0 || dt === 1) {
+        newT = dt
+      } else {
+        dt = dt * 2
+        if (!locPeriod) locPeriod = this._period = 0.3 * 1.5
 
-            var s = locPeriod / 4;
-            dt = dt - 1;
-            if (dt < 0)
-                newT = -0.5 * Math.pow(2, 10 * dt) * Math.sin((dt - s) * Math.PI * 2 / locPeriod);
-            else
-                newT = Math.pow(2, -10 * dt) * Math.sin((dt - s) * Math.PI * 2 / locPeriod) * 0.5 + 1;
-        }
-        this._inner.update(newT);
+        const s = locPeriod / 4
+        dt = dt - 1
+        if (dt < 0) newT = -0.5 * Math.pow(2, 10 * dt) * Math.sin(((dt - s) * Math.PI * 2) / locPeriod)
+        else newT = Math.pow(2, -10 * dt) * Math.sin(((dt - s) * Math.PI * 2) / locPeriod) * 0.5 + 1
+      }
+      this._inner.update(newT)
     },
 
     /**
      * Create a action. Opposite with the original motion trajectory.
      * @return {EaseElasticInOut}
      */
-    reverse:function () {
-        return new EaseElasticInOut(this._inner.reverse(), this._period);
+    reverse: function () {
+      return new EaseElasticInOut(this._inner.reverse(), this._period)
     },
 
     /**
@@ -1206,12 +1220,13 @@ export const EaseElasticInOut = EaseElastic.extend(/** @lends EaseElasticInOut# 
      *
      * @returns {EaseElasticInOut}
      */
-    clone:function(){
-        var action = new EaseElasticInOut();
-        action.initWithAction(this._inner.clone(), this._period);
-        return action;
-    }
-});
+    clone: function () {
+      const action = new EaseElasticInOut()
+      action.initWithAction(this._inner.clone(), this._period)
+      return action
+    },
+  },
+)
 
 /**
  * Creates the action easing object with the period in radians (default is 0.3). <br />
@@ -1225,32 +1240,29 @@ export const EaseElasticInOut = EaseElastic.extend(/** @lends EaseElasticInOut# 
  * action.easing(easeElasticInOut(3.0));
  */
 export const easeElasticInOut = function (period) {
-    period = period || 0.3;
-    return {
-        _period: period,
-        easing: function (dt) {
-            var newT = 0;
-            var locPeriod = this._period;
-            if (dt === 0 || dt === 1) {
-                newT = dt;
-            } else {
-                dt = dt * 2;
-                if (!locPeriod)
-                    locPeriod = this._period = 0.3 * 1.5;
-                var s = locPeriod / 4;
-                dt = dt - 1;
-                if (dt < 0)
-                    newT = -0.5 * Math.pow(2, 10 * dt) * Math.sin((dt - s) * Math.PI * 2 / locPeriod);
-                else
-                    newT = Math.pow(2, -10 * dt) * Math.sin((dt - s) * Math.PI * 2 / locPeriod) * 0.5 + 1;
-            }
-            return newT;
-        },
-        reverse: function(){
-            return easeElasticInOut(this._period);
-        }
-    };
-};
+  period = period || 0.3
+  return {
+    _period: period,
+    easing: function (dt) {
+      let newT = 0
+      let locPeriod = this._period
+      if (dt === 0 || dt === 1) {
+        newT = dt
+      } else {
+        dt = dt * 2
+        if (!locPeriod) locPeriod = this._period = 0.3 * 1.5
+        const s = locPeriod / 4
+        dt = dt - 1
+        if (dt < 0) newT = -0.5 * Math.pow(2, 10 * dt) * Math.sin(((dt - s) * Math.PI * 2) / locPeriod)
+        else newT = Math.pow(2, -10 * dt) * Math.sin(((dt - s) * Math.PI * 2) / locPeriod) * 0.5 + 1
+      }
+      return newT
+    },
+    reverse: function () {
+      return easeElasticInOut(this._period)
+    },
+  }
+}
 
 /**
  * EaseBounce abstract class.
@@ -1260,24 +1272,25 @@ export const easeElasticInOut = function (period) {
  * @class
  * @extends ActionEase
  */
-export const EaseBounce = ActionEase.extend(/** @lends EaseBounce# */{
+export const EaseBounce = ActionEase.extend(
+  /** @lends EaseBounce# */ {
     /**
      * @param {Number} time1
      * @return {Number}
      */
-    bounceTime:function (time1) {
-        if (time1 < 1 / 2.75) {
-            return 7.5625 * time1 * time1;
-        } else if (time1 < 2 / 2.75) {
-            time1 -= 1.5 / 2.75;
-            return 7.5625 * time1 * time1 + 0.75;
-        } else if (time1 < 2.5 / 2.75) {
-            time1 -= 2.25 / 2.75;
-            return 7.5625 * time1 * time1 + 0.9375;
-        }
+    bounceTime: function (time1) {
+      if (time1 < 1 / 2.75) {
+        return 7.5625 * time1 * time1
+      } else if (time1 < 2 / 2.75) {
+        time1 -= 1.5 / 2.75
+        return 7.5625 * time1 * time1 + 0.75
+      } else if (time1 < 2.5 / 2.75) {
+        time1 -= 2.25 / 2.75
+        return 7.5625 * time1 * time1 + 0.9375
+      }
 
-        time1 -= 2.625 / 2.75;
-        return 7.5625 * time1 * time1 + 0.984375;
+      time1 -= 2.625 / 2.75
+      return 7.5625 * time1 * time1 + 0.984375
     },
 
     /**
@@ -1286,20 +1299,21 @@ export const EaseBounce = ActionEase.extend(/** @lends EaseBounce# */{
      *
      * @returns {EaseBounce}
      */
-    clone:function(){
-        var action = new EaseBounce();
-        action.initWithAction(this._inner.clone());
-        return action;
+    clone: function () {
+      const action = new EaseBounce()
+      action.initWithAction(this._inner.clone())
+      return action
     },
 
     /**
      * Create a action. Opposite with the original motion trajectory.
      * @return {EaseBounce}
      */
-    reverse:function () {
-        return new EaseBounce(this._inner.reverse());
-    }
-});
+    reverse: function () {
+      return new EaseBounce(this._inner.reverse())
+    },
+  },
+)
 
 /**
  * EaseBounceIn action. <br />
@@ -1316,23 +1330,24 @@ export const EaseBounce = ActionEase.extend(/** @lends EaseBounce# */{
  * //The new usage
  * action.easing(easeBounceIn());
  */
-export const EaseBounceIn = EaseBounce.extend(/** @lends EaseBounceIn# */{
+export const EaseBounceIn = EaseBounce.extend(
+  /** @lends EaseBounceIn# */ {
     /**
      * Called once per frame. Time is the number of seconds of a frame interval.
      *
      * @param {Number} dt
      */
-    update:function (dt) {
-        var newT = 1 - this.bounceTime(1 - dt);
-        this._inner.update(newT);
+    update: function (dt) {
+      const newT = 1 - this.bounceTime(1 - dt)
+      this._inner.update(newT)
     },
 
     /**
      * Create a action. Opposite with the original motion trajectory.
      * @return {EaseBounceOut}
      */
-    reverse:function () {
-        return new EaseBounceOut(this._inner.reverse());
+    reverse: function () {
+      return new EaseBounceOut(this._inner.reverse())
     },
 
     /**
@@ -1341,36 +1356,37 @@ export const EaseBounceIn = EaseBounce.extend(/** @lends EaseBounceIn# */{
      *
      * @returns {EaseBounceIn}
      */
-    clone:function(){
-        var action = new EaseBounceIn();
-        action.initWithAction(this._inner.clone());
-        return action;
-    }
-});
+    clone: function () {
+      const action = new EaseBounceIn()
+      action.initWithAction(this._inner.clone())
+      return action
+    },
+  },
+)
 
 export const _bounceTime = function (time1) {
-    if (time1 < 1 / 2.75) {
-        return 7.5625 * time1 * time1;
-    } else if (time1 < 2 / 2.75) {
-        time1 -= 1.5 / 2.75;
-        return 7.5625 * time1 * time1 + 0.75;
-    } else if (time1 < 2.5 / 2.75) {
-        time1 -= 2.25 / 2.75;
-        return 7.5625 * time1 * time1 + 0.9375;
-    }
+  if (time1 < 1 / 2.75) {
+    return 7.5625 * time1 * time1
+  } else if (time1 < 2 / 2.75) {
+    time1 -= 1.5 / 2.75
+    return 7.5625 * time1 * time1 + 0.75
+  } else if (time1 < 2.5 / 2.75) {
+    time1 -= 2.25 / 2.75
+    return 7.5625 * time1 * time1 + 0.9375
+  }
 
-    time1 -= 2.625 / 2.75;
-    return 7.5625 * time1 * time1 + 0.984375;
-};
+  time1 -= 2.625 / 2.75
+  return 7.5625 * time1 * time1 + 0.984375
+}
 
 export const _easeBounceInObj = {
-    easing: function(dt){
-        return 1 - _bounceTime(1 - dt);
-    },
-    reverse: function(){
-        return _easeBounceOutObj;
-    }
-};
+  easing: function (dt) {
+    return 1 - _bounceTime(1 - dt)
+  },
+  reverse: function () {
+    return _easeBounceOutObj
+  },
+}
 
 /**
  * Creates the action easing object. <br />
@@ -1381,9 +1397,9 @@ export const _easeBounceInObj = {
  * // example
  * action.easing(easeBounceIn());
  */
-export const easeBounceIn = function(){
-    return _easeBounceInObj;
-};
+export const easeBounceIn = function () {
+  return _easeBounceInObj
+}
 
 /**
  * EaseBounceOut action. <br />
@@ -1400,23 +1416,24 @@ export const easeBounceIn = function(){
  * //The new usage
  * action.easing(easeBounceOut());
  */
-export const EaseBounceOut = EaseBounce.extend(/** @lends EaseBounceOut# */{
+export const EaseBounceOut = EaseBounce.extend(
+  /** @lends EaseBounceOut# */ {
     /**
      * Called once per frame. Time is the number of seconds of a frame interval.
      *
      * @param {Number} dt
      */
-    update:function (dt) {
-        var newT = this.bounceTime(dt);
-        this._inner.update(newT);
+    update: function (dt) {
+      const newT = this.bounceTime(dt)
+      this._inner.update(newT)
     },
 
     /**
      * Create a action. Opposite with the original motion trajectory.
      * @return {EaseBounceIn}
      */
-    reverse:function () {
-        return new EaseBounceIn(this._inner.reverse());
+    reverse: function () {
+      return new EaseBounceIn(this._inner.reverse())
     },
 
     /**
@@ -1425,21 +1442,22 @@ export const EaseBounceOut = EaseBounce.extend(/** @lends EaseBounceOut# */{
      *
      * @returns {EaseBounceOut}
      */
-    clone:function(){
-        var action = new EaseBounceOut();
-        action.initWithAction(this._inner.clone());
-        return action;
-    }
-});
+    clone: function () {
+      const action = new EaseBounceOut()
+      action.initWithAction(this._inner.clone())
+      return action
+    },
+  },
+)
 
 export const _easeBounceOutObj = {
-    easing: function(dt){
-        return _bounceTime(dt);
-    },
-    reverse:function () {
-        return _easeBounceInObj;
-    }
-};
+  easing: function (dt) {
+    return _bounceTime(dt)
+  },
+  reverse: function () {
+    return _easeBounceInObj
+  },
+}
 
 /**
  * Creates the action easing object. <br />
@@ -1450,9 +1468,9 @@ export const _easeBounceOutObj = {
  * // example
  * action.easing(easeBounceOut());
  */
-export const easeBounceOut = function(){
-    return _easeBounceOutObj;
-};
+export const easeBounceOut = function () {
+  return _easeBounceOutObj
+}
 
 /**
  * EaseBounceInOut action. <br />
@@ -1469,21 +1487,22 @@ export const easeBounceOut = function(){
  * //The new usage
  * action.easing(easeBounceInOut());
  */
-export const EaseBounceInOut = EaseBounce.extend(/** @lends EaseBounceInOut# */{
+export const EaseBounceInOut = EaseBounce.extend(
+  /** @lends EaseBounceInOut# */ {
     /**
      * Called once per frame. Time is the number of seconds of a frame interval.
      *
      * @param {Number} dt
      */
-    update:function (dt) {
-        var newT = 0;
-        if (dt < 0.5) {
-            dt = dt * 2;
-            newT = (1 - this.bounceTime(1 - dt)) * 0.5;
-        } else {
-            newT = this.bounceTime(dt * 2 - 1) * 0.5 + 0.5;
-        }
-        this._inner.update(newT);
+    update: function (dt) {
+      let newT = 0
+      if (dt < 0.5) {
+        dt = dt * 2
+        newT = (1 - this.bounceTime(1 - dt)) * 0.5
+      } else {
+        newT = this.bounceTime(dt * 2 - 1) * 0.5 + 0.5
+      }
+      this._inner.update(newT)
     },
 
     /**
@@ -1492,36 +1511,37 @@ export const EaseBounceInOut = EaseBounce.extend(/** @lends EaseBounceInOut# */{
      *
      * @returns {EaseBounceInOut}
      */
-    clone:function(){
-        var action = new EaseBounceInOut();
-        action.initWithAction(this._inner.clone());
-        return action;
+    clone: function () {
+      const action = new EaseBounceInOut()
+      action.initWithAction(this._inner.clone())
+      return action
     },
 
     /**
      * Create a action. Opposite with the original motion trajectory.
      * @return {EaseBounceInOut}
      */
-    reverse:function () {
-        return new EaseBounceInOut(this._inner.reverse());
-    }
-});
+    reverse: function () {
+      return new EaseBounceInOut(this._inner.reverse())
+    },
+  },
+)
 
 export const _easeBounceInOutObj = {
-    easing: function (time1) {
-        var newT;
-        if (time1 < 0.5) {
-            time1 = time1 * 2;
-            newT = (1 - _bounceTime(1 - time1)) * 0.5;
-        } else {
-            newT = _bounceTime(time1 * 2 - 1) * 0.5 + 0.5;
-        }
-        return newT;
-    },
-    reverse: function(){
-        return _easeBounceInOutObj;
+  easing: function (time1) {
+    let newT
+    if (time1 < 0.5) {
+      time1 = time1 * 2
+      newT = (1 - _bounceTime(1 - time1)) * 0.5
+    } else {
+      newT = _bounceTime(time1 * 2 - 1) * 0.5 + 0.5
     }
-};
+    return newT
+  },
+  reverse: function () {
+    return _easeBounceInOutObj
+  },
+}
 
 /**
  * Creates the action easing object. <br />
@@ -1532,9 +1552,9 @@ export const _easeBounceInOutObj = {
  * // example
  * action.easing(easeBounceInOut());
  */
-export const easeBounceInOut = function(){
-    return _easeBounceInOutObj;
-};
+export const easeBounceInOut = function () {
+  return _easeBounceInOutObj
+}
 
 /**
  * EaseBackIn action. <br />
@@ -1551,24 +1571,25 @@ export const easeBounceInOut = function(){
  * //The new usage
  * action.easing(easeBackIn());
  */
-export const EaseBackIn = ActionEase.extend(/** @lends EaseBackIn# */{
+export const EaseBackIn = ActionEase.extend(
+  /** @lends EaseBackIn# */ {
     /**
      * Called once per frame. Time is the number of seconds of a frame interval.
      *
      * @param {Number} dt
      */
-    update:function (dt) {
-        var overshoot = 1.70158;
-        dt = dt===0 || dt===1 ? dt : dt * dt * ((overshoot + 1) * dt - overshoot);
-        this._inner.update(dt);
+    update: function (dt) {
+      const overshoot = 1.70158
+      dt = dt === 0 || dt === 1 ? dt : dt * dt * ((overshoot + 1) * dt - overshoot)
+      this._inner.update(dt)
     },
 
     /**
      * Create a action. Opposite with the original motion trajectory.
      * @return {EaseBackOut}
      */
-    reverse:function () {
-        return new EaseBackOut(this._inner.reverse());
+    reverse: function () {
+      return new EaseBackOut(this._inner.reverse())
     },
 
     /**
@@ -1577,22 +1598,23 @@ export const EaseBackIn = ActionEase.extend(/** @lends EaseBackIn# */{
      *
      * @returns {EaseBackIn}
      */
-    clone:function(){
-        var action = new EaseBackIn();
-        action.initWithAction(this._inner.clone());
-        return action;
-    }
-});
+    clone: function () {
+      const action = new EaseBackIn()
+      action.initWithAction(this._inner.clone())
+      return action
+    },
+  },
+)
 
 export const _easeBackInObj = {
-    easing: function (time1) {
-        var overshoot = 1.70158;
-        return (time1===0 || time1===1) ? time1 : time1 * time1 * ((overshoot + 1) * time1 - overshoot);
-    },
-    reverse: function(){
-        return _easeBackOutObj;
-    }
-};
+  easing: function (time1) {
+    const overshoot = 1.70158
+    return time1 === 0 || time1 === 1 ? time1 : time1 * time1 * ((overshoot + 1) * time1 - overshoot)
+  },
+  reverse: function () {
+    return _easeBackOutObj
+  },
+}
 
 /**
  * Creates the action easing object. <br />
@@ -1603,9 +1625,9 @@ export const _easeBackInObj = {
  * // example
  * action.easing(easeBackIn());
  */
-export const easeBackIn = function(){
-    return _easeBackInObj;
-};
+export const easeBackIn = function () {
+  return _easeBackInObj
+}
 
 /**
  * EaseBackOut action. <br />
@@ -1622,24 +1644,25 @@ export const easeBackIn = function(){
  * //The new usage
  * action.easing(easeBackOut());
  */
-export const EaseBackOut = ActionEase.extend(/** @lends EaseBackOut# */{
+export const EaseBackOut = ActionEase.extend(
+  /** @lends EaseBackOut# */ {
     /**
      * Called once per frame. Time is the number of seconds of a frame interval.
      *
      * @param {Number} dt
      */
-    update:function (dt) {
-        var overshoot = 1.70158;
-        dt = dt - 1;
-        this._inner.update(dt * dt * ((overshoot + 1) * dt + overshoot) + 1);
+    update: function (dt) {
+      const overshoot = 1.70158
+      dt = dt - 1
+      this._inner.update(dt * dt * ((overshoot + 1) * dt + overshoot) + 1)
     },
 
     /**
      * Create a action. Opposite with the original motion trajectory.
      * @return {EaseBackIn}
      */
-    reverse:function () {
-        return new EaseBackIn(this._inner.reverse());
+    reverse: function () {
+      return new EaseBackIn(this._inner.reverse())
     },
 
     /**
@@ -1648,23 +1671,24 @@ export const EaseBackOut = ActionEase.extend(/** @lends EaseBackOut# */{
      *
      * @returns {EaseBackOut}
      */
-    clone:function(){
-        var action = new EaseBackOut();
-        action.initWithAction(this._inner.clone());
-        return action;
-    }
-});
+    clone: function () {
+      const action = new EaseBackOut()
+      action.initWithAction(this._inner.clone())
+      return action
+    },
+  },
+)
 
 export const _easeBackOutObj = {
-    easing: function (time1) {
-        var overshoot = 1.70158;
-        time1 = time1 - 1;
-        return time1 * time1 * ((overshoot + 1) * time1 + overshoot) + 1;
-    },
-    reverse: function(){
-        return _easeBackInObj;
-    }
-};
+  easing: function (time1) {
+    const overshoot = 1.70158
+    time1 = time1 - 1
+    return time1 * time1 * ((overshoot + 1) * time1 + overshoot) + 1
+  },
+  reverse: function () {
+    return _easeBackInObj
+  },
+}
 
 /**
  * Creates the action easing object. <br />
@@ -1675,9 +1699,9 @@ export const _easeBackOutObj = {
  * // example
  * action.easing(easeBackOut());
  */
-export const easeBackOut = function(){
-    return _easeBackOutObj;
-};
+export const easeBackOut = function () {
+  return _easeBackOutObj
+}
 
 /**
  * EaseBackInOut action. <br />
@@ -1694,21 +1718,22 @@ export const easeBackOut = function(){
  * //The new usage
  * action.easing(easeBackInOut());
  */
-export const EaseBackInOut = ActionEase.extend(/** @lends EaseBackInOut# */{
+export const EaseBackInOut = ActionEase.extend(
+  /** @lends EaseBackInOut# */ {
     /**
      * Called once per frame. Time is the number of seconds of a frame interval.
      *
      * @param {Number} dt
      */
-    update:function (dt) {
-        var overshoot = 1.70158 * 1.525;
-        dt = dt * 2;
-        if (dt < 1) {
-            this._inner.update((dt * dt * ((overshoot + 1) * dt - overshoot)) / 2);
-        } else {
-            dt = dt - 2;
-            this._inner.update((dt * dt * ((overshoot + 1) * dt + overshoot)) / 2 + 1);
-        }
+    update: function (dt) {
+      const overshoot = 1.70158 * 1.525
+      dt = dt * 2
+      if (dt < 1) {
+        this._inner.update((dt * dt * ((overshoot + 1) * dt - overshoot)) / 2)
+      } else {
+        dt = dt - 2
+        this._inner.update((dt * dt * ((overshoot + 1) * dt + overshoot)) / 2 + 1)
+      }
     },
 
     /**
@@ -1717,36 +1742,37 @@ export const EaseBackInOut = ActionEase.extend(/** @lends EaseBackInOut# */{
      *
      * @returns {EaseBackInOut}
      */
-    clone:function(){
-        var action = new EaseBackInOut();
-        action.initWithAction(this._inner.clone());
-        return action;
+    clone: function () {
+      const action = new EaseBackInOut()
+      action.initWithAction(this._inner.clone())
+      return action
     },
 
     /**
      * Create a action. Opposite with the original motion trajectory.
      * @return {EaseBackInOut}
      */
-    reverse:function () {
-        return new EaseBackInOut(this._inner.reverse());
-    }
-});
+    reverse: function () {
+      return new EaseBackInOut(this._inner.reverse())
+    },
+  },
+)
 
 export const _easeBackInOutObj = {
-    easing: function (time1) {
-        var overshoot = 1.70158 * 1.525;
-        time1 = time1 * 2;
-        if (time1 < 1) {
-            return (time1 * time1 * ((overshoot + 1) * time1 - overshoot)) / 2;
-        } else {
-            time1 = time1 - 2;
-            return (time1 * time1 * ((overshoot + 1) * time1 + overshoot)) / 2 + 1;
-        }
-    },
-    reverse: function(){
-        return _easeBackInOutObj;
+  easing: function (time1) {
+    const overshoot = 1.70158 * 1.525
+    time1 = time1 * 2
+    if (time1 < 1) {
+      return (time1 * time1 * ((overshoot + 1) * time1 - overshoot)) / 2
+    } else {
+      time1 = time1 - 2
+      return (time1 * time1 * ((overshoot + 1) * time1 + overshoot)) / 2 + 1
     }
-};
+  },
+  reverse: function () {
+    return _easeBackInOutObj
+  },
+}
 
 /**
  * Creates the action easing object. <br />
@@ -1757,9 +1783,9 @@ export const _easeBackInOutObj = {
  * // example
  * action.easing(easeBackInOut());
  */
-export const easeBackInOut = function(){
-    return _easeBackInOutObj;
-};
+export const easeBackInOut = function () {
+  return _easeBackInOutObj
+}
 
 /**
  * EaseBezierAction action. <br />
@@ -1778,8 +1804,8 @@ export const easeBackInOut = function(){
  * //The new usage
  * action.easing(easeBezierAction(0.5, 0.5, 1.0, 1.0));
  */
-export const EaseBezierAction = ActionEase.extend(/** @lends EaseBezierAction# */{
-
+export const EaseBezierAction = ActionEase.extend(
+  /** @lends EaseBezierAction# */ {
     _p0: null,
     _p1: null,
     _p2: null,
@@ -1790,12 +1816,12 @@ export const EaseBezierAction = ActionEase.extend(/** @lends EaseBezierAction# *
      * Initialization requires the application of Bessel curve of action.
      * @param {Action} action
      */
-    ctor: function(action){
-        ActionEase.prototype.ctor.call(this, action);
+    ctor: function (action) {
+      ActionEase.prototype.ctor.call(this, action)
     },
 
-    _updateTime: function(a, b, c, d, t){
-        return (Math.pow(1-t,3) * a + 3*t*(Math.pow(1-t,2))*b + 3*Math.pow(t,2)*(1-t)*c + Math.pow(t,3)*d );
+    _updateTime: function (a, b, c, d, t) {
+      return Math.pow(1 - t, 3) * a + 3 * t * Math.pow(1 - t, 2) * b + 3 * Math.pow(t, 2) * (1 - t) * c + Math.pow(t, 3) * d
     },
 
     /**
@@ -1803,9 +1829,9 @@ export const EaseBezierAction = ActionEase.extend(/** @lends EaseBezierAction# *
      *
      * @param {Number} dt
      */
-    update: function(dt){
-        var t = this._updateTime(this._p0, this._p1, this._p2, this._p3, dt);
-        this._inner.update(t);
+    update: function (dt) {
+      const t = this._updateTime(this._p0, this._p1, this._p2, this._p3, dt)
+      this._inner.update(t)
     },
 
     /**
@@ -1814,21 +1840,21 @@ export const EaseBezierAction = ActionEase.extend(/** @lends EaseBezierAction# *
      *
      * @returns {EaseBezierAction}
      */
-    clone: function(){
-        var action = new EaseBezierAction();
-        action.initWithAction(this._inner.clone());
-        action.setBezierParamer(this._p0, this._p1, this._p2, this._p3);
-        return action;
+    clone: function () {
+      const action = new EaseBezierAction()
+      action.initWithAction(this._inner.clone())
+      action.setBezierParamer(this._p0, this._p1, this._p2, this._p3)
+      return action
     },
 
     /**
      * Create a action. Opposite with the original motion trajectory.
      * @return {EaseBezierAction}
      */
-    reverse: function(){
-        var action = new EaseBezierAction(this._inner.reverse());
-        action.setBezierParamer(this._p3, this._p2, this._p1, this._p0);
-        return action;
+    reverse: function () {
+      const action = new EaseBezierAction(this._inner.reverse())
+      action.setBezierParamer(this._p3, this._p2, this._p1, this._p0)
+      return action
     },
 
     /**
@@ -1838,13 +1864,14 @@ export const EaseBezierAction = ActionEase.extend(/** @lends EaseBezierAction# *
      * @param p2
      * @param p3
      */
-    setBezierParamer: function(p0, p1, p2, p3){
-        this._p0 = p0 || 0;
-        this._p1 = p1 || 0;
-        this._p2 = p2 || 0;
-        this._p3 = p3 || 0;
-    }
-});
+    setBezierParamer: function (p0, p1, p2, p3) {
+      this._p0 = p0 || 0
+      this._p1 = p1 || 0
+      this._p2 = p2 || 0
+      this._p3 = p3 || 0
+    },
+  },
+)
 
 /**
  * Creates the action. <br />
@@ -1863,9 +1890,9 @@ export const EaseBezierAction = ActionEase.extend(/** @lends EaseBezierAction# *
  * //The new usage
  * action.easing(easeBezierAction(0.5, 0.5, 1.0, 1.0));
  */
-EaseBezierAction.create = function(action){
-    return new EaseBezierAction(action);
-};
+EaseBezierAction.create = function (action) {
+  return new EaseBezierAction(action)
+}
 
 /**
  * Creates the action easing object. <br />
@@ -1880,16 +1907,16 @@ EaseBezierAction.create = function(action){
  * // example
  * action.easing(easeBezierAction(0.5, 0.5, 1.0, 1.0));
  */
-export const easeBezierAction = function(p0, p1, p2, p3){
-    return {
-        easing: function(time){
-            return EaseBezierAction.prototype._updateTime(p0, p1, p2, p3, time);
-        },
-        reverse: function(){
-            return easeBezierAction(p3, p2, p1, p0);
-        }
-    };
-};
+export const easeBezierAction = function (p0, p1, p2, p3) {
+  return {
+    easing: function (time) {
+      return EaseBezierAction.prototype._updateTime(p0, p1, p2, p3, time)
+    },
+    reverse: function () {
+      return easeBezierAction(p3, p2, p1, p0)
+    },
+  }
+}
 
 /**
  * EaseQuadraticActionIn action. <br />
@@ -1906,10 +1933,10 @@ export const easeBezierAction = function(p0, p1, p2, p3){
  * //The new usage
  * action.easing(easeQuadraticActionIn());
  */
-export const EaseQuadraticActionIn = ActionEase.extend(/** @lends EaseQuadraticActionIn# */{
-
-    _updateTime: function(time){
-        return Math.pow(time, 2);
+export const EaseQuadraticActionIn = ActionEase.extend(
+  /** @lends EaseQuadraticActionIn# */ {
+    _updateTime: function (time) {
+      return Math.pow(time, 2)
     },
 
     /**
@@ -1917,8 +1944,8 @@ export const EaseQuadraticActionIn = ActionEase.extend(/** @lends EaseQuadraticA
      *
      * @param {Number} dt
      */
-    update: function(dt){
-        this._inner.update(this._updateTime(dt));
+    update: function (dt) {
+      this._inner.update(this._updateTime(dt))
     },
 
     /**
@@ -1927,28 +1954,28 @@ export const EaseQuadraticActionIn = ActionEase.extend(/** @lends EaseQuadraticA
      *
      * @returns {EaseQuadraticActionIn}
      */
-    clone: function(){
-        var action = new EaseQuadraticActionIn();
-        action.initWithAction(this._inner.clone());
-        return action;
+    clone: function () {
+      const action = new EaseQuadraticActionIn()
+      action.initWithAction(this._inner.clone())
+      return action
     },
 
     /**
      * Create a action. Opposite with the original motion trajectory.
      * @return {EaseQuadraticActionIn}
      */
-    reverse: function(){
-        return new EaseQuadraticActionIn(this._inner.reverse());
-    }
-
-});
+    reverse: function () {
+      return new EaseQuadraticActionIn(this._inner.reverse())
+    },
+  },
+)
 
 export const _easeQuadraticActionIn = {
-    easing: EaseQuadraticActionIn.prototype._updateTime,
-    reverse: function(){
-        return _easeQuadraticActionIn;
-    }
-};
+  easing: EaseQuadraticActionIn.prototype._updateTime,
+  reverse: function () {
+    return _easeQuadraticActionIn
+  },
+}
 
 /**
  * Creates the action easing object. <br />
@@ -1959,9 +1986,9 @@ export const _easeQuadraticActionIn = {
  * //example
  * action.easing(easeQuadraticActionIn());
  */
-export const easeQuadraticActionIn = function(){
-    return _easeQuadraticActionIn;
-};
+export const easeQuadraticActionIn = function () {
+  return _easeQuadraticActionIn
+}
 
 /**
  * EaseQuadraticActionIn action. <br />
@@ -1978,10 +2005,10 @@ export const easeQuadraticActionIn = function(){
  * //The new usage
  * action.easing(easeQuadraticActionOut());
  */
-export const EaseQuadraticActionOut = ActionEase.extend(/** @lends EaseQuadraticActionOut# */{
-
-    _updateTime: function(time){
-        return -time*(time-2);
+export const EaseQuadraticActionOut = ActionEase.extend(
+  /** @lends EaseQuadraticActionOut# */ {
+    _updateTime: function (time) {
+      return -time * (time - 2)
     },
 
     /**
@@ -1989,8 +2016,8 @@ export const EaseQuadraticActionOut = ActionEase.extend(/** @lends EaseQuadratic
      *
      * @param {Number} dt
      */
-    update: function(dt){
-        this._inner.update(this._updateTime(dt));
+    update: function (dt) {
+      this._inner.update(this._updateTime(dt))
     },
 
     /**
@@ -1999,27 +2026,28 @@ export const EaseQuadraticActionOut = ActionEase.extend(/** @lends EaseQuadratic
      *
      * @returns {EaseQuadraticActionOut}
      */
-    clone: function(){
-        var action = new EaseQuadraticActionOut();
-        action.initWithAction();
-        return action;
+    clone: function () {
+      const action = new EaseQuadraticActionOut()
+      action.initWithAction()
+      return action
     },
 
     /**
      * Create a action. Opposite with the original motion trajectory.
      * @return {EaseQuadraticActionOut}
      */
-    reverse: function(){
-        return new EaseQuadraticActionOut(this._inner.reverse());
-    }
-});
+    reverse: function () {
+      return new EaseQuadraticActionOut(this._inner.reverse())
+    },
+  },
+)
 
 export const _easeQuadraticActionOut = {
-    easing: EaseQuadraticActionOut.prototype._updateTime,
-    reverse: function(){
-        return _easeQuadraticActionOut;
-    }
-};
+  easing: EaseQuadraticActionOut.prototype._updateTime,
+  reverse: function () {
+    return _easeQuadraticActionOut
+  },
+}
 /**
  * Creates the action easing object. <br />
  * Reference easeOutQuad: <br />
@@ -2030,9 +2058,9 @@ export const _easeQuadraticActionOut = {
  * //example
  * action.easing(easeQuadraticActionOut());
  */
-export const easeQuadraticActionOut = function(){
-    return _easeQuadraticActionOut;
-};
+export const easeQuadraticActionOut = function () {
+  return _easeQuadraticActionOut
+}
 
 /**
  * EaseQuadraticActionInOut action. <br />
@@ -2049,17 +2077,18 @@ export const easeQuadraticActionOut = function(){
  * //The new usage
  * action.easing(easeQuadraticActionInOut());
  */
-export const EaseQuadraticActionInOut = ActionEase.extend(/** @lends EaseQuadraticActionInOut# */{
-    _updateTime: function(time){
-        var resultTime = time;
-        time *= 2;
-        if(time < 1){
-            resultTime = time * time * 0.5;
-        }else{
-            --time;
-            resultTime = -0.5 * ( time * ( time - 2 ) - 1)
-        }
-        return resultTime;
+export const EaseQuadraticActionInOut = ActionEase.extend(
+  /** @lends EaseQuadraticActionInOut# */ {
+    _updateTime: function (time) {
+      let resultTime = time
+      time *= 2
+      if (time < 1) {
+        resultTime = time * time * 0.5
+      } else {
+        --time
+        resultTime = -0.5 * (time * (time - 2) - 1)
+      }
+      return resultTime
     },
 
     /**
@@ -2067,8 +2096,8 @@ export const EaseQuadraticActionInOut = ActionEase.extend(/** @lends EaseQuadrat
      *
      * @param {Number} dt
      */
-    update: function(dt){
-        this._inner.update(this._updateTime(dt));
+    update: function (dt) {
+      this._inner.update(this._updateTime(dt))
     },
 
     /**
@@ -2077,27 +2106,28 @@ export const EaseQuadraticActionInOut = ActionEase.extend(/** @lends EaseQuadrat
      *
      * @returns {EaseQuadraticActionInOut}
      */
-    clone: function(){
-        var action = new EaseQuadraticActionInOut();
-        action.initWithAction(this._inner.clone());
-        return action;
+    clone: function () {
+      const action = new EaseQuadraticActionInOut()
+      action.initWithAction(this._inner.clone())
+      return action
     },
 
     /**
      * Create a action. Opposite with the original motion trajectory.
      * @return {EaseQuadraticActionInOut}
      */
-    reverse: function(){
-        return new EaseQuadraticActionInOut(this._inner.reverse());
-    }
-});
+    reverse: function () {
+      return new EaseQuadraticActionInOut(this._inner.reverse())
+    },
+  },
+)
 
 export const _easeQuadraticActionInOut = {
-    easing: EaseQuadraticActionInOut.prototype._updateTime,
-    reverse: function(){
-        return _easeQuadraticActionInOut;
-    }
-};
+  easing: EaseQuadraticActionInOut.prototype._updateTime,
+  reverse: function () {
+    return _easeQuadraticActionInOut
+  },
+}
 
 /**
  * Creates the action easing object. <br />
@@ -2109,9 +2139,9 @@ export const _easeQuadraticActionInOut = {
  * //example
  * action.easing(easeQuadraticActionInOut());
  */
-export const easeQuadraticActionInOut = function(){
-    return _easeQuadraticActionInOut;
-};
+export const easeQuadraticActionInOut = function () {
+  return _easeQuadraticActionInOut
+}
 
 /**
  * EaseQuarticActionIn action. <br />
@@ -2128,9 +2158,10 @@ export const easeQuadraticActionInOut = function(){
  * //The new usage
  * action.easing(easeQuarticActionIn());
  */
-export const EaseQuarticActionIn = ActionEase.extend(/** @lends EaseQuarticActionIn# */{
-    _updateTime: function(time){
-        return time * time * time * time;
+export const EaseQuarticActionIn = ActionEase.extend(
+  /** @lends EaseQuarticActionIn# */ {
+    _updateTime: function (time) {
+      return time * time * time * time
     },
 
     /**
@@ -2138,8 +2169,8 @@ export const EaseQuarticActionIn = ActionEase.extend(/** @lends EaseQuarticActio
      *
      * @param {Number} dt
      */
-    update: function(dt){
-        this._inner.update(this._updateTime(dt));
+    update: function (dt) {
+      this._inner.update(this._updateTime(dt))
     },
 
     /**
@@ -2148,27 +2179,28 @@ export const EaseQuarticActionIn = ActionEase.extend(/** @lends EaseQuarticActio
      *
      * @returns {EaseQuarticActionIn}
      */
-    clone: function(){
-        var action = new EaseQuarticActionIn();
-        action.initWithAction(this._inner.clone());
-        return action;
+    clone: function () {
+      const action = new EaseQuarticActionIn()
+      action.initWithAction(this._inner.clone())
+      return action
     },
 
     /**
      * Create a action. Opposite with the original motion trajectory.
      * @return {EaseQuarticActionIn}
      */
-    reverse: function(){
-        return new EaseQuarticActionIn(this._inner.reverse());
-    }
-});
+    reverse: function () {
+      return new EaseQuarticActionIn(this._inner.reverse())
+    },
+  },
+)
 
 export const _easeQuarticActionIn = {
-    easing: EaseQuarticActionIn.prototype._updateTime,
-    reverse: function(){
-        return _easeQuarticActionIn;
-    }
-};
+  easing: EaseQuarticActionIn.prototype._updateTime,
+  reverse: function () {
+    return _easeQuarticActionIn
+  },
+}
 /**
  * Creates the action easing object. <br />
  * Reference easeIntQuart: <br />
@@ -2179,9 +2211,9 @@ export const _easeQuarticActionIn = {
  * //example
  * action.easing(easeQuarticActionIn());
  */
-export const easeQuarticActionIn = function(){
-    return _easeQuarticActionIn;
-};
+export const easeQuarticActionIn = function () {
+  return _easeQuarticActionIn
+}
 
 /**
  * EaseQuarticActionOut action. <br />
@@ -2198,10 +2230,11 @@ export const easeQuarticActionIn = function(){
  * //The new usage
  * action.easing(EaseQuarticActionOut());
  */
-export const EaseQuarticActionOut = ActionEase.extend(/** @lends EaseQuarticActionOut# */{
-    _updateTime: function(time){
-        time -= 1;
-        return -(time * time * time * time - 1);
+export const EaseQuarticActionOut = ActionEase.extend(
+  /** @lends EaseQuarticActionOut# */ {
+    _updateTime: function (time) {
+      time -= 1
+      return -(time * time * time * time - 1)
     },
 
     /**
@@ -2209,8 +2242,8 @@ export const EaseQuarticActionOut = ActionEase.extend(/** @lends EaseQuarticActi
      *
      * @param {Number} dt
      */
-    update: function(dt){
-        this._inner.update(this._updateTime(dt));
+    update: function (dt) {
+      this._inner.update(this._updateTime(dt))
     },
 
     /**
@@ -2219,27 +2252,28 @@ export const EaseQuarticActionOut = ActionEase.extend(/** @lends EaseQuarticActi
      *
      * @returns {EaseQuarticActionOut}
      */
-    clone: function(){
-        var action = new EaseQuarticActionOut();
-        action.initWithAction(this._inner.clone());
-        return action;
+    clone: function () {
+      const action = new EaseQuarticActionOut()
+      action.initWithAction(this._inner.clone())
+      return action
     },
 
     /**
      * Create a action. Opposite with the original motion trajectory.
      * @return {EaseQuarticActionOut}
      */
-    reverse: function(){
-        return new EaseQuarticActionOut(this._inner.reverse());
-    }
-});
+    reverse: function () {
+      return new EaseQuarticActionOut(this._inner.reverse())
+    },
+  },
+)
 
 export const _easeQuarticActionOut = {
-    easing: EaseQuarticActionOut.prototype._updateTime,
-    reverse: function(){
-        return _easeQuarticActionOut;
-    }
-};
+  easing: EaseQuarticActionOut.prototype._updateTime,
+  reverse: function () {
+    return _easeQuarticActionOut
+  },
+}
 
 /**
  * Creates the action easing object. <br />
@@ -2251,9 +2285,9 @@ export const _easeQuarticActionOut = {
  * //example
  * action.easing(QuarticActionOut());
  */
-export const easeQuarticActionOut = function(){
-    return _easeQuarticActionOut;
-};
+export const easeQuarticActionOut = function () {
+  return _easeQuarticActionOut
+}
 
 /**
  * EaseQuarticActionInOut action. <br />
@@ -2270,13 +2304,13 @@ export const easeQuarticActionOut = function(){
  * //The new usage
  * action.easing(easeQuarticActionInOut());
  */
-export const EaseQuarticActionInOut = ActionEase.extend(/** @lends EaseQuarticActionInOut# */{
-    _updateTime: function(time){
-        time = time*2;
-        if (time < 1)
-            return 0.5 * time * time * time * time;
-        time -= 2;
-        return -0.5 * (time * time * time * time - 2);
+export const EaseQuarticActionInOut = ActionEase.extend(
+  /** @lends EaseQuarticActionInOut# */ {
+    _updateTime: function (time) {
+      time = time * 2
+      if (time < 1) return 0.5 * time * time * time * time
+      time -= 2
+      return -0.5 * (time * time * time * time - 2)
     },
 
     /**
@@ -2284,8 +2318,8 @@ export const EaseQuarticActionInOut = ActionEase.extend(/** @lends EaseQuarticAc
      *
      * @param {Number} dt
      */
-    update: function(dt){
-        this._inner.update(this._updateTime(dt));
+    update: function (dt) {
+      this._inner.update(this._updateTime(dt))
     },
 
     /**
@@ -2294,27 +2328,28 @@ export const EaseQuarticActionInOut = ActionEase.extend(/** @lends EaseQuarticAc
      *
      * @returns {EaseQuarticActionInOut}
      */
-    clone: function(){
-        var action = new EaseQuarticActionInOut();
-        action.initWithAction(this._inner.clone());
-        return action;
+    clone: function () {
+      const action = new EaseQuarticActionInOut()
+      action.initWithAction(this._inner.clone())
+      return action
     },
 
     /**
      * Create a action. Opposite with the original motion trajectory.
      * @return {EaseQuarticActionInOut}
      */
-    reverse: function(){
-        return new EaseQuarticActionInOut(this._inner.reverse());
-    }
-});
+    reverse: function () {
+      return new EaseQuarticActionInOut(this._inner.reverse())
+    },
+  },
+)
 
 export const _easeQuarticActionInOut = {
-    easing: EaseQuarticActionInOut.prototype._updateTime,
-    reverse: function(){
-        return _easeQuarticActionInOut;
-    }
-};
+  easing: EaseQuarticActionInOut.prototype._updateTime,
+  reverse: function () {
+    return _easeQuarticActionInOut
+  },
+}
 /**
  * Creates the action easing object.  <br />
  * Reference easeInOutQuart: <br />
@@ -2322,9 +2357,9 @@ export const _easeQuarticActionInOut = {
  * @function
  * @returns {Object}
  */
-export const easeQuarticActionInOut = function(){
-    return _easeQuarticActionInOut;
-};
+export const easeQuarticActionInOut = function () {
+  return _easeQuarticActionInOut
+}
 
 /**
  * EaseQuinticActionIn action. <br />
@@ -2341,9 +2376,10 @@ export const easeQuarticActionInOut = function(){
  * //The new usage
  * action.easing(easeQuinticActionIn());
  */
-export const EaseQuinticActionIn = ActionEase.extend(/** @lends EaseQuinticActionIn# */{
-    _updateTime: function(time){
-        return time * time * time * time * time;
+export const EaseQuinticActionIn = ActionEase.extend(
+  /** @lends EaseQuinticActionIn# */ {
+    _updateTime: function (time) {
+      return time * time * time * time * time
     },
 
     /**
@@ -2351,8 +2387,8 @@ export const EaseQuinticActionIn = ActionEase.extend(/** @lends EaseQuinticActio
      *
      * @param {Number} dt
      */
-    update: function(dt){
-        this._inner.update(this._updateTime(dt));
+    update: function (dt) {
+      this._inner.update(this._updateTime(dt))
     },
 
     /**
@@ -2361,27 +2397,28 @@ export const EaseQuinticActionIn = ActionEase.extend(/** @lends EaseQuinticActio
      *
      * @returns {EaseQuinticActionIn}
      */
-    clone: function(){
-        var action = new EaseQuinticActionIn();
-        action.initWithAction(this._inner.clone());
-        return action;
+    clone: function () {
+      const action = new EaseQuinticActionIn()
+      action.initWithAction(this._inner.clone())
+      return action
     },
 
     /**
      * Create a action. Opposite with the original motion trajectory.
      * @return {EaseQuinticActionIn}
      */
-    reverse: function(){
-        return new EaseQuinticActionIn(this._inner.reverse());
-    }
-});
+    reverse: function () {
+      return new EaseQuinticActionIn(this._inner.reverse())
+    },
+  },
+)
 
 export const _easeQuinticActionIn = {
-    easing: EaseQuinticActionIn.prototype._updateTime,
-    reverse: function(){
-        return _easeQuinticActionIn;
-    }
-};
+  easing: EaseQuinticActionIn.prototype._updateTime,
+  reverse: function () {
+    return _easeQuinticActionIn
+  },
+}
 
 /**
  * Creates the action easing object. <br />
@@ -2393,9 +2430,9 @@ export const _easeQuinticActionIn = {
  * //example
  * action.easing(easeQuinticActionIn());
  */
-export const easeQuinticActionIn = function(){
-    return _easeQuinticActionIn;
-};
+export const easeQuinticActionIn = function () {
+  return _easeQuinticActionIn
+}
 
 /**
  * EaseQuinticActionOut action. <br />
@@ -2412,10 +2449,11 @@ export const easeQuinticActionIn = function(){
  * //The new usage
  * action.easing(easeQuadraticActionOut());
  */
-export const EaseQuinticActionOut = ActionEase.extend(/** @lends EaseQuinticActionOut# */{
-    _updateTime: function(time){
-        time -=1;
-        return (time * time * time * time * time + 1);
+export const EaseQuinticActionOut = ActionEase.extend(
+  /** @lends EaseQuinticActionOut# */ {
+    _updateTime: function (time) {
+      time -= 1
+      return time * time * time * time * time + 1
     },
 
     /**
@@ -2423,8 +2461,8 @@ export const EaseQuinticActionOut = ActionEase.extend(/** @lends EaseQuinticActi
      *
      * @param {Number} dt
      */
-    update: function(dt){
-        this._inner.update(this._updateTime(dt));
+    update: function (dt) {
+      this._inner.update(this._updateTime(dt))
     },
 
     /**
@@ -2433,27 +2471,28 @@ export const EaseQuinticActionOut = ActionEase.extend(/** @lends EaseQuinticActi
      *
      * @returns {EaseQuinticActionOut}
      */
-    clone: function(){
-        var action = new EaseQuinticActionOut();
-        action.initWithAction(this._inner.clone());
-        return action;
+    clone: function () {
+      const action = new EaseQuinticActionOut()
+      action.initWithAction(this._inner.clone())
+      return action
     },
 
     /**
      * Create a action. Opposite with the original motion trajectory.
      * @return {EaseQuinticActionOut}
      */
-    reverse: function(){
-        return new EaseQuinticActionOut(this._inner.reverse());
-    }
-});
+    reverse: function () {
+      return new EaseQuinticActionOut(this._inner.reverse())
+    },
+  },
+)
 
 export const _easeQuinticActionOut = {
-    easing: EaseQuinticActionOut.prototype._updateTime,
-    reverse: function(){
-        return _easeQuinticActionOut;
-    }
-};
+  easing: EaseQuinticActionOut.prototype._updateTime,
+  reverse: function () {
+    return _easeQuinticActionOut
+  },
+}
 
 /**
  * Creates the action easing object. <br />
@@ -2465,9 +2504,9 @@ export const _easeQuinticActionOut = {
  * //example
  * action.easing(easeQuadraticActionOut());
  */
-export const easeQuinticActionOut = function(){
-    return _easeQuinticActionOut;
-};
+export const easeQuinticActionOut = function () {
+  return _easeQuinticActionOut
+}
 
 /**
  * EaseQuinticActionInOut action. <br />
@@ -2484,13 +2523,13 @@ export const easeQuinticActionOut = function(){
  * //The new usage
  * action.easing(easeQuinticActionInOut());
  */
-export const EaseQuinticActionInOut = ActionEase.extend(/** @lends EaseQuinticActionInOut# */{
-    _updateTime: function(time){
-        time = time*2;
-        if (time < 1)
-            return 0.5 * time * time * time * time * time;
-        time -= 2;
-        return 0.5 * (time * time * time * time * time + 2);
+export const EaseQuinticActionInOut = ActionEase.extend(
+  /** @lends EaseQuinticActionInOut# */ {
+    _updateTime: function (time) {
+      time = time * 2
+      if (time < 1) return 0.5 * time * time * time * time * time
+      time -= 2
+      return 0.5 * (time * time * time * time * time + 2)
     },
 
     /**
@@ -2498,8 +2537,8 @@ export const EaseQuinticActionInOut = ActionEase.extend(/** @lends EaseQuinticAc
      *
      * @param {Number} dt
      */
-    update: function(dt){
-        this._inner.update(this._updateTime(dt));
+    update: function (dt) {
+      this._inner.update(this._updateTime(dt))
     },
 
     /**
@@ -2508,27 +2547,28 @@ export const EaseQuinticActionInOut = ActionEase.extend(/** @lends EaseQuinticAc
      *
      * @returns {EaseQuinticActionInOut}
      */
-    clone: function(){
-        var action = new EaseQuinticActionInOut();
-        action.initWithAction(this._inner.clone());
-        return action;
+    clone: function () {
+      const action = new EaseQuinticActionInOut()
+      action.initWithAction(this._inner.clone())
+      return action
     },
 
     /**
      * Create a action. Opposite with the original motion trajectory.
      * @return {EaseQuinticActionInOut}
      */
-    reverse: function(){
-        return new EaseQuinticActionInOut(this._inner.reverse());
-    }
-});
+    reverse: function () {
+      return new EaseQuinticActionInOut(this._inner.reverse())
+    },
+  },
+)
 
 export const _easeQuinticActionInOut = {
-    easing: EaseQuinticActionInOut.prototype._updateTime,
-    reverse: function(){
-        return _easeQuinticActionInOut;
-    }
-};
+  easing: EaseQuinticActionInOut.prototype._updateTime,
+  reverse: function () {
+    return _easeQuinticActionInOut
+  },
+}
 
 /**
  * Creates the action easing object. <br />
@@ -2540,9 +2580,9 @@ export const _easeQuinticActionInOut = {
  * //example
  * action.easing(easeQuinticActionInOut());
  */
-export const easeQuinticActionInOut = function(){
-    return _easeQuinticActionInOut;
-};
+export const easeQuinticActionInOut = function () {
+  return _easeQuinticActionInOut
+}
 
 /**
  * EaseCircleActionIn action. <br />
@@ -2559,9 +2599,10 @@ export const easeQuinticActionInOut = function(){
  * //The new usage
  * action.easing(easeCircleActionIn());
  */
-export const EaseCircleActionIn = ActionEase.extend(/** @lends EaseCircleActionIn# */{
-    _updateTime: function(time){
-        return -1 * (Math.sqrt(1 - time * time) - 1);
+export const EaseCircleActionIn = ActionEase.extend(
+  /** @lends EaseCircleActionIn# */ {
+    _updateTime: function (time) {
+      return -1 * (Math.sqrt(1 - time * time) - 1)
     },
 
     /**
@@ -2569,8 +2610,8 @@ export const EaseCircleActionIn = ActionEase.extend(/** @lends EaseCircleActionI
      *
      * @param {Number} dt
      */
-    update: function(dt){
-        this._inner.update(this._updateTime(dt));
+    update: function (dt) {
+      this._inner.update(this._updateTime(dt))
     },
 
     /**
@@ -2579,27 +2620,28 @@ export const EaseCircleActionIn = ActionEase.extend(/** @lends EaseCircleActionI
      *
      * @returns {EaseCircleActionIn}
      */
-    clone: function(){
-        var action = new EaseCircleActionIn();
-        action.initWithAction(this._inner.clone());
-        return action;
+    clone: function () {
+      const action = new EaseCircleActionIn()
+      action.initWithAction(this._inner.clone())
+      return action
     },
 
     /**
      * Create a action. Opposite with the original motion trajectory.
      * @return {EaseCircleActionIn}
      */
-    reverse: function(){
-        return new EaseCircleActionIn(this._inner.reverse());
-    }
-});
+    reverse: function () {
+      return new EaseCircleActionIn(this._inner.reverse())
+    },
+  },
+)
 
 export const _easeCircleActionIn = {
-    easing: EaseCircleActionIn.prototype._updateTime,
-    reverse: function(){
-        return _easeCircleActionIn;
-    }
-};
+  easing: EaseCircleActionIn.prototype._updateTime,
+  reverse: function () {
+    return _easeCircleActionIn
+  },
+}
 
 /**
  * Creates the action easing object. <br />
@@ -2611,9 +2653,9 @@ export const _easeCircleActionIn = {
  * //example
  * action.easing(easeCircleActionIn());
  */
-export const easeCircleActionIn = function(){
-    return _easeCircleActionIn;
-};
+export const easeCircleActionIn = function () {
+  return _easeCircleActionIn
+}
 
 /**
  * EaseCircleActionOut action. <br />
@@ -2630,10 +2672,11 @@ export const easeCircleActionIn = function(){
  * //The new usage
  * action.easing(easeCircleActionOut());
  */
-export const EaseCircleActionOut = ActionEase.extend(/** @lends EaseCircleActionOut# */{
-    _updateTime: function(time){
-        time = time - 1;
-        return Math.sqrt(1 - time * time);
+export const EaseCircleActionOut = ActionEase.extend(
+  /** @lends EaseCircleActionOut# */ {
+    _updateTime: function (time) {
+      time = time - 1
+      return Math.sqrt(1 - time * time)
     },
 
     /**
@@ -2641,8 +2684,8 @@ export const EaseCircleActionOut = ActionEase.extend(/** @lends EaseCircleAction
      *
      * @param {Number} dt
      */
-    update: function(dt){
-        this._inner.update(this._updateTime(dt));
+    update: function (dt) {
+      this._inner.update(this._updateTime(dt))
     },
 
     /**
@@ -2651,27 +2694,28 @@ export const EaseCircleActionOut = ActionEase.extend(/** @lends EaseCircleAction
      *
      * @returns {EaseCircleActionOut}
      */
-    clone: function(){
-        var action = new EaseCircleActionOut();
-        action.initWithAction(this._inner.clone());
-        return action;
+    clone: function () {
+      const action = new EaseCircleActionOut()
+      action.initWithAction(this._inner.clone())
+      return action
     },
 
     /**
      * Create a action. Opposite with the original motion trajectory.
      * @return {EaseCircleActionOut}
      */
-    reverse: function(){
-        return new EaseCircleActionOut(this._inner.reverse());
-    }
-});
+    reverse: function () {
+      return new EaseCircleActionOut(this._inner.reverse())
+    },
+  },
+)
 
 export const _easeCircleActionOut = {
-    easing: EaseCircleActionOut.prototype._updateTime,
-    reverse: function(){
-        return _easeCircleActionOut;
-    }
-};
+  easing: EaseCircleActionOut.prototype._updateTime,
+  reverse: function () {
+    return _easeCircleActionOut
+  },
+}
 
 /**
  * Creates the action easing object. <br />
@@ -2683,9 +2727,9 @@ export const _easeCircleActionOut = {
  * //example
  * actioneasing(easeCircleActionOut());
  */
-export const easeCircleActionOut = function(){
-    return _easeCircleActionOut;
-};
+export const easeCircleActionOut = function () {
+  return _easeCircleActionOut
+}
 
 /**
  * EaseCircleActionInOut action. <br />
@@ -2702,13 +2746,13 @@ export const easeCircleActionOut = function(){
  * //The new usage
  * action.easing(easeCircleActionInOut());
  */
-export const EaseCircleActionInOut = ActionEase.extend(/** @lends EaseCircleActionInOut# */{
-    _updateTime: function(time){
-        time = time * 2;
-        if (time < 1)
-            return -0.5 * (Math.sqrt(1 - time * time) - 1);
-        time -= 2;
-        return 0.5 * (Math.sqrt(1 - time * time) + 1);
+export const EaseCircleActionInOut = ActionEase.extend(
+  /** @lends EaseCircleActionInOut# */ {
+    _updateTime: function (time) {
+      time = time * 2
+      if (time < 1) return -0.5 * (Math.sqrt(1 - time * time) - 1)
+      time -= 2
+      return 0.5 * (Math.sqrt(1 - time * time) + 1)
     },
 
     /**
@@ -2716,8 +2760,8 @@ export const EaseCircleActionInOut = ActionEase.extend(/** @lends EaseCircleActi
      *
      * @param {Number} dt
      */
-    update: function(dt){
-        this._inner.update(this._updateTime(dt));
+    update: function (dt) {
+      this._inner.update(this._updateTime(dt))
     },
 
     /**
@@ -2726,27 +2770,28 @@ export const EaseCircleActionInOut = ActionEase.extend(/** @lends EaseCircleActi
      *
      * @returns {EaseCircleActionInOut}
      */
-    clone: function(){
-        var action = new EaseCircleActionInOut();
-        action.initWithAction(this._inner.clone());
-        return action;
+    clone: function () {
+      const action = new EaseCircleActionInOut()
+      action.initWithAction(this._inner.clone())
+      return action
     },
 
     /**
      * Create a action. Opposite with the original motion trajectory.
      * @return {EaseCircleActionInOut}
      */
-    reverse: function(){
-        return new EaseCircleActionInOut(this._inner.reverse());
-    }
-});
+    reverse: function () {
+      return new EaseCircleActionInOut(this._inner.reverse())
+    },
+  },
+)
 
 export const _easeCircleActionInOut = {
-    easing: EaseCircleActionInOut.prototype._updateTime,
-    reverse: function(){
-        return _easeCircleActionInOut;
-    }
-};
+  easing: EaseCircleActionInOut.prototype._updateTime,
+  reverse: function () {
+    return _easeCircleActionInOut
+  },
+}
 
 /**
  * Creates the action easing object. <br />
@@ -2758,9 +2803,9 @@ export const _easeCircleActionInOut = {
  * //example
  * action.easing(easeCircleActionInOut());
  */
-export const easeCircleActionInOut = function(){
-    return _easeCircleActionInOut;
-};
+export const easeCircleActionInOut = function () {
+  return _easeCircleActionInOut
+}
 
 /**
  * EaseCubicActionIn action. <br />
@@ -2777,9 +2822,10 @@ export const easeCircleActionInOut = function(){
  * //The new usage
  * action.easing(easeCubicActionIn());
  */
-export const EaseCubicActionIn = ActionEase.extend(/** @lends EaseCubicActionIn# */{
-    _updateTime: function(time){
-        return time * time * time;
+export const EaseCubicActionIn = ActionEase.extend(
+  /** @lends EaseCubicActionIn# */ {
+    _updateTime: function (time) {
+      return time * time * time
     },
 
     /**
@@ -2787,8 +2833,8 @@ export const EaseCubicActionIn = ActionEase.extend(/** @lends EaseCubicActionIn#
      *
      * @param {Number} dt
      */
-    update: function(dt){
-        this._inner.update(this._updateTime(dt));
+    update: function (dt) {
+      this._inner.update(this._updateTime(dt))
     },
 
     /**
@@ -2797,27 +2843,28 @@ export const EaseCubicActionIn = ActionEase.extend(/** @lends EaseCubicActionIn#
      *
      * @returns {EaseCubicActionIn}
      */
-    clone: function(){
-        var action = new EaseCubicActionIn();
-        action.initWithAction(this._inner.clone());
-        return action;
+    clone: function () {
+      const action = new EaseCubicActionIn()
+      action.initWithAction(this._inner.clone())
+      return action
     },
 
     /**
      * Create a action. Opposite with the original motion trajectory.
      * @return {EaseCubicActionIn}
      */
-    reverse: function(){
-        return new EaseCubicActionIn(this._inner.reverse());
-    }
-});
+    reverse: function () {
+      return new EaseCubicActionIn(this._inner.reverse())
+    },
+  },
+)
 
 export const _easeCubicActionIn = {
-    easing: EaseCubicActionIn.prototype._updateTime,
-    reverse: function(){
-        return _easeCubicActionIn;
-    }
-};
+  easing: EaseCubicActionIn.prototype._updateTime,
+  reverse: function () {
+    return _easeCubicActionIn
+  },
+}
 
 /**
  * Creates the action easing object. <br />
@@ -2829,9 +2876,9 @@ export const _easeCubicActionIn = {
  * //example
  * action.easing(easeCubicActionIn());
  */
-export const easeCubicActionIn = function(){
-    return _easeCubicActionIn;
-};
+export const easeCubicActionIn = function () {
+  return _easeCubicActionIn
+}
 
 /**
  * EaseCubicActionOut action. <br />
@@ -2848,10 +2895,11 @@ export const easeCubicActionIn = function(){
  * //The new usage
  * action.easing(easeCubicActionOut());
  */
-export const EaseCubicActionOut = ActionEase.extend(/** @lends EaseCubicActionOut# */{
-    _updateTime: function(time){
-        time -= 1;
-        return (time * time * time + 1);
+export const EaseCubicActionOut = ActionEase.extend(
+  /** @lends EaseCubicActionOut# */ {
+    _updateTime: function (time) {
+      time -= 1
+      return time * time * time + 1
     },
 
     /**
@@ -2859,8 +2907,8 @@ export const EaseCubicActionOut = ActionEase.extend(/** @lends EaseCubicActionOu
      *
      * @param {Number} dt
      */
-    update: function(dt){
-        this._inner.update(this._updateTime(dt));
+    update: function (dt) {
+      this._inner.update(this._updateTime(dt))
     },
 
     /**
@@ -2869,27 +2917,28 @@ export const EaseCubicActionOut = ActionEase.extend(/** @lends EaseCubicActionOu
      *
      * @returns {EaseCubicActionOut}
      */
-    clone: function(){
-        var action = new EaseCubicActionOut();
-        action.initWithAction(this._inner.clone());
-        return action;
+    clone: function () {
+      const action = new EaseCubicActionOut()
+      action.initWithAction(this._inner.clone())
+      return action
     },
 
     /**
      * Create a action. Opposite with the original motion trajectory.
      * @return {EaseCubicActionOut}
      */
-    reverse: function(){
-        return new EaseCubicActionOut(this._inner.reverse());
-    }
-});
+    reverse: function () {
+      return new EaseCubicActionOut(this._inner.reverse())
+    },
+  },
+)
 
 export const _easeCubicActionOut = {
-    easing: EaseCubicActionOut.prototype._updateTime,
-    reverse: function(){
-        return _easeCubicActionOut;
-    }
-};
+  easing: EaseCubicActionOut.prototype._updateTime,
+  reverse: function () {
+    return _easeCubicActionOut
+  },
+}
 
 /**
  * Creates the action easing object. <br />
@@ -2901,9 +2950,9 @@ export const _easeCubicActionOut = {
  * //example
  * action.easing(easeCubicActionOut());
  */
-export const easeCubicActionOut = function(){
-    return _easeCubicActionOut;
-};
+export const easeCubicActionOut = function () {
+  return _easeCubicActionOut
+}
 
 /**
  * EaseCubicActionInOut action. <br />
@@ -2920,13 +2969,13 @@ export const easeCubicActionOut = function(){
  * //The new usage
  * action.easing(easeCubicActionInOut());
  */
-export const EaseCubicActionInOut = ActionEase.extend(/** @lends EaseCubicActionInOut# */{
-    _updateTime: function(time){
-        time = time*2;
-        if (time < 1)
-            return 0.5 * time * time * time;
-        time -= 2;
-        return 0.5 * (time * time * time + 2);
+export const EaseCubicActionInOut = ActionEase.extend(
+  /** @lends EaseCubicActionInOut# */ {
+    _updateTime: function (time) {
+      time = time * 2
+      if (time < 1) return 0.5 * time * time * time
+      time -= 2
+      return 0.5 * (time * time * time + 2)
     },
 
     /**
@@ -2934,8 +2983,8 @@ export const EaseCubicActionInOut = ActionEase.extend(/** @lends EaseCubicAction
      *
      * @param {Number} dt
      */
-    update: function(dt){
-        this._inner.update(this._updateTime(dt));
+    update: function (dt) {
+      this._inner.update(this._updateTime(dt))
     },
 
     /**
@@ -2944,27 +2993,28 @@ export const EaseCubicActionInOut = ActionEase.extend(/** @lends EaseCubicAction
      *
      * @returns {EaseCubicActionInOut}
      */
-    clone: function(){
-        var action = new EaseCubicActionInOut();
-        action.initWithAction(this._inner.clone());
-        return action;
+    clone: function () {
+      const action = new EaseCubicActionInOut()
+      action.initWithAction(this._inner.clone())
+      return action
     },
 
     /**
      * Create a action. Opposite with the original motion trajectory.
      * @return {EaseCubicActionInOut}
      */
-    reverse: function(){
-        return new EaseCubicActionInOut(this._inner.reverse());
-    }
-});
+    reverse: function () {
+      return new EaseCubicActionInOut(this._inner.reverse())
+    },
+  },
+)
 
 export const _easeCubicActionInOut = {
-    easing: EaseCubicActionInOut.prototype._updateTime,
-    reverse: function(){
-        return _easeCubicActionInOut;
-    }
-};
+  easing: EaseCubicActionInOut.prototype._updateTime,
+  reverse: function () {
+    return _easeCubicActionInOut
+  },
+}
 
 /**
  * Creates the action easing object. <br />
@@ -2973,6 +3023,6 @@ export const _easeCubicActionInOut = {
  * @function
  * @returns {Object}
  */
-export const easeCubicActionInOut = function(){
-    return _easeCubicActionInOut;
-};
+export const easeCubicActionInOut = function () {
+  return _easeCubicActionInOut
+}

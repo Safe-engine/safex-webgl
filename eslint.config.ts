@@ -8,16 +8,16 @@ export default [
   js.configs.recommended,
   ...tseslint.configs.recommended,
   prettierConfig,
-  {
-    files: ['**/*.{ts,mts,cts}'],
-    languageOptions: {
-      parser: tseslint.parser,
-      parserOptions: {
-        project: ['./tsconfig.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-    },
-  },
+  // {
+  //   files: ['**/*.{ts,mts,cts}'],
+  //   languageOptions: {
+  //     parser: tseslint.parser,
+  //     parserOptions: {
+  //       project: ['./tsconfig.json'],
+  //       tsconfigRootDir: import.meta.dirname,
+  //     },
+  //   },
+  // },
   {
     files: ['**/*.{js,mjs,cjs,ts,mts,cts}'],
     languageOptions: {

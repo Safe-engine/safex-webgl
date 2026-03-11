@@ -1,27 +1,27 @@
-import { ProtectedNode } from './ProtectedNode';
-(function () {
-  if (!Node.WebGLRenderCmd) return
-  ProtectedNode.WebGLRenderCmd = function (renderable) {
-    this._rootCtor(renderable)
-  }
+import { NodeWebGLRenderCmd } from '../../core/base-nodes/NodeWebGLRenderCmd'
+import { ProtectedNode } from './ProtectedNode'
 
-  const proto = (ProtectedNode.WebGLRenderCmd.prototype = Object.create(Node.WebGLRenderCmd.prototype))
-  inject(ProtectedNode.RenderCmd, proto)
-  proto.constructor = ProtectedNode.WebGLRenderCmd
-  proto._pNodeCmdCtor = ProtectedNode.WebGLRenderCmd
+export const ProtectedNodeWebGLRenderCmd = function (renderable) {
+  this._rootCtor(renderable)
+}
+export function inject(srcPrototype, destPrototype) {
+  for (const key in srcPrototype) destPrototype[key] = srcPrototype[key]
+}
+const proto = (ProtectedNodeWebGLRenderCmd.prototype = Object.create(NodeWebGLRenderCmd.prototype))
+inject(ProtectedNode.RenderCmd, proto)
+proto.constructor = ProtectedNodeWebGLRenderCmd
+proto._pNodeCmdCtor = ProtectedNodeWebGLRenderCmd
 
-  proto.transform = function (parentCmd, recursive) {
-    this.originTransform(parentCmd, recursive)
+proto.transform = function (parentCmd, recursive) {
+  this.originTransform(parentCmd, recursive)
 
-    let i,
-      len,
-      locChildren = this._node._protectedChildren
-    if (recursive && locChildren && locChildren.length !== 0) {
-      for (i = 0, len = locChildren.length; i < len; i++) {
-        locChildren[i]._renderCmd.transform(this, recursive)
-      }
+  let i, len
+  const locChildren = this._node._protectedChildren
+  if (recursive && locChildren && locChildren.length !== 0) {
+    for (i = 0, len = locChildren.length; i < len; i++) {
+      locChildren[i]._renderCmd.transform(this, recursive)
     }
   }
+}
 
-  proto.pNodeTransform = proto.transform
-})()
+proto.pNodeTransform = proto.transform

@@ -1,486 +1,389 @@
 import { size } from '../../core/cocoa/Geometry'
-import { defineGetterSetter } from '../../core/sprites/SpritesPropertyDefine'
+import { LabelTTF } from '../../core/labelttf/LabelTTF'
 import { log } from '../../helper/Debugger'
 import { ProtectedNode } from '../base/ProtectedNode'
 import { Widget } from '../base/UIWidget'
 
-export const Text = Widget.extend(
-  /** @lends Text# */ {
-    _touchScaleChangeEnabled: false,
-    _normalScaleValueX: 1,
-    _normalScaleValueY: 1,
-    _fontName: 'Arial',
-    _fontSize: 16,
-    _onSelectedScaleOffset: 0.5,
-    _labelRenderer: null,
-    _textAreaSize: null,
-    _textVerticalAlignment: 0,
-    _textHorizontalAlignment: 0,
-    _className: 'Text',
-    _type: null,
-    _labelRendererAdaptDirty: true,
+export class Text extends Widget {
+  _touchScaleChangeEnabled = false
+  _normalScaleValueX = 1
+  _normalScaleValueY = 1
+  _fontName = 'Arial'
+  _fontSize = 16
+  _onSelectedScaleOffset = 0.5
+  _labelRenderer: any = null
+  _textAreaSize: any = null
+  _textVerticalAlignment = 0
+  _textHorizontalAlignment = 0
+  _className = 'Text'
+  _type: any = null
+  _labelRendererAdaptDirty = true
 
-    /**
-     * allocates and initializes a UILabel.
-     * Constructor of Text. override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
-     * @param {String} textContent
-     * @param {String} fontName
-     * @param {Number} fontSize
-     * @example
-     * // example
-     * var uiLabel = new Text();
-     */
-    ctor: function (textContent, fontName, fontSize) {
-      this._type = Text.Type.SYSTEM
-      this._textAreaSize = size(0, 0)
-      Widget.prototype.ctor.call(this)
+  constructor(textContent?: string, fontName?: string, fontSize?: number) {
+    super()
+    this._type = Text.Type.SYSTEM
+    this._textAreaSize = size(0, 0)
 
-      if (fontSize !== undefined) {
-        this.setFontName(fontName)
-        this.setFontSize(fontSize)
-        this.setString(textContent)
-      } else {
-        this.setFontName(this._fontName)
-      }
-    },
+    if (fontSize !== undefined) {
+      this.setFontName(fontName!)
+      this.setFontSize(fontSize)
+      this.setString(textContent!)
+    } else {
+      this.setFontName(this._fontName)
+    }
+  }
 
-    _initRenderer: function () {
-      this._labelRenderer = new LabelTTF()
-      this.addProtectedChild(this._labelRenderer, Text.RENDERER_ZORDER, -1)
-    },
+  // legacy helper for codebases that relied on Widget.extend-style API
+  static create(textContent?: string, fontName?: string, fontSize?: number) {
+    return new Text(textContent, fontName, fontSize)
+  }
 
-    /**
-     * Changes the  value of Text.
-     * @deprecated since v3.0, please use setString() instead.
-     * @param {String} text
-     */
-    setText: function (text) {
-      log('Please use the setString')
-      this.setString(text)
-    },
+  _initRenderer() {
+    this._labelRenderer = new LabelTTF()
+    this.addProtectedChild(this._labelRenderer, Text.RENDERER_ZORDER, -1)
+  }
 
-    /**
-     * Changes the  value of Text.
-     * @param {String} text
-     */
-    setString: function (text) {
-      if (text === this._labelRenderer.getString()) return
-      this._setString(text)
+  setText(text: string) {
+    log('Please use the setString')
+    this.setString(text)
+  }
 
-      this._updateContentSizeWithTextureSize(this._labelRenderer.getContentSize())
-    },
+  setString(text: string) {
+    if (text === this._labelRenderer.getString()) return
+    this._setString(text)
+    this._updateContentSizeWithTextureSize(this._labelRenderer.getContentSize())
+  }
 
-    _setString: function (text) {
-      this._labelRenderer.setString(text)
-      this._labelRendererAdaptDirty = true
-    },
+  _setString(text: string) {
+    this._labelRenderer.setString(text)
+    this._labelRendererAdaptDirty = true
+  }
 
-    /**
-     * Gets the string value of Text.
-     * @deprecated since v3.0, please use getString instead.
-     * @returns {String}
-     */
-    getStringValue: function () {
-      log('Please use the getString')
-      return this._labelRenderer.getString()
-    },
+  getStringValue() {
+    log('Please use the getString')
+    return this._labelRenderer.getString()
+  }
 
-    /**
-     * Gets the string value of Text.
-     * @returns {String}
-     */
-    getString: function () {
-      return this._labelRenderer.getString()
-    },
+  getString() {
+    return this._labelRenderer.getString()
+  }
 
-    /**
-     * Gets the string length of Text.
-     * @returns {Number}
-     */
-    getStringLength: function () {
-      return this._labelRenderer.getStringLength()
-    },
+  getStringLength() {
+    return this._labelRenderer.getStringLength()
+  }
 
-    /**
-     * Sets fontSize
-     * @param {Number} size
-     */
-    setFontSize: function (size) {
-      this._setFontSize(size)
-      this._updateContentSizeWithTextureSize(this._labelRenderer.getContentSize())
-    },
+  setFontSize(size: number) {
+    this._setFontSize(size)
+    this._updateContentSizeWithTextureSize(this._labelRenderer.getContentSize())
+  }
 
-    _setFontSize: function (size) {
-      this._labelRenderer.setFontSize(size)
-      this._fontSize = size
-      this._labelRendererAdaptDirty = true
-    },
+  _setFontSize(size: number) {
+    this._labelRenderer.setFontSize(size)
+    this._fontSize = size
+    this._labelRendererAdaptDirty = true
+  }
 
-    /**
-     * Returns font Size of Text
-     * @returns {Number}
-     */
-    getFontSize: function () {
-      return this._fontSize
-    },
+  getFontSize() {
+    return this._fontSize
+  }
 
-    /**
-     * Sets font name
-     * @return {String} name
-     */
-    setFontName: function (name) {
-      this._setFontName(name)
-      this._updateContentSizeWithTextureSize(this._labelRenderer.getContentSize())
-    },
+  setFontName(name: string) {
+    this._setFontName(name)
+    this._updateContentSizeWithTextureSize(this._labelRenderer.getContentSize())
+  }
 
-    _setFontName: function (name) {
-      this._fontName = name
-      this._labelRenderer.setFontName(name)
-      this._labelRendererAdaptDirty = true
-    },
+  _setFontName(name: string) {
+    this._fontName = name
+    this._labelRenderer.setFontName(name)
+    this._labelRendererAdaptDirty = true
+  }
 
-    _updateUITextContentSize: function () {
-      this._updateContentSizeWithTextureSize(this._labelRenderer.getContentSize())
-    },
+  _updateUITextContentSize() {
+    this._updateContentSizeWithTextureSize(this._labelRenderer.getContentSize())
+  }
 
-    /**
-     * Returns font name of Text.
-     * @returns {string}
-     */
-    getFontName: function () {
-      return this._fontName
-    },
+  getFontName() {
+    return this._fontName
+  }
 
-    _setFont: function (font) {
-      const res = LabelTTF._fontStyleRE.exec(font)
-      if (res) {
-        this._fontSize = parseInt(res[1])
-        this._fontName = res[2]
-        this._labelRenderer._setFont(font)
-        this._labelScaleChangedWithSize()
-      }
-    },
-    _getFont: function () {
-      return this._labelRenderer._getFont()
-    },
+  _setFont(font: string) {
+    const res = LabelTTF._fontStyleRE.exec(font)
+    if (res) {
+      this._fontSize = parseInt(res[1])
+      this._fontName = res[2]
+      this._labelRenderer._setFont(font)
+      this._labelScaleChangedWithSize()
+    }
+  }
 
-    /**
-     * Returns the type of Text.
-     * @returns {null}
-     */
-    getType: function () {
-      return this._type
-    },
+  _getFont() {
+    return this._labelRenderer._getFont()
+  }
 
-    /**
-     * Sets text Area Size
-     * @param {Size} size
-     */
-    setTextAreaSize: function (size) {
-      this._setTextAreaSize(size)
-      this._updateContentSizeWithTextureSize(this._labelRenderer.getContentSize())
-    },
+  getType() {
+    return this._type
+  }
 
-    _setTextAreaSize: function (size) {
-      this._labelRenderer.setDimensions(size)
-      if (!this._ignoreSize) {
-        this._customSize = size
-      }
-      this._labelRendererAdaptDirty = true
-    },
+  setTextAreaSize(size: any) {
+    this._setTextAreaSize(size)
+    this._updateContentSizeWithTextureSize(this._labelRenderer.getContentSize())
+  }
 
-    /**
-     * Returns renderer's dimension.
-     * @returns {Size}
-     */
-    getTextAreaSize: function () {
-      return this._labelRenderer.getDimensions()
-    },
+  _setTextAreaSize(size: any) {
+    this._labelRenderer.setDimensions(size)
+    if (!this._ignoreSize) {
+      this._customSize = size
+    }
+    this._labelRendererAdaptDirty = true
+  }
 
-    /**
-     * Sets Horizontal Alignment of LabelTTF
-     * @param {TEXT_ALIGNMENT_LEFT|TEXT_ALIGNMENT_CENTER|TEXT_ALIGNMENT_RIGHT} alignment Horizontal Alignment
-     */
-    setTextHorizontalAlignment: function (alignment) {
-      this._setTextHorizontalAlignment(alignment)
-      this._updateContentSizeWithTextureSize(this._labelRenderer.getContentSize())
-    },
+  getTextAreaSize() {
+    return this._labelRenderer.getDimensions()
+  }
 
-    _setTextHorizontalAlignment: function (alignment) {
-      this._labelRenderer.setHorizontalAlignment(alignment)
-      this._labelRendererAdaptDirty = true
-    },
+  setTextHorizontalAlignment(alignment: number) {
+    this._setTextHorizontalAlignment(alignment)
+    this._updateContentSizeWithTextureSize(this._labelRenderer.getContentSize())
+  }
 
-    /**
-     * Returns Horizontal Alignment of label
-     * @returns {TEXT_ALIGNMENT_LEFT|TEXT_ALIGNMENT_CENTER|TEXT_ALIGNMENT_RIGHT}
-     */
-    getTextHorizontalAlignment: function () {
-      return this._labelRenderer.getHorizontalAlignment()
-    },
+  _setTextHorizontalAlignment(alignment: number) {
+    this._labelRenderer.setHorizontalAlignment(alignment)
+    this._labelRendererAdaptDirty = true
+  }
 
-    /**
-     * Sets Vertical Alignment of label
-     * @param {VERTICAL_TEXT_ALIGNMENT_TOP|VERTICAL_TEXT_ALIGNMENT_CENTER|VERTICAL_TEXT_ALIGNMENT_BOTTOM} alignment
-     */
-    setTextVerticalAlignment: function (alignment) {
-      this._setTextVerticalAlignment(alignment)
-      this._updateContentSizeWithTextureSize(this._labelRenderer.getContentSize())
-    },
+  getTextHorizontalAlignment() {
+    return this._labelRenderer.getHorizontalAlignment()
+  }
 
-    _setTextVerticalAlignment: function (alignment) {
-      this._labelRenderer.setVerticalAlignment(alignment)
-      this._labelRendererAdaptDirty = true
-    },
-    /**
-     * Gets text vertical alignment.
-     * @returns {VERTICAL_TEXT_ALIGNMENT_TOP|VERTICAL_TEXT_ALIGNMENT_CENTER|VERTICAL_TEXT_ALIGNMENT_BOTTOM}
-     */
-    getTextVerticalAlignment: function () {
-      return this._labelRenderer.getVerticalAlignment()
-    },
+  setTextVerticalAlignment(alignment: number) {
+    this._setTextVerticalAlignment(alignment)
+    this._updateContentSizeWithTextureSize(this._labelRenderer.getContentSize())
+  }
 
-    /**
-     * Sets the touch scale enabled of label.
-     * @param {Boolean} enable
-     */
-    setTouchScaleChangeEnabled: function (enable) {
-      this._touchScaleChangeEnabled = enable
-    },
+  _setTextVerticalAlignment(alignment: number) {
+    this._labelRenderer.setVerticalAlignment(alignment)
+    this._labelRendererAdaptDirty = true
+  }
 
-    /**
-     * Gets the touch scale enabled of label.
-     * @returns {Boolean}
-     */
-    isTouchScaleChangeEnabled: function () {
-      return this._touchScaleChangeEnabled
-    },
+  getTextVerticalAlignment() {
+    return this._labelRenderer.getVerticalAlignment()
+  }
 
-    _onPressStateChangedToNormal: function () {
-      if (!this._touchScaleChangeEnabled) return
-      this._labelRenderer.setScaleX(this._normalScaleValueX)
-      this._labelRenderer.setScaleY(this._normalScaleValueY)
-    },
+  setTouchScaleChangeEnabled(enable: boolean) {
+    this._touchScaleChangeEnabled = enable
+  }
 
-    _onPressStateChangedToPressed: function () {
-      if (!this._touchScaleChangeEnabled) return
-      this._labelRenderer.setScaleX(this._normalScaleValueX + this._onSelectedScaleOffset)
-      this._labelRenderer.setScaleY(this._normalScaleValueY + this._onSelectedScaleOffset)
-    },
+  isTouchScaleChangeEnabled() {
+    return this._touchScaleChangeEnabled
+  }
 
-    _onPressStateChangedToDisabled: function () {},
+  _onPressStateChangedToNormal() {
+    if (!this._touchScaleChangeEnabled) return
+    this._labelRenderer.setScaleX(this._normalScaleValueX)
+    this._labelRenderer.setScaleY(this._normalScaleValueY)
+  }
 
-    _onSizeChanged: function () {
-      Widget.prototype._onSizeChanged.call(this)
-      this._labelRendererAdaptDirty = true
-    },
+  _onPressStateChangedToPressed() {
+    if (!this._touchScaleChangeEnabled) return
+    this._labelRenderer.setScaleX(this._normalScaleValueX + this._onSelectedScaleOffset)
+    this._labelRenderer.setScaleY(this._normalScaleValueY + this._onSelectedScaleOffset)
+  }
 
-    _adaptRenderers: function () {
-      if (this._labelRendererAdaptDirty) {
-        this._labelScaleChangedWithSize()
-        this._labelRendererAdaptDirty = false
-      }
-    },
+  _onPressStateChangedToDisabled() {}
 
-    /**
-     * Returns the renderer's content size.
-     * @override
-     * @returns {Size}
-     */
-    getVirtualRendererSize: function () {
-      return this._labelRenderer.getContentSize()
-    },
+  _onSizeChanged() {
+    super._onSizeChanged()
+    this._labelRendererAdaptDirty = true
+  }
 
-    /**
-     * Returns the renderer of Text.
-     * @returns {Node}
-     */
-    getVirtualRenderer: function () {
-      return this._labelRenderer
-    },
+  _adaptRenderers() {
+    if (this._labelRendererAdaptDirty) {
+      this._labelScaleChangedWithSize()
+      this._labelRendererAdaptDirty = false
+    }
+  }
 
-    //@since v3.3
-    getAutoRenderSize: function () {
-      let virtualSize = this._labelRenderer.getContentSize()
-      if (!this._ignoreSize) {
-        this._labelRenderer.setDimensions(0, 0)
-        virtualSize = this._labelRenderer.getContentSize()
-        this._labelRenderer.setDimensions(this._contentSize.width, this._contentSize.height)
-      }
-      return virtualSize
-    },
+  getVirtualRendererSize() {
+    return this._labelRenderer.getContentSize()
+  }
 
-    _labelScaleChangedWithSize: function () {
-      const locContentSize = this._contentSize
-      if (this._ignoreSize) {
+  getVirtualRenderer() {
+    return this._labelRenderer
+  }
+
+  getAutoRenderSize() {
+    let virtualSize = this._labelRenderer.getContentSize()
+    if (!this._ignoreSize) {
+      this._labelRenderer.setDimensions(0, 0)
+      virtualSize = this._labelRenderer.getContentSize()
+      this._labelRenderer.setDimensions(this._contentSize.width, this._contentSize.height)
+    }
+    return virtualSize
+  }
+
+  _labelScaleChangedWithSize() {
+    const locContentSize = this._contentSize
+    if (this._ignoreSize) {
+      this._labelRenderer.setScale(1.0)
+      this._normalScaleValueX = this._normalScaleValueY = 1
+    } else {
+      this._labelRenderer.setDimensions(size(locContentSize.width, locContentSize.height))
+      const textureSize = this._labelRenderer.getContentSize()
+      if (textureSize.width <= 0.0 || textureSize.height <= 0.0) {
         this._labelRenderer.setScale(1.0)
-        this._normalScaleValueX = this._normalScaleValueY = 1
-      } else {
-        this._labelRenderer.setDimensions(size(locContentSize.width, locContentSize.height))
-        const textureSize = this._labelRenderer.getContentSize()
-        if (textureSize.width <= 0.0 || textureSize.height <= 0.0) {
-          this._labelRenderer.setScale(1.0)
-          return
-        }
-        const scaleX = locContentSize.width / textureSize.width
-        const scaleY = locContentSize.height / textureSize.height
-        this._labelRenderer.setScaleX(scaleX)
-        this._labelRenderer.setScaleY(scaleY)
-        this._normalScaleValueX = scaleX
-        this._normalScaleValueY = scaleY
+        return
       }
-      this._labelRenderer.setPosition(locContentSize.width / 2.0, locContentSize.height / 2.0)
-    },
+      const scaleX = locContentSize.width / textureSize.width
+      const scaleY = locContentSize.height / textureSize.height
+      this._labelRenderer.setScaleX(scaleX)
+      this._labelRenderer.setScaleY(scaleY)
+      this._normalScaleValueX = scaleX
+      this._normalScaleValueY = scaleY
+    }
+    this._labelRenderer.setPosition(locContentSize.width / 2.0, locContentSize.height / 2.0)
+  }
 
-    /**
-     * Returns the "class name" of Text.
-     * @returns {string}
-     */
-    getDescription: function () {
-      return 'Label'
-    },
+  getDescription() {
+    return 'Label'
+  }
 
-    /**
-     * Enables shadow style and sets color, offset and blur radius styles.
-     * @param {Color} shadowColor
-     * @param {Size} offset
-     * @param {Number} blurRadius
-     */
-    enableShadow: function (shadowColor, offset, blurRadius) {
-      this._labelRenderer.enableShadow(shadowColor, offset, blurRadius)
-    },
+  enableShadow(shadowColor: any, offset: any, blurRadius: number) {
+    this._labelRenderer.enableShadow(shadowColor, offset, blurRadius)
+  }
 
-    /**
-     * Enables outline style and sets outline's color and size.
-     * @param {Color} outlineColor
-     * @param {Size} outlineSize
-     */
-    enableOutline: function (outlineColor, outlineSize) {
-      this._labelRenderer.enableStroke(outlineColor, outlineSize)
-    },
+  enableOutline(outlineColor: any, outlineSize: any) {
+    this._labelRenderer.enableStroke(outlineColor, outlineSize)
+  }
 
-    /**
-     * Enables glow color
-     * @param glowColor
-     */
-    enableGlow: function (glowColor) {
-      if (this._type === Text.Type.TTF) this._labelRenderer.enableGlow(glowColor)
-    },
+  enableGlow(glowColor: any) {
+    if (this._type === Text.Type.TTF) this._labelRenderer.enableGlow(glowColor)
+  }
 
-    /**
-     * Disables renderer's effect.
-     */
-    disableEffect: function () {
-      if (this._labelRenderer.disableEffect) this._labelRenderer.disableEffect()
-    },
+  disableEffect() {
+    if (this._labelRenderer.disableEffect) this._labelRenderer.disableEffect()
+  }
 
-    _createCloneInstance: function () {
-      return new Text()
-    },
+  _createCloneInstance() {
+    return new Text()
+  }
 
-    _copySpecialProperties: function (uiLabel) {
-      if (uiLabel instanceof Text) {
-        this.setFontName(uiLabel._fontName)
-        this.setFontSize(uiLabel.getFontSize())
-        this.setString(uiLabel.getString())
-        this.setTouchScaleChangeEnabled(uiLabel.touchScaleEnabled)
-        this.setTextAreaSize(uiLabel._textAreaSize)
-        this.setTextHorizontalAlignment(uiLabel._labelRenderer.getHorizontalAlignment())
-        this.setTextVerticalAlignment(uiLabel._labelRenderer.getVerticalAlignment())
-        this.setContentSize(uiLabel.getContentSize())
-        this.setTextColor(uiLabel.getTextColor())
-      }
-    },
+  _copySpecialProperties(uiLabel: any) {
+    if (uiLabel instanceof Text) {
+      this.setFontName(uiLabel._fontName)
+      this.setFontSize(uiLabel.getFontSize())
+      this.setString(uiLabel.getString())
+      this.setTouchScaleChangeEnabled(uiLabel.isTouchScaleChangeEnabled())
+      this.setTextAreaSize(uiLabel._textAreaSize)
+      this.setTextHorizontalAlignment(uiLabel._labelRenderer.getHorizontalAlignment())
+      this.setTextVerticalAlignment(uiLabel._labelRenderer.getVerticalAlignment())
+      this.setContentSize(uiLabel.getContentSize())
+      this.setTextColor(uiLabel.getTextColor())
+    }
+  }
 
-    _setBoundingWidth: function (value) {
-      this._textAreaSize.width = value
-      this._labelRenderer._setBoundingWidth(value)
-      this._labelScaleChangedWithSize()
-    },
-    _setBoundingHeight: function (value) {
-      this._textAreaSize.height = value
-      this._labelRenderer._setBoundingHeight(value)
-      this._labelScaleChangedWithSize()
-    },
-    _getBoundingWidth: function () {
-      return this._textAreaSize.width
-    },
-    _getBoundingHeight: function () {
-      return this._textAreaSize.height
-    },
+  _setBoundingWidth(value: number) {
+    this._textAreaSize.width = value
+    this._labelRenderer._setBoundingWidth(value)
+    this._labelScaleChangedWithSize()
+  }
+  _setBoundingHeight(value: number) {
+    this._textAreaSize.height = value
+    this._labelRenderer._setBoundingHeight(value)
+    this._labelScaleChangedWithSize()
+  }
+  _getBoundingWidth() {
+    return this._textAreaSize.width
+  }
+  _getBoundingHeight() {
+    return this._textAreaSize.height
+  }
 
-    _changePosition: function () {
-      this._adaptRenderers()
-    },
+  _changePosition() {
+    this._adaptRenderers()
+  }
 
-    setColor: function (color) {
-      ProtectedNode.prototype.setColor.call(this, color)
-      this._labelRenderer.setColor(color)
-    },
+  setColor(color: any) {
+    ProtectedNode.prototype.setColor.call(this, color)
+    this._labelRenderer.setColor(color)
+  }
 
-    setTextColor: function (color) {
-      this._labelRenderer.setFontFillColor(color)
-    },
+  setTextColor(color: any) {
+    this._labelRenderer.setFontFillColor(color)
+  }
 
-    getTextColor: function () {
-      return this._labelRenderer._getFillStyle()
-    },
-  },
-)
+  getTextColor() {
+    return this._labelRenderer._getFillStyle()
+  }
 
-let _p = Text.prototype
+  // property accessors moved inside class using TypeScript getters/setters
+  get boundingWidth() {
+    return this._getBoundingWidth()
+  }
+  set boundingWidth(value: number) {
+    this._setBoundingWidth(value)
+  }
 
-// Extended properties
-/** @expose */
-_p.boundingWidth
-defineGetterSetter(_p, 'boundingWidth', _p._getBoundingWidth, _p._setBoundingWidth)
-/** @expose */
-_p.boundingHeight
-defineGetterSetter(_p, 'boundingHeight', _p._getBoundingHeight, _p._setBoundingHeight)
-/** @expose */
-_p.string
-defineGetterSetter(_p, 'string', _p.getString, _p.setString)
-/** @expose */
-_p.stringLength
-defineGetterSetter(_p, 'stringLength', _p.getStringLength)
-/** @expose */
-_p.font
-defineGetterSetter(_p, 'font', _p._getFont, _p._setFont)
-/** @expose */
-_p.fontSize
-defineGetterSetter(_p, 'fontSize', _p.getFontSize, _p.setFontSize)
-/** @expose */
-_p.fontName
-defineGetterSetter(_p, 'fontName', _p.getFontName, _p.setFontName)
-/** @expose */
-_p.textAlign
-defineGetterSetter(_p, 'textAlign', _p.getTextHorizontalAlignment, _p.setTextHorizontalAlignment)
-/** @expose */
-_p.verticalAlign
-defineGetterSetter(_p, 'verticalAlign', _p.getTextVerticalAlignment, _p.setTextVerticalAlignment)
+  get boundingHeight() {
+    return this._getBoundingHeight()
+  }
+  set boundingHeight(value: number) {
+    this._setBoundingHeight(value)
+  }
 
-_p = null
+  get string() {
+    return this.getString()
+  }
+  set string(v: string) {
+    this.setString(v)
+  }
 
-/**
- * allocates and initializes a UILabel.
- * @deprecated since v3.0, please use new Text() instead.
- * @return {Text}
- */
-Label = Text.create = function (textContent, fontName, fontSize) {
-  return new Text(textContent, fontName, fontSize)
-}
+  get stringLength() {
+    return this.getStringLength()
+  }
 
-/**
- * The zOrder value of Text's renderer.
- * @constant
- * @type {number}
- */
-Text.RENDERER_ZORDER = -1
+  get font() {
+    return this._getFont()
+  }
+  set font(v: string) {
+    this._setFont(v)
+  }
 
-/**
- * @ignore
- */
-Text.Type = {
-  SYSTEM: 0,
-  TTF: 1,
+  get fontSize() {
+    return this.getFontSize()
+  }
+  set fontSize(v: number) {
+    this.setFontSize(v)
+  }
+
+  get fontName() {
+    return this.getFontName()
+  }
+  set fontName(v: string) {
+    this.setFontName(v)
+  }
+
+  get textAlign() {
+    return this.getTextHorizontalAlignment()
+  }
+  set textAlign(v: number) {
+    this.setTextHorizontalAlignment(v)
+  }
+
+  get verticalAlign() {
+    return this.getTextVerticalAlignment()
+  }
+  set verticalAlign(v: number) {
+    this.setTextVerticalAlignment(v)
+  }
+
+  // static helpers
+  static RENDERER_ZORDER = -1
+
+  /**
+   * @ignore
+   */
+  static Type = {
+    SYSTEM: 0,
+    TTF: 1,
+  }
 }

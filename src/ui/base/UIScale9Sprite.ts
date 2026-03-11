@@ -9,6 +9,7 @@ import { SpriteLoadManager } from '../../core/sprites/SpriteLoadManager'
 import { error, log } from '../../helper/Debugger'
 import { _renderType } from '../../helper/engine'
 import { textureCache } from '../../textures'
+import { Scale9SpriteWebGLRenderCmd } from './UIScale9SpriteWebGLRenderCmd'
 
 const dataPool = {
   _pool: {},

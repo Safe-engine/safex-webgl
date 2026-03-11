@@ -4,6 +4,9 @@ import { assert, log } from "../../helper/Debugger";
 import { _renderType } from "../../helper/engine";
 
 export class ProtectedNode extends Node {
+    static setContentSize(_customSize: any) {
+      throw new Error('Method not implemented.');
+    }
     _protectedChildren: any;
     _reorderProtectedChildDirty: boolean;
 
