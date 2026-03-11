@@ -2,7 +2,7 @@ import { _renderContext, container, director, game, renderer, view, winSize } fr
 import { log } from '../../helper/Debugger'
 import { _renderType } from '../../helper/engine'
 import { sys } from '../../helper/sys'
-import { rect, Rect, size, Size, Point as Vec2 } from '../cocoa/Geometry'
+import { rect, Rect, Size, Point as Vec2 } from '../cocoa/Geometry'
 import { eventManager } from '../event-manager/EventManager'
 import { ContainerStrategy } from './EGLView/ContainerStrategy'
 import { ContentStrategy } from './EGLView/ContentStrategy'
@@ -133,13 +133,13 @@ export class EGLView {
     __BrowserGetter.init(this)
 
     this._frame = game.container!.parentNode === d.body ? d.documentElement : (game.container!.parentNode as HTMLElement)
-    this._frameSize = size(0, 0)
+    this._frameSize = Size(0, 0)
     this._initFrameSize()
 
     const w = game.canvas!.width
     const h = game.canvas!.height
-    this._designResolutionSize = size(w, h)
-    this._originalDesignResolutionSize = size(w, h)
+    this._designResolutionSize = Size(w, h)
+    this._originalDesignResolutionSize = Size(w, h)
     this._viewPortRect = rect(0, 0, w, h)
     this._visibleRect = rect(0, 0, w, h)
     this._contentTranslateLeftTop = { left: 0, top: 0 }
@@ -457,11 +457,11 @@ export class EGLView {
    * @return
    */
   getCanvasSize(): Size {
-    return size(game.canvas!.width, game.canvas!.height)
+    return Size(game.canvas!.width, game.canvas!.height)
   }
 
   getFrameSize(): Size {
-    return size(this._frameSize.width, this._frameSize.height)
+    return Size(this._frameSize.width, this._frameSize.height)
   }
 
   setFrameSize(width: number, height: number) {
@@ -478,11 +478,11 @@ export class EGLView {
    * @return
    */
   getVisibleSize(): Size {
-    return size(this._visibleRect.width, this._visibleRect.height)
+    return Size(this._visibleRect.width, this._visibleRect.height)
   }
 
   getVisibleSizeInPixel(): Size {
-    return size(this._visibleRect.width * this._scaleX, this._visibleRect.height * this._scaleY)
+    return Size(this._visibleRect.width * this._scaleX, this._visibleRect.height * this._scaleY)
   }
 
   getVisibleOrigin(): Vec2 {
@@ -609,7 +609,7 @@ export class EGLView {
    * @return
    */
   getDesignResolutionSize(): Size {
-    return size(this._designResolutionSize.width, this._designResolutionSize.height)
+    return Size(this._designResolutionSize.width, this._designResolutionSize.height)
   }
 
   setRealPixelResolution(width: number, height: number, resolutionPolicy: ResolutionPolicy | number) {

@@ -1,6 +1,6 @@
 import { scaleTo } from '../../actions/ActionScale'
 import { SpriteFrame, spriteFrameCache } from '../../core'
-import { rect, size, sizeEqualToSize } from '../../core/cocoa/Geometry'
+import { rect, Size, sizeEqualToSize } from '../../core/cocoa/Geometry'
 import { LabelTTF } from '../../core/labelttf/LabelTTF'
 import { Color } from '../../core/platform'
 import { VERTICAL_TEXT_ALIGNMENT_CENTER } from '../../core/platform/Types'
@@ -65,7 +65,7 @@ export class Button extends Widget {
   constructor(normalImage?: string, selectedImage?: string, disableImage?: string, texType?: number) {
     super()
     this._capInsetsNormal = rect(0, 0, 0, 0)
-    this._normalTextureSize = size(0, 0)
+    this._normalTextureSize = Size(0, 0)
     this.setTouchEnabled(true)
 
     this._normalLoader = new SpriteLoadManager()
@@ -161,7 +161,7 @@ export class Button extends Widget {
         return this._titleRenderer.getContentSize()
       }
     }
-    return size(this._normalTextureSize)
+    return Size(this._normalTextureSize)
   }
 
   /**
@@ -252,7 +252,7 @@ export class Button extends Widget {
     }
 
     // FIXME: https://github.com/cocos2d/cocos2d-x/issues/12249
-    if (!this._ignoreSize && sizeEqualToSize(this._customSize, size(0, 0))) {
+    if (!this._ignoreSize && sizeEqualToSize(this._customSize, Size(0, 0))) {
       this._customSize = this._buttonScale9Renderer.getContentSize()
     }
 
@@ -757,7 +757,7 @@ export class Button extends Widget {
     const width = titleSize.width > imageSize.width ? titleSize.width : imageSize.width
     const height = titleSize.height > imageSize.height ? titleSize.height : imageSize.height
 
-    return size(width, height)
+    return Size(width, height)
   }
 
   // Constants

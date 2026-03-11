@@ -1,6 +1,6 @@
 import { game, renderer } from '../..'
 import { pAdd, pLength, pMult, pSub } from '../../core'
-import { p, size } from '../../core/cocoa/Geometry'
+import { p, Size } from '../../core/cocoa/Geometry'
 import { Color, color } from '../../core/platform'
 import { assert, log } from '../../helper/Debugger'
 import { _renderType } from '../../helper/engine'
@@ -225,7 +225,7 @@ export class ScrollView extends Layout {
     this._topBoundary = locSize.height
     this._rightBoundary = locSize.width
     const innerSize = this._innerContainer.getContentSize()
-    this._innerContainer.setContentSize(size(Math.max(innerSize.width, locSize.width), Math.max(innerSize.height, locSize.height)))
+    this._innerContainer.setContentSize(Size(Math.max(innerSize.width, locSize.width), Math.max(innerSize.height, locSize.height)))
     this._innerContainer.setPosition(0, locSize.height - this._innerContainer.getContentSize().height)
 
     if (this._verticalScrollBar) this._verticalScrollBar.onScrolled(this._getHowMuchOutOfBoundary())
@@ -250,7 +250,7 @@ export class ScrollView extends Layout {
     if (size.height < locSize.height) log('Inner height <= ScrollView height, it will be force sized!')
     else innerSizeHeight = size.height
 
-    innerContainer.setContentSize(size(innerSizeWidth, innerSizeHeight))
+    innerContainer.setContentSize(Size(innerSizeWidth, innerSizeHeight))
 
     const pos = this._innerContainer.getPosition()
     const contAP = this._innerContainer.getAnchorPoint()
@@ -751,28 +751,28 @@ export class ScrollView extends Layout {
     let scrolledToTop = false
     let scrolledToBottom = false
 
-    if (realMove.y > 0.0) // up
-    {
+    if (realMove.y > 0.0) {
+      // up
       const icBottomPos = this._innerContainer.getBottomBoundary()
       if (icBottomPos + realMove.y >= this._bottomBoundary) {
         scrolledToBottom = true
       }
-    } else if (realMove.y < 0.0) // down
-    {
+    } else if (realMove.y < 0.0) {
+      // down
       const icTopPos = this._innerContainer.getTopBoundary()
       if (icTopPos + realMove.y <= this._topBoundary) {
         scrolledToTop = true
       }
     }
 
-    if (realMove.x < 0.0) // left
-    {
+    if (realMove.x < 0.0) {
+      // left
       const icRightPos = this._innerContainer.getRightBoundary()
       if (icRightPos + realMove.x <= this._rightBoundary) {
         scrolledToRight = true
       }
-    } else if (realMove.x > 0.0) // right
-    {
+    } else if (realMove.x > 0.0) {
+      // right
       const icLeftPos = this._innerContainer.getLeftBoundary()
       if (icLeftPos + realMove.x >= this._leftBoundary) {
         scrolledToLeft = true

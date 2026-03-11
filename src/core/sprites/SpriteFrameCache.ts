@@ -4,7 +4,7 @@ import { loader } from '../../helper/loader'
 import { path } from '../../helper/path'
 import { textureCache } from '../../textures/TextureCache'
 import { Texture2D } from '../../textures/TexturesWebGL'
-import { p, rect, size } from '../cocoa/Geometry'
+import { p, rect, Size } from '../cocoa/Geometry'
 import { SpriteFrame } from './SpriteFrame'
 
 /**
@@ -40,8 +40,8 @@ export const spriteFrameCache = {
 
   _sizeFromString: function (content) {
     const result = this._CCNS_REG1.exec(content)
-    if (!result) return size(0, 0)
-    return size(parseFloat(result[1]), parseFloat(result[2]))
+    if (!result) return Size(0, 0)
+    return Size(parseFloat(result[1]), parseFloat(result[2]))
   },
 
   _getFrameConfig: function (url) {
@@ -94,7 +94,7 @@ export const spriteFrameCache = {
         // Math.abs ow/oh
         ow = Math.abs(ow)
         oh = Math.abs(oh)
-        tempFrame.size = size(ow, oh)
+        tempFrame.size = Size(ow, oh)
       } else if (format == 1 || format == 2) {
         tempFrame.rect = this._rectFromString(frameDict['frame'])
         tempFrame.rotated = frameDict['rotated'] || false
@@ -119,7 +119,7 @@ export const spriteFrameCache = {
         tempFrame.rect = rect(tmpFrame['x'], tmpFrame['y'], tmpFrame['w'], tmpFrame['h'])
         tempFrame.rotated = frameDict['rotated'] || false
         tempFrame.offset = p(0, 0)
-        tempFrame.size = size(tmpSourceSize['w'], tmpSourceSize['h'])
+        tempFrame.size = Size(tmpSourceSize['w'], tmpSourceSize['h'])
       }
       frames[key] = tempFrame
     }

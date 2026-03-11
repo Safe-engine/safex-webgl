@@ -3,7 +3,7 @@ import { isObject, isUndefined } from '../../helper/checkType'
 import { _LogInfos, log } from '../../helper/Debugger'
 import { global } from '../../helper/global'
 import { sys } from '../../helper/sys'
-import { p, rect, size } from '../cocoa/Geometry'
+import { p, rect, Size } from '../cocoa/Geometry'
 
 /**
  * @constant
@@ -264,7 +264,7 @@ export const _pointPixelsToPointsOut = function (pixels, outPoint) {
  */
 export const sizePointsToPixels = function (sizeInPoints) {
   const scale = contentScaleFactor()
-  return size(sizeInPoints.width * scale, sizeInPoints.height * scale)
+  return Size(sizeInPoints.width * scale, sizeInPoints.height * scale)
 }
 
 /**
@@ -275,7 +275,7 @@ export const sizePointsToPixels = function (sizeInPoints) {
  */
 export const sizePixelsToPoints = function (sizeInPixels) {
   const scale = contentScaleFactor()
-  return size(sizeInPixels.width / scale, sizeInPixels.height / scale)
+  return Size(sizeInPixels.width / scale, sizeInPixels.height / scale)
 }
 
 export const _sizePixelsToPointsOut = function (sizeInPixels, outSize) {

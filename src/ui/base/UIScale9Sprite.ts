@@ -1,7 +1,7 @@
 import { game, renderer } from '../..'
 import { SpriteFrame, spriteFrameCache } from '../../core'
 import { Node } from '../../core/base-nodes/Node'
-import { p, rect, Rect, rectEqualToZero, size, sizeEqualToSize } from '../../core/cocoa/Geometry'
+import { p, rect, Rect, rectEqualToZero, Size, sizeEqualToSize } from '../../core/cocoa/Geometry'
 import { BlendFunc } from '../../core/platform/BlendFunc'
 import { FIX_ARTIFACTS_BY_STRECHING_TEXEL } from '../../core/platform/Config'
 import { BLEND_DST, BLEND_SRC, contentScaleFactor, ONE, rectPointsToPixels, SRC_ALPHA } from '../../core/platform/Macro'
@@ -598,7 +598,7 @@ export class Scale9Sprite extends Node {
       // eslint-disable-next-line @typescript-eslint/no-this-alias
       const self = this
       const onResourceDataLoaded = function () {
-        if (sizeEqualToSize(self._contentSize, size(0, 0))) {
+        if (sizeEqualToSize(self._contentSize, Size(0, 0))) {
           self.setContentSize(self._spriteFrame._rect)
         }
         self._textureLoaded = true
@@ -675,9 +675,9 @@ export class Scale9Sprite extends Node {
       if (this._spriteFrame) {
         return this._spriteFrame._originalSize
       }
-      return size(this._contentSize)
+      return Size(this._contentSize)
     } else {
-      return size(this._contentSize)
+      return Size(this._contentSize)
     }
   }
 

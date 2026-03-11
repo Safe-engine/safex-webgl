@@ -1,10 +1,11 @@
 import { game } from '../..'
 import { pLength, pSub, Sprite } from '../../core'
 import { Node } from '../../core/base-nodes/Node'
-import { p, rect, size } from '../../core/cocoa/Geometry'
+import { p, rect, Size } from '../../core/cocoa/Geometry'
 import { Color, color, FLT_MAX } from '../../core/platform'
 import { assert, log } from '../../helper/Debugger'
 import { _renderType } from '../../helper/engine'
+import { DrawNode } from '../../shape-nodes/DrawNode'
 import { Scale9Sprite } from '../base/UIScale9Sprite'
 import { Widget } from '../base/UIWidget'
 import { LayoutParameter, LinearLayoutParameter, RelativeLayoutParameter } from './UILayoutParameter'
@@ -71,7 +72,7 @@ export class Layout extends Widget {
     this._colorType = Layout.BG_COLOR_NONE
 
     this.ignoreContentAdaptWithSize(false)
-    this.setContentSize(size(0, 0))
+    this.setContentSize(Size(0, 0))
     this.setAnchorPoint(0, 0)
     this.onPassFocusToChild = this._findNearestChildWidgetIndex.bind(this)
 
@@ -81,7 +82,7 @@ export class Layout extends Widget {
     this._startColor = color(255, 255, 255, 255)
     this._endColor = color(255, 255, 255, 255)
     this._alongVector = p(0, -1)
-    this._backGroundImageTextureSize = size(0, 0)
+    this._backGroundImageTextureSize = Size(0, 0)
 
     this._clippingRect = rect(0, 0, 0, 0)
     this._backGroundImageColor = color(255, 255, 255, 255)
@@ -346,22 +347,22 @@ export class Layout extends Widget {
   setClippingEnabled(able) {
     if (able === this._clippingEnabled) return
     this._clippingEnabled = able
-    // switch (this._clippingType) {
-    //   case Layout.CLIPPING_SCISSOR:
-    //   case Layout.CLIPPING_STENCIL:
-    //     if (able) {
-    //       this._clippingStencil = new DrawNode()
-    //       this._renderCmd.rebindStencilRendering(this._clippingStencil)
-    //       if (this._running) this._clippingStencil._performRecursive(Node._stateCallbackType.onEnter)
-    //       this._setStencilClippingSize(this._contentSize)
-    //     } else {
-    //       if (this._running && this._clippingStencil) this._clippingStencil._performRecursive(Node._stateCallbackType.onExit)
-    //       this._clippingStencil = null
-    //     }
-    //     break
-    //   default:
-    //     break
-    // }
+    switch (this._clippingType) {
+      case Layout.CLIPPING_SCISSOR:
+      case Layout.CLIPPING_STENCIL:
+        if (able) {
+          this._clippingStencil = new DrawNode()
+          this._renderCmd.rebindStencilRendering(this._clippingStencil)
+          if (this._running) this._clippingStencil._performRecursive(Node._stateCallbackType.onEnter)
+          this._setStencilClippingSize(this._contentSize)
+        } else {
+          if (this._running && this._clippingStencil) this._clippingStencil._performRecursive(Node._stateCallbackType.onExit)
+          this._clippingStencil = null
+        }
+        break
+      default:
+        break
+    }
   }
 
   /**
@@ -854,7 +855,7 @@ export class Layout extends Widget {
    */
   _getLayoutAccumulatedSize() {
     const children = this.getChildren()
-    const layoutSize = size(0, 0)
+    const layoutSize = Size(0, 0)
     let widgetCount = 0,
       locSize
     for (let i = 0, len = children.length; i < len; i++) {

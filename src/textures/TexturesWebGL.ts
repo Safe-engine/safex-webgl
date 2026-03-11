@@ -1,5 +1,5 @@
 import { _renderContext, game } from '..'
-import { size } from '../core/cocoa/Geometry'
+import { Size } from '../core/cocoa/Geometry'
 import { configuration } from '../core/Configuration'
 import { EventHelper } from '../core/event-manager/EventHelper'
 import { contentScaleFactor, SHADER_POSITION_TEXTURE, VERTEX_ATTRIB_POSITION, VERTEX_ATTRIB_TEX_COORDS } from '../core/platform/Macro'
@@ -242,7 +242,7 @@ export class Texture2D extends EventHelper {
     this.url = null
 
     // ctor behavior
-    this._contentSize = size(0, 0)
+    this._contentSize = Size(0, 0)
     this._pixelFormat = Texture2D.defaultPixelFormat
     const gl = _renderContext
     this._vertexBuffer = gl.createBuffer()
@@ -293,7 +293,7 @@ export class Texture2D extends EventHelper {
    * @return {Size}
    */
   getContentSize() {
-    return size(this._contentSize.width / contentScaleFactor(), this._contentSize.height / contentScaleFactor())
+    return Size(this._contentSize.width / contentScaleFactor(), this._contentSize.height / contentScaleFactor())
   }
 
   _getWidth() {
@@ -760,7 +760,7 @@ export class Texture2D extends EventHelper {
     let inPixel8: any
 
     const hasAlpha: any = uiImage.hasAlpha()
-    const imageSize: any = size(uiImage.getWidth(), uiImage.getHeight())
+    const imageSize: any = Size(uiImage.getWidth(), uiImage.getHeight())
     let pixelFormat: any = tex2d.defaultPixelFormat
     const bpp: any = uiImage.getBitsPerComponent()
 

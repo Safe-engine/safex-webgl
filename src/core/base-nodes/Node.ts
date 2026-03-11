@@ -10,11 +10,11 @@ import {
   rectApplyAffineTransform,
   rectApplyAffineTransformIn,
 } from '../cocoa/AffineTransform'
-import { p, Point, Rect, rect, rectUnion, Size, size } from '../cocoa/Geometry'
+import { p, Point, Rect, rect, rectUnion, Size } from '../cocoa/Geometry'
 import { EventHelper } from '../event-manager/EventHelper'
 import { eventManager } from '../event-manager/EventManager'
 import { Color, color } from '../platform/Color'
-import { arrayRemoveObject } from '../platform/Macro'
+import { arrayRemoveObject, REPEAT_FOREVER } from '../platform/Macro'
 import { Scheduler } from '../Scheduler'
 import { pAdd, pSub } from '../support/PointExtension'
 import { dirtyFlags } from './NodeRenderCmd'
@@ -30,8 +30,9 @@ export class Node extends EventHelper {
   findNextFocusedWidget(direction: any, arg1: this) {
     throw new Error('Method not implemented.')
   }
-  width: any
-  height: any
+  zIndex: number
+  width: number
+  height: number
   _imageRenderer: any
   // _doLayout: (target: any) => void
   _doLayoutDirty: boolean
@@ -48,9 +49,9 @@ export class Node extends EventHelper {
   _batchNode: any
   textureAtlas: any
   _texture: any
-  _rectRotated: any
-  _flippedX: any
-  _flippedY: any
+  _rectRotated: boolean
+  _flippedX: boolean
+  _flippedY: boolean
   _blendFunc: any
   opacityModifyRGB: boolean
   _textureLoaded: any
@@ -113,7 +114,7 @@ export class Node extends EventHelper {
   constructor() {
     super()
     this._anchorPoint = p(0, 0)
-    this._contentSize = size(0, 0)
+    this._contentSize = Size(0, 0)
     this._position = p(0, 0)
     this._normalizedPosition = p(0, 0)
     this._children = []
@@ -358,7 +359,7 @@ export class Node extends EventHelper {
   }
 
   getContentSize() {
-    return size(this._contentSize)
+    return Size(this._contentSize)
   }
   setContentSize(sz: any, height?: any) {
     const locContentSize = this._contentSize
@@ -1158,5 +1159,5 @@ export class Node extends EventHelper {
 }
 
 // Minimal runtime fallbacks used during migration
-export const REPEAT_FOREVER = -1
+// export const REPEAT_FOREVER = -1
 export const ACTION_TAG_INVALID = -1

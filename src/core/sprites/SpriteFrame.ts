@@ -3,7 +3,7 @@ import { _LogInfos, error } from '../../helper/Debugger'
 import { _renderType } from '../../helper/engine'
 import { textureCache } from '../../textures/TextureCache'
 import { Texture2D } from '../../textures/TexturesWebGL'
-import { p, rect, size } from '../cocoa/Geometry'
+import { p, rect, Size } from '../cocoa/Geometry'
 import { EventHelper } from '../event-manager/EventHelper'
 import { _pointPixelsToPointsOut, _sizePixelsToPointsOut, rectPixelsToPoints, rectPointsToPixels } from '../platform/Macro'
 
@@ -34,9 +34,9 @@ export class SpriteFrame extends EventHelper {
     super()
     this._offset = p(0, 0)
     this._offsetInPixels = p(0, 0)
-    this._originalSize = size(0, 0)
+    this._originalSize = Size(0, 0)
     this._rotated = false
-    this._originalSizeInPixels = size(0, 0)
+    this._originalSizeInPixels = Size(0, 0)
     this._textureFilename = ''
     this._texture = null
     this._textureLoaded = false
@@ -106,7 +106,7 @@ export class SpriteFrame extends EventHelper {
   }
 
   getOriginalSizeInPixels() {
-    return size(this._originalSizeInPixels)
+    return Size(this._originalSizeInPixels)
   }
 
   setOriginalSizeInPixels(sizeInPixels: any) {
@@ -115,7 +115,7 @@ export class SpriteFrame extends EventHelper {
   }
 
   getOriginalSize() {
-    return size(this._originalSize)
+    return Size(this._originalSize)
   }
 
   setOriginalSize(sizeInPixels: any) {

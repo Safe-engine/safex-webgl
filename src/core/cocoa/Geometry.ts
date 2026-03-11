@@ -41,7 +41,7 @@ export function pointEqualToPoint(point1: Point, point2: Point): boolean {
   return point1 && point2 && point1.x === point2.x && point1.y === point2.y
 }
 
-export class Size {
+export class _Size {
   width: number
   height: number
 
@@ -63,14 +63,15 @@ export class Size {
  * var size3 = size(size2);
  * var size4 = size({width: 100, height: 100});
  */
-export function size(w?: number | Size, h?: number): Size {
+export type Size = _Size
+export function Size(w?: number | Size, h?: number): Size {
   if (w === undefined) {
-    return new Size()
+    return new _Size()
   }
   if (h === undefined) {
-    return new Size((w as Size).width, (w as Size).height)
+    return new _Size((w as Size).width, (w as Size).height)
   }
-  return new Size(w as number, h)
+  return new _Size(w as number, h)
 }
 
 /**

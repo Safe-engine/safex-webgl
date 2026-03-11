@@ -1,6 +1,10 @@
 export * from './boot'
+export * from './clipping-nodes/ClippingNode'
 export * from './core'
 export * from './helper/global'
 export * from './helper/loader'
 export * from './helper/sys'
+export * from './polyfills'
+export * from './shape-nodes/DrawNode'
 export * from './textures'
+

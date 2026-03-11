@@ -1,6 +1,6 @@
 import { renderer } from '../..'
 import { Node } from '../../core/base-nodes/Node'
-import { p, rect, rectContainsPoint, Size, size } from '../../core/cocoa/Geometry'
+import { p, rect, rectContainsPoint, Size } from '../../core/cocoa/Geometry'
 import { EventListener } from '../../core/event-manager'
 import { EventFocus } from '../../core/event-manager/EventFocus'
 import { eventManager } from '../../core/event-manager/EventManager'
@@ -112,7 +112,7 @@ export class Widget extends ProtectedNode {
     this._touchMovePosition = p(0, 0)
     this._touchEndPosition = p(0, 0)
     this._widgetType = Widget.TYPE_WIDGET
-    this._customSize = size(0, 0)
+    this._customSize = Size(0, 0)
     this._layoutParameterDictionary = {}
     this._sizeType = Widget.SIZE_ABSOLUTE
     this._sizePercent = p(0, 0)
@@ -416,7 +416,7 @@ export class Widget extends ProtectedNode {
         this._sizePercent.y = parentSize.height > 0 ? this._customSize.height / parentSize.height : 0
         break
       case Widget.SIZE_PERCENT: {
-        const cSize = size(parentSize.width * this._sizePercent.x, parentSize.height * this._sizePercent.y)
+        const cSize = Size(parentSize.width * this._sizePercent.x, parentSize.height * this._sizePercent.y)
         if (this._ignoreSize) this.setContentSize(this.getVirtualRendererSize())
         else this.setContentSize(cSize)
         this._customSize.width = cSize.width
@@ -496,7 +496,7 @@ export class Widget extends ProtectedNode {
    * @returns {Size}
    */
   getCustomSize() {
-    return size(this._customSize)
+    return Size(this._customSize)
   }
 
   /**
@@ -504,7 +504,7 @@ export class Widget extends ProtectedNode {
    * @returns {Size}
    */
   getLayoutSize() {
-    return size(this._contentSize)
+    return Size(this._contentSize)
   }
 
   /**
@@ -541,7 +541,7 @@ export class Widget extends ProtectedNode {
    * Gets the content size of widget.  Content size is widget's texture size.
    */
   getVirtualRendererSize() {
-    return size(this._contentSize)
+    return Size(this._contentSize)
   }
 
   /**
@@ -918,7 +918,7 @@ export class Widget extends ProtectedNode {
    * @param {Function} selector
    * @param {Object} target
    */
-  addTouchEventListener(selector, target) {
+  addTouchEventListener(selector, target?) {
     if (target === undefined) this._touchEventCallback = selector
     else {
       this._touchEventSelector = selector

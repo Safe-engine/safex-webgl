@@ -1,4 +1,4 @@
-import { size } from '../../core/cocoa/Geometry'
+import { Size } from '../../core/cocoa/Geometry'
 import { LabelTTF } from '../../core/labelttf/LabelTTF'
 import { log } from '../../helper/Debugger'
 import { ProtectedNode } from '../base/ProtectedNode'
@@ -22,7 +22,7 @@ export class Text extends Widget {
   constructor(textContent?: string, fontName?: string, fontSize?: number) {
     super()
     this._type = Text.Type.SYSTEM
-    this._textAreaSize = size(0, 0)
+    this._textAreaSize = Size(0, 0)
 
     if (fontSize !== undefined) {
       this.setFontName(fontName!)
@@ -227,7 +227,7 @@ export class Text extends Widget {
       this._labelRenderer.setScale(1.0)
       this._normalScaleValueX = this._normalScaleValueY = 1
     } else {
-      this._labelRenderer.setDimensions(size(locContentSize.width, locContentSize.height))
+      this._labelRenderer.setDimensions(Size(locContentSize.width, locContentSize.height))
       const textureSize = this._labelRenderer.getContentSize()
       if (textureSize.width <= 0.0 || textureSize.height <= 0.0) {
         this._labelRenderer.setScale(1.0)

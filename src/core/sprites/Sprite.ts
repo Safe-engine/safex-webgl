@@ -2,7 +2,7 @@ import { _LogInfos, assert, log } from '../../helper/Debugger'
 import { textureCache } from '../../textures/TextureCache'
 import { Texture2D } from '../../textures/TexturesWebGL'
 import { Node } from '../base-nodes/Node'
-import { p, Rect, rect, size } from '../cocoa/Geometry'
+import { p, Rect, rect, Size } from '../cocoa/Geometry'
 import { BLEND_DST, BLEND_SRC, pointPointsToPixels, rectPointsToPixels, sizePointsToPixels } from '../platform/Macro'
 import { animationCache } from './AnimationCache'
 import { SpriteFrame } from './SpriteFrame'
@@ -238,7 +238,7 @@ export class Sprite extends Node {
     this._offsetPosition.x = 0
     this._offsetPosition.y = 0
     this._hasChildren = false
-    this.setTextureRect(rect(0, 0, 0, 0), false, size(0, 0))
+    this.setTextureRect(rect(0, 0, 0, 0), false, Size(0, 0))
     return true
   }
 

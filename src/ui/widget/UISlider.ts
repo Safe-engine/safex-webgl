@@ -1,6 +1,6 @@
 import { game } from '../..'
 import { Sprite } from '../../core'
-import { p, rect, size } from '../../core/cocoa/Geometry'
+import { p, rect, Size } from '../../core/cocoa/Geometry'
 import { _renderType } from '../../helper/engine'
 import { Scale9Sprite } from '../base/UIScale9Sprite'
 import { Widget } from '../base/UIWidget'
@@ -58,8 +58,8 @@ export class Slider extends Widget {
    */
   constructor(barTextureName?: string, normalBallTextureName?: string, resType?: number) {
     super()
-    this._barTextureSize = size(0, 0)
-    this._progressBarTextureSize = size(0, 0)
+    this._barTextureSize = Size(0, 0)
+    this._progressBarTextureSize = Size(0, 0)
     this._capInsetsBarRenderer = rect(0, 0, 0, 0)
     this._capInsetsProgressBarRenderer = rect(0, 0, 0, 0)
     super()
@@ -418,7 +418,7 @@ export class Slider extends Widget {
     const res = percent / 100.0
     const dis = this._barLength * res
     this._slidBallRenderer.setPosition(dis, this._contentSize.height / 2)
-    if (this._scale9Enabled) this._progressBarRenderer.setPreferredSize(size(dis, this._contentSize.height))
+    if (this._scale9Enabled) this._progressBarRenderer.setPreferredSize(Size(dis, this._contentSize.height))
     else {
       const spriteRenderer = this._progressBarRenderer
       const rect = spriteRenderer.getTextureRect()

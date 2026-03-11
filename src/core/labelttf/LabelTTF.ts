@@ -1,7 +1,7 @@
 import { renderer, view } from '../..'
 import { _LogInfos, log } from '../../helper/Debugger'
 import { Node } from '../base-nodes/Node'
-import { p, size } from '../cocoa/Geometry'
+import { p, Size } from '../cocoa/Geometry'
 import { color, contentScaleFactor } from '../platform'
 import { FontDefinition } from '../platform/FontDefinition'
 import { TEXT_ALIGNMENT_CENTER, TEXT_ALIGNMENT_LEFT, VERTICAL_TEXT_ALIGNMENT_TOP } from '../platform/Types'
@@ -21,11 +21,11 @@ import { LabelTTFWebGLRenderCmd } from './LabelTTFWebGLRenderCmd'
  * @param {String} text
  * @param {String|FontDefinition} [fontName="Arial"]
  * @param {Number} [fontSize=16]
- * @param {Size} [dimensions=size(0,0)]
+ * @param {Size} [dimensions=Size(0,0)]
  * @param {Number} [hAlignment=TEXT_ALIGNMENT_LEFT]
  * @param {Number} [vAlignment=VERTICAL_TEXT_ALIGNMENT_TOP]
  * @example
- * var myLabel = new LabelTTF('label text',  'Times New Roman', 32, size(320,32), TEXT_ALIGNMENT_LEFT);
+ * var myLabel = new LabelTTF('label text',  'Times New Roman', 32, Size(320,32), TEXT_ALIGNMENT_LEFT);
  *
  * var fontDef = new FontDefinition();
  * fontDef.fontName = "Arial";
@@ -102,12 +102,12 @@ export class LabelTTF extends Sprite {
     else strInfo = ''
 
     fontSize = fontSize || 16
-    dimensions = dimensions || size(0, 0 /*fontSize*/)
+    dimensions = dimensions || Size(0, 0 /*fontSize*/)
     hAlignment = hAlignment || TEXT_ALIGNMENT_LEFT
     vAlignment = vAlignment || VERTICAL_TEXT_ALIGNMENT_TOP
 
     this._opacityModifyRGB = false
-    this._dimensions = size(dimensions.width, dimensions.height)
+    this._dimensions = Size(dimensions.width, dimensions.height)
     this._fontName = fontName || 'Arial'
     this._hAlignment = hAlignment
     this._vAlignment = vAlignment
@@ -133,7 +133,7 @@ export class LabelTTF extends Sprite {
 
   constructor(text?, fontName?, fontSize?, dimensions?, hAlignment?, vAlignment?) {
     super()
-    this._dimensions = size(0, 0)
+    this._dimensions = Size(0, 0)
     this._hAlignment = TEXT_ALIGNMENT_LEFT
     this._vAlignment = VERTICAL_TEXT_ALIGNMENT_TOP
     this._opacityModifyRGB = false
@@ -212,7 +212,7 @@ export class LabelTTF extends Sprite {
    * @return {Size}
    */
   getDimensions() {
-    return size(this._dimensions)
+    return Size(this._dimensions)
   }
 
   /**
@@ -762,7 +762,7 @@ export class LabelTTF extends Sprite {
   getContentSize() {
     if (this._needUpdateTexture) this._renderCmd._updateTTF()
     const ratio = view.getDevicePixelRatio()
-    return size(this._contentSize.width / ratio, this._contentSize.height / ratio)
+    return Size(this._contentSize.width / ratio, this._contentSize.height / ratio)
   }
 
   _getWidth() {
