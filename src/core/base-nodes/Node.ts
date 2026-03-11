@@ -33,7 +33,7 @@ export class Node extends EventHelper {
   width: any
   height: any
   _imageRenderer: any
-  _doLayout: any
+  // _doLayout: (target: any) => void
   _doLayoutDirty: boolean
   _isFocusPassing: boolean
   _setReorderChildDirtyRecursively() {

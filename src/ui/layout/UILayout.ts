@@ -346,22 +346,22 @@ export class Layout extends Widget {
   setClippingEnabled(able) {
     if (able === this._clippingEnabled) return
     this._clippingEnabled = able
-    switch (this._clippingType) {
-      case Layout.CLIPPING_SCISSOR:
-      case Layout.CLIPPING_STENCIL:
-        if (able) {
-          this._clippingStencil = new DrawNode()
-          this._renderCmd.rebindStencilRendering(this._clippingStencil)
-          if (this._running) this._clippingStencil._performRecursive(Node._stateCallbackType.onEnter)
-          this._setStencilClippingSize(this._contentSize)
-        } else {
-          if (this._running && this._clippingStencil) this._clippingStencil._performRecursive(Node._stateCallbackType.onExit)
-          this._clippingStencil = null
-        }
-        break
-      default:
-        break
-    }
+    // switch (this._clippingType) {
+    //   case Layout.CLIPPING_SCISSOR:
+    //   case Layout.CLIPPING_STENCIL:
+    //     if (able) {
+    //       this._clippingStencil = new DrawNode()
+    //       this._renderCmd.rebindStencilRendering(this._clippingStencil)
+    //       if (this._running) this._clippingStencil._performRecursive(Node._stateCallbackType.onEnter)
+    //       this._setStencilClippingSize(this._contentSize)
+    //     } else {
+    //       if (this._running && this._clippingStencil) this._clippingStencil._performRecursive(Node._stateCallbackType.onExit)
+    //       this._clippingStencil = null
+    //     }
+    //     break
+    //   default:
+    //     break
+    // }
   }
 
   /**
@@ -610,22 +610,22 @@ export class Layout extends Widget {
     switch (this._colorType) {
       case Layout.BG_COLOR_NONE:
         break
-      case Layout.BG_COLOR_SOLID:
-        this._colorRender = new LayerColor()
-        this._colorRender.setContentSize(this._contentSize)
-        this._colorRender.setOpacity(this._opacity)
-        this._colorRender.setColor(this._color)
-        this.addProtectedChild(this._colorRender, Layout.BACKGROUND_RENDERER_ZORDER, -1)
-        break
-      case Layout.BG_COLOR_GRADIENT:
-        this._gradientRender = new LayerGradient(color(255, 0, 0, 255), color(0, 255, 0, 255))
-        this._gradientRender.setContentSize(this._contentSize)
-        this._gradientRender.setOpacity(this._opacity)
-        this._gradientRender.setStartColor(this._startColor)
-        this._gradientRender.setEndColor(this._endColor)
-        this._gradientRender.setVector(this._alongVector)
-        this.addProtectedChild(this._gradientRender, Layout.BACKGROUND_RENDERER_ZORDER, -1)
-        break
+      // case Layout.BG_COLOR_SOLID:
+      //   this._colorRender = new LayerColor()
+      //   this._colorRender.setContentSize(this._contentSize)
+      //   this._colorRender.setOpacity(this._opacity)
+      //   this._colorRender.setColor(this._color)
+      //   this.addProtectedChild(this._colorRender, Layout.BACKGROUND_RENDERER_ZORDER, -1)
+      //   break
+      // case Layout.BG_COLOR_GRADIENT:
+      //   this._gradientRender = new LayerGradient(color(255, 0, 0, 255), color(0, 255, 0, 255))
+      //   this._gradientRender.setContentSize(this._contentSize)
+      //   this._gradientRender.setOpacity(this._opacity)
+      //   this._gradientRender.setStartColor(this._startColor)
+      //   this._gradientRender.setEndColor(this._endColor)
+      //   this._gradientRender.setVector(this._alongVector)
+      //   this.addProtectedChild(this._gradientRender, Layout.BACKGROUND_RENDERER_ZORDER, -1)
+      //   break
       default:
         break
     }
@@ -823,8 +823,8 @@ export class Layout extends Widget {
 
     this.sortAllChildren()
 
-    const executant = getLayoutManager(this._layoutType)
-    if (executant) executant._doLayout(this)
+    // const executant = getLayoutManager(this._layoutType)
+    // if (executant) executant._doLayout(this)
     this._doLayoutDirty = false
   }
 

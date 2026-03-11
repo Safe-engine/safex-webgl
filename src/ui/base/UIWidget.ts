@@ -1231,9 +1231,9 @@ export class Widget extends ProtectedNode {
    * @param {LayoutParameter.NONE|LayoutParameter.LINEAR|LayoutParameter.RELATIVE} type
    * @returns {LayoutParameter}
    */
-  getLayoutParameter(type) {
-    type = type || this._layoutParameterType
-    return this._layoutParameterDictionary[type]
+  getLayoutParameter(type?) {
+    const t = type || this._layoutParameterType
+    return this._layoutParameterDictionary[t]
   }
 
   /**
@@ -1515,7 +1515,7 @@ export class Widget extends ProtectedNode {
 
   _findLayout() {
     renderer.childrenOrderDirty = true
-    let layout = this._parent
+    let layout: any = this._parent
     while (layout) {
       if (layout._doLayout) {
         layout._doLayoutDirty = true
