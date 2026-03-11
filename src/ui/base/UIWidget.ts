@@ -870,7 +870,7 @@ export class Widget extends ProtectedNode {
    * A call back function called when widget is selected, and on touch canceled.
    * @param {Point} touchPoint
    */
-  onTouchCancelled(touchPoint) {
+  onTouchCancelled(touchPoint, event?) {
     this.setHighlighted(false)
     this._cancelUpEvent()
   }

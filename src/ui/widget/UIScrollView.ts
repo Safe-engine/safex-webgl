@@ -1,25 +1,34 @@
 import { game, renderer } from '../..'
 import { pAdd, pLength, pMult, pSub } from '../../core'
 import { p, size } from '../../core/cocoa/Geometry'
-import { color } from '../../core/platform'
+import { Color, color } from '../../core/platform'
 import { assert, log } from '../../helper/Debugger'
 import { _renderType } from '../../helper/engine'
 import { Widget } from '../base/UIWidget'
 import { Layout } from '../layout/UILayout'
+import { ScrollViewBar } from './UIScrollViewBar'
 
-/**
- * The ScrollView control of Cocos UI
- * @class
- * @extends Layout
- *
- * @property {Number}               innerWidth              - Inner container width of the scroll view
- * @property {Number}               innerHeight             - Inner container height of the scroll view
- * @property {ScrollView.DIR_NONE | ScrollView.DIR_VERTICAL | ScrollView.DIR_HORIZONTAL | ScrollView.DIR_BOTH}    direction               - Scroll direction of the scroll view
- * @property {Boolean}              bounceEnabled           - Indicate whether bounce is enabled
- * @property {Boolean}              inertiaScrollEnabled    - Indicate whether inertiaScroll is enabled
- * @property {Number}               touchTotalTimeThreshold - Touch total time threshold
- */
 export class ScrollView extends Layout {
+  static DIR_NONE = 0
+  static DIR_VERTICAL = 1
+  static DIR_HORIZONTAL = 2
+  static DIR_BOTH = 3
+  static EVENT_SCROLL_TO_TOP = 0
+  static EVENT_SCROLL_TO_BOTTOM = 1
+  static EVENT_SCROLL_TO_LEFT = 2
+  static EVENT_SCROLL_TO_RIGHT = 3
+  static EVENT_SCROLLING = 4
+  static EVENT_BOUNCE_TOP = 5
+  static EVENT_BOUNCE_BOTTOM = 6
+  static EVENT_BOUNCE_LEFT = 7
+  static EVENT_BOUNCE_RIGHT = 8
+  static EVENT_CONTAINER_MOVED = 9
+  static EVENT_AUTOSCROLL_ENDED = 10
+  static MOVEDIR_TOP = 0
+  static MOVEDIR_BOTTOM = 1
+  static MOVEDIR_LEFT = 2
+  static MOVEDIR_RIGHT = 3
+
   _innerContainer: any = null
   _direction: any = null
 
@@ -61,6 +70,7 @@ export class ScrollView extends Layout {
   _scrollViewEventListener: any = null
   _scrollViewEventSelector: any = null
   _className = 'ScrollView'
+  _ccEventCallback: any
 
   /**
    * Allocates and initializes a UIScrollView.
@@ -137,14 +147,14 @@ export class ScrollView extends Layout {
       cmd.scissorClippingVisit(parentCmd)
     }
 
-    let i,
-      children = this._children,
-      len = children.length,
-      child
-    let j,
-      pChildren = this._protectedChildren,
-      pLen = pChildren.length,
-      pChild
+    let i
+    const children = this._children
+    const len = children.length
+    let child
+    let j
+    const pChildren = this._protectedChildren
+    const pLen = pChildren.length
+    let pChild
 
     if (this._reorderChildDirty) this.sortAllChildren()
     if (this._reorderProtectedChildDirty) this.sortAllProtectedChildren()
@@ -229,10 +239,10 @@ export class ScrollView extends Layout {
    * @param {Size} size inner container size.
    */
   setInnerContainerSize(size: any): void {
-    let innerContainer = this._innerContainer,
-      locSize = this._contentSize,
-      innerSizeWidth = locSize.width,
-      innerSizeHeight = locSize.height
+    const innerContainer = this._innerContainer
+    const locSize = this._contentSize
+    let innerSizeWidth = locSize.width
+    let innerSizeHeight = locSize.height
 
     if (size.width < locSize.width) log('Inner width <= ScrollView width, it will be force sized!')
     else innerSizeWidth = size.width
@@ -257,10 +267,10 @@ export class ScrollView extends Layout {
   }
 
   _setInnerWidth(width: number): void {
-    let locW = this._contentSize.width,
-      innerWidth = locW,
-      container = this._innerContainer,
-      oldInnerWidth = container.width
+    const locW = this._contentSize.width
+    let innerWidth = locW
+    const container = this._innerContainer
+    const oldInnerWidth = container.width
     if (width < locW) log('Inner width <= scrollview width, it will be force sized!')
     else innerWidth = width
     container.width = innerWidth
@@ -281,21 +291,22 @@ export class ScrollView extends Layout {
   }
 
   _setInnerHeight(height: number): void {
-    let locH = this._contentSize.height,
-      innerHeight = locH,
-      container = this._innerContainer,
-      oldInnerHeight = container.height
+    const locH = this._contentSize.height
+    let innerHeight = locH
+    const container = this._innerContainer
+    const oldInnerHeight = container.height
     if (height < locH) log('Inner height <= scrollview height, it will be force sized!')
     else innerHeight = height
     container.height = innerHeight
 
     switch (this._direction) {
       case ScrollView.DIR_VERTICAL:
-      case ScrollView.DIR_BOTH:
-        var newInnerHeight = innerHeight
-        var offset = oldInnerHeight - newInnerHeight
+      case ScrollView.DIR_BOTH: {
+        const newInnerHeight = innerHeight
+        const offset = oldInnerHeight - newInnerHeight
         this._scrollChildren(0, offset)
         break
+      }
     }
     const innerAY = container.anchorY
     if (container.getLeftBoundary() > 0.0) container.y = innerAY * innerHeight
@@ -354,13 +365,13 @@ export class ScrollView extends Layout {
 
   _isInContainer(widget): any {
     if (!this._clippingEnabled) return true
-    let wPos = widget._position,
-      wSize = widget._contentSize,
-      wAnchor = widget._anchorPoint,
-      size = this._customSize,
-      pos = this._innerContainer._position,
-      bottom = 0,
-      left = 0
+    const wPos = widget._position
+    const wSize = widget._contentSize
+    const wAnchor = widget._anchorPoint
+    const size = this._customSize
+    const pos = this._innerContainer._position
+    let bottom
+    let left
     if (
       // Top
       (bottom = wPos.y - wAnchor.y * wSize.height) >= size.height - pos.y ||
@@ -466,7 +477,7 @@ export class ScrollView extends Layout {
     return result
   }
 
-  _getHowMuchOutOfBoundary(addition): any {
+  _getHowMuchOutOfBoundary(addition?): any {
     if (addition === undefined) addition = p(0, 0)
 
     if (addition.x === 0 && addition.y === 0 && !this._outOfBoundaryAmountDirty) {
@@ -494,7 +505,7 @@ export class ScrollView extends Layout {
     return outOfBoundaryAmount
   }
 
-  _isOutOfBoundary(dir): any {
+  _isOutOfBoundary(dir?): any {
     const outOfBoundary = this._getHowMuchOutOfBoundary()
     if (dir !== undefined) {
       switch (dir) {
@@ -538,7 +549,7 @@ export class ScrollView extends Layout {
 
   _calculateTouchMoveVelocity(): any {
     let totalTime = 0
-    for (var i = 0; i < this._touchMoveTimeDeltas.length; ++i) {
+    for (let i = 0; i < this._touchMoveTimeDeltas.length; ++i) {
       totalTime += this._touchMoveTimeDeltas[i]
     }
     if (totalTime == 0 || totalTime >= this._touchTotalTimeThreshold) {
@@ -547,7 +558,7 @@ export class ScrollView extends Layout {
 
     const totalMovement = p(0, 0)
 
-    for (var i = 0; i < this._touchMoveDisplacements.length; ++i) {
+    for (let i = 0; i < this._touchMoveDisplacements.length; ++i) {
       totalMovement.x += this._touchMoveDisplacements[i].x
       totalMovement.y += this._touchMoveDisplacements[i].y
     }
@@ -720,17 +731,17 @@ export class ScrollView extends Layout {
     this._moveInnerContainer(pSub(desOrX, this.getInnerContainerPosition()), true)
   }
 
-  _scrollChildren(deltaMove): any {
+  _scrollChildren(deltaMove, offset?): any {
     const realMove = deltaMove
     if (this.bounceEnabled) {
       // If the position of the inner container is out of the boundary, the offsets should be divided by two.
-      var outOfBoundary = this._getHowMuchOutOfBoundary()
+      const outOfBoundary = this._getHowMuchOutOfBoundary()
       realMove.x *= outOfBoundary.x == 0 ? 1 : 0.5
       realMove.y *= outOfBoundary.y == 0 ? 1 : 0.5
     }
 
     if (!this.bounceEnabled) {
-      var outOfBoundary = this._getHowMuchOutOfBoundary(realMove)
+      const outOfBoundary = this._getHowMuchOutOfBoundary(realMove)
       realMove.x += outOfBoundary.x
       realMove.y += outOfBoundary.y
     }
@@ -1135,7 +1146,7 @@ export class ScrollView extends Layout {
    * @param {Event} event
    */
   onTouchCancelled(touch, event): any {
-    Layout.prototype.onTouchCancelled.call(this, touch, event)
+    super.onTouchCancelled(touch, event)
     if (!this._isInterceptTouch) this._handleReleaseLogic(touch)
     this._isInterceptTouch = false
   }
@@ -1171,8 +1182,8 @@ export class ScrollView extends Layout {
         this._touchBeganPosition.y = touchPoint.y
         this._handlePressLogic(touch)
         break
-      case Widget.TOUCH_MOVED:
-        var offset = pLength(pSub(sender.getTouchBeganPosition(), touchPoint))
+      case Widget.TOUCH_MOVED: {
+        const offset = pLength(pSub(sender.getTouchBeganPosition(), touchPoint))
         this._touchMovePosition.x = touchPoint.x
         this._touchMovePosition.y = touchPoint.y
         if (offset > this._childFocusCancelOffset) {
@@ -1180,6 +1191,7 @@ export class ScrollView extends Layout {
           this._handleMoveLogic(touch)
         }
         break
+      }
       case Widget.TOUCH_CANCELED:
       case Widget.TOUCH_ENDED:
         this._touchEndPosition.x = touchPoint.x
@@ -1340,7 +1352,7 @@ export class ScrollView extends Layout {
    */
   setScrollBarPositionFromCornerForVertical(positionFromCorner): any {
     assert(this._scrollBarEnabled, 'Scroll bar should be enabled!')
-    assert(this._direction !== ScrollView.DIR_HORIZONTAL, "Scroll view doesn't have a vertical scroll bar!")
+    assert(this._direction !== ScrollView.DIR_HORIZONTAL, 'Scroll view doesnt have a vertical scroll bar!')
     this._verticalScrollBar.setPositionFromCorner(positionFromCorner)
   }
 
@@ -1350,7 +1362,7 @@ export class ScrollView extends Layout {
    */
   getScrollBarPositionFromCornerForVertical(): any {
     assert(this._scrollBarEnabled, 'Scroll bar should be enabled!')
-    assert(this._direction !== ScrollView.DIR_HORIZONTAL, "Scroll view doesn't have a vertical scroll bar!")
+    assert(this._direction !== ScrollView.DIR_HORIZONTAL, 'Scroll view doesnt have a vertical scroll bar!')
     return this._verticalScrollBar.getPositionFromCorner()
   }
 
@@ -1360,7 +1372,7 @@ export class ScrollView extends Layout {
    */
   setScrollBarPositionFromCornerForHorizontal(positionFromCorner): any {
     assert(this._scrollBarEnabled, 'Scroll bar should be enabled!')
-    assert(this._direction !== ScrollView.DIR_VERTICAL, "Scroll view doesn't have a horizontal scroll bar!")
+    assert(this._direction !== ScrollView.DIR_VERTICAL, 'Scroll view doesnt have a horizontal scroll bar!')
     this._horizontalScrollBar.setPositionFromCorner(positionFromCorner)
   }
 
@@ -1370,7 +1382,7 @@ export class ScrollView extends Layout {
    */
   getScrollBarPositionFromCornerForHorizontal(): any {
     assert(this._scrollBarEnabled, 'Scroll bar should be enabled!')
-    assert(this._direction !== ScrollView.DIR_VERTICAL, "Scroll view doesn't have a horizontal scroll bar!")
+    assert(this._direction !== ScrollView.DIR_VERTICAL, 'Scroll view doesnt have a horizontal scroll bar!')
     return this._horizontalScrollBar.getPositionFromCorner()
   }
 
@@ -1429,7 +1441,7 @@ export class ScrollView extends Layout {
     if (this._horizontalScrollBar) {
       this._horizontalScrollBar.getColor()
     }
-    return color.WHITE
+    return Color.WHITE
   }
 
   /**
@@ -1728,107 +1740,3 @@ Object.defineProperty(ScrollView.prototype, 'touchTotalTimeThreshold', {
     this.setTouchTotalTimeThreshold(val)
   },
 })
-
-// Constants
-//ScrollView direction
-/**
- * The none flag of ScrollView's direction.
- * @constant
- * @type {number}
- */
-ScrollView.DIR_NONE = 0
-/**
- * The vertical flag of ScrollView's direction.
- * @constant
- * @type {number}
- */
-ScrollView.DIR_VERTICAL = 1
-/**
- * The horizontal flag of ScrollView's direction.
- * @constant
- * @type {number}
- */
-ScrollView.DIR_HORIZONTAL = 2
-/**
- * The both flag of ScrollView's direction.
- * @constant
- * @type {number}
- */
-ScrollView.DIR_BOTH = 3
-
-//ScrollView event
-/**
- * The flag scroll to top of ScrollView's event.
- * @constant
- * @type {number}
- */
-ScrollView.EVENT_SCROLL_TO_TOP = 0
-/**
- * The flag scroll to bottom of ScrollView's event.
- * @constant
- * @type {number}
- */
-ScrollView.EVENT_SCROLL_TO_BOTTOM = 1
-/**
- * The flag scroll to left of ScrollView's event.
- * @constant
- * @type {number}
- */
-ScrollView.EVENT_SCROLL_TO_LEFT = 2
-/**
- * The flag scroll to right of ScrollView's event.
- * @constant
- * @type {number}
- */
-ScrollView.EVENT_SCROLL_TO_RIGHT = 3
-/**
- * The scrolling flag of ScrollView's event.
- * @constant
- * @type {number}
- */
-ScrollView.EVENT_SCROLLING = 4
-/**
- * The flag bounce top of ScrollView's event.
- * @constant
- * @type {number}
- */
-ScrollView.EVENT_BOUNCE_TOP = 5
-/**
- * The flag bounce bottom of ScrollView's event.
- * @constant
- * @type {number}
- */
-ScrollView.EVENT_BOUNCE_BOTTOM = 6
-/**
- * The flag bounce left of ScrollView's event.
- * @constant
- * @type {number}
- */
-ScrollView.EVENT_BOUNCE_LEFT = 7
-/**
- * The flag bounce right of ScrollView's event.
- * @constant
- * @type {number}
- */
-ScrollView.EVENT_BOUNCE_RIGHT = 8
-/**
- * The flag container moved of ScrollView's event.
- * @constant
- * @type {number}
- */
-ScrollView.EVENT_CONTAINER_MOVED = 9
-/**
- * The flag autoscroll ended of ScrollView's event.
- * @constant
- * @type {number}
- */
-ScrollView.EVENT_AUTOSCROLL_ENDED = 10
-
-/**
- * @ignore
- */
-
-ScrollView.MOVEDIR_TOP = 0
-ScrollView.MOVEDIR_BOTTOM = 1
-ScrollView.MOVEDIR_LEFT = 2
-ScrollView.MOVEDIR_RIGHT = 3

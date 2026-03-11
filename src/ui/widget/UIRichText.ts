@@ -1,5 +1,7 @@
 import { Sprite } from '../../core'
+import { Node } from '../../core/base-nodes/Node'
 import { p, rect } from '../../core/cocoa/Geometry'
+import { LabelTTF } from '../../core/labelttf/LabelTTF'
 import { arrayRemoveObject } from '../../core/platform'
 import { FontDefinition } from '../../core/platform/FontDefinition'
 import {
@@ -11,15 +13,20 @@ import {
   VERTICAL_TEXT_ALIGNMENT_TOP,
 } from '../../core/platform/Types'
 import { isNumber } from '../../helper/checkType'
+import { Widget } from '../base/UIWidget'
 
 export class RichElement {
+  static TEXT = 0
+  static IMAGE = 1
+  static CUSTOM = 2
+
   _type = 0
   _tag = 0
   _color: any = null
   _opacity = 0
 
   /**
-   * Constructor of ccui.RichElement
+   * Constructor of RichElement
    */
   constructor(tag?: number, color?: any, opacity?: number) {
     this._type = 0
@@ -42,7 +49,7 @@ export class RichElement {
 /**
  * The text element for RichText, it has text, fontName, fontSize attributes.
  * @class
- * @extends ccui.RichElement
+ * @extends RichElement
  */
 export class RichElementText extends RichElement {
   _text = ''
@@ -54,7 +61,7 @@ export class RichElementText extends RichElement {
   /**
    * Usage Example using FontDefinition:
    *
-   * var rtEl  = new ccui.RichElementText("tag", new FontDefinition({
+   * var rtEl  = new RichElementText("tag", new FontDefinition({
    *                              fillStyle: color.BLACK,
    *                              fontName: "Arial",
    *                              fontSize: 12,
@@ -63,7 +70,7 @@ export class RichElementText extends RichElement {
    *                              lineHeight: 14
    *                          }), 255, "Some Text");
    *
-   * Constructor of ccui.RichElementText
+   * Constructor of RichElementText
    * @param {Number} tag
    * @param {Color|FontDefinition} colorOrFontDef
    * @param {Number} opacity
@@ -72,6 +79,7 @@ export class RichElementText extends RichElement {
    * @param {Number} fontSize
    */
   constructor(tag?: number, colorOrFontDef?: any, opacity?: number, text?: string, fontName?: string, fontSize?: number) {
+    super(tag, colorOrFontDef, opacity)
     let color = colorOrFontDef
     if (colorOrFontDef && colorOrFontDef instanceof FontDefinition) {
       color = colorOrFontDef.fillStyle
@@ -92,14 +100,14 @@ export class RichElementText extends RichElement {
 
   /**
    * Create a richElementText
-   * @deprecated since v3.0, please use new ccui.RichElementText() instead.
+   * @deprecated since v3.0, please use new RichElementText() instead.
    * @param {Number} tag
    * @param {Color} color
    * @param {Number} opacity
    * @param {String} text
    * @param {String} fontName
    * @param {Number} fontSize
-   * @returns {ccui.RichElementText}
+   * @returns {RichElementText}
    */
   static create(tag?: number, color?: any, opacity?: number, text?: string, fontName?: string, fontSize?: number): RichElementText {
     return new RichElementText(tag, color, opacity, text, fontName, fontSize)
@@ -109,7 +117,7 @@ export class RichElementText extends RichElement {
 /**
  * The image element for RichText, it has filePath, textureRect, textureType attributes.
  * @class
- * @extends ccui.RichElement
+ * @extends RichElement
  */
 export class RichElementImage extends RichElement {
   _filePath = ''
@@ -117,7 +125,7 @@ export class RichElementImage extends RichElement {
   _textureType = 0
 
   /**
-   * Constructor of ccui.RichElementImage
+   * Constructor of RichElementImage
    * @param {Number} tag
    * @param {Color} color
    * @param {Number} opacity
@@ -133,12 +141,12 @@ export class RichElementImage extends RichElement {
 
   /**
    * Create a richElementImage
-   * @deprecated since v3.0, please use new ccui.RichElementImage() instead.
+   * @deprecated since v3.0, please use new RichElementImage() instead.
    * @param {Number} tag
    * @param {Color} color
    * @param {Number} opacity
    * @param {String} filePath
-   * @returns {ccui.RichElementImage}
+   * @returns {RichElementImage}
    */
   static create(tag?: number, color?: any, opacity?: number, filePath?: string): RichElementImage {
     return new RichElementImage(tag, color, opacity, filePath)
@@ -148,13 +156,13 @@ export class RichElementImage extends RichElement {
 /**
  * The custom node element for RichText.
  * @class
- * @extends ccui.RichElement
+ * @extends RichElement
  */
 export class RichElementCustomNode extends RichElement {
   _customNode: any = null
 
   /**
-   * Constructor of ccui.RichElementCustomNode
+   * Constructor of RichElementCustomNode
    * @param {Number} tag
    * @param {Color} color
    * @param {Number} opacity
@@ -168,24 +176,19 @@ export class RichElementCustomNode extends RichElement {
 
   /**
    * Create a richElementCustomNode
-   * @deprecated since v3.0, please use new ccui.RichElementCustomNode() instead.
+   * @deprecated since v3.0, please use new RichElementCustomNode() instead.
    * @param {Number} tag
    * @param {Number} color
    * @param {Number} opacity
    * @param {Node} customNode
-   * @returns {ccui.RichElementCustomNode}
+   * @returns {RichElementCustomNode}
    */
   static create(tag?: number, color?: any, opacity?: number, customNode?: any): RichElementCustomNode {
     return new RichElementCustomNode(tag, color, opacity, customNode)
   }
 }
 
-/**
- * The rich text control of Cocos UI. It receives text, image, and custom node as its children to display.
- * @class
- * @extends ccui.Widget
- */
-export class RichText extends ccui.Widget {
+export class RichText extends Widget {
   _formatTextDirty = false
   _richElements: any[] = []
   _elementRenders: any[] = []
@@ -198,9 +201,9 @@ export class RichText extends ccui.Widget {
 
   /**
    * create a rich text
-   * Constructor of ccui.RichText. override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
+   * Constructor of RichText. override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
    * @example
-   * var uiRichText = new ccui.RichTex();
+   * var uiRichText = new RichTex();
    */
   constructor() {
     super()
@@ -221,7 +224,7 @@ export class RichText extends ccui.Widget {
 
   /**
    * Insert a element
-   * @param {ccui.RichElement} element
+   * @param {RichElement} element
    * @param {Number} index
    */
   insertElement(element: any, index: number): void {
@@ -231,7 +234,7 @@ export class RichText extends ccui.Widget {
 
   /**
    * Push a element
-   * @param {ccui.RichElement} element
+   * @param {RichElement} element
    */
   pushBackElement(element: any): void {
     this._richElements.push(element)
@@ -240,7 +243,7 @@ export class RichText extends ccui.Widget {
 
   /**
    * Remove element
-   * @param {ccui.RichElement} element
+   * @param {RichElement} element
    */
   removeElement(element: any): void {
     if (isNumber(element)) this._richElements.splice(element, 1)
@@ -255,9 +258,9 @@ export class RichText extends ccui.Widget {
     if (this._formatTextDirty) {
       this._elementRenderersContainer!.removeAllChildren()
       this._elementRenders.length = 0
-      let i,
-        element,
-        locRichElements = this._richElements
+      let i
+      let element
+      const locRichElements = this._richElements
       if (this._ignoreSize) {
         this._addNewLine()
         for (i = 0; i < locRichElements.length; i++) {
@@ -351,7 +354,7 @@ export class RichText extends ccui.Widget {
       }
 
       if (validLeftLength) {
-        let leftRenderer = null
+        let leftRenderer
         if (fontNameOrFontDef instanceof FontDefinition) {
           leftRenderer = new LabelTTF(leftWords.substr(0, leftLength), fontNameOrFontDef)
           leftRenderer.setOpacity(fontNameOrFontDef.fillStyle.a) //TODO: Verify that might not be needed...
@@ -400,8 +403,8 @@ export class RichText extends ccui.Widget {
    * Formats richText's renderer.
    */
   formatRenderers(): void {
-    let newContentSizeHeight = 0,
-      locRenderersContainer = this._elementRenderersContainer!
+    let newContentSizeHeight = 0
+    const locRenderersContainer = this._elementRenderersContainer!
     const locElementRenders = this._elementRenders
     let i, j, row, nextPosX, l
     let lineHeight, offsetX
@@ -501,7 +504,7 @@ export class RichText extends ccui.Widget {
     this._elementRenders[this._elementRenders.length - 1].push(renderer)
   }
 
-  private _adaptRenderers(): void {
+  _adaptRenderers(): void {
     this.formatText()
   }
 
@@ -555,7 +558,7 @@ export class RichText extends ccui.Widget {
   }
 
   /**
-   * Gets the content size of ccui.RichText
+   * Gets the content size of RichText
    * @override
    * @return {Size}
    */
@@ -582,7 +585,7 @@ export class RichText extends ccui.Widget {
   }
 
   /**
-   * Returns the class name of ccui.RichText.
+   * Returns the class name of RichText.
    * @returns {string}
    */
   getDescription(): string {
@@ -590,7 +593,7 @@ export class RichText extends ccui.Widget {
   }
 
   /**
-   * Allow child renderer to be affected by ccui.RichText's opacity
+   * Allow child renderer to be affected by RichText's opacity
    * @param {boolean} value
    */
   setCascadeOpacityEnabled(value: boolean): void {
@@ -615,7 +618,7 @@ export class RichText extends ccui.Widget {
    * NOTE: we should rename this to setHorizontalAlignment directly
    *
    * @example
-   * var richText = new ccui.RichText();
+   * var richText = new RichText();
    * richText.setTextHorizontalAlignment(Text_ALIGNMENT_RIGHT);
    *
    * @param {Number} value - example TEXT_ALIGNMENT_RIGHT
@@ -632,7 +635,7 @@ export class RichText extends ccui.Widget {
    * although it is named TextVerticalAlignment, it should work with all type of renderer too.
    *
    * @example
-   * var richText = new ccui.RichText();
+   * var richText = new RichText();
    * richText.setTextVerticalAlignment(VERTICAL_TEXT_ALIGNMENT_CENTER);
    *
    * @param {Number} value - example VERTICAL_TEXT_ALIGNMENT_CENTER
@@ -643,34 +646,4 @@ export class RichText extends ccui.Widget {
       this.formatText()
     }
   }
-
-  /**
-   * create a rich text
-   * @deprecated since v3.0, please use new ccui.RichText() instead.
-   * @returns {RichText}
-   */
-  static create(): RichText {
-    return new RichText()
-  }
 }
-
-// Constants
-//Rich element type
-/**
- * The text type of rich element.
- * @constant
- * @type {number}
- */
-RichElement.TEXT = 0
-/**
- * The image type of rich element.
- * @constant
- * @type {number}
- */
-RichElement.IMAGE = 1
-/**
- * The custom type of rich element.
- * @constant
- * @type {number}
- */
-RichElement.CUSTOM = 2
