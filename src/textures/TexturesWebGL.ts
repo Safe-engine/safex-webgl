@@ -858,7 +858,7 @@ export class Texture2D extends EventHelper {
    * @param {Node} target
    * @deprecated since 3.1, please use addEventListener instead
    */
-  addLoadedEventListener(callback: any, target: any) {
+  addLoadedEventListener(callback: any, target?: any) {
     this.addEventListener('load', callback, target)
   }
 
