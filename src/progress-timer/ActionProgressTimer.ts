@@ -1,201 +1,189 @@
+import { ActionInterval } from '../actions/ActionInterval'
+import { log } from '../helper/Debugger'
+import { ProgressTimer } from './ProgressTimer'
 
 /**
- * Progress to percentage
+ * Creates a ProgressTo action with a duration and a percent
  * @class
- * @extends cc.ActionInterval
+ * @extends ActionInterval
  * @param {Number} duration duration in seconds
  * @param {Number} percent
  * @example
- * var to = new cc.ProgressTo(2, 100);
+ * // example
+ * var to = new ProgressTo(2, 100);
  */
-cc.ProgressTo = cc.ActionInterval.extend(/** @lends cc.ProgressTo# */{
-    _to:0,
-    _from:0,
+export class ProgressTo extends ActionInterval {
+  _to = 0
+  _from = 0
 
-	/**
-	 * Creates a ProgressTo action with a duration and a percent
-	 * Constructor of cc.ProgressTo
-     * @param {Number} duration duration in seconds
-     * @param {Number} percent
-	 */
-    ctor: function(duration, percent){
-        cc.ActionInterval.prototype.ctor.call(this);
-        this._to = 0;
-        this._from = 0;
+  /**
+   * Creates a ProgressTo action with a duration and a percent
+   * Constructor of ProgressTo
+   * @param {Number} duration duration in seconds
+   * @param {Number} percent
+   */
+  constructor(duration?: number, percent?: number) {
+    super()
+    this._to = 0
+    this._from = 0
 
-		percent !== undefined && this.initWithDuration(duration, percent);
-    },
+    percent !== undefined && this.initWithDuration(duration, percent)
+  }
 
-    /** Initializes with a duration and a percent
-     * @param {Number} duration duration in seconds
-     * @param {Number} percent
-     * @return {Boolean}
-     */
-    initWithDuration:function (duration, percent) {
-        if (cc.ActionInterval.prototype.initWithDuration.call(this, duration)) {
-            this._to = percent;
-            return true;
-        }
-        return false;
-    },
-    /**
-     * return a new cc.ProgressTo, all the configuration is the same as the original
-     * @returns {cc.ProgressTo}
-     */
-    clone:function(){
-        var action = new cc.ProgressTo();
-        action.initWithDuration(this._duration, this._to);
-        return action;
-    },
-    /**
-     * reverse hasn't been supported
-     * @returns {null}
-     */
-    reverse: function(){
-        cc.log("cc.ProgressTo.reverse(): reverse hasn't been supported.");
-        return null;
-    },
-
-    /**
-     * start with a target
-     * @param {cc.Node} target
-     */
-    startWithTarget:function (target) {
-        cc.ActionInterval.prototype.startWithTarget.call(this, target);
-        this._from = target.percentage;
-    },
-
-    /**
-     * custom update
-     * @param {Number} time time in seconds
-     */
-    update:function (time) {
-        if (this.target  instanceof cc.ProgressTimer)
-            this.target.percentage = this._from + (this._to - this._from) * time;
+  /** Initializes with a duration and a percent
+   * @param {Number} duration duration in seconds
+   * @param {Number} percent
+   * @return {Boolean}
+   */
+  initWithDuration(duration: number, percent: number): boolean {
+    if (super.initWithDuration(duration)) {
+      this._to = percent
+      return true
     }
-});
+    return false
+  }
+
+  /**
+   * return a new ProgressTo, all the configuration is the same as the original
+   * @returns {ProgressTo}
+   */
+  clone(): ProgressTo {
+    const action = new ProgressTo()
+    action.initWithDuration(this._duration, this._to)
+    return action
+  }
+
+  /**
+   * reverse hasn't been supported
+   * @returns {null}
+   */
+  reverse(): null {
+    log('ProgressTo.reverse(): reverse hasnt been supported.')
+    return null
+  }
+
+  /**
+   * start with a target
+   * @param {Node} target
+   */
+  startWithTarget(target: any): void {
+    super.startWithTarget(target)
+    this._from = target.percentage
+  }
+
+  /**
+   * custom update
+   * @param {Number} time time in seconds
+   */
+  update(time: number): void {
+    if (this.target instanceof ProgressTimer) this.target.percentage = this._from + (this._to - this._from) * time
+  }
+}
 
 /**
  * Creates and initializes with a duration and a percent
  * @function
  * @param {Number} duration duration in seconds
  * @param {Number} percent
- * @return {cc.ProgressTo}
+ * @return {ProgressTo}
  * @example
  * // example
- * var to = cc.progressTo(2, 100);
+ * var to = progressTo(2, 100);
  */
-cc.progressTo = function (duration, percent) {
-    return new cc.ProgressTo(duration, percent);
-};
-/**
- * Please use cc.progressTo instead
- * Creates and initializes with a duration and a percent
- * @static
- * @deprecated since v3.0,please use cc.progressTo instead.
- * @param {Number} duration duration in seconds
- * @param {Number} percent
- * @return {cc.ProgressTo}
- */
-cc.ProgressTo.create = cc.progressTo;
+export function progressTo(duration: number, percent: number): ProgressTo {
+  return new ProgressTo(duration, percent)
+}
+
+/** @deprecated since v3.0, please use progressTo instead */
+ProgressTo.create = progressTo
 
 /**
  * Progress from a percentage to another percentage
  * @class
- * @extends cc.ActionInterval
+ * @extends ActionInterval
  * @param {Number} duration duration in seconds
  * @param {Number} fromPercentage
  * @param {Number} toPercentage
  * @example
- *  var fromTo = new cc.ProgressFromTo(2, 100.0, 0.0);
+ *  var fromTo = new ProgressFromTo(2, 100.0, 0.0);
  */
-cc.ProgressFromTo = cc.ActionInterval.extend(/** @lends cc.ProgressFromTo# */{
-    _to:0,
-    _from:0,
+export class ProgressFromTo extends ActionInterval {
+  _to = 0
+  _from = 0
 
-	/**
-	 * Creates and initializes the action with a duration, a "from" percentage and a "to" percentage
-	 * Constructor of cc.ProgressFromTo
-     * @param {Number} duration duration in seconds
-     * @param {Number} fromPercentage
-     * @param {Number} toPercentage
-	 */
-    ctor:function(duration, fromPercentage, toPercentage){
-        cc.ActionInterval.prototype.ctor.call(this);
-        this._to = 0;
-        this._from = 0;
+  /**
+   * Creates and initializes the action with a duration, a "from" percentage and a "to" percentage
+   * Constructor of ProgressFromTo
+   * @param {Number} duration duration in seconds
+   * @param {Number} fromPercentage
+   * @param {Number} toPercentage
+   */
+  constructor(duration?: number, fromPercentage?: number, toPercentage?: number) {
+    super()
+    this._to = 0
+    this._from = 0
 
-		toPercentage !== undefined && this.initWithDuration(duration, fromPercentage, toPercentage);
-    },
+    toPercentage !== undefined && this.initWithDuration(duration, fromPercentage, toPercentage)
+  }
 
-    /** Initializes the action with a duration, a "from" percentage and a "to" percentage
-     * @param {Number} duration duration in seconds
-     * @param {Number} fromPercentage
-     * @param {Number} toPercentage
-     * @return {Boolean}
-     */
-    initWithDuration:function (duration, fromPercentage, toPercentage) {
-        if (cc.ActionInterval.prototype.initWithDuration.call(this, duration)) {
-            this._to = toPercentage;
-            this._from = fromPercentage;
-            return true;
-        }
-        return false;
-    },
-    /**
-     * return a new cc.ProgressTo, all the configuration is the same as the original
-     * @returns {cc.ProgressFromTo}
-     */
-    clone:function(){
-        var action = new cc.ProgressFromTo();
-        action.initWithDuration(this._duration, this._from, this._to);
-        return action;
-    },
-
-    /**
-     * @return {cc.ActionInterval}
-     */
-    reverse:function () {
-        return cc.progressFromTo(this._duration, this._to, this._from);
-    },
-
-    /**
-     * start with a target
-     * @param {cc.Node} target
-     */
-    startWithTarget:function (target) {
-        cc.ActionInterval.prototype.startWithTarget.call(this, target);
-    },
-
-    /**
-     * @param {Number} time time in seconds
-     */
-    update:function (time) {
-        if (this.target  instanceof cc.ProgressTimer)
-            this.target.percentage = this._from + (this._to - this._from) * time;
+  /** Initializes the action with a duration, a "from" percentage and a "to" percentage
+   * @param {Number} duration duration in seconds
+   * @param {Number} fromPercentage
+   * @param {Number} toPercentage
+   * @return {Boolean}
+   */
+  override initWithDuration(duration: number, fromPercentage?: number, toPercentage?: number): boolean {
+    if (super.initWithDuration(duration)) {
+      if (toPercentage !== undefined) this._to = toPercentage
+      if (fromPercentage !== undefined) this._from = fromPercentage
+      return true
     }
-});
+    return false
+  }
+
+  /**
+   * return a new ProgressFromTo, all the configuration is the same as the original
+   * @returns {ProgressFromTo}
+   */
+  override clone(): ProgressFromTo {
+    const action = new ProgressFromTo()
+    action.initWithDuration(this._duration, this._from, this._to)
+    return action
+  }
+
+  /**
+   * @return {ActionInterval}
+   */
+  reverse(): ProgressFromTo {
+    return progressFromTo(this._duration, this._to, this._from)
+  }
+
+  /**
+   * start with a target
+   * @param {Node} target
+   */
+  startWithTarget(target: any): void {
+    super.startWithTarget(target)
+  }
+
+  /**
+   * @param {Number} time time in seconds
+   */
+  update(time: number): void {
+    if (this.target instanceof ProgressTimer) this.target.percentage = this._from + (this._to - this._from) * time
+  }
+}
 
 /** Creates and initializes the action with a duration, a "from" percentage and a "to" percentage
  * @function
  * @param {Number} duration duration in seconds
  * @param {Number} fromPercentage
  * @param {Number} toPercentage
- * @return {cc.ProgressFromTo}
+ * @return {ProgressFromTo}
  * @example
  * // example
- *  var fromTo = cc.progressFromTo(2, 100.0, 0.0);
+ *  var fromTo = progressFromTo(2, 100.0, 0.0);
  */
-cc.progressFromTo = function (duration, fromPercentage, toPercentage) {
-    return new cc.ProgressFromTo(duration, fromPercentage, toPercentage);
-};
-/**
- * Creates and initializes the action with a duration, a "from" percentage and a "to" percentage
- * @static
- * @deprecated since v3.0,please use cc.ProgressFromTo(duration, fromPercentage, toPercentage) instead.
- * @param {Number} duration duration in seconds
- * @param {Number} fromPercentage
- * @param {Number} toPercentage
- * @return {cc.ProgressFromTo}
- */
-cc.ProgressFromTo.create = cc.progressFromTo;
+export function progressFromTo(duration: number, fromPercentage: number, toPercentage: number): ProgressFromTo {
+  return new ProgressFromTo(duration, fromPercentage, toPercentage)
+}
