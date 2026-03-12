@@ -1,6 +1,5 @@
 import { Size } from '../../core/cocoa/Geometry'
 import { LabelTTF } from '../../core/labelttf/LabelTTF'
-import { log } from '../../helper/Debugger'
 import { ProtectedNode } from '../base/ProtectedNode'
 import { Widget } from '../base/UIWidget'
 
@@ -11,7 +10,7 @@ export class Text extends Widget {
   _fontName = 'Arial'
   _fontSize = 16
   _onSelectedScaleOffset = 0.5
-  _labelRenderer: any = null
+  declare _labelRenderer: LabelTTF
   _textAreaSize: any = null
   _textVerticalAlignment = 0
   _textHorizontalAlignment = 0
@@ -33,20 +32,15 @@ export class Text extends Widget {
     }
   }
 
-  // legacy helper for codebases that relied on Widget.extend-style API
-  static create(textContent?: string, fontName?: string, fontSize?: number) {
-    return new Text(textContent, fontName, fontSize)
-  }
-
   _initRenderer() {
     this._labelRenderer = new LabelTTF()
     this.addProtectedChild(this._labelRenderer, Text.RENDERER_ZORDER, -1)
   }
 
-  setText(text: string) {
-    log('Please use the setString')
-    this.setString(text)
-  }
+  // setText(text: string) {
+  //   log('Please use the setString')
+  //   this.setString(text)
+  // }
 
   setString(text: string) {
     if (text === this._labelRenderer.getString()) return
@@ -59,10 +53,10 @@ export class Text extends Widget {
     this._labelRendererAdaptDirty = true
   }
 
-  getStringValue() {
-    log('Please use the getString')
-    return this._labelRenderer.getString()
-  }
+  // getStringValue() {
+  //   log('Please use the getString')
+  //   return this._labelRenderer.getString()
+  // }
 
   getString() {
     return this._labelRenderer.getString()
@@ -207,7 +201,7 @@ export class Text extends Widget {
     return this._labelRenderer.getContentSize()
   }
 
-  getVirtualRenderer() {
+  getVirtualRenderer(): any {
     return this._labelRenderer
   }
 

@@ -2,6 +2,7 @@ import { director, game, global, loader, sys, Vec2, view } from '../src'
 import { Color, LabelTTF, ResolutionPolicy, Scene, Sprite, spriteFrameCache } from '../src/core'
 import { MotionStreak } from '../src/motion-streak'
 import { ProgressTimer } from '../src/progress-timer'
+import { Text } from '../src/ui'
 
 class BootScene extends Scene {
   // constructor() {
@@ -37,6 +38,9 @@ class BootScene extends Scene {
       const label = new LabelTTF('Hello World', 'Arial', 24)
       label.setPosition(300, 200)
       this.addChild(label)
+      const text = new Text('Hello Têxt', 'Arial', 24)
+      text.setPosition(400, 200)
+      this.addChild(text)
       const motionStreak = new MotionStreak(1, 32, 13, Color.GREEN, 'button.png')
       motionStreak.setPosition(300, 400)
       this.addChild(motionStreak)

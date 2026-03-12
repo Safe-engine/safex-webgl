@@ -4,11 +4,12 @@ import { assert, log } from '../../helper/Debugger'
 import { ProtectedNodeWebGLRenderCmd } from './ProtectedNodeWebGLRenderCmd'
 
 export class ProtectedNode extends Node {
-  static setContentSize(_customSize: any) {
-    throw new Error('Method not implemented.')
-  }
+  // static setContentSize(_customSize: any) {
+  //   throw new Error('Method not implemented.')
+  // }
   _protectedChildren: any
   _reorderProtectedChildDirty: boolean
+  declare _renderCmd: ProtectedNodeWebGLRenderCmd
 
   constructor() {
     super()

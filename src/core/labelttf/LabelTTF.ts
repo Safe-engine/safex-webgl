@@ -288,7 +288,7 @@ export class LabelTTF extends Sprite {
    *   new:
    *     labelttf.enableShadow(shadowColor, offset, blurRadius);
    */
-  enableShadow(a, b, c, d) {
+  enableShadow(a, b, c, d?) {
     if (a.r != null && a.g != null && a.b != null && a.a != null) {
       this._enableShadow(a, b, c)
     } else {
@@ -582,7 +582,7 @@ export class LabelTTF extends Sprite {
    * @param {Number} scale or scaleX value
    * @param {Number} [scaleY=]
    */
-  setScale(scale, scaleY) {
+  setScale(scale, scaleY?) {
     const ratio = view.getDevicePixelRatio()
     this._scaleX = scale / ratio
     this._scaleY = (scaleY || scaleY === 0 ? scaleY : scale) / ratio
@@ -689,7 +689,7 @@ export class LabelTTF extends Sprite {
    * @param {Size|Number} dim dimensions or width of dimensions
    * @param {Number} [height] height of dimensions
    */
-  setDimensions(dim, height) {
+  setDimensions(dim, height?) {
     let width
     if (height === undefined) {
       width = dim.width
