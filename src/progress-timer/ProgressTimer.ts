@@ -1,7 +1,7 @@
 import { game } from '..'
-import { clampf, pClamp } from '../core'
+import { clampf, pClamp, Sprite } from '../core'
 import { Node } from '../core/base-nodes/Node'
-import { p } from '../core/cocoa/Geometry'
+import { p, Point } from '../core/cocoa/Geometry'
 import { defineGetterSetter } from '../core/sprites/SpritesPropertyDefine'
 import { _renderType } from '../helper/engine'
 import { ProgressTimerWebGLRenderCmd } from './ProgressTimerWebGLRenderCmd'
@@ -14,17 +14,17 @@ export class ProgressTimer extends Node {
 
   _type: number
   _percentage = 0.0
-  _sprite: any = null
-  _midPoint: any = null
-  _barChangeRate: any = null
+  _sprite: Sprite = null
+  _midPoint: Point = null
+  _barChangeRate: Point = null
   _reverseDirection = false
   _className = 'ProgressTimer'
 
-  declare midPoint: any
-  declare barChangeRate: any
+  declare midPoint: Point
+  declare barChangeRate: Point
   declare type: number
   declare percentage: number
-  declare sprite: any
+  declare sprite: Sprite
   declare reverseDir: boolean
 
   /**
@@ -205,7 +205,7 @@ export class ProgressTimer extends Node {
    * set sprite for ProgressTimer
    * @param {Sprite} sprite
    */
-  setSprite(sprite: any) {
+  setSprite(sprite: Sprite) {
     if (this._sprite !== sprite) {
       this._sprite = sprite
       if (sprite) {
@@ -266,21 +266,9 @@ export class ProgressTimer extends Node {
 // Extended properties
 const _p = ProgressTimer.prototype
 
-/** @expose */
-_p.midPoint
 defineGetterSetter(_p, 'midPoint', _p.getMidpoint, _p.setMidpoint)
-/** @expose */
-_p.barChangeRate
 defineGetterSetter(_p, 'barChangeRate', _p.getBarChangeRate, _p.setBarChangeRate)
-/** @expose */
-_p.type
 defineGetterSetter(_p, 'type', _p.getType, _p.setType)
-/** @expose */
-_p.percentage
 defineGetterSetter(_p, 'percentage', _p.getPercentage, _p.setPercentage)
-/** @expose */
-_p.sprite
 defineGetterSetter(_p, 'sprite', _p.getSprite, _p.setSprite)
-/** @expose */
-_p.reverseDir
 defineGetterSetter(_p, 'reverseDir', _p.isReverseDirection, _p.setReverseDirection)

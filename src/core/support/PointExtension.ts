@@ -225,8 +225,8 @@ export const clampf = function (value, min_inclusive, max_inclusive) {
  * @param {Number} max_inclusive
  * @return {Point}
  */
-export const pClamp = function (p, min_inclusive, max_inclusive) {
-  return p(clampf(p.x, min_inclusive.x, max_inclusive.x), clampf(p.y, min_inclusive.y, max_inclusive.y))
+export const pClamp = function (pt, min_inclusive, max_inclusive) {
+  return p(clampf(pt.x, min_inclusive.x, max_inclusive.x), clampf(pt.y, min_inclusive.y, max_inclusive.y))
 }
 
 /**

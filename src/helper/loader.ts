@@ -1,5 +1,4 @@
-import { game } from '..'
-import { CONCURRENCY_HTTP_REQUEST_COUNT } from '../core/platform/Macro'
+import { CONCURRENCY_HTTP_REQUEST_COUNT, game } from '..'
 import { AsyncPool } from './AsyncPool'
 import { error, log } from './Debugger'
 import { _renderType } from './engine'
@@ -165,7 +164,7 @@ export const loader = (function () {
             const result = JSON.parse(txt)
             cb(null, result)
           } catch (e) {
-            throw new Error(`parse json [${url}] failed : ${e.message}`)
+            throw new Error(`parse json [${url}] failed : ${e.message}`, { cause: e })
           }
         }
       })
@@ -353,22 +352,28 @@ export const loader = (function () {
      * @return {AsyncPool}
      */
     load(resources, option, loadCallback?) {
-      if (!Array.isArray(resources)) resources = [resources]
-
-      if (typeof option === 'function') {
+      const argsLen = arguments.length
+      if (!argsLen) throw new Error('arguments error!')
+      if (argsLen === 3 && typeof option === 'function') {
+        option = typeof loadCallback === 'function' ? { trigger: option, cb: loadCallback } : { cb: option, cbTarget: loadCallback }
+      } else if (argsLen === 2 && typeof option === 'function') {
         option = { cb: option }
+      } else if (argsLen === 1) {
+        option = {}
       }
-
+      resources = Array.isArray(resources) ? resources : [resources]
       const asyncPool = new AsyncPool(
         resources,
         CONCURRENCY_HTTP_REQUEST_COUNT,
         (value, index, done, pool) => {
-          this._loadResIterator(value, index, (err, result) => {
-            option.trigger?.call(option.triggerTarget, result, pool.size, pool.finishedSize)
-            done(err, result)
+          this._loadResIterator(value, index, (err, ...rest) => {
+            if (option.trigger) {
+              option.trigger.call(option.triggerTarget, rest[0], pool.size, pool.finishedSize)
+            }
+            done(err, rest[0])
           })
         },
-        option.cb ?? loadCallback,
+        option.cb,
         option.cbTarget,
       )
 
