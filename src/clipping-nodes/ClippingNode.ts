@@ -1,5 +1,5 @@
 import { Node } from '../core/base-nodes/Node'
-import { defineGetterSetter } from '../core/sprites/SpritesPropertyDefine'
+import { defineGetterSetter } from '../helper/getset'
 import { ClippingNodeWebGLRenderCmd } from './ClippingNodeWebGLRenderCmd'
 
 /**

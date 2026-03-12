@@ -1,4 +1,4 @@
-import { defineGetterSetter } from '../../sprites/SpritesPropertyDefine'
+import { defineGetterSetter } from '../../../helper/getset'
 
 /**
  * @class Tex2F

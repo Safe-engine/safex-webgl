@@ -3,12 +3,12 @@ import { NodeRenderCmd } from './NodeRenderCmd'
 
 export class NodeWebGLRenderCmd extends NodeRenderCmd {
   _glProgramState: any = null
-  _rootCtor: typeof NodeWebGLRenderCmd
+  // declare _rootCtor: typeof NodeWebGLRenderCmd
 
   constructor(renderable: any) {
     super(renderable)
     this._glProgramState = null
-    this._rootCtor = NodeWebGLRenderCmd
+    // this._rootCtor = NodeWebGLRenderCmd
   }
 
   _updateColor(): void {}

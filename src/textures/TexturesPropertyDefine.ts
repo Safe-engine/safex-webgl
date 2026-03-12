@@ -1,4 +1,4 @@
-import { defineGetterSetter } from '../core/sprites/SpritesPropertyDefine'
+import { defineGetterSetter } from '../helper/getset'
 import { Texture2D } from './TexturesWebGL'
 
 export const PrototypeTexture2D = function () {

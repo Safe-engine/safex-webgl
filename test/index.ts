@@ -1,5 +1,6 @@
 import { director, game, global, loader, sys, view } from '../src'
 import { ResolutionPolicy, Scene, Sprite, spriteFrameCache } from '../src/core'
+import { ProgressTimer } from '../src/progress-timer'
 
 class BootScene extends Scene {
   // constructor() {
@@ -20,13 +21,15 @@ class BootScene extends Scene {
       const sprite2 = new Sprite('button_plus.png')
       const frame = spriteFrameCache.getSpriteFrame('ui/buttons/back')
       const sprite3 = new Sprite(frame)
-      console.log('sprite onEnter', sprite3.getTexture())
-      sprite.setPosition(view.getDesignResolutionSize().width / 2, view.getDesignResolutionSize().height / 2)
+      const timer = new ProgressTimer(sprite)
+      console.log('sprite onEnter', timer)
+      timer.setPercentage(50)
+      timer.setPosition(view.getDesignResolutionSize().width / 2, view.getDesignResolutionSize().height / 2)
       sprite2.setPosition(85, 26)
       sprite3.setPosition(100, 200)
-      this.addChild(sprite)
+      this.addChild(timer)
       this.addChild(sprite3)
-      sprite.addChild(sprite2)
+      timer.addChild(sprite2)
     })
   }
 

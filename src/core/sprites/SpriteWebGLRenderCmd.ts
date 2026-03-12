@@ -19,7 +19,7 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
 
   constructor(renderable: Sprite) {
     super(renderable)
-    new this._rootCtor(renderable)
+    // new this._rootCtor(renderable)
     this._needDraw = true
 
     this._vertices = [
@@ -217,12 +217,12 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
       if (blendFunc.src === ONE && blendFunc.dst === BLEND_DST) {
         blendFunc.src = SRC_ALPHA
       }
-      node.opacityModifyRGB = false
+      node.setOpacityModifyRGB(false)
     } else {
       if (blendFunc.src === SRC_ALPHA && blendFunc.dst === BLEND_DST) {
         blendFunc.src = ONE
       }
-      node.opacityModifyRGB = true
+      node.setOpacityModifyRGB(true)
     }
   }
 
@@ -298,8 +298,7 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
   }
 
   needDraw(): boolean {
-    const node = this._node,
-      locTexture = node._texture
+    const locTexture = this._node._texture
     return this._needDraw && locTexture
   }
 

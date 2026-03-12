@@ -17,6 +17,7 @@ import { Color, color } from '../platform/Color'
 import { arrayRemoveObject, REPEAT_FOREVER } from '../platform/Macro'
 import { Scheduler } from '../Scheduler'
 import { pAdd, pSub } from '../support/PointExtension'
+import { PrototypeCCNode } from './BaseNodesPropertyDefine'
 import { dirtyFlags } from './NodeRenderCmd'
 import { NodeWebGLRenderCmd } from './NodeWebGLRenderCmd'
 
@@ -30,36 +31,33 @@ export class Node extends EventHelper {
   findNextFocusedWidget(direction: any, arg1: this) {
     throw new Error('Method not implemented.')
   }
-  zIndex: number
-  width: number
-  height: number
-  _imageRenderer: any
-  // _doLayout: (target: any) => void
-  _doLayoutDirty: boolean
-  _isFocusPassing: boolean
+  declare zIndex: number
+  declare width: number
+  declare height: number
+  declare _imageRenderer: any
+  // declare _doLayout: (target: any) => void
+  declare _doLayoutDirty: boolean
+  declare _isFocusPassing: boolean
   _setReorderChildDirtyRecursively() {
     throw new Error('Method not implemented.')
   }
-  _rect: Rect
-  _unflippedOffsetPositionFromCenter: Point
+  declare _rect: Rect
+  declare _unflippedOffsetPositionFromCenter: Point
   setTextureRect(rt: Rect) {
     throw new Error('Method not implemented.')
   }
-  _batchNode: any
-  textureAtlas: any
-  _texture: any
-  _rectRotated: boolean
-  _flippedX: boolean
-  _flippedY: boolean
-  _blendFunc: any
-  opacityModifyRGB: boolean
-  _textureLoaded: any
-  _offsetPosition: any
-  _opacityModifyRGB: any
+  declare _batchNode: any
+  declare textureAtlas: any
+  declare _texture: any
+  declare _rectRotated: boolean
+  declare _flippedX: boolean
+  declare _flippedY: boolean
+  declare _blendFunc: any
+  declare opacityModifyRGB: boolean
+  declare _textureLoaded: any
+  declare _offsetPosition: any
+  declare _opacityModifyRGB: any
   // Static members
-  static create(): Node {
-    return new Node()
-  }
   static _stateCallbackType: any = { onEnter: 1, onExit: 2, cleanup: 3, onEnterTransitionDidFinish: 4, onExitTransitionDidStart: 5, max: 6 }
   static _performStacks: any[] = [[]]
   static _performing = 0
@@ -108,7 +106,7 @@ export class Node extends EventHelper {
   _realColor: Color = null
   _cascadeColorEnabled = false
   _cascadeOpacityEnabled = false
-  _renderCmd: any = null
+  declare _renderCmd: any
 
   constructor() {
     super()
@@ -1157,6 +1155,7 @@ export class Node extends EventHelper {
   }
 }
 
+PrototypeCCNode()
 // Minimal runtime fallbacks used during migration
 // export const REPEAT_FOREVER = -1
 export const ACTION_TAG_INVALID = -1

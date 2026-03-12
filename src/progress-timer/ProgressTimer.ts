@@ -1,9 +1,7 @@
-import { game } from '..'
-import { clampf, pClamp, Sprite } from '../core'
+import { clampf, Color, pClamp, Sprite } from '../core'
 import { Node } from '../core/base-nodes/Node'
 import { p, Point } from '../core/cocoa/Geometry'
-import { defineGetterSetter } from '../core/sprites/SpritesPropertyDefine'
-import { _renderType } from '../helper/engine'
+import { defineGetterSetter } from '../helper/getset'
 import { ProgressTimerWebGLRenderCmd } from './ProgressTimerWebGLRenderCmd'
 
 export class ProgressTimer extends Node {
@@ -26,12 +24,13 @@ export class ProgressTimer extends Node {
   declare percentage: number
   declare sprite: Sprite
   declare reverseDir: boolean
+  declare _renderCmd: ProgressTimerWebGLRenderCmd
 
   /**
    * constructor of ProgressTimer
    * @param {Sprite} sprite
    */
-  constructor(sprite?: any) {
+  constructor(sprite?: Sprite) {
     super()
     this._type = ProgressTimer.TYPE_RADIAL
     this._percentage = 0.0
@@ -45,16 +44,12 @@ export class ProgressTimer extends Node {
 
   onEnter() {
     super.onEnter()
-    if (_renderType === game.RENDER_TYPE_WEBGL) {
-      this._renderCmd.initCmd()
-      this._renderCmd._updateProgress()
-    }
+    this._renderCmd.initCmd()
+    this._renderCmd._updateProgress()
   }
 
   cleanup() {
-    if (_renderType === game.RENDER_TYPE_WEBGL) {
-      this._renderCmd.releaseData()
-    }
+    this._renderCmd.releaseData()
     super.cleanup()
   }
 
@@ -160,8 +155,8 @@ export class ProgressTimer extends Node {
    * set color of sprite
    * @param {Color} color
    */
-  setColor(color: any) {
-    this._sprite.color = color
+  setColor(color: Color) {
+    this._sprite.setColor(color)
     this._renderCmd.setDirtyFlag(Node._dirtyFlags.colorDirty)
   }
 
@@ -170,7 +165,7 @@ export class ProgressTimer extends Node {
    * @param {Number} opacity
    */
   setOpacity(opacity: number) {
-    this._sprite.opacity = opacity
+    this._sprite.setOpacity(opacity)
     this._renderCmd.setDirtyFlag(Node._dirtyFlags.opacityDirty)
   }
 
@@ -179,7 +174,7 @@ export class ProgressTimer extends Node {
    * @return {Color}
    */
   getColor() {
-    return this._sprite.color
+    return this._sprite.getColor()
   }
 
   /**
@@ -187,7 +182,7 @@ export class ProgressTimer extends Node {
    * @return {Number}
    */
   getOpacity() {
-    return this._sprite.opacity
+    return this._sprite.getOpacity()
   }
 
   /**
@@ -245,7 +240,7 @@ export class ProgressTimer extends Node {
    * @param {Sprite} sprite
    * @return {Boolean}
    */
-  initWithSprite(sprite: any) {
+  initWithSprite(sprite: Sprite) {
     this.percentage = 0
     this.setAnchorPoint(0.5, 0.5)
 

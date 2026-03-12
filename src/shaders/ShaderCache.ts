@@ -310,7 +310,7 @@ export const shaderCache = /** @lends shaderCache# */ {
       this._programs[key] = program
     }
 
-    return this._programs[key]
+    return this._programs[key] as GLProgram
   },
 
   /**

@@ -9,6 +9,7 @@ import { SpriteFrame } from './SpriteFrame'
 import { spriteFrameCache } from './SpriteFrameCache'
 import { SpriteLoadManager } from './SpriteLoadManager'
 import { SpriteWebGLRenderCmd } from './SpriteWebGLRenderCmd'
+
 export class Sprite extends Node {
   dirty = false
   atlasIndex = 0
@@ -33,6 +34,7 @@ export class Sprite extends Node {
   _loader: SpriteLoadManager = null
   anchorX = 0.5
   anchorY = 0.5
+  declare _renderCmd: SpriteWebGLRenderCmd
 
   constructor(fileName?: any, rectArg?: any, rotated?: any) {
     super()
@@ -422,14 +424,5 @@ export class Sprite extends Node {
     return new SpriteWebGLRenderCmd(this)
   }
 
-  static create(fileName?: any, rect?: any, rotated?: any) {
-    return new Sprite(fileName, rect, rotated)
-  }
   static readonly INDEX_NOT_INITIALIZED = -1
-  static createWithSpriteFrameName = Sprite.create
-  static createWithSpriteFrame = Sprite.create
 }
-
-// EventHelper.prototype.apply(Sprite.prototype);
-// Object.assign(Sprite.prototype, EventHelper.prototype);
-// PrototypeSprite();

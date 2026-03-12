@@ -1,4 +1,4 @@
-import { defineGetterSetter } from '../sprites/SpritesPropertyDefine'
+import { defineGetterSetter } from '../../helper/getset'
 import { LabelTTF } from './LabelTTF'
 
 export const PrototypeLabelTTF = function () {

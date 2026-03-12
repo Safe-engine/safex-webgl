@@ -19,22 +19,22 @@ import { ProgressTimer } from './ProgressTimer'
 const MAX_VERTEX_COUNT = 8
 
 export class ProgressTimerWebGLRenderCmd extends NodeWebGLRenderCmd {
-  _progressDirty: boolean
-  _bl: Point
-  _tr: Point
-  _transformUpdating: boolean
-  _vertexData: any
-  _vertexWebGLBuffer: WebGLBuffer
-  _vertexArrayBuffer: ArrayBuffer
-  _float32View: Float32Array<any>
-  _vertexDataCount: number
-  _vertexDataDirty: boolean
-  _reverseDirection: any
+  declare _progressDirty: boolean
+  declare _bl: Point
+  declare _tr: Point
+  declare _transformUpdating: boolean
+  declare _vertexData: any
+  declare _vertexWebGLBuffer: WebGLBuffer
+  declare _vertexArrayBuffer: ArrayBuffer
+  declare _float32View: Float32Array<any>
+  declare _vertexDataCount: number
+  declare _vertexDataDirty: boolean
+  declare _reverseDirection: any
   declare _node: ProgressTimer
 
   constructor(renderableObject) {
     super(renderableObject)
-    new this._rootCtor(renderableObject)
+    // new this._rootCtor(renderableObject)
     this._needDraw = true
     this._progressDirty = true
 
@@ -42,7 +42,7 @@ export class ProgressTimerWebGLRenderCmd extends NodeWebGLRenderCmd {
     this._tr = p()
     this._transformUpdating = false
 
-    this.initCmd()
+    // this.initCmd()
   }
 
   transform(parentCmd, recursive?) {
@@ -368,7 +368,6 @@ export class ProgressTimerWebGLRenderCmd extends NodeWebGLRenderCmd {
   _updateRadial() {
     const node = this._node
     if (!node._sprite) return
-
     let i
     const locMidPoint = node._midPoint
     const alpha = node._percentage / 100
@@ -493,7 +492,7 @@ export class ProgressTimerWebGLRenderCmd extends NodeWebGLRenderCmd {
     const max = p(tr.u, tr.v)
 
     //  Fix bug #1303 so that progress timer handles sprite frame texture rotation
-    if (locSprite.textureRectRotated) {
+    if (locSprite.isTextureRectRotated()) {
       const temp = ax
       ax = ay
       ay = temp

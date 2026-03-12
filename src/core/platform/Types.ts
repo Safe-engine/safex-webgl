@@ -1,4 +1,4 @@
-import { defineGetterSetter } from '../sprites/SpritesPropertyDefine'
+import { defineGetterSetter } from '../../helper/getset'
 import { Tex2F } from './types/Tex2F'
 import { Vertex2F } from './types/Vertex2F'
 import { Vertex3F } from './types/Vertex3F'
