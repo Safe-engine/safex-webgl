@@ -23,9 +23,9 @@ class BootScene extends Scene {
       const frame = spriteFrameCache.getSpriteFrame('ui/buttons/back')
       const sprite3 = new Sprite(frame)
       const timer = new ProgressTimer(sprite)
-      timer.setPercentage(60)
+      timer.setPercentage(10)
       timer.setPosition(view.getDesignResolutionSize().width / 2, view.getDesignResolutionSize().height / 2)
-      sprite2.setPosition(85, 26)
+      sprite2.setPosition(85, 226)
       sprite3.setPosition(100, 200)
       this.addChild(timer)
       this.addChild(sprite3)
@@ -49,7 +49,7 @@ global._isContextMenuEnable = true
 game.run(
   {
     debugMode: 1,
-    showFPS: false,
+    showFPS: true,
     frameRate: 60,
     id: 'gameCanvas',
     renderMode: 2,

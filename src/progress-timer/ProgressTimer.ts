@@ -32,7 +32,7 @@ export class ProgressTimer extends Node {
    */
   constructor(sprite?: Sprite) {
     super()
-    this._type = ProgressTimer.TYPE_RADIAL
+    this._type = ProgressTimer.TYPE_BAR
     this._percentage = 0.0
     this._midPoint = p(0, 0)
     this._barChangeRate = p(0, 0)
@@ -242,9 +242,9 @@ export class ProgressTimer extends Node {
     this.percentage = 0
     this.setAnchorPoint(0.5, 0.5)
 
-    this._type = ProgressTimer.TYPE_RADIAL
+    // this._type = ProgressTimer.TYPE_RADIAL
     this._reverseDirection = false
-    this.midPoint = p(0.5, 0.5)
+    this.midPoint = p(0, 0.5)
     this.barChangeRate = p(1, 1)
     this.setSprite(sprite)
     this._renderCmd.resetVertexData()

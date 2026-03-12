@@ -19,8 +19,8 @@ import { animationCache } from './sprites/AnimationCache'
 import { spriteFrameCache } from './sprites/SpriteFrameCache'
 import { profiler } from './utils/Profiler'
 
-export class DirectorDelegate {
-  updateProjection(): void {}
+interface DirectorDelegate {
+  updateProjection(): void
 }
 
 export class Director {

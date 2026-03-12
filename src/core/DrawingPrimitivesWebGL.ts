@@ -5,10 +5,6 @@ import { shaderCache } from '../shaders/ShaderCache'
 import { Point } from './cocoa/Geometry'
 import { Color } from './platform/Color'
 import { SHADER_POSITION_UCOLOR, VERTEX_ATTRIB_POSITION, contentScaleFactor, incrementGLDraws } from './platform/Macro'
-
-// type Point = { x: number; y: number }
-// type Color = { r: number; g: number; b: number; a: number }
-
 export class DrawingPrimitiveWebGL {
   private _renderContext: WebGLRenderingContext
   private _initialized = false

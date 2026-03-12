@@ -99,7 +99,7 @@ export class Node extends EventHelper {
   _realColor: Color = null
   _cascadeColorEnabled = false
   _cascadeOpacityEnabled = false
-  declare _renderCmd: any
+  declare _renderCmd: NodeWebGLRenderCmd
 
   constructor() {
     super()
@@ -1047,21 +1047,21 @@ export class Node extends EventHelper {
   getDisplayedColor() {
     return this._renderCmd.getDisplayedColor()
   }
-  setColor(col: any) {
+  setColor(col: Color) {
     const locRealColor = this._realColor
     locRealColor.r = col.r
     locRealColor.g = col.g
     locRealColor.b = col.b
     this._renderCmd.setDirtyFlag(Node._dirtyFlags.colorDirty)
   }
-  updateDisplayedColor(parentColor: any) {
+  updateDisplayedColor(parentColor: Color) {
     this._renderCmd._updateDisplayColor(parentColor)
   }
 
   isCascadeColorEnabled() {
     return this._cascadeColorEnabled
   }
-  setCascadeColorEnabled(cascadeColorEnabled: any) {
+  setCascadeColorEnabled(cascadeColorEnabled: boolean) {
     if (this._cascadeColorEnabled === cascadeColorEnabled) return
     this._cascadeColorEnabled = cascadeColorEnabled
     this._renderCmd.setCascadeColorEnabledDirty()

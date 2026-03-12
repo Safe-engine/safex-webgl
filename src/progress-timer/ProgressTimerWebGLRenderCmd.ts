@@ -75,7 +75,7 @@ export class ProgressTimerWebGLRenderCmd extends NodeWebGLRenderCmd {
 
     const blendFunc = node._sprite._blendFunc
     glBlendFunc(blendFunc.src, blendFunc.dst)
-    glBindTexture2D(node._sprite.texture)
+    glBindTexture2D(node._sprite.getTexture())
     context.bindBuffer(context.ARRAY_BUFFER, this._vertexWebGLBuffer)
 
     context.enableVertexAttribArray(VERTEX_ATTRIB_POSITION)

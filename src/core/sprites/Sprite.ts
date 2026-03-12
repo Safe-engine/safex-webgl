@@ -8,6 +8,7 @@ import { animationCache } from './AnimationCache'
 import { SpriteFrame } from './SpriteFrame'
 import { spriteFrameCache } from './SpriteFrameCache'
 import { SpriteLoadManager } from './SpriteLoadManager'
+import { PrototypeSprite } from './SpritesPropertyDefine'
 import { SpriteWebGLRenderCmd } from './SpriteWebGLRenderCmd'
 
 export class Sprite extends Node {
@@ -20,7 +21,7 @@ export class Sprite extends Node {
   _shouldBeHidden = false
   declare _transformToBatch: any
   declare _texture: Texture2D
-  declare texture: Texture2D
+  // declare texture: Texture2D
   declare _rect: Rect
   _rectRotated = false
   declare _offsetPosition: any
@@ -234,7 +235,7 @@ export class Sprite extends Node {
     this.dirty = this._recursiveDirty = false
     this._blendFunc.src = BLEND_SRC
     this._blendFunc.dst = BLEND_DST
-    this.texture = null
+    // this.texture = null
     this._flippedX = this._flippedY = false
     this.anchorX = 0.5
     this.anchorY = 0.5
@@ -427,3 +428,5 @@ export class Sprite extends Node {
 
   static readonly INDEX_NOT_INITIALIZED = -1
 }
+
+PrototypeSprite()
