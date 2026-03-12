@@ -28,9 +28,7 @@ export function s_globalOrderOfArrivalPP() {
 }
 
 export class Node extends EventHelper {
-  findNextFocusedWidget(direction: any, arg1: this) {
-    throw new Error('Method not implemented.')
-  }
+  // declare findNextFocusedWidget: (direction: any, arg1: this) => void
   declare zIndex: number
   declare width: number
   declare height: number
@@ -38,14 +36,8 @@ export class Node extends EventHelper {
   // declare _doLayout: (target: any) => void
   declare _doLayoutDirty: boolean
   declare _isFocusPassing: boolean
-  _setReorderChildDirtyRecursively() {
-    throw new Error('Method not implemented.')
-  }
   declare _rect: Rect
   declare _unflippedOffsetPositionFromCenter: Point
-  setTextureRect(rt: Rect) {
-    throw new Error('Method not implemented.')
-  }
   declare _batchNode: any
   declare textureAtlas: any
   declare _texture: any
@@ -89,15 +81,16 @@ export class Node extends EventHelper {
   _parent: Node = null
   _ignoreAnchorPointForPosition = false
   tag = NODE_TAG_INVALID
-  userData: any = null
-  userObject: any = null
+  declare userData: any
+  declare userObject: any
+  declare grid
   _reorderChildDirty = false
   arrivalOrder = 0
-  _actionManager: ActionManager = null
-  _scheduler: Scheduler = null
+  declare _actionManager: ActionManager
+  declare _scheduler: Scheduler
   _additionalTransformDirty = false
-  _additionalTransform: any = null
-  _componentContainer: any = null
+  declare _additionalTransform: any
+  declare _componentContainer: any
   _isTransitionFinished = false
   _className = 'Node'
   _showNode = false
@@ -914,8 +907,6 @@ export class Node extends EventHelper {
   removeAllComponents() {
     if (this._componentContainer) this._componentContainer.removeAll()
   }
-
-  grid: any = null
 
   visit(parent?: any) {
     const cmd = this._renderCmd,

@@ -222,7 +222,7 @@ export class Layout extends Widget {
    */
   findNextFocusedWidget(direction, current) {
     if (this._isFocusPassing || this.isFocused()) {
-      const parent = this.getParent()
+      const parent: any = this.getParent()
       this._isFocusPassing = false
       if (this.__passFocusToChild) {
         const w = this._passFocusToChild(direction, current)

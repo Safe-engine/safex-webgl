@@ -9,10 +9,6 @@ import { _pointPixelsToPointsOut, _sizePixelsToPointsOut, rectPixelsToPoints, re
 
 /**
  * <p>
-// @ts-nocheck
-import { rect } from "../cocoa/Geometry";
-import { EventHelper } from "../event-manager/EventHelper";
-
 /**
  * SpriteFrame represents a frame (rect within a texture).
  * This file preserves legacy static helpers (create, createWithTexture)

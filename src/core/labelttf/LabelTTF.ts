@@ -84,7 +84,7 @@ export class LabelTTF extends Sprite {
   _strokeSize = 0
 
   // font tint
-  _textFillColor = null
+  declare _textFillColor
 
   _strokeShadowOffsetX = 0
   _strokeShadowOffsetY = 0
@@ -97,6 +97,7 @@ export class LabelTTF extends Sprite {
   _fontStyle = 'normal'
   _fontWeight = 'normal'
   _lineHeight: any = 'normal'
+  declare _renderCmd: any
 
   /**
    * Initializes the LabelTTF with a font name, alignment, dimension and font size, do not call it by yourself,

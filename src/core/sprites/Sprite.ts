@@ -11,20 +11,20 @@ import { SpriteLoadManager } from './SpriteLoadManager'
 import { SpriteWebGLRenderCmd } from './SpriteWebGLRenderCmd'
 
 export class Sprite extends Node {
-  dirty = false
-  atlasIndex = 0
-  textureAtlas: any = null
-  _batchNode: any = null
-  _recursiveDirty: any = null
-  _hasChildren: any = null
+  declare dirty
+  declare atlasIndex
+  declare textureAtlas: any
+  declare _batchNode: any
+  declare _recursiveDirty: any
+  declare _hasChildren: any
   _shouldBeHidden = false
-  _transformToBatch: any = null
-  _texture: Texture2D = null
-  texture: Texture2D
-  _rect: Rect = null
+  declare _transformToBatch: any
+  declare _texture: Texture2D
+  declare texture: Texture2D
+  declare _rect: Rect
   _rectRotated = false
-  _offsetPosition: any = null
-  _unflippedOffsetPositionFromCenter: any = null
+  declare _offsetPosition: any
+  declare _unflippedOffsetPositionFromCenter: any
   _opacityModifyRGB = false
   _flippedX = false
   _flippedY = false
@@ -34,6 +34,7 @@ export class Sprite extends Node {
   _loader: SpriteLoadManager = null
   anchorX = 0.5
   anchorY = 0.5
+  declare _setReorderChildDirtyRecursively: () => void
   declare _renderCmd: SpriteWebGLRenderCmd
 
   constructor(fileName?: any, rectArg?: any, rotated?: any) {
@@ -283,7 +284,7 @@ export class Sprite extends Node {
       return false
     }
     rotated = rotated || false
-    const textureIns = this._renderCmd._handleTextureForRotatedTexture(texture, rectArg, rotated, counterclockwise)
+    const textureIns = this._renderCmd._handleTextureForRotatedTexture(texture)
     if (!super.init()) return false
     this._batchNode = null
     this._recursiveDirty = false

@@ -76,9 +76,9 @@ class NodeRenderCmd {
 
   _transform: any = null
   _worldTransform: any = null
-  _inverse: any = null
+  declare _inverse: any
 
-  _updateCurrentRegions?: () => void
+  declare _updateCurrentRegions?: () => void
   // _notifyRegionStatus?: (status: any) => void
   _cacheDirty?: boolean
 

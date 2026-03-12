@@ -2,7 +2,7 @@ import { GLProgramState } from '../../shaders/GLProgramState'
 import { NodeRenderCmd } from './NodeRenderCmd'
 
 export class NodeWebGLRenderCmd extends NodeRenderCmd {
-  _glProgramState: any = null
+  declare _glProgramState: any
   // declare _rootCtor: typeof NodeWebGLRenderCmd
 
   constructor(renderable: any) {

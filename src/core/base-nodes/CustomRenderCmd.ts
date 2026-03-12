@@ -1,7 +1,7 @@
 export class CustomRenderCmd {
   _needDraw = true
   _target: any
-  _callback: (ctx: any, scaleX: number, scaleY: number) => void
+  declare _callback: (ctx: any, scaleX: number, scaleY: number) => void
 
   constructor(target: any, func: (ctx: any, scaleX: number, scaleY: number) => void) {
     this._target = target

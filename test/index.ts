@@ -1,5 +1,6 @@
 import { director, game, global, loader, sys, view } from '../src'
-import { ResolutionPolicy, Scene, Sprite, spriteFrameCache } from '../src/core'
+import { Color, ResolutionPolicy, Scene, Sprite, spriteFrameCache } from '../src/core'
+import { MotionStreak } from '../src/motion-streak'
 import { ProgressTimer } from '../src/progress-timer'
 
 class BootScene extends Scene {
@@ -22,14 +23,20 @@ class BootScene extends Scene {
       const frame = spriteFrameCache.getSpriteFrame('ui/buttons/back')
       const sprite3 = new Sprite(frame)
       const timer = new ProgressTimer(sprite)
-      console.log('sprite onEnter', timer)
-      timer.setPercentage(50)
+      timer.setPercentage(60)
       timer.setPosition(view.getDesignResolutionSize().width / 2, view.getDesignResolutionSize().height / 2)
       sprite2.setPosition(85, 26)
       sprite3.setPosition(100, 200)
       this.addChild(timer)
       this.addChild(sprite3)
       timer.addChild(sprite2)
+      console.log('sprite onEnter', timer)
+      // const label = new LabelTTF('Hello World', 'Arial', 24)
+      // label.setPosition(300, 200)
+      // this.addChild(label)
+      const motionStreak = new MotionStreak(1, 32, 13, Color.GREEN, 'button.png')
+      motionStreak.setPosition(300, 400)
+      this.addChild(motionStreak)
     })
   }
 

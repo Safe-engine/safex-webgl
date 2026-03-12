@@ -8,14 +8,15 @@ import { BLEND_DST, ONE, rectPointsToPixels, SHADER_SPRITE_POSITION_TEXTURECOLOR
 import { Sprite } from './Sprite'
 
 export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
-  _vertices: any[]
-  _color: Uint32Array
-  _dirty: boolean
-  _recursiveDirty: boolean
-  _spriteCmdCtor: any
-  _textureLoaded: any
-  _rect: Rect
-  texture: any
+  declare _vertices: any[]
+  declare _color: Uint32Array
+  declare _dirty: boolean
+  declare _recursiveDirty: boolean
+  // declare _spriteCmdCtor: any
+  declare _textureLoaded: any
+  declare _rect: Rect
+  declare texture: any
+  declare _node: Sprite
 
   constructor(renderable: Sprite) {
     super(renderable)
@@ -33,10 +34,10 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
     this._recursiveDirty = false
 
     this._shaderProgram = shaderCache.programForKey(SHADER_SPRITE_POSITION_TEXTURECOLOR)
-    this._spriteCmdCtor = SpriteWebGLRenderCmd
+    // this._spriteCmdCtor = SpriteWebGLRenderCmd
   }
 
-  updateBlendFunc(blendFunc: any): void {}
+  declare updateBlendFunc: (blendFunc: any) => void
 
   setDirtyFlag(dirtyFlag: any): void {
     super.setDirtyFlag(dirtyFlag)
@@ -299,7 +300,7 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
 
   needDraw(): boolean {
     const locTexture = this._node._texture
-    return this._needDraw && locTexture
+    return this._needDraw && !!locTexture
   }
 
   uploadData(f32buffer: any, ui32buffer: any, vertexDataOffset: number): number {

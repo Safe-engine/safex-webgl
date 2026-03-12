@@ -10,11 +10,11 @@ export class ProgressTimer extends Node {
   static TYPE_RADIAL = 0
   static TYPE_BAR = 1
 
-  _type: number
+  declare _type: number
   _percentage = 0.0
-  _sprite: Sprite = null
-  _midPoint: Point = null
-  _barChangeRate: Point = null
+  declare _sprite: Sprite
+  declare _midPoint: Point
+  declare _barChangeRate: Point
   _reverseDirection = false
   _className = 'ProgressTimer'
 
@@ -37,9 +37,7 @@ export class ProgressTimer extends Node {
     this._midPoint = p(0, 0)
     this._barChangeRate = p(0, 0)
     this._reverseDirection = false
-    this._sprite = null
-
-    sprite && this.initWithSprite(sprite)
+    this.initWithSprite(sprite)
   }
 
   onEnter() {
@@ -72,7 +70,7 @@ export class ProgressTimer extends Node {
    * Midpoint setter
    * @param {Point} mpoint
    */
-  setMidpoint(mpoint: any) {
+  setMidpoint(mpoint: Point) {
     this._midPoint = pClamp(mpoint, p(0, 0), p(1, 1))
   }
 
@@ -90,7 +88,7 @@ export class ProgressTimer extends Node {
   /**
    * @param {Point} barChangeRate
    */
-  setBarChangeRate(barChangeRate: any) {
+  setBarChangeRate(barChangeRate: Point) {
     this._barChangeRate = pClamp(barChangeRate, p(0, 0), p(1, 1))
   }
 
