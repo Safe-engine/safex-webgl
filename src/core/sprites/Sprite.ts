@@ -12,6 +12,12 @@ import { PrototypeSprite } from './SpritesPropertyDefine'
 import { SpriteWebGLRenderCmd } from './SpriteWebGLRenderCmd'
 
 export class Sprite extends Node {
+  getLineHeight() {
+    throw new Error('Method not implemented.')
+  }
+  _getFontStyle() {
+    throw new Error('Method not implemented.')
+  }
   declare dirty
   declare atlasIndex
   declare textureAtlas: any
@@ -37,6 +43,23 @@ export class Sprite extends Node {
   anchorY = 0.5
   declare _setReorderChildDirtyRecursively: () => void
   declare _renderCmd: SpriteWebGLRenderCmd
+  _needUpdateTexture: boolean
+  _string: any
+  _shadowColor: any
+  _strokeColor: any
+  declare _textFillColor: any
+  _shadowOpacity: any
+  _dimensions: any
+  _strokeEnabled: any
+  _strokeSize: number
+  _shadowEnabled: any
+  _shadowOffset: any
+  _fontSize: number
+  _strokeShadowOffsetX: number
+  _strokeShadowOffsetY: number
+  _vAlignment: any
+  _hAlignment: any
+  _shadowBlur: any
 
   constructor(fileName?: any, rectArg?: any, rotated?: any) {
     super()

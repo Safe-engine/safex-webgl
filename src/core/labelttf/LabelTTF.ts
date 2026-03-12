@@ -3,7 +3,7 @@ import { renderer, view } from '../..'
 import { _LogInfos, log } from '../../helper/Debugger'
 import { Node } from '../base-nodes/Node'
 import { p, Size } from '../cocoa/Geometry'
-import { color, contentScaleFactor } from '../platform'
+import { Color, color, contentScaleFactor } from '../platform'
 import { FontDefinition } from '../platform/FontDefinition'
 import { TEXT_ALIGNMENT_CENTER, TEXT_ALIGNMENT_LEFT, VERTICAL_TEXT_ALIGNMENT_TOP } from '../platform/Types'
 import { Sprite } from '../sprites/Sprite'
@@ -84,7 +84,7 @@ export class LabelTTF extends Sprite {
   _strokeSize = 0
 
   // font tint
-  declare _textFillColor
+  declare _textFillColor: Color
 
   _strokeShadowOffsetX = 0
   _strokeShadowOffsetY = 0
@@ -97,7 +97,7 @@ export class LabelTTF extends Sprite {
   _fontStyle = 'normal'
   _fontWeight = 'normal'
   _lineHeight: any = 'normal'
-  declare _renderCmd: any
+  declare _renderCmd: LabelTTFWebGLRenderCmd
 
   /**
    * Initializes the LabelTTF with a font name, alignment, dimension and font size, do not call it by yourself,
@@ -168,19 +168,20 @@ export class LabelTTF extends Sprite {
     this._needUpdateTexture = false
 
     this._lineWidths = []
+    // console.log('LabelTTF constructor', this._textFillColor)
     this._renderCmd._setColorsString()
     this._textureLoaded = true
 
     if (fontName && fontName instanceof FontDefinition) {
       this.initWithStringAndTextDefinition(text, fontName)
     } else {
-      LabelTTF.prototype.initWithString.call(this, text, fontName, fontSize, dimensions, hAlignment, vAlignment)
+      this.initWithString(text, fontName, fontSize, dimensions, hAlignment, vAlignment)
     }
   }
 
-  init() {
-    return this.initWithString(' ', this._fontName, this._fontSize)
-  }
+  // init() {
+  //   return this.initWithString(' ', this._fontName, this._fontSize)
+  // }
 
   description() {
     return `<LabelTTF | FontName =${this._fontName} FontSize = ${this._fontSize.toFixed(1)}>`
@@ -467,9 +468,9 @@ export class LabelTTF extends Sprite {
   setFontFillColor(fillColor) {
     const locTextFillColor = this._textFillColor
     if (locTextFillColor.r !== fillColor.r || locTextFillColor.g !== fillColor.g || locTextFillColor.b !== fillColor.b) {
-      locTextFillColor.r = fillColor.r
-      locTextFillColor.g = fillColor.g
-      locTextFillColor.b = fillColor.b
+      this._textFillColor.r = fillColor.r
+      this._textFillColor.g = fillColor.g
+      this._textFillColor.b = fillColor.b
       this._renderCmd._setColorsString()
       this._needUpdateTexture = true
     }
@@ -788,7 +789,7 @@ export class LabelTTF extends Sprite {
     return this._contentSize.height / view.getDevicePixelRatio()
   }
 
-  setTextureRect(rect, rotated, untrimmedSize) {
+  setTextureRect(rect, rotated?, untrimmedSize?) {
     this._rectRotated = rotated || false
     this.setContentSize(untrimmedSize || rect)
 

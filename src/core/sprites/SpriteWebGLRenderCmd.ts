@@ -64,7 +64,7 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
         log(_LogInfos.Sprite_addChild)
         return false
       }
-      if (child.texture._webTextureObj !== node.textureAtlas.texture._webTextureObj) log(_LogInfos.Sprite_addChild_2)
+      if (child.getTexture()._webTextureObj !== node.textureAtlas.texture._webTextureObj) log(_LogInfos.Sprite_addChild_2)
 
       //put it in descendants array of batch node
       node._batchNode.appendChild(child)
@@ -267,7 +267,7 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
     }
   }
 
-  transform(parentCmd: any, recursive: any): void {
+  transform(parentCmd: any, recursive?: boolean): void {
     this.originTransform(parentCmd, recursive)
 
     const node = this._node,

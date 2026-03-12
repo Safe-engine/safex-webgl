@@ -1,5 +1,5 @@
-import { director, game, global, loader, sys, view } from '../src'
-import { Color, ResolutionPolicy, Scene, Sprite, spriteFrameCache } from '../src/core'
+import { director, game, global, loader, sys, Vec2, view } from '../src'
+import { Color, LabelTTF, ResolutionPolicy, Scene, Sprite, spriteFrameCache } from '../src/core'
 import { MotionStreak } from '../src/motion-streak'
 import { ProgressTimer } from '../src/progress-timer'
 
@@ -22,18 +22,21 @@ class BootScene extends Scene {
       const sprite2 = new Sprite('button_plus.png')
       const frame = spriteFrameCache.getSpriteFrame('ui/buttons/back')
       const sprite3 = new Sprite(frame)
-      const timer = new ProgressTimer(sprite)
-      timer.setPercentage(10)
-      timer.setPosition(view.getDesignResolutionSize().width / 2, view.getDesignResolutionSize().height / 2)
       sprite2.setPosition(85, 226)
       sprite3.setPosition(100, 200)
-      this.addChild(timer)
       this.addChild(sprite3)
+      const timer = new ProgressTimer(sprite)
+      this.addChild(timer)
+      timer.setPercentage(60)
+      timer.setPosition(view.getDesignResolutionSize().width / 2, view.getDesignResolutionSize().height / 2)
       timer.addChild(sprite2)
-      console.log('sprite onEnter', timer)
-      // const label = new LabelTTF('Hello World', 'Arial', 24)
-      // label.setPosition(300, 200)
-      // this.addChild(label)
+      // console.log('sprite onEnter', timer)
+      timer.setType(ProgressTimer.TYPE_BAR)
+      timer.setMidpoint(Vec2(0, 0))
+      timer.setBarChangeRate(Vec2(1, 0))
+      const label = new LabelTTF('Hello World', 'Arial', 24)
+      label.setPosition(300, 200)
+      this.addChild(label)
       const motionStreak = new MotionStreak(1, 32, 13, Color.GREEN, 'button.png')
       motionStreak.setPosition(300, 400)
       this.addChild(motionStreak)
@@ -66,10 +69,6 @@ game.run(
     view.setDesignResolutionSize(width, height, policy)
     // The game will be resized when browser size change
     view.resizeWithBrowserSize(true)
-    const scene = new Scene()
-    const sprite = new Sprite('button.png')
-    sprite.setPosition(100, 200)
-    scene.addChild(sprite)
     director.runScene(new BootScene())
   },
 )

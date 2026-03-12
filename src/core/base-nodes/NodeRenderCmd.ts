@@ -64,7 +64,7 @@ function transformChildTree(root) {
 class NodeRenderCmd {
   _node: Node
   _anchorPointInPoints: { x: number; y: number }
-  _displayedColor: any
+  declare _displayedColor: Color
 
   _needDraw = false
   _dirtyFlag = 1
