@@ -1,8 +1,9 @@
 import { director, game, global, loader, sys, Vec2, view } from '../src'
 import { Color, LabelTTF, Rect, ResolutionPolicy, Scene, Sprite, spriteFrameCache } from '../src/core'
+import { FontDefinition } from '../src/core/platform/FontDefinition'
 import { MotionStreak } from '../src/motion-streak'
 import { ProgressTimer } from '../src/progress-timer'
-import { Button, Scale9Sprite, Slider, Text } from '../src/ui'
+import { Button, RichElementText, RichText, Scale9Sprite, Slider, Text } from '../src/ui'
 
 class BootScene extends Scene {
   // constructor() {
@@ -45,6 +46,17 @@ class BootScene extends Scene {
       const text = new Text('From Têxt', 'Arial', 24)
       text.setPosition(500, 200)
       this.addChild(text)
+      const rt = new RichText()
+      const fontDefinition = new FontDefinition()
+      fontDefinition.strokeEnabled = true
+      fontDefinition.strokeStyle = Color.GREEN
+      fontDefinition.lineWidth = 3
+      fontDefinition.fontName = 'Arial'
+      fontDefinition.fontSize = 48
+      const rtet = new RichElementText(1, fontDefinition, 255, 'rick text')
+      rt.pushBackElement(rtet)
+      rt.setPosition(200, 300)
+      this.addChild(rt)
       const button = new Button('button.png')
       button.setPosition(400, 300)
       button.setTitleText('Click Me')

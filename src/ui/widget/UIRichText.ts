@@ -52,7 +52,7 @@ export class RichElementText extends RichElement {
   _fontName = ''
   _fontSize = 0
   /** @type FontDefinition */
-  _fontDefinition: FontDefinition | null = null
+  _fontDefinition: FontDefinition
 
   /**
    * Usage Example using FontDefinition:
@@ -75,23 +75,20 @@ export class RichElementText extends RichElement {
    * @param {Number} fontSize
    */
   constructor(tag?: number, colorOrFontDef?: any, opacity?: number, text?: string, fontName?: string, fontSize?: number) {
-    super(tag, colorOrFontDef, opacity)
     let color = colorOrFontDef
     if (colorOrFontDef && colorOrFontDef instanceof FontDefinition) {
       color = colorOrFontDef.fillStyle
       fontName = colorOrFontDef.fontName
       fontSize = colorOrFontDef.fontSize
-      this._fontDefinition = colorOrFontDef
-    } else {
-      super(tag, color, opacity)
     }
-    if (!this._fontDefinition) {
-      super(tag, color, opacity)
+    super(tag, color, opacity)
+    if (colorOrFontDef && colorOrFontDef instanceof FontDefinition) {
+      this._fontDefinition = colorOrFontDef
     }
     this._type = RichElement.TEXT
-    this._text = text || ''
-    this._fontName = fontName || ''
-    this._fontSize = fontSize || 0
+    this._text = text
+    this._fontName = fontName
+    this._fontSize = fontSize
   }
 }
 

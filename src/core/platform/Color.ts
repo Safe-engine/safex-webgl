@@ -59,7 +59,7 @@ export function color(r?: number | { r: number; g: number; b: number; a?: number
   if (r === undefined) return new Color(0, 0, 0, 255)
   if (typeof r === 'object') return new Color(r.r, r.g, r.b, r.a ?? 255)
   if (typeof r === 'string') return hexToColor(r as string)
-  return new Color(r , g , b , a ?? 255)
+  return new Color(r, g, b, a ?? 255)
 }
 
 export function colorEqual(color1: Color, color2: Color): boolean {
