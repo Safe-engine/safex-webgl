@@ -1,21 +1,21 @@
 import { scaleTo } from '../../actions/ActionScale'
 import { SpriteFrame, spriteFrameCache } from '../../core'
-import { rect, Size, sizeEqualToSize } from '../../core/cocoa/Geometry'
+import { Rect, rect, Size, sizeEqualToSize } from '../../core/cocoa/Geometry'
 import { LabelTTF } from '../../core/labelttf/LabelTTF'
 import { Color } from '../../core/platform'
 import { VERTICAL_TEXT_ALIGNMENT_CENTER } from '../../core/platform/Types'
 import { SpriteLoadManager } from '../../core/sprites/SpriteLoadManager'
 import { log } from '../../helper/Debugger'
 import { textureCache } from '../../textures'
-import { ProtectedNode } from '../base/ProtectedNode'
 import { Scale9Sprite } from '../base/UIScale9Sprite'
 import { Widget } from '../base/UIWidget'
+
 export class Button extends Widget {
-  _buttonScale9Renderer: any = null
-  _buttonNormalSpriteFrame: any = null
-  _buttonClickedSpriteFrame: any = null
-  _buttonDisableSpriteFrame: any = null
-  _titleRenderer: any = null
+  _buttonScale9Renderer: Scale9Sprite
+  _buttonNormalSpriteFrame: SpriteFrame
+  _buttonClickedSpriteFrame: SpriteFrame
+  _buttonDisableSpriteFrame: SpriteFrame
+  _titleRenderer: LabelTTF
 
   _normalFileName = ''
   _clickedFileName = ''
@@ -24,16 +24,16 @@ export class Button extends Widget {
   _prevIgnoreSize = true
   _scale9Enabled = false
 
-  _capInsetsNormal: any = null
+  declare _capInsetsNormal: Rect
 
   _normalTexType: number = Widget.LOCAL_TEXTURE
   _pressedTexType: number = Widget.LOCAL_TEXTURE
   _disabledTexType: number = Widget.LOCAL_TEXTURE
 
-  _normalTextureSize: any = null
+  declare _normalTextureSize: Size
 
   pressedActionEnabled = false
-  _titleColor: any = null
+  declare _titleColor: Color
 
   _zoomScale = 0.1
 
@@ -71,7 +71,7 @@ export class Button extends Widget {
     this._normalLoader = new SpriteLoadManager()
     this._clickedLoader = new SpriteLoadManager()
     this._disabledLoader = new SpriteLoadManager()
-
+    this._initRenderer()
     if (normalImage) {
       this.loadTextures(normalImage, selectedImage, disableImage, texType)
     }
@@ -89,9 +89,7 @@ export class Button extends Widget {
 
   _initRenderer() {
     this._buttonScale9Renderer = new Scale9Sprite()
-
     this._buttonScale9Renderer.setRenderingType(Scale9Sprite.RenderingType.SIMPLE)
-
     this.addProtectedChild(this._buttonScale9Renderer, Button.DISABLED_RENDERER_ZORDER, -1)
   }
 
@@ -99,7 +97,7 @@ export class Button extends Widget {
    * Sets if button is using scale9 renderer.
    * @param {Boolean} able true that using scale9 renderer, false otherwise.
    */
-  setScale9Enabled(able) {
+  setScale9Enabled(able: boolean) {
     if (this._scale9Enabled === able) return
 
     this._brightStyle = Widget.BRIGHT_STYLE_NONE
@@ -177,8 +175,8 @@ export class Button extends Widget {
     this.loadTextureDisabled(disabled, texType)
   }
 
-  _createSpriteFrameWithFile(file) {
-    let texture = textureCache.getTextureForKey(file)
+  _createSpriteFrameWithFile(file: string) {
+    let texture = textureCache.getTextureForKey(file) as any
     if (!texture) {
       texture = textureCache.addImage(file)
     }
@@ -206,14 +204,14 @@ export class Button extends Widget {
    * @param {String} normal normal state of texture's filename.
    * @param {Widget.LOCAL_TEXTURE|Widget.PLIST_TEXTURE} texType
    */
-  loadTextureNormal(normal, texType) {
+  loadTextureNormal(normal: string, texType: number) {
     if (!normal) return
 
     texType = texType || Widget.LOCAL_TEXTURE
     this._normalFileName = normal
     this._normalTexType = texType
 
-    let normalSpriteFrame
+    let normalSpriteFrame: SpriteFrame
     switch (this._normalTexType) {
       case Widget.LOCAL_TEXTURE:
         normalSpriteFrame = this._createSpriteFrameWithFile(normal)
@@ -236,7 +234,7 @@ export class Button extends Widget {
       this._normalLoader.clear()
       this._normalLoader.once(
         normalSpriteFrame,
-        function () {
+        () => {
           this.loadTextureNormal(this._normalFileName, this._normalTexType)
         },
         this,
@@ -282,7 +280,7 @@ export class Button extends Widget {
     this._clickedFileName = selected
     this._pressedTexType = texType
 
-    let clickedSpriteFrame
+    let clickedSpriteFrame: SpriteFrame
     switch (this._pressedTexType) {
       case Widget.LOCAL_TEXTURE:
         clickedSpriteFrame = this._createSpriteFrameWithFile(selected)
@@ -303,7 +301,7 @@ export class Button extends Widget {
       this._clickedLoader.clear()
       this._clickedLoader.once(
         clickedSpriteFrame,
-        function () {
+        () => {
           this.loadTexturePressed(this._clickedFileName, this._pressedTexType)
         },
         this,
@@ -350,7 +348,7 @@ export class Button extends Widget {
       this._disabledLoader.clear()
       this._disabledLoader.once(
         disabledSpriteframe,
-        function () {
+        () => {
           this.loadTextureDisabled(this._disabledFileName, this._disabledTexType)
         },
         this,
@@ -528,10 +526,10 @@ export class Button extends Widget {
 
   _updateContentSize() {
     if (this._unifySize) {
-      if (this._scale9Enabled) ProtectedNode.setContentSize(this._customSize)
+      if (this._scale9Enabled) this.setContentSize(this._customSize)
       else {
         const s = this._getNormalSize()
-        ProtectedNode.setContentSize(s)
+        this.setContentSize(s)
       }
       this._onSizeChanged()
       return
@@ -553,7 +551,7 @@ export class Button extends Widget {
    * @returns {Node}
    */
   getVirtualRenderer() {
-    return this._buttonScale9Renderer
+    return this._buttonScale9Renderer as any
   }
 
   _normalTextureScaleChangedWithSize() {
@@ -711,10 +709,10 @@ export class Button extends Widget {
   }
 
   _setTitleFont(font) {
-    this._titleRenderer.font = font
+    this._titleRenderer.setFontName(font)
   }
   _getTitleFont() {
-    return this._titleRenderer.font
+    return this._titleRenderer.getFontName()
   }
 
   /**

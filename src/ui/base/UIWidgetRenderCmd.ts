@@ -42,7 +42,7 @@ export class WidgetWebGLRenderCmd extends ProtectedNodeWebGLRenderCmd {
           node._position.y = parentSize.height * node._positionPercent.y
         }
       }
-      // this.pNodeTransform(parentCmd, recursive)
+      this.pNodeTransform(parentCmd, recursive)
     }
   }
 

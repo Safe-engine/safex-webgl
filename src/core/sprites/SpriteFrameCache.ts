@@ -342,7 +342,7 @@ export const spriteFrameCache = {
         if (!frame) delete this._spriteFramesAliases[name]
       }
     }
-    return frame
+    return frame as SpriteFrame
   },
 
   _clear: function () {

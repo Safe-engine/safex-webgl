@@ -123,14 +123,15 @@ export class ProtectedNodeWebGLRenderCmd extends NodeWebGLRenderCmd {
       }
     }
   }
+  declare pNodeTransform
 }
 
 export function inject(srcPrototype, destPrototype) {
   for (const key in srcPrototype) destPrototype[key] = srcPrototype[key]
 }
-// const proto = (ProtectedNodeWebGLRenderCmd.prototype = Object.create(NodeWebGLRenderCmd.prototype))
+const proto = ProtectedNodeWebGLRenderCmd.prototype
 // inject(ProtectedNodeRenderCmd, proto)
 // proto.constructor = ProtectedNodeWebGLRenderCmd
 // proto._pNodeCmdCtor = ProtectedNodeWebGLRenderCmd
 
-// proto.pNodeTransform = proto.transform
+proto.pNodeTransform = proto.transform

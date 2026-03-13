@@ -43,20 +43,20 @@ export class Widget extends ProtectedNode {
   _bright = true ///< is this widget bright
   _touchEnabled = false ///< is this widget touch endabled
 
-  _brightStyle = null ///< bright style
+  declare _brightStyle ///< bright style
 
-  _touchBeganPosition = null ///< touch began point
-  _touchMovePosition = null ///< touch moved point
-  _touchEndPosition = null ///< touch ended point
+  declare _touchBeganPosition ///< touch began point
+  declare _touchMovePosition ///< touch moved point
+  declare _touchEndPosition ///< touch ended point
 
-  _touchEventListener = null
-  _touchEventSelector = null
+  declare _touchEventListener
+  declare _touchEventSelector
 
   _name = 'default'
   _widgetType = null
   _actionTag = 0
   _customSize = null
-  _layoutParameterDictionary = null
+  declare _layoutParameterDictionary
   _layoutParameterType = 0
 
   _focused = false
@@ -78,14 +78,14 @@ export class Widget extends ProtectedNode {
   _opacity = 255
   _highlight = false
 
-  _touchEventCallback = null
-  _clickEventListener = null
+  declare _touchEventCallback
+  declare _clickEventListener
 
   _propagateTouchEvents = true
   _unifySize = false
 
-  _callbackName = null
-  _callbackType = null
+  declare _callbackName
+  declare _callbackType
   _inViewRect = true
   /**
    * <p>

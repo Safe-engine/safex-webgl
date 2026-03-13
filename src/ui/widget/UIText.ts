@@ -62,9 +62,9 @@ export class Text extends Widget {
     return this._labelRenderer.getString()
   }
 
-  getStringLength() {
-    return this._labelRenderer.getStringLength()
-  }
+  // getStringLength() {
+  //   return this._labelRenderer.getStringLength()
+  // }
 
   setFontSize(size: number) {
     this._setFontSize(size)
@@ -249,13 +249,13 @@ export class Text extends Widget {
     this._labelRenderer.enableStroke(outlineColor, outlineSize)
   }
 
-  enableGlow(glowColor: any) {
-    if (this._type === Text.Type.TTF) this._labelRenderer.enableGlow(glowColor)
-  }
+  // enableGlow(glowColor: any) {
+  //   if (this._type === Text.Type.TTF) this._labelRenderer.enableGlow(glowColor)
+  // }
 
-  disableEffect() {
-    if (this._labelRenderer.disableEffect) this._labelRenderer.disableEffect()
-  }
+  // disableEffect() {
+  //   if (this._labelRenderer.disableEffect) this._labelRenderer.disableEffect()
+  // }
 
   _createCloneInstance() {
     return new Text()
@@ -331,9 +331,9 @@ export class Text extends Widget {
     this.setString(v)
   }
 
-  get stringLength() {
-    return this.getStringLength()
-  }
+  // get stringLength() {
+  //   return this.getStringLength()
+  // }
 
   get font() {
     return this._getFont()

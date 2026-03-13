@@ -327,7 +327,7 @@ const scale9QuadGenerator = {
 
 export class Scale9Sprite extends Node {
   //resource data, could be async loaded.
-  _spriteFrame: any = null
+  _spriteFrame: SpriteFrame = null
   _scale9Image: any = null
 
   //scale 9 data
@@ -336,7 +336,7 @@ export class Scale9Sprite extends Node {
   _insetTop = 0
   _insetBottom = 0
   //blend function
-  _blendFunc: any = null
+  _blendFunc: BlendFunc = null
   //sliced or simple
   _renderingType = 1
   //bright or not
@@ -345,8 +345,8 @@ export class Scale9Sprite extends Node {
   //rendering quads shared by canvas and webgl
   _rawVerts: any = null
   _rawUvs: any = null
-  _vertices: Float32Array
-  _uvs: Float32Array
+  declare _vertices: Float32Array
+  declare _uvs: Float32Array
   _vertCount = 0
   _quadsDirty = true
   _uvsDirty = true
@@ -359,9 +359,10 @@ export class Scale9Sprite extends Node {
   _flippedY = false
   _className = 'Scale9Sprite'
 
-  _loader: any
-  _capInsetsInternal: any
-  _cacheCapInsets: any
+  _loader: SpriteLoadManager
+  _capInsetsInternal: Rect
+  _cacheCapInsets: Rect
+  declare _renderCmd: Scale9SpriteWebGLRenderCmd
 
   /**
    * Constructor function.

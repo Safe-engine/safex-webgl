@@ -84,7 +84,7 @@ export const textureCache = /** @lends textureCache# */ {
    * //example
    * const key = textureCache.getTextureForKey("hello.png");
    */
-  getTextureForKey: function (textureKeyName) {
+  getTextureForKey: function (textureKeyName): Texture2D | null {
     return this._textures[textureKeyName] || this._textures[loader._getAliase(textureKeyName)]
   },
 
