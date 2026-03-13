@@ -25,14 +25,14 @@ import { TEXT_ALIGNMENT_CENTER, VERTICAL_TEXT_ALIGNMENT_TOP } from './Types'
 export class FontDefinition {
   fontName = 'Arial'
   fontSize = 12
-  textAlign: any = TEXT_ALIGNMENT_CENTER
-  verticalAlign: any = VERTICAL_TEXT_ALIGNMENT_TOP
-  fillStyle: any = color(255, 255, 255, 255)
+  textAlign = TEXT_ALIGNMENT_CENTER
+  verticalAlign = VERTICAL_TEXT_ALIGNMENT_TOP
+  fillStyle = color(255, 255, 255, 255)
   boundingWidth = 0
   boundingHeight = 0
 
   strokeEnabled = false
-  strokeStyle: any = color(255, 255, 255, 255)
+  strokeStyle = color(255, 255, 255, 255)
   lineWidth = 1
   lineHeight = 'normal'
   fontStyle = 'normal'

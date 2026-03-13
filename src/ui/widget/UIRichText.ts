@@ -2,7 +2,7 @@ import { Sprite } from '../../core'
 import { Node } from '../../core/base-nodes/Node'
 import { p, Rect } from '../../core/cocoa/Geometry'
 import { LabelTTF } from '../../core/labelttf/LabelTTF'
-import { arrayRemoveObject } from '../../core/platform'
+import { arrayRemoveObject, color, Color } from '../../core/platform'
 import { FontDefinition } from '../../core/platform/FontDefinition'
 import {
   TEXT_ALIGNMENT_CENTER,
@@ -22,27 +22,23 @@ export class RichElement {
 
   _type = 0
   _tag = 0
-  _color: any = null
+  declare _color: Color
   _opacity = 0
 
   /**
    * Constructor of RichElement
    */
-  constructor(tag?: number, color?: any, opacity?: number) {
+  constructor(tag?: number, cl?: Color, opacity = 0) {
     this._type = 0
     this._tag = tag || 0
     this._color = color(255, 255, 255, 255)
-    if (color) {
-      this._color.r = color.r
-      this._color.g = color.g
-      this._color.b = color.b
+    if (cl) {
+      this._color.r = cl.r
+      this._color.g = cl.g
+      this._color.b = cl.b
     }
-    this._opacity = opacity || 0
-    if (opacity === undefined) {
-      this._color.a = color.a
-    } else {
-      this._color.a = opacity
-    }
+    this._opacity = opacity
+    this._color.a = opacity ?? cl.a
   }
 }
 
@@ -97,21 +93,6 @@ export class RichElementText extends RichElement {
     this._fontName = fontName || ''
     this._fontSize = fontSize || 0
   }
-
-  /**
-   * Create a richElementText
-   * @deprecated since v3.0, please use new RichElementText() instead.
-   * @param {Number} tag
-   * @param {Color} color
-   * @param {Number} opacity
-   * @param {String} text
-   * @param {String} fontName
-   * @param {Number} fontSize
-   * @returns {RichElementText}
-   */
-  static create(tag?: number, color?: any, opacity?: number, text?: string, fontName?: string, fontSize?: number): RichElementText {
-    return new RichElementText(tag, color, opacity, text, fontName, fontSize)
-  }
 }
 
 /**
@@ -121,7 +102,7 @@ export class RichElementText extends RichElement {
  */
 export class RichElementImage extends RichElement {
   _filePath = ''
-  _textureRect: any = null
+  declare _textureRect: Rect
   _textureType = 0
 
   /**
@@ -131,25 +112,12 @@ export class RichElementImage extends RichElement {
    * @param {Number} opacity
    * @param {String} filePath
    */
-  constructor(tag?: number, color?: any, opacity?: number, filePath?: string) {
+  constructor(tag?: number, color?: any, opacity?: number, filePath = '') {
     super(tag, color, opacity)
     this._type = RichElement.IMAGE
-    this._filePath = filePath || ''
+    this._filePath = filePath
     this._textureRect = Rect(0, 0, 0, 0)
     this._textureType = 0
-  }
-
-  /**
-   * Create a richElementImage
-   * @deprecated since v3.0, please use new RichElementImage() instead.
-   * @param {Number} tag
-   * @param {Color} color
-   * @param {Number} opacity
-   * @param {String} filePath
-   * @returns {RichElementImage}
-   */
-  static create(tag?: number, color?: any, opacity?: number, filePath?: string): RichElementImage {
-    return new RichElementImage(tag, color, opacity, filePath)
   }
 }
 
@@ -173,25 +141,12 @@ export class RichElementCustomNode extends RichElement {
     this._type = RichElement.CUSTOM
     this._customNode = customNode || null
   }
-
-  /**
-   * Create a richElementCustomNode
-   * @deprecated since v3.0, please use new RichElementCustomNode() instead.
-   * @param {Number} tag
-   * @param {Number} color
-   * @param {Number} opacity
-   * @param {Node} customNode
-   * @returns {RichElementCustomNode}
-   */
-  static create(tag?: number, color?: any, opacity?: number, customNode?: any): RichElementCustomNode {
-    return new RichElementCustomNode(tag, color, opacity, customNode)
-  }
 }
 
 export class RichText extends Widget {
   _formatTextDirty = false
-  _richElements: any[] = []
-  _elementRenders: any[] = []
+  _richElements: RichElement[] = []
+  _elementRenders: Node[][] = []
   _leftSpaceWidth = 0
   _verticalSpace = 0
   _elementRenderersContainer: Node | null = null
@@ -214,9 +169,10 @@ export class RichText extends Widget {
     this._verticalSpace = 0
     this._textHorizontalAlignment = TEXT_ALIGNMENT_LEFT
     this._textVerticalAlignment = VERTICAL_TEXT_ALIGNMENT_TOP
+    this._initRenderer()
   }
 
-  _initRenderer(): void {
+  _initRenderer() {
     this._elementRenderersContainer = new Node()
     this._elementRenderersContainer.setAnchorPoint(0.5, 0.5)
     this.addProtectedChild(this._elementRenderersContainer!, 0, -1)
@@ -227,7 +183,7 @@ export class RichText extends Widget {
    * @param {RichElement} element
    * @param {Number} index
    */
-  insertElement(element: any, index: number): void {
+  insertElement(element: any, index: number) {
     this._richElements.splice(index, 0, element)
     this._formatTextDirty = true
   }
@@ -236,7 +192,7 @@ export class RichText extends Widget {
    * Push a element
    * @param {RichElement} element
    */
-  pushBackElement(element: any): void {
+  pushBackElement(element: any) {
     this._richElements.push(element)
     this._formatTextDirty = true
   }
@@ -245,7 +201,7 @@ export class RichText extends Widget {
    * Remove element
    * @param {RichElement} element
    */
-  removeElement(element: any): void {
+  removeElement(element: any) {
     if (isNumber(element)) this._richElements.splice(element, 1)
     else arrayRemoveObject(this._richElements, element)
     this._formatTextDirty = true
@@ -254,7 +210,7 @@ export class RichText extends Widget {
   /**
    * Formats the richText's content.
    */
-  formatText(): void {
+  formatText() {
     if (this._formatTextDirty) {
       this._elementRenderersContainer!.removeAllChildren()
       this._elementRenders.length = 0
@@ -324,7 +280,7 @@ export class RichText extends Widget {
    * @param {Color} color
    * @private
    */
-  private _handleTextRenderer(text: string, fontNameOrFontDef: any, fontSize: number, color: any): void {
+  private _handleTextRenderer(text: string, fontNameOrFontDef: any, fontSize: number, color: any) {
     if (text === '') return
 
     if (text === '\n') {
@@ -379,12 +335,12 @@ export class RichText extends Widget {
     }
   }
 
-  private _handleImageRenderer(filePath: string, color: any, opacity: number): void {
+  private _handleImageRenderer(filePath: string, color: any, opacity: number) {
     const imageRenderer = new Sprite(filePath)
     this._handleCustomRenderer(imageRenderer)
   }
 
-  private _handleCustomRenderer(renderer: any): void {
+  private _handleCustomRenderer(renderer: any) {
     const imgSize = renderer.getContentSize()
     this._leftSpaceWidth -= imgSize.width
     if (this._leftSpaceWidth < 0) {
@@ -394,7 +350,7 @@ export class RichText extends Widget {
     } else this._pushToContainer(renderer)
   }
 
-  private _addNewLine(): void {
+  private _addNewLine() {
     this._leftSpaceWidth = this._customSize.width
     this._elementRenders.push([])
   }
@@ -402,7 +358,7 @@ export class RichText extends Widget {
   /**
    * Formats richText's renderer.
    */
-  formatRenderers(): void {
+  formatRenderers() {
     let newContentSizeHeight = 0
     const locRenderersContainer = this._elementRenderersContainer!
     const locElementRenders = this._elementRenders
@@ -499,12 +455,12 @@ export class RichText extends Widget {
     locRenderersContainer.setPosition(this._contentSize.width * 0.5, this._contentSize.height * 0.5)
   }
 
-  private _pushToContainer(renderer: any): void {
+  private _pushToContainer(renderer: any) {
     if (this._elementRenders.length <= 0) return
     this._elementRenders[this._elementRenders.length - 1].push(renderer)
   }
 
-  _adaptRenderers(): void {
+  _adaptRenderers() {
     this.formatText()
   }
 
@@ -512,7 +468,7 @@ export class RichText extends Widget {
    * Sets vertical space
    * @param {Number} space
    */
-  setVerticalSpace(space: number): void {
+  setVerticalSpace(space: number) {
     this._verticalSpace = space
   }
 
@@ -521,17 +477,17 @@ export class RichText extends Widget {
    * @override
    * @param {Point} pt
    */
-  setAnchorPoint(pt: any): void {
+  setAnchorPoint(pt: any) {
     super.setAnchorPoint(pt)
     this._elementRenderersContainer?.setAnchorPoint(pt)
   }
 
-  _setAnchorX(x: number): void {
+  _setAnchorX(x: number) {
     super._setAnchorX(x)
     this._elementRenderersContainer?._setAnchorX(x)
   }
 
-  _setAnchorY(y: number): void {
+  _setAnchorY(y: number) {
     super._setAnchorY(y)
     this._elementRenderersContainer?._setAnchorY(y)
   }
@@ -550,7 +506,7 @@ export class RichText extends Widget {
    * @param {Boolean} ignore
    * @override
    */
-  ignoreContentAdaptWithSize(ignore: boolean): void {
+  ignoreContentAdaptWithSize(ignore: boolean) {
     if (this._ignoreSize !== ignore) {
       this._formatTextDirty = true
       super.ignoreContentAdaptWithSize(ignore)
@@ -577,7 +533,7 @@ export class RichText extends Widget {
     return super._getHeight()
   }
 
-  setContentSize(contentSize: any, height?: number): void {
+  setContentSize(contentSize: any, height?: number) {
     const locWidth = height === undefined ? contentSize.width : contentSize
     const locHeight = height === undefined ? contentSize.height : height
     super.setContentSize(locWidth, locHeight)
@@ -596,7 +552,7 @@ export class RichText extends Widget {
    * Allow child renderer to be affected by RichText's opacity
    * @param {boolean} value
    */
-  setCascadeOpacityEnabled(value: boolean): void {
+  setCascadeOpacityEnabled(value: boolean) {
     super.setCascadeOpacityEnabled(value)
     this._elementRenderersContainer?.setCascadeOpacityEnabled(value)
   }
@@ -606,7 +562,7 @@ export class RichText extends Widget {
    * by default the property is false, which break the line on characters
    * @param value
    */
-  setLineBreakOnSpace(value: boolean): void {
+  setLineBreakOnSpace(value: boolean) {
     this._lineBreakOnSpace = value
     this._formatTextDirty = true
     this.formatText()
@@ -623,7 +579,7 @@ export class RichText extends Widget {
    *
    * @param {Number} value - example TEXT_ALIGNMENT_RIGHT
    */
-  setTextHorizontalAlignment(value: number): void {
+  setTextHorizontalAlignment(value: number) {
     if (value !== this._textHorizontalAlignment) {
       this._textHorizontalAlignment = value
       this.formatText()
@@ -640,7 +596,7 @@ export class RichText extends Widget {
    *
    * @param {Number} value - example VERTICAL_TEXT_ALIGNMENT_CENTER
    */
-  setTextVerticalAlignment(value: number): void {
+  setTextVerticalAlignment(value: number) {
     if (value !== this._textVerticalAlignment) {
       this._textVerticalAlignment = value
       this.formatText()
