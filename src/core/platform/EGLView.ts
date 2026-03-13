@@ -2,7 +2,7 @@ import { _renderContext, container, director, game, renderer, view, winSize } fr
 import { log } from '../../helper/Debugger'
 import { _renderType } from '../../helper/engine'
 import { sys } from '../../helper/sys'
-import { rect, Rect, Size, Point as Vec2 } from '../cocoa/Geometry'
+import { Rect, Size, Point as Vec2 } from '../cocoa/Geometry'
 import { eventManager } from '../event-manager/EventManager'
 import { ContainerStrategy } from './EGLView/ContainerStrategy'
 import { ContentStrategy } from './EGLView/ContentStrategy'
@@ -81,9 +81,9 @@ export class EGLView {
   // resolution size, it is the size appropriate for the app resources.
   _designResolutionSize: Size
   _originalDesignResolutionSize: Size
-  // Viewport is the container's rect related to content's coordinates in pixel
+  // Viewport is the container's Rect related to content's coordinates in pixel
   _viewPortRect: Rect
-  // The visible rect in content's coordinate in point
+  // The visible Rect in content's coordinate in point
   _visibleRect: Rect
   _retinaEnabled = false
   _autoFullScreen = false
@@ -140,8 +140,8 @@ export class EGLView {
     const h = game.canvas!.height
     this._designResolutionSize = Size(w, h)
     this._originalDesignResolutionSize = Size(w, h)
-    this._viewPortRect = rect(0, 0, w, h)
-    this._visibleRect = rect(0, 0, w, h)
+    this._viewPortRect = Rect(0, 0, w, h)
+    this._visibleRect = Rect(0, 0, w, h)
     this._contentTranslateLeftTop = { left: 0, top: 0 }
     this._viewName = 'Cocos2dHTML5'
 
@@ -584,7 +584,7 @@ export class EGLView {
       // _renderContext.setOffset(vp.x, -vp.y)
     }
 
-    // reset director's member variables to fit visible rect
+    // reset director's member variables to fit visible Rect
     director._winSizeInPoints.width = this._designResolutionSize.width
     director._winSizeInPoints.height = this._designResolutionSize.height
     policy.postApply(this)
@@ -592,7 +592,7 @@ export class EGLView {
     winSize.height = director._winSizeInPoints.height
 
     if (_renderType === game.RENDER_TYPE_WEBGL) {
-      // reset director's member variables to fit visible rect
+      // reset director's member variables to fit visible Rect
       director.setGLDefaultValues()
     } else if (_renderType === game.RENDER_TYPE_CANVAS) {
       renderer._allNeedDraw = true
@@ -657,7 +657,7 @@ export class EGLView {
 
     if (!_scissorRect) {
       const boxArr = gl.getParameter(gl.SCISSOR_BOX)
-      _scissorRect = rect(boxArr[0], boxArr[1], boxArr[2], boxArr[3])
+      _scissorRect = Rect(boxArr[0], boxArr[1], boxArr[2], boxArr[3])
     }
 
     if (_scissorRect.x != sx || _scissorRect.y != sy || _scissorRect.width != sw || _scissorRect.height != sh) {
@@ -682,11 +682,11 @@ export class EGLView {
     const gl = _renderContext
     if (!_scissorRect) {
       const boxArr = gl.getParameter(gl.SCISSOR_BOX)
-      _scissorRect = rect(boxArr[0], boxArr[1], boxArr[2], boxArr[3])
+      _scissorRect = Rect(boxArr[0], boxArr[1], boxArr[2], boxArr[3])
     }
     const scaleXFactor = 1 / this._scaleX
     const scaleYFactor = 1 / this._scaleY
-    return rect(
+    return Rect(
       (_scissorRect.x - this._viewPortRect.x) * scaleXFactor,
       (_scissorRect.y - this._viewPortRect.y) * scaleYFactor,
       _scissorRect.width * scaleXFactor,

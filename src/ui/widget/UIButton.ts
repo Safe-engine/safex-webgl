@@ -1,6 +1,6 @@
 import { scaleTo } from '../../actions/ActionScale'
 import { SpriteFrame, spriteFrameCache } from '../../core'
-import { Rect, rect, Size, sizeEqualToSize } from '../../core/cocoa/Geometry'
+import { Rect, Size, sizeEqualToSize } from '../../core/cocoa/Geometry'
 import { LabelTTF } from '../../core/labelttf/LabelTTF'
 import { Color } from '../../core/platform'
 import { VERTICAL_TEXT_ALIGNMENT_CENTER } from '../../core/platform/Types'
@@ -64,7 +64,7 @@ export class Button extends Widget {
    */
   constructor(normalImage?: string, selectedImage?: string, disableImage?: string, texType?: number) {
     super()
-    this._capInsetsNormal = rect(0, 0, 0, 0)
+    this._capInsetsNormal = Rect(0, 0, 0, 0)
     this._normalTextureSize = Size(0, 0)
     this.setTouchEnabled(true)
 
@@ -185,7 +185,7 @@ export class Button extends Widget {
     }
 
     const textureSize = texture.getContentSize()
-    const rc = rect(0, 0, textureSize.width, textureSize.height)
+    const rc = Rect(0, 0, textureSize.width, textureSize.height)
     return new SpriteFrame(texture, rc)
   }
 
@@ -406,7 +406,7 @@ export class Button extends Widget {
    * @returns {Rect}
    */
   getCapInsetsNormalRenderer() {
-    return rect(this._capInsetsNormal)
+    return Rect(this._capInsetsNormal)
   }
 
   /**
@@ -422,7 +422,7 @@ export class Button extends Widget {
    * @returns {Rect}
    */
   getCapInsetsPressedRenderer() {
-    return rect(this._capInsetsNormal)
+    return Rect(this._capInsetsNormal)
   }
 
   /**
@@ -438,7 +438,7 @@ export class Button extends Widget {
    * @returns {Rect}
    */
   getCapInsetsDisabledRenderer() {
-    return rect(this._capInsetsNormal)
+    return Rect(this._capInsetsNormal)
   }
 
   _onPressStateChangedToNormal() {

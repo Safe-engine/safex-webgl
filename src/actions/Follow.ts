@@ -1,5 +1,5 @@
 import { director } from '..'
-import { p, rect, Rect, rectEqualToZero } from '../core/cocoa/Geometry'
+import { p, Rect, rectEqualToZero } from '../core/cocoa/Geometry'
 import { clampf, pMult } from '../core/support/PointExtension'
 import { Action } from './Action'
 
@@ -27,7 +27,7 @@ export class Follow extends Action {
     this.rightBoundary = 0.0
     this.topBoundary = 0.0
     this.bottomBoundary = 0.0
-    this._worldRect = rect(0, 0, 0, 0)
+    this._worldRect = Rect(0, 0, 0, 0)
 
     if (followedNode) rectArg ? this.initWithTarget(followedNode, rectArg) : this.initWithTarget(followedNode)
   }
@@ -35,7 +35,7 @@ export class Follow extends Action {
   clone() {
     const action = new Follow()
     const locRect = this._worldRect
-    const rectObj = new Rect(locRect.x, locRect.y, locRect.width, locRect.height)
+    const rectObj = Rect(locRect.x, locRect.y, locRect.width, locRect.height)
     action.initWithTarget(this._followedNode, rectObj)
     return action
   }
@@ -50,7 +50,7 @@ export class Follow extends Action {
 
   initWithTarget(followedNode: any, rectArg?: any) {
     if (!followedNode) throw new Error('Follow.initWithAction(): followedNode must be non nil')
-    rectArg = rectArg || rect(0, 0, 0, 0)
+    rectArg = rectArg || Rect(0, 0, 0, 0)
     this._followedNode = followedNode
     this._worldRect = rectArg
 

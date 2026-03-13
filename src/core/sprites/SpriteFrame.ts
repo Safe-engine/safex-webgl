@@ -3,14 +3,14 @@ import { _LogInfos, error } from '../../helper/Debugger'
 import { _renderType } from '../../helper/engine'
 import { textureCache } from '../../textures/TextureCache'
 import { Texture2D } from '../../textures/TexturesWebGL'
-import { p, rect, Size } from '../cocoa/Geometry'
+import { p, Rect, Size } from '../cocoa/Geometry'
 import { EventHelper } from '../event-manager/EventHelper'
 import { _pointPixelsToPointsOut, _sizePixelsToPointsOut, rectPixelsToPoints, rectPointsToPixels } from '../platform/Macro'
 
 /**
  * <p>
 /**
- * SpriteFrame represents a frame (rect within a texture).
+ * SpriteFrame represents a frame (Rect within a texture).
  * This file preserves legacy static helpers (create, createWithTexture)
  * and re-attaches EventHelper methods to the prototype for runtime compatibility.
  */
@@ -57,11 +57,11 @@ export class SpriteFrame extends EventHelper {
 
   getRectInPixels() {
     const loc = this._rectInPixels
-    return rect(loc.x, loc.y, loc.width, loc.height)
+    return Rect(loc.x, loc.y, loc.width, loc.height)
   }
 
   setRectInPixels(rectInPixels: any) {
-    if (!this._rectInPixels) this._rectInPixels = rect(0, 0, 0, 0)
+    if (!this._rectInPixels) this._rectInPixels = Rect(0, 0, 0, 0)
     this._rectInPixels.x = rectInPixels.x
     this._rectInPixels.y = rectInPixels.y
     this._rectInPixels.width = rectInPixels.width
@@ -79,11 +79,11 @@ export class SpriteFrame extends EventHelper {
 
   getRect() {
     const r = this._rect
-    return rect(r.x, r.y, r.width, r.height)
+    return Rect(r.x, r.y, r.width, r.height)
   }
 
   setRect(r: any) {
-    if (!this._rect) this._rect = rect(0, 0, 0, 0)
+    if (!this._rect) this._rect = Rect(0, 0, 0, 0)
     this._rect.x = r.x
     this._rect.y = r.y
     this._rect.width = r.width
@@ -148,7 +148,7 @@ export class SpriteFrame extends EventHelper {
               this.setTexture(tempTexture)
 
               const rectVal = this.getRect()
-              this.setRect(rect(0, 0, rectVal.width, rectVal.height))
+              this.setRect(Rect(0, 0, rectVal.width, rectVal.height))
             }
             const locRect = this._rect
             if (locRect.width === 0 && locRect.height === 0) {

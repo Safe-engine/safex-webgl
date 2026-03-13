@@ -2,7 +2,7 @@ import { renderer } from '../..'
 import { _LogInfos, error, log } from '../../helper/Debugger'
 import { shaderCache } from '../../shaders/ShaderCache'
 import { NodeWebGLRenderCmd } from '../base-nodes/NodeWebGLRenderCmd'
-import { pointEqualToPoint, Rect, rect, rectEqualToRect, rectEqualToZero } from '../cocoa/Geometry'
+import { pointEqualToPoint, Rect, rectEqualToRect, rectEqualToZero } from '../cocoa/Geometry'
 import { FIX_ARTIFACTS_BY_STRECHING_TEXEL } from '../platform/Config'
 import { BLEND_DST, ONE, rectPointsToPixels, SHADER_SPRITE_POSITION_TEXTURECOLOR, SRC_ALPHA } from '../platform/Macro'
 import { Sprite } from './Sprite'
@@ -92,7 +92,7 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
     this._textureLoaded = true
     let locRect = this._rect
     if (!locRect) {
-      locRect = rect(0, 0, sender.width, sender.height)
+      locRect = Rect(0, 0, sender.width, sender.height)
     } else if (rectEqualToZero(locRect)) {
       locRect.width = sender.width
       locRect.height = sender.height
@@ -236,7 +236,7 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
       // Update texture rect and blend func
       if (texture) {
         const texSize = texture._contentSize
-        const rt = rect(0, 0, texSize.width, texSize.height)
+        const rt = Rect(0, 0, texSize.width, texSize.height)
         node.setTextureRect(rt)
         this._updateBlendFunc()
       }

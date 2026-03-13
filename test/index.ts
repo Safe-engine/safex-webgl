@@ -2,7 +2,7 @@ import { director, game, global, loader, sys, Vec2, view } from '../src'
 import { Color, LabelTTF, ResolutionPolicy, Scene, Sprite, spriteFrameCache } from '../src/core'
 import { MotionStreak } from '../src/motion-streak'
 import { ProgressTimer } from '../src/progress-timer'
-import { Button, Text } from '../src/ui'
+import { Button, Slider, Text } from '../src/ui'
 
 class BootScene extends Scene {
   // constructor() {
@@ -45,7 +45,18 @@ class BootScene extends Scene {
       button.setPosition(400, 300)
       button.setTitleText('Click Me')
       this.addChild(button)
-      // console.log('Button', button)
+      button.addClickEventListener(() => {
+        console.log('Button clicked')
+      })
+      const slider = new Slider('sliderTrack.png', 'sliderThumb.png')
+      slider.setPosition(400, 400)
+      this.addChild(slider)
+      // slider.loadSlidBallTextureNormal('sliderThumb.png')
+      slider.addEventListener((sender: Slider, type: number) => {
+        const percent = sender.getPercent()
+        console.log('Slider value changed', percent, type)
+      }, this)
+      console.log('Slider', slider)
       const motionStreak = new MotionStreak(1, 32, 13, Color.GREEN, 'button.png')
       motionStreak.setPosition(300, 400)
       this.addChild(motionStreak)

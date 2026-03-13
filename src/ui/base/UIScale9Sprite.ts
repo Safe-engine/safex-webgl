@@ -1,7 +1,7 @@
 import { game, renderer } from '../..'
 import { SpriteFrame, spriteFrameCache } from '../../core'
 import { Node } from '../../core/base-nodes/Node'
-import { p, rect, Rect, rectEqualToZero, Size, sizeEqualToSize } from '../../core/cocoa/Geometry'
+import { _Rect, p, Rect, rectEqualToZero, Size, sizeEqualToSize } from '../../core/cocoa/Geometry'
 import { BlendFunc } from '../../core/platform/BlendFunc'
 import { FIX_ARTIFACTS_BY_STRECHING_TEXEL } from '../../core/platform/Config'
 import { BLEND_DST, BLEND_SRC, contentScaleFactor, ONE, rectPointsToPixels, SRC_ALPHA } from '../../core/platform/Macro'
@@ -445,14 +445,14 @@ export class Scale9Sprite extends Node {
     }
   }
 
-  initWithFile(file, rect, capInsets) {
-    if (file instanceof Rect) {
+  initWithFile(file, rect?: Rect, capInsets?: Rect) {
+    if (file instanceof _Rect) {
       file = rect
       capInsets = file
-      rect = rect(0, 0, 0, 0)
+      rect = Rect(0, 0, 0, 0)
     } else {
-      rect = rect || rect(0, 0, 0, 0)
-      capInsets = capInsets || rect(0, 0, 0, 0)
+      rect = rect || Rect(0, 0, 0, 0)
+      capInsets = capInsets || Rect(0, 0, 0, 0)
     }
 
     if (!file) throw new Error('Scale9Sprite.initWithFile(): file should be non-null')

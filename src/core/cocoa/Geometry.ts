@@ -85,7 +85,7 @@ export function sizeEqualToSize(size1: Size, size2: Size): boolean {
   return size1 && size2 && size1.width === size2.width && size1.height === size2.height
 }
 
-export class Rect {
+export class _Rect {
   x: number
   y: number
   width: number
@@ -113,15 +113,16 @@ export class Rect {
  * var rect3 = rect(rect2);
  * var rect4 = rect({x: 100, y: 100, width: 100, height: 100});
  */
-export function rect(x?: number | Rect, y?: number, w?: number, h?: number): Rect {
+export type Rect = _Rect
+export function Rect(x?: number | Rect, y?: number, w?: number, h?: number): Rect {
   if (x === undefined) {
-    return new Rect()
+    return new _Rect()
   }
   if (y === undefined) {
     const r = x as Rect
-    return new Rect(r.x, r.y, r.width, r.height)
+    return new _Rect(r.x, r.y, r.width, r.height)
   }
-  return new Rect(x as number, y as number, w as number, h as number)
+  return new _Rect(x as number, y as number, w as number, h as number)
 }
 
 /**
@@ -267,7 +268,7 @@ export function rectOverlapsRect(rectA: Rect, rectB: Rect): boolean {
  * @return
  */
 export function rectUnion(rectA: Rect, rectB: Rect): Rect {
-  const newRect = rect(0, 0, 0, 0)
+  const newRect = Rect(0, 0, 0, 0)
   newRect.x = Math.min(rectA.x, rectB.x)
   newRect.y = Math.min(rectA.y, rectB.y)
   newRect.width = Math.max(rectA.x + rectA.width, rectB.x + rectB.width) - newRect.x
@@ -283,7 +284,7 @@ export function rectUnion(rectA: Rect, rectB: Rect): Rect {
  * @return
  */
 export function rectIntersection(rectA: Rect, rectB: Rect): Rect {
-  const intersection = rect(Math.max(rectGetMinX(rectA), rectGetMinX(rectB)), Math.max(rectGetMinY(rectA), rectGetMinY(rectB)), 0, 0)
+  const intersection = Rect(Math.max(rectGetMinX(rectA), rectGetMinX(rectB)), Math.max(rectGetMinY(rectA), rectGetMinY(rectB)), 0, 0)
 
   intersection.width = Math.min(rectGetMaxX(rectA), rectGetMaxX(rectB)) - rectGetMinX(intersection)
   intersection.height = Math.min(rectGetMaxY(rectA), rectGetMaxY(rectB)) - rectGetMinY(intersection)

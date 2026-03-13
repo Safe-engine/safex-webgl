@@ -3,7 +3,7 @@ import { isObject, isUndefined } from '../../helper/checkType'
 import { _LogInfos, log } from '../../helper/Debugger'
 import { global } from '../../helper/global'
 import { sys } from '../../helper/sys'
-import { p, rect, Size } from '../cocoa/Geometry'
+import { p, Rect, Size } from '../cocoa/Geometry'
 
 /**
  * @constant
@@ -285,25 +285,25 @@ export const _sizePixelsToPointsOut = function (sizeInPixels, outSize) {
 }
 
 /**
- * Converts a rect in pixels to points
+ * Converts a Rect in pixels to points
  * @param {export const Rect} pixel
  * @return {export const Rect}
  * @function
  */
 export const rectPixelsToPoints = function (pixel) {
   const scale = contentScaleFactor()
-  return rect(pixel.x / scale, pixel.y / scale, pixel.width / scale, pixel.height / scale)
+  return Rect(pixel.x / scale, pixel.y / scale, pixel.width / scale, pixel.height / scale)
 }
 
 /**
- * Converts a rect in points to pixels
+ * Converts a Rect in points to pixels
  * @param {export const Rect} point
  * @return {export const Rect}
  * @function
  */
 export const rectPointsToPixels = function (point) {
   const scale = contentScaleFactor()
-  return rect(point.x * scale, point.y * scale, point.width * scale, point.height * scale)
+  return Rect(point.x * scale, point.y * scale, point.width * scale, point.height * scale)
 }
 
 //some gl constant variable

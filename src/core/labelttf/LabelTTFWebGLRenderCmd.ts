@@ -3,7 +3,7 @@ import { _renderType } from '../../helper/engine'
 import { global } from '../../helper/global'
 import { Texture2D } from '../../textures'
 import { Node } from '../base-nodes/Node'
-import { p, Rect, rect, Size } from '../cocoa/Geometry'
+import { p, Rect, Size } from '../cocoa/Geometry'
 import {
   TEXT_ALIGNMENT_CENTER,
   TEXT_ALIGNMENT_RIGHT,
@@ -15,7 +15,7 @@ import { FontDefinition } from '../platform/FontDefinition'
 import { SpriteWebGLRenderCmd } from '../sprites/SpriteWebGLRenderCmd'
 import { LabelTTF } from './LabelTTF'
 
-const localBB = new Rect()
+const localBB = Rect()
 
 export class LabelTTFWebGLRenderCmd extends SpriteWebGLRenderCmd {
   declare _cacheCmdCtor: any
@@ -84,7 +84,7 @@ export class LabelTTFWebGLRenderCmd extends SpriteWebGLRenderCmd {
         node._texture._htmlElementObj = this._labelCanvas
         node._texture.handleLoadedTexture()
       }
-      node.setTextureRect(rect(0, 0, 1, locContentSize.height))
+      node.setTextureRect(Rect(0, 0, 1, locContentSize.height))
       return true
     }
 
@@ -101,7 +101,7 @@ export class LabelTTFWebGLRenderCmd extends SpriteWebGLRenderCmd {
       node._texture._htmlElementObj = this._labelCanvas
       node._texture.handleLoadedTexture()
     }
-    node.setTextureRect(rect(0, 0, width, height))
+    node.setTextureRect(Rect(0, 0, width, height))
     return true
   }
 

@@ -10,7 +10,7 @@ import {
   rectApplyAffineTransform,
   rectApplyAffineTransformIn,
 } from '../cocoa/AffineTransform'
-import { p, Point, Rect, rect, rectUnion, Size } from '../cocoa/Geometry'
+import { p, Point, Rect, rectUnion, Size } from '../cocoa/Geometry'
 import { EventHelper } from '../event-manager/EventHelper'
 import { eventManager } from '../event-manager/EventManager'
 import { Color, color } from '../platform/Color'
@@ -454,7 +454,7 @@ export class Node extends EventHelper {
     return this.getBoundingBox()
   }
   getBoundingBox() {
-    const r = rect(0, 0, this._contentSize.width, this._contentSize.height)
+    const r = Rect(0, 0, this._contentSize.width, this._contentSize.height)
     return rectApplyAffineTransformIn(r, this.getNodeToParentTransform())
   }
   cleanup() {
@@ -983,7 +983,7 @@ export class Node extends EventHelper {
   setGLServerState() {}
 
   getBoundingBoxToWorld() {
-    let r = rect(0, 0, this._contentSize.width, this._contentSize.height)
+    let r = Rect(0, 0, this._contentSize.width, this._contentSize.height)
     const trans = this.getNodeToWorldTransform()
     r = rectApplyAffineTransform(r, trans)
     if (!this._children) return r
@@ -999,7 +999,7 @@ export class Node extends EventHelper {
   }
 
   _getBoundingBoxToCurrentNode(parentTransform?: any) {
-    let r = rect(0, 0, this._contentSize.width, this._contentSize.height)
+    let r = Rect(0, 0, this._contentSize.width, this._contentSize.height)
     const trans =
       parentTransform === undefined
         ? this.getNodeToParentTransform()

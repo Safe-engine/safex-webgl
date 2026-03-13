@@ -4,7 +4,7 @@ import { loader } from '../../helper/loader'
 import { path } from '../../helper/path'
 import { textureCache } from '../../textures/TextureCache'
 import { Texture2D } from '../../textures/TexturesWebGL'
-import { p, rect, Size } from '../cocoa/Geometry'
+import { p, Rect, Size } from '../cocoa/Geometry'
 import { SpriteFrame } from './SpriteFrame'
 
 /**
@@ -28,8 +28,8 @@ export const spriteFrameCache = {
 
   _rectFromString: function (content) {
     const result = this._CCNS_REG2.exec(content)
-    if (!result) return rect(0, 0, 0, 0)
-    return rect(parseFloat(result[1]), parseFloat(result[2]), parseFloat(result[3]), parseFloat(result[4]))
+    if (!result) return Rect(0, 0, 0, 0)
+    return Rect(parseFloat(result[1]), parseFloat(result[2]), parseFloat(result[3]), parseFloat(result[4]))
   },
 
   _pointFromString: function (content) {
@@ -82,7 +82,7 @@ export const spriteFrameCache = {
       const tempFrame: any = {}
 
       if (format == 0) {
-        tempFrame.rect = rect(frameDict['x'], frameDict['y'], frameDict['width'], frameDict['height'])
+        tempFrame.rect = Rect(frameDict['x'], frameDict['y'], frameDict['width'], frameDict['height'])
         tempFrame.rotated = false
         tempFrame.offset = p(frameDict['offsetX'], frameDict['offsetY'])
         let ow = frameDict['originalWidth']
@@ -105,7 +105,7 @@ export const spriteFrameCache = {
         const spriteSize = this._sizeFromString(frameDict['spriteSize'])
         let textureRect = this._rectFromString(frameDict['textureRect'])
         if (spriteSize) {
-          textureRect = rect(textureRect.x, textureRect.y, spriteSize.width, spriteSize.height)
+          textureRect = Rect(textureRect.x, textureRect.y, spriteSize.width, spriteSize.height)
         }
         tempFrame.rect = textureRect
         tempFrame.rotated = frameDict['textureRotated'] || false // == "true";
@@ -116,7 +116,7 @@ export const spriteFrameCache = {
         const tmpFrame = frameDict['frame'],
           tmpSourceSize = frameDict['sourceSize']
         key = frameDict['filename'] || key
-        tempFrame.rect = rect(tmpFrame['x'], tmpFrame['y'], tmpFrame['w'], tmpFrame['h'])
+        tempFrame.rect = Rect(tmpFrame['x'], tmpFrame['y'], tmpFrame['w'], tmpFrame['h'])
         tempFrame.rotated = frameDict['rotated'] || false
         tempFrame.offset = p(0, 0)
         tempFrame.size = Size(tmpSourceSize['w'], tmpSourceSize['h'])
@@ -158,7 +158,7 @@ export const spriteFrameCache = {
       const frame = frames[key]
       let spriteFrame = spriteFrames[key]
       if (!spriteFrame) {
-        spriteFrame = new SpriteFrame(texture, rect(frame.rect), frame.rotated, frame.offset, frame.size)
+        spriteFrame = new SpriteFrame(texture, Rect(frame.rect), frame.rotated, frame.offset, frame.size)
         const aliases = frame.aliases
         if (aliases) {
           //set aliases

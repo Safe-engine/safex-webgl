@@ -1,5 +1,5 @@
 import { Sprite } from '../../core'
-import { rect } from '../../core/cocoa/Geometry'
+import { Rect } from '../../core/cocoa/Geometry'
 import { textureCache } from '../../textures'
 import { LayoutParameter } from '../layout/UILayoutParameter'
 
@@ -111,7 +111,7 @@ export const helper = {
       y = 0.0
       height = 0.0
     }
-    return rect(x, y, width, height)
+    return Rect(x, y, width, height)
   },
 
   _createSpriteFromBase64: function (base64String, key) {

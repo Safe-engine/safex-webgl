@@ -1,6 +1,6 @@
 import { Sprite } from '../../core'
 import { Node } from '../../core/base-nodes/Node'
-import { p, rect } from '../../core/cocoa/Geometry'
+import { p, Rect } from '../../core/cocoa/Geometry'
 import { LabelTTF } from '../../core/labelttf/LabelTTF'
 import { arrayRemoveObject } from '../../core/platform'
 import { FontDefinition } from '../../core/platform/FontDefinition'
@@ -135,7 +135,7 @@ export class RichElementImage extends RichElement {
     super(tag, color, opacity)
     this._type = RichElement.IMAGE
     this._filePath = filePath || ''
-    this._textureRect = rect(0, 0, 0, 0)
+    this._textureRect = Rect(0, 0, 0, 0)
     this._textureType = 0
   }
 

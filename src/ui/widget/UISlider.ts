@@ -1,6 +1,6 @@
 import { game } from '../..'
-import { Sprite } from '../../core'
-import { p, rect, Size } from '../../core/cocoa/Geometry'
+import { Node, Sprite } from '../../core'
+import { p, Rect, Size } from '../../core/cocoa/Geometry'
 import { _renderType } from '../../helper/engine'
 import { Scale9Sprite } from '../base/UIScale9Sprite'
 import { Widget } from '../base/UIWidget'
@@ -13,14 +13,14 @@ import { Widget } from '../base/UIWidget'
  * @property {Number}   percent     - The current progress of loadingbar
  */
 export class Slider extends Widget {
-  _barRenderer: any = null
-  _progressBarRenderer: any = null
-  _barTextureSize: any = null
-  _progressBarTextureSize: any = null
-  _slidBallNormalRenderer: any = null
-  _slidBallPressedRenderer: any = null
-  _slidBallDisabledRenderer: any = null
-  _slidBallRenderer: any = null
+  declare _barRenderer: Scale9Sprite | Sprite
+  declare _progressBarRenderer: Scale9Sprite | Sprite
+  declare _barTextureSize: Size
+  declare _progressBarTextureSize: Size
+  declare _slidBallNormalRenderer: Sprite
+  declare _slidBallPressedRenderer: Sprite
+  declare _slidBallDisabledRenderer: Sprite
+  declare _slidBallRenderer: Node
   _barLength = 0
   _percent = 0
   _scale9Enabled = false
@@ -30,15 +30,15 @@ export class Slider extends Widget {
   _slidBallNormalTextureFile = ''
   _slidBallPressedTextureFile = ''
   _slidBallDisabledTextureFile = ''
-  _capInsetsBarRenderer: any = null
-  _capInsetsProgressBarRenderer: any = null
-  _sliderEventListener: any = null
-  _sliderEventSelector: any = null
-  _barTexType: number = Widget.LOCAL_TEXTURE
-  _progressBarTexType: number = Widget.LOCAL_TEXTURE
-  _ballNTexType: number = Widget.LOCAL_TEXTURE
-  _ballPTexType: number = Widget.LOCAL_TEXTURE
-  _ballDTexType: number = Widget.LOCAL_TEXTURE
+  declare _capInsetsBarRenderer
+  declare _capInsetsProgressBarRenderer
+  declare _sliderEventListener
+  declare _sliderEventSelector
+  _barTexType = Widget.LOCAL_TEXTURE
+  _progressBarTexType = Widget.LOCAL_TEXTURE
+  _ballNTexType = Widget.LOCAL_TEXTURE
+  _ballPTexType = Widget.LOCAL_TEXTURE
+  _ballDTexType = Widget.LOCAL_TEXTURE
   _isTextureLoaded = false
   _className = 'Slider'
   _barRendererAdaptDirty = true
@@ -48,7 +48,7 @@ export class Slider extends Widget {
 
   _sliderBallNormalTextureScaleX = 1
   _sliderBallNormalTextureScaleY = 1
-  _ccEventCallback: any = null
+  declare _ccEventCallback
   /**
    * allocates and initializes a UISlider.
    * Constructor of Slider. override it to extend the construction behavior, remember to call "super()" in the extended constructor.
@@ -60,9 +60,8 @@ export class Slider extends Widget {
     super()
     this._barTextureSize = Size(0, 0)
     this._progressBarTextureSize = Size(0, 0)
-    this._capInsetsBarRenderer = rect(0, 0, 0, 0)
-    this._capInsetsProgressBarRenderer = rect(0, 0, 0, 0)
-    super()
+    this._capInsetsBarRenderer = Rect(0, 0, 0, 0)
+    this._capInsetsProgressBarRenderer = Rect(0, 0, 0, 0)
 
     resType = resType || 0
     this.setTouchEnabled(true)
@@ -70,11 +69,11 @@ export class Slider extends Widget {
       this.loadBarTexture(barTextureName, resType)
     }
     if (normalBallTextureName) {
-      this.loadSlidBallTextures(normalBallTextureName, resType as any)
+      this.loadSlidBallTextures(normalBallTextureName, normalBallTextureName, normalBallTextureName, resType)
     }
   }
 
-  _initRenderer(): any {
+  _initRenderer() {
     //todo use Scale9Sprite
     this._barRenderer = new Sprite()
     this._progressBarRenderer = new Sprite()
@@ -263,7 +262,7 @@ export class Slider extends Widget {
    * @returns {Rect}
    */
   getCapInsetsBarRenderer(): any {
-    return rect(this._capInsetsBarRenderer)
+    return Rect(this._capInsetsBarRenderer)
   }
 
   /**
@@ -286,7 +285,7 @@ export class Slider extends Widget {
    * @returns {Rect}
    */
   getCapInsetsProgressBarRenderer(): any {
-    return rect(this._capInsetsProgressBarRenderer)
+    return Rect(this._capInsetsProgressBarRenderer)
   }
 
   /**
@@ -421,8 +420,8 @@ export class Slider extends Widget {
     if (this._scale9Enabled) this._progressBarRenderer.setPreferredSize(Size(dis, this._contentSize.height))
     else {
       const spriteRenderer = this._progressBarRenderer
-      const rect = spriteRenderer.getTextureRect()
-      spriteRenderer.setTextureRect(rect(rect.x, rect.y, dis / spriteRenderer._scaleX, rect.height), spriteRenderer.isTextureRectRotated())
+      const rc = spriteRenderer.getTextureRect()
+      spriteRenderer.setTextureRect(Rect(rc.x, rc.y, dis / spriteRenderer._scaleX, rc.height), spriteRenderer.isTextureRectRotated())
     }
   }
 
@@ -435,7 +434,7 @@ export class Slider extends Widget {
   hitTest(pt: any): any {
     const nsp = this._slidBallNormalRenderer.convertToNodeSpace(pt)
     const ballSize = this._slidBallNormalRenderer.getContentSize()
-    const ballRect = rect(0, 0, ballSize.width, ballSize.height)
+    const ballRect = Rect(0, 0, ballSize.width, ballSize.height)
     return nsp.x >= ballRect.x && nsp.x <= ballRect.x + ballRect.width && nsp.y >= ballRect.y && nsp.y <= ballRect.y + ballRect.height
   }
 

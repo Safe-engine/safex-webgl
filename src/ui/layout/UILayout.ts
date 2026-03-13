@@ -1,6 +1,6 @@
 import { pLength, pSub, Sprite } from '../../core'
 import { Node } from '../../core/base-nodes/Node'
-import { p, rect, Size } from '../../core/cocoa/Geometry'
+import { p, Rect, Size } from '../../core/cocoa/Geometry'
 import { Color, color, FLT_MAX } from '../../core/platform'
 import { assert, log } from '../../helper/Debugger'
 import { DrawNode } from '../../shape-nodes/DrawNode'
@@ -73,7 +73,7 @@ export class Layout extends Widget {
     this.setAnchorPoint(0, 0)
     this.onPassFocusToChild = this._findNearestChildWidgetIndex.bind(this)
 
-    this._backGroundImageCapInsets = rect(0, 0, 0, 0)
+    this._backGroundImageCapInsets = Rect(0, 0, 0, 0)
 
     this._color = color(255, 255, 255, 255)
     this._startColor = color(255, 255, 255, 255)
@@ -81,7 +81,7 @@ export class Layout extends Widget {
     this._alongVector = p(0, -1)
     this._backGroundImageTextureSize = Size(0, 0)
 
-    this._clippingRect = rect(0, 0, 0, 0)
+    this._clippingRect = Rect(0, 0, 0, 0)
     this._backGroundImageColor = color(255, 255, 255, 255)
   }
 
@@ -524,7 +524,7 @@ export class Layout extends Widget {
    * @returns {Rect}
    */
   getBackGroundImageCapInsets() {
-    return rect(this._backGroundImageCapInsets)
+    return Rect(this._backGroundImageCapInsets)
   }
 
   _supplyTheLayoutParameterLackToChild(locChild) {
@@ -807,9 +807,6 @@ export class Layout extends Widget {
    */
   getLayoutType() {
     return this._layoutType
-  }
-  isLayout() {
-    return this._layoutType !== null
   }
 
   /**

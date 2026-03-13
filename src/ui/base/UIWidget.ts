@@ -1,6 +1,6 @@
 import { renderer } from '../..'
 import { Node } from '../../core/base-nodes/Node'
-import { p, rect, rectContainsPoint, Size } from '../../core/cocoa/Geometry'
+import { p, Rect, rectContainsPoint, Size } from '../../core/cocoa/Geometry'
 import { EventListener } from '../../core/event-manager'
 import { EventFocus } from '../../core/event-manager/EventFocus'
 import { eventManager } from '../../core/event-manager/EventManager'
@@ -657,10 +657,10 @@ export class Widget extends ProtectedNode {
    */
   findNextFocusedWidget(direction, current) {
     if (null === this.onNextFocusedWidget || null == this.onNextFocusedWidget(direction)) {
-      const isLayout = current.isLayout()
+      const isLayout = current._layoutType
       if (this.isFocused() || isLayout) {
         const layout: any = this.getParent()
-        if (null === layout || !layout.isLayout()) {
+        if (null === layout || !layout._layoutType) {
           //the outer layout's default behaviour is : loop focus
           if (isLayout) return current.findNextFocusedWidget(direction, current)
           return current
@@ -936,7 +936,7 @@ export class Widget extends ProtectedNode {
    * @returns {boolean} true if the point is in widget's space, false otherwise.
    */
   hitTest(pt) {
-    const bb = rect(0, 0, this._contentSize.width, this._contentSize.height)
+    const bb = Rect(0, 0, this._contentSize.width, this._contentSize.height)
     return rectContainsPoint(bb, this.convertToNodeSpace(pt))
   }
 
@@ -950,7 +950,7 @@ export class Widget extends ProtectedNode {
     let parent: any = this.getParent()
     let clippingParent = null
     while (parent) {
-      if (parent.isLayout()) {
+      if (parent._layoutType) {
         if (parent.isClippingEnabled()) {
           this._affectByClipping = true
           clippingParent = parent
