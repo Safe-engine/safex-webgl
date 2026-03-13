@@ -524,19 +524,15 @@ export class Scale9Sprite extends Node {
     this._updateCapInsets(spriteFrame._rect, capInsets)
   }
 
-  initWithSpriteFrameName(spriteFrameName, capInsets) {
+  initWithSpriteFrameName(spriteFrameName, capInsets?) {
     if (!spriteFrameName) throw new Error('Scale9Sprite.initWithSpriteFrameName(): spriteFrameName should be non-null')
-    capInsets = capInsets || Rect(0, 0, 0, 0)
-
     const frame = spriteFrameCache.getSpriteFrame(spriteFrameName)
     if (frame == null) {
       log('Scale9Sprite.initWithSpriteFrameName(): cant find the sprite frame by spriteFrameName')
       return false
     }
     this.setSpriteFrame(frame)
-
     capInsets = capInsets || Rect(0, 0, 0, 0)
-
     this._updateCapInsets(frame._rect, capInsets)
   }
 

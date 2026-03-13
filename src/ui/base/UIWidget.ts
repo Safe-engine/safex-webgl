@@ -15,29 +15,6 @@ import { WidgetWebGLRenderCmd } from './UIWidgetRenderCmd'
 
 export const __LAYOUT_COMPONENT_NAME = '__ui_layout'
 
-/**
- * The base class for ccui controls and layout
- * @sample
- * var uiWidget = new Widget();
- * this.addChild(uiWidget);
- * @class
- * @extends ProtectedNode
- *
- * @property {Number}           xPercent        - Position x in percentage of width
- * @property {Number}           yPercent        - Position y in percentage of height
- * @property {Number}           widthPercent    - Width in percentage of parent width
- * @property {Number}           heightPercent   - Height in percentage of parent height
- * @property {Widget}      widgetParent    - <@readonly> The direct parent when it's a widget also, otherwise equals null
- * @property {Boolean}          enabled         - Indicate whether the widget is enabled
- * @property {Boolean}          focused         - Indicate whether the widget is focused
- * @property {Widget.SIZE_ABSOLUTE|Widget.SIZE_PERCENT}     sizeType        - The size type of the widget
- * @property {Widget.TYPE_WIDGET|Widget.TYPE_CONTAINER}   widgetType      - <@readonly> The type of the widget
- * @property {Boolean}          touchEnabled    - Indicate whether touch events are enabled
- * @property {Boolean}          updateEnabled   - Indicate whether the update function is scheduled
- * @property {Boolean}          bright          - Indicate whether the widget is bright
- * @property {String}           name            - The name of the widget
- * @property {Number}           actionTag       - The action tag of the widget
- */
 export class Widget extends ProtectedNode {
   _enabled = true ///< Highest control of widget
   _bright = true ///< is this widget bright
@@ -93,13 +70,13 @@ export class Widget extends ProtectedNode {
    *    you must call widget.setFocused(true/false) to change the focus state of the current focused widget;
    * </p>
    */
-  onFocusChanged = null
+  declare onFocusChanged
 
   /**
    * use this function to manually specify the next focused widget regards to each direction
    */
-  onNextFocusedWidget = null
-  _sizeDirty: any
+  declare onNextFocusedWidget
+  declare _sizeDirty
 
   /**
    * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.

@@ -13,8 +13,8 @@ import { Widget } from '../base/UIWidget'
  * @property {Number}   percent     - The current progress of loadingbar
  */
 export class Slider extends Widget {
-  declare _barRenderer: Scale9Sprite | Sprite
-  declare _progressBarRenderer: Scale9Sprite | Sprite
+  declare _barRenderer: any
+  declare _progressBarRenderer: any
   declare _barTextureSize: Size
   declare _progressBarTextureSize: Size
   declare _slidBallNormalRenderer: Sprite
@@ -65,6 +65,7 @@ export class Slider extends Widget {
 
     resType = resType || 0
     this.setTouchEnabled(true)
+    this._initRenderer()
     if (barTextureName) {
       this.loadBarTexture(barTextureName, resType)
     }
@@ -100,7 +101,7 @@ export class Slider extends Widget {
    * @param {String} fileName
    * @param {Widget.LOCAL_TEXTURE|Widget.PLIST_TEXTURE} texType
    */
-  loadBarTexture(fileName: string, texType?: number): any {
+  loadBarTexture(fileName: string, texType?: number) {
     if (!fileName) {
       return
     }
@@ -141,7 +142,7 @@ export class Slider extends Widget {
    * @param {String} fileName
    * @param {Widget.LOCAL_TEXTURE|Widget.PLIST_TEXTURE} texType
    */
-  loadProgressBarTexture(fileName: string, texType?: number): any {
+  loadProgressBarTexture(fileName: string, texType?: number) {
     if (!fileName) {
       return
     }
@@ -181,15 +182,14 @@ export class Slider extends Widget {
    * Sets if slider is using scale9 renderer.
    * @param {Boolean} able
    */
-  setScale9Enabled(able: boolean): any {
+  setScale9Enabled(able: boolean) {
     //todo use setScale9Enabled
     if (this._scale9Enabled === able) return
 
     this._scale9Enabled = able
     this.removeProtectedChild(this._barRenderer, true)
     this.removeProtectedChild(this._progressBarRenderer, true)
-    this._barRenderer = null
-    this._progressBarRenderer = null
+
     if (this._scale9Enabled) {
       this._barRenderer = new Scale9Sprite()
       this._progressBarRenderer = new Scale9Sprite()
@@ -218,7 +218,7 @@ export class Slider extends Widget {
    * Returns slider is using scale9 renderer or not.
    * @returns {Boolean}
    */
-  isScale9Enabled(): any {
+  isScale9Enabled() {
     return this._scale9Enabled
   }
 
@@ -226,7 +226,7 @@ export class Slider extends Widget {
    * override "ignoreContentAdaptWithSize" method of widget.
    * @param {Boolean} ignore
    */
-  ignoreContentAdaptWithSize(ignore: boolean): any {
+  ignoreContentAdaptWithSize(ignore: boolean) {
     if (!this._scale9Enabled || (this._scale9Enabled && !ignore)) {
       super.ignoreContentAdaptWithSize(ignore)
       this._prevIgnoreSize = ignore
@@ -237,7 +237,7 @@ export class Slider extends Widget {
    * Sets capinsets for slider, if slider is using scale9 renderer.
    * @param {Rect} capInsets
    */
-  setCapInsets(capInsets: any): any {
+  setCapInsets(capInsets: any) {
     this.setCapInsetsBarRenderer(capInsets)
     this.setCapInsetProgressBarRenderer(capInsets)
   }
@@ -284,7 +284,7 @@ export class Slider extends Widget {
    * Returns cap insets of ProgressBar for slider.
    * @returns {Rect}
    */
-  getCapInsetsProgressBarRenderer(): any {
+  getCapInsetsProgressBarRenderer() {
     return Rect(this._capInsetsProgressBarRenderer)
   }
 
@@ -295,7 +295,7 @@ export class Slider extends Widget {
    * @param {String} disabled
    * @param {Widget.LOCAL_TEXTURE|Widget.PLIST_TEXTURE} texType
    */
-  loadSlidBallTextures(normal: string, pressed?: string, disabled?: string, texType?: number): any {
+  loadSlidBallTextures(normal: string, pressed?: string, disabled?: string, texType?: number) {
     this.loadSlidBallTextureNormal(normal, texType)
     this.loadSlidBallTexturePressed(pressed, texType)
     this.loadSlidBallTextureDisabled(disabled, texType)
@@ -306,7 +306,7 @@ export class Slider extends Widget {
    * @param {String} normal
    * @param {Widget.LOCAL_TEXTURE|Widget.PLIST_TEXTURE} texType
    */
-  loadSlidBallTextureNormal(normal: string, texType?: number): any {
+  loadSlidBallTextureNormal(normal: string, texType?: number) {
     if (!normal) {
       return
     }
@@ -341,7 +341,7 @@ export class Slider extends Widget {
    * @param {String} pressed
    * @param {Widget.LOCAL_TEXTURE|Widget.PLIST_TEXTURE} texType
    */
-  loadSlidBallTexturePressed(pressed: string, texType?: number): any {
+  loadSlidBallTexturePressed(pressed: string, texType?: number) {
     if (!pressed) {
       return
     }
@@ -376,7 +376,7 @@ export class Slider extends Widget {
    * @param {String} disabled
    * @param {Widget.LOCAL_TEXTURE|Widget.PLIST_TEXTURE} texType
    */
-  loadSlidBallTextureDisabled(disabled: string, texType?: number): any {
+  loadSlidBallTextureDisabled(disabled: string, texType?: number) {
     if (!disabled) {
       return
     }
@@ -410,7 +410,7 @@ export class Slider extends Widget {
    * Changes the progress direction of slider.
    * @param {number} percent
    */
-  setPercent(percent: number): any {
+  setPercent(percent: number) {
     if (percent > 100) percent = 100
     if (percent < 0) percent = 0
     this._percent = percent
@@ -431,14 +431,14 @@ export class Slider extends Widget {
    * @param {Point} pt
    * @returns {boolean}
    */
-  hitTest(pt: any): any {
+  hitTest(pt: any) {
     const nsp = this._slidBallNormalRenderer.convertToNodeSpace(pt)
     const ballSize = this._slidBallNormalRenderer.getContentSize()
     const ballRect = Rect(0, 0, ballSize.width, ballSize.height)
     return nsp.x >= ballRect.x && nsp.x <= ballRect.x + ballRect.width && nsp.y >= ballRect.y && nsp.y <= ballRect.y + ballRect.height
   }
 
-  onTouchBegan(touch: any, event: any): any {
+  onTouchBegan(touch: any, event: any) {
     const pass = super.onTouchBegan(touch, event)
     if (this._hit) {
       const nsp = this.convertToNodeSpace(this._touchBeganPosition)
@@ -448,14 +448,14 @@ export class Slider extends Widget {
     return pass
   }
 
-  onTouchMoved(touch: any, event: any): any {
+  onTouchMoved(touch: any, event: any) {
     const touchPoint = touch.getLocation()
     const nsp = this.convertToNodeSpace(touchPoint)
     this.setPercent(this._getPercentWithBallPos(nsp.x))
     this._percentChangedEvent()
   }
 
-  onTouchEnded(touch: any, event: any): any {
+  onTouchEnded(touch: any, event: any) {
     super.onTouchEnded(touch, event)
   }
 
@@ -468,7 +468,7 @@ export class Slider extends Widget {
    * @param {Point} px
    * @returns {number}
    */
-  _getPercentWithBallPos(px): any {
+  _getPercentWithBallPos(px) {
     return (px / this._barLength) * 100
   }
 
@@ -478,7 +478,7 @@ export class Slider extends Widget {
    * @param {Object} [target=]
    * @deprecated since v3.0, please use addEventListener instead.
    */
-  addEventListenerSlider(selector, target): any {
+  addEventListenerSlider(selector, target) {
     this.addEventListener(selector, target)
   }
 
@@ -487,12 +487,12 @@ export class Slider extends Widget {
    * @param {Function} selector
    * @param {Object} [target=]
    */
-  addEventListener(selector, target): any {
+  addEventListener(selector, target) {
     this._sliderEventSelector = selector //when target is undefined, _sliderEventSelector = _eventCallback
     this._sliderEventListener = target
   }
 
-  _percentChangedEvent(): any {
+  _percentChangedEvent() {
     if (this._sliderEventSelector) {
       if (this._sliderEventListener) this._sliderEventSelector.call(this._sliderEventListener, this, Slider.EVENT_PERCENT_CHANGED)
       else this._sliderEventSelector(this, Slider.EVENT_PERCENT_CHANGED) // _eventCallback
@@ -504,17 +504,17 @@ export class Slider extends Widget {
    * Gets the progress direction of slider.
    * @returns {number}
    */
-  getPercent(): any {
+  getPercent() {
     return this._percent
   }
 
-  _onSizeChanged(): any {
+  _onSizeChanged() {
     super._onSizeChanged()
     this._barRendererAdaptDirty = true
     this._progressBarRendererDirty = true
   }
 
-  _adaptRenderers(): any {
+  _adaptRenderers() {
     if (this._barRendererAdaptDirty) {
       this._barRendererScaleChangedWithSize()
       this._barRendererAdaptDirty = false
@@ -529,7 +529,7 @@ export class Slider extends Widget {
    * Returns the content size of bar renderer.
    * @returns {Size}
    */
-  getVirtualRendererSize(): any {
+  getVirtualRendererSize() {
     return this._barRenderer.getContentSize()
   }
 
@@ -537,11 +537,11 @@ export class Slider extends Widget {
    * Returns the bar renderer.
    * @returns {Node}
    */
-  getVirtualRenderer(): any {
+  getVirtualRenderer() {
     return this._barRenderer
   }
 
-  _barRendererScaleChangedWithSize(): any {
+  _barRendererScaleChangedWithSize() {
     if (this._unifySize) {
       this._barLength = this._contentSize.width
       this._barRenderer.setPreferredSize(this._contentSize)
@@ -637,37 +637,33 @@ export class Slider extends Widget {
       this._slidBallDisabledRenderer.setVisible(true)
     } else {
       this._slidBallNormalRenderer.setVisible(true)
-      if (_renderType === game.RENDER_TYPE_WEBGL) {
-        this._slidBallNormalRenderer._renderCmd._shaderProgram = this._getGrayGLProgram()
-      } else {
-        // TODO: add canvas support
-      }
+      this._slidBallNormalRenderer._renderCmd._shaderProgram = this._getGrayGLProgram()
     }
     this._slidBallNormalRenderer.setScale(this._sliderBallNormalTextureScaleX, this._sliderBallNormalTextureScaleY)
     this._slidBallPressedRenderer.setVisible(false)
   }
 
-  setZoomScale(scale): any {
+  setZoomScale(scale) {
     this._zoomScale = scale
   }
 
-  getZoomScale(): any {
+  getZoomScale() {
     return this._zoomScale
   }
 
-  getSlidBallNormalRenderer(): any {
+  getSlidBallNormalRenderer() {
     return this._slidBallNormalRenderer
   }
 
-  getSlidBallPressedRenderer(): any {
+  getSlidBallPressedRenderer() {
     return this._slidBallPressedRenderer
   }
 
-  getSlidBallDisabledRenderer(): any {
+  getSlidBallDisabledRenderer() {
     return this._slidBallDisabledRenderer
   }
 
-  getSlidBallRenderer(): any {
+  getSlidBallRenderer() {
     return this._slidBallRenderer
   }
 
@@ -675,15 +671,15 @@ export class Slider extends Widget {
    * Returns the "class name" of LoadingBar.
    * @returns {string}
    */
-  getDescription(): any {
+  getDescription() {
     return 'Slider'
   }
 
-  _createCloneInstance(): any {
+  _createCloneInstance() {
     return new Slider()
   }
 
-  _copySpecialProperties(slider): any {
+  _copySpecialProperties(slider) {
     this._prevIgnoreSize = slider._prevIgnoreSize
     this.setScale9Enabled(slider._scale9Enabled)
     this.loadBarTexture(slider._textureFile, slider._barTexType)
@@ -698,8 +694,6 @@ export class Slider extends Widget {
     this._ccEventCallback = slider._ccEventCallback
   }
 
-  // Constant
-  //Slider event type
   /**
    * The percent change event flag of Slider.
    * @constant
@@ -727,13 +721,3 @@ export class Slider extends Widget {
    */
   static BALL_RENDERER_ZORDER = -1
 }
-
-// Extended properties with getter/setter
-Object.defineProperty(Slider.prototype, 'percent', {
-  get: function () {
-    return this.getPercent()
-  },
-  set: function (val) {
-    this.setPercent(val)
-  },
-})

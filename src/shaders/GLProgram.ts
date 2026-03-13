@@ -750,7 +750,7 @@ export class GLProgram {
    * returns the vertexShader error log
    * @return {String}
    */
-  vertexShaderLog(): string {
+  vertexShaderLog() {
     return this._glContext.getShaderInfoLog(this._vertShader)
   }
 
@@ -758,7 +758,7 @@ export class GLProgram {
    * returns the vertexShader error log
    * @return {String}
    */
-  getVertexShaderLog(): string {
+  getVertexShaderLog() {
     return this._glContext.getShaderInfoLog(this._vertShader)
   }
 
@@ -766,7 +766,7 @@ export class GLProgram {
    * returns the fragmentShader error log
    * @returns {String}
    */
-  getFragmentShaderLog(): string {
+  getFragmentShaderLog() {
     return this._glContext.getShaderInfoLog(this._vertShader)
   }
 
@@ -774,7 +774,7 @@ export class GLProgram {
    * returns the fragmentShader error log
    * @return {String}
    */
-  fragmentShaderLog(): string {
+  fragmentShaderLog() {
     return this._glContext.getShaderInfoLog(this._fragShader)
   }
 
@@ -782,7 +782,7 @@ export class GLProgram {
    * returns the program error log
    * @return {String}
    */
-  programLog(): string {
+  programLog() {
     return this._glContext.getProgramInfoLog(this._programObj)
   }
 
@@ -790,7 +790,7 @@ export class GLProgram {
    * returns the program error log
    * @return {String}
    */
-  getProgramLog(): string {
+  getProgramLog() {
     return this._glContext.getProgramInfoLog(this._programObj)
   }
 
@@ -836,10 +836,6 @@ export class GLProgram {
       GLProgram._highpSupported = highp.precision !== 0
     }
     return GLProgram._highpSupported
-  }
-
-  static create(vShaderFileName: string, fShaderFileName: string): GLProgram {
-    return new GLProgram(vShaderFileName, fShaderFileName)
   }
 }
 

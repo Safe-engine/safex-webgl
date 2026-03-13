@@ -1,8 +1,8 @@
-import { GLProgramState } from '../../shaders/GLProgramState'
+import { GLProgram, GLProgramState } from '../../shaders'
 import { NodeRenderCmd } from './NodeRenderCmd'
 
 export class NodeWebGLRenderCmd extends NodeRenderCmd {
-  declare _glProgramState: any
+  declare _glProgramState: GLProgramState
   // declare _rootCtor: typeof NodeWebGLRenderCmd
 
   constructor(renderable: any) {
@@ -17,7 +17,7 @@ export class NodeWebGLRenderCmd extends NodeRenderCmd {
     this._glProgramState = GLProgramState.getOrCreateWithGLProgram(shaderProgram)
   }
 
-  getShaderProgram(): any {
+  getShaderProgram(): GLProgram {
     return this._glProgramState ? this._glProgramState.getGLProgram() : null
   }
 

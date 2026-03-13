@@ -1,4 +1,5 @@
 import { log } from '../helper/Debugger'
+import { GLProgram } from './GLProgram'
 import { glBindTexture2DN } from './GLStateCache'
 
 export const types = {
@@ -12,72 +13,76 @@ export const types = {
   GL_TEXTURE: 7,
 }
 
-export const UniformValue = function (uniform, glprogram) {
-  this._uniform = uniform
-  this._glprogram = glprogram
+export class UniformValue {
+  _uniform: any
+  _glprogram: GLProgram
+  _value: any
+  _type = -1
+  _textureId?: any
 
-  this._value = null
-  this._type = -1
-}
+  constructor(uniform: any, glprogram: GLProgram) {
+    this._uniform = uniform
+    this._glprogram = glprogram
+    this._value = null
+  }
 
-UniformValue.prototype = {
-  setFloat: function setFloat(value) {
+  setFloat(value: number) {
     this._value = value
     this._type = types.GL_FLOAT
-  },
+  }
 
-  setInt: function setInt(value) {
+  setInt(value: number) {
     this._value = value
     this._type = types.GL_INT
-  },
+  }
 
-  setVec2: function setVec2(v1, v2) {
+  setVec2(v1: number, v2: number) {
     this._value = [v1, v2]
     this._type = types.GL_FLOAT_VEC2
-  },
+  }
 
-  setVec2v: function setVec2v(value) {
+  setVec2v(value: number[]) {
     this._value = value.slice(0)
     this._type = types.GL_FLOAT_VEC2
-  },
+  }
 
-  setVec3: function setVec3(v1, v2, v3) {
+  setVec3(v1: number, v2: number, v3: number) {
     this._value = [v1, v2, v3]
     this._type = types.GL_FLOAT_VEC3
-  },
+  }
 
-  setVec3v: function setVec3v(value) {
+  setVec3v(value: number[]) {
     this._value = value.slice(0)
     this._type = types.GL_FLOAT_VEC3
-  },
+  }
 
-  setVec4: function setVec4(v1, v2, v3, v4) {
+  setVec4(v1: number, v2: number, v3: number, v4: number) {
     this._value = [v1, v2, v3, v4]
     this._type = types.GL_FLOAT_VEC4
-  },
+  }
 
-  setVec4v: function setVec4v(value) {
+  setVec4v(value: number[]) {
     this._value = value.slice(0)
     this._type = types.GL_FLOAT_VEC4
-  },
+  }
 
-  setMat4: function setMat4(value) {
+  setMat4(value: number[]) {
     this._value = value.slice(0)
     this._type = types.GL_FLOAT_MAT4
-  },
+  }
 
-  setCallback: function setCallback(fn) {
+  setCallback(fn: (glprogram: any, uniform: any) => void) {
     this._value = fn
     this._type = types.GL_CALLBACK
-  },
+  }
 
-  setTexture: function setTexture(textureId, textureUnit) {
+  setTexture(textureId: any, textureUnit: number) {
     this._value = textureUnit
     this._textureId = textureId
     this._type = types.GL_TEXTURE
-  },
+  }
 
-  apply: function apply() {
+  apply() {
     switch (this._type) {
       case types.GL_INT:
         this._glprogram.setUniformLocationWith1i(this._uniform._location, this._value)
@@ -106,30 +111,34 @@ UniformValue.prototype = {
         break
       default:
     }
-  },
-}
-
-export const GLProgramState = function (glprogram) {
-  this._glprogram = glprogram
-  this._uniforms = {}
-  this._boundTextureUnits = {}
-  this._textureUnitIndex = 1 // Start at 1, as CC_Texture0 is bound to 0
-
-  const activeUniforms = glprogram._glContext.getProgramParameter(glprogram._programObj, glprogram._glContext.ACTIVE_UNIFORMS)
-
-  for (let i = 0; i < activeUniforms; i += 1) {
-    const uniform = glprogram._glContext.getActiveUniform(glprogram._programObj, i)
-    if (uniform.name.indexOf('CC_') !== 0) {
-      uniform._location = glprogram._glContext.getUniformLocation(glprogram._programObj, uniform.name)
-      uniform._location._name = uniform.name
-      const uniformValue = new UniformValue(uniform, glprogram)
-      this._uniforms[uniform.name] = uniformValue
-    }
   }
 }
 
-GLProgramState.prototype = {
-  apply: function apply(modelView) {
+export class GLProgramState {
+  _glprogram: GLProgram
+  _uniforms: Record<string, UniformValue>
+  _boundTextureUnits: Record<string, number>
+  _textureUnitIndex = 1 // Start at 1, as CC_Texture0 is bound to 0
+
+  constructor(glprogram: GLProgram) {
+    this._glprogram = glprogram
+    this._uniforms = {}
+    this._boundTextureUnits = {}
+
+    const activeUniforms = glprogram._glContext.getProgramParameter(glprogram._programObj, glprogram._glContext.ACTIVE_UNIFORMS)
+
+    for (let i = 0; i < activeUniforms; i += 1) {
+      const uniform: any = glprogram._glContext.getActiveUniform(glprogram._programObj, i)
+      if (uniform.name.indexOf('CC_') !== 0) {
+        uniform._location = glprogram._glContext.getUniformLocation(glprogram._programObj, uniform.name)
+        uniform._location._name = uniform.name
+        const uniformValue = new UniformValue(uniform, glprogram)
+        this._uniforms[uniform.name] = uniformValue
+      }
+    }
+  }
+
+  apply(modelView?: any) {
     this._glprogram.use()
     if (modelView) {
       this._glprogram._setUniformForMVPMatrixWithMat4(modelView)
@@ -138,115 +147,115 @@ GLProgramState.prototype = {
     for (const name in this._uniforms) {
       this._uniforms[name].apply()
     }
-  },
+  }
 
-  setGLProgram: function setGLProgram(glprogram) {
+  setGLProgram(glprogram: any) {
     this._glprogram = glprogram
-  },
+  }
 
-  getGLProgram: function getGLProgram() {
+  getGLProgram() {
     return this._glprogram
-  },
+  }
 
-  getUniformCount: function getUniformCount() {
-    return this._uniforms.length
-  },
+  getUniformCount() {
+    return Object.keys(this._uniforms).length
+  }
 
-  getUniformValue: function getUniformValue(uniform) {
+  getUniformValue(uniform: string) {
     return this._uniforms[uniform]
-  },
+  }
 
-  setUniformInt: function setUniformInt(uniform, value) {
+  setUniformInt(uniform: string, value: number) {
     const v = this.getUniformValue(uniform)
     if (v) {
       v.setInt(value)
     } else {
       log(`cocos2d: warning: Uniform not found: ${uniform}`)
     }
-  },
+  }
 
-  setUniformFloat: function setUniformFloat(uniform, value) {
+  setUniformFloat(uniform: string, value: number) {
     const v = this.getUniformValue(uniform)
     if (v) {
       v.setFloat(value)
     } else {
       log(`cocos2d: warning: Uniform not found: ${uniform}`)
     }
-  },
+  }
 
-  setUniformVec2: function setUniformVec2(uniform, v1, v2) {
+  setUniformVec2(uniform: string, v1: number, v2: number) {
     const v = this.getUniformValue(uniform)
     if (v) {
       v.setVec2(v1, v2)
     } else {
       log(`cocos2d: warning: Uniform not found: ${uniform}`)
     }
-  },
+  }
 
-  setUniformVec2v: function setUniformVec2v(uniform, value) {
+  setUniformVec2v(uniform: string, value: number[]) {
     const v = this.getUniformValue(uniform)
     if (v) {
       v.setVec2v(value)
     } else {
       log(`cocos2d: warning: Uniform not found: ${uniform}`)
     }
-  },
+  }
 
-  setUniformVec3: function setUniformVec3(uniform, v1, v2, v3) {
+  setUniformVec3(uniform: string, v1: number, v2: number, v3: number) {
     const v = this.getUniformValue(uniform)
     if (v) {
       v.setVec3(v1, v2, v3)
     } else {
       log(`cocos2d: warning: Uniform not found: ${uniform}`)
     }
-  },
+  }
 
-  setUniformVec3v: function setUniformVec3v(uniform, value) {
+  setUniformVec3v(uniform: string, value: number[]) {
     const v = this.getUniformValue(uniform)
     if (v) {
       v.setVec3v(value)
     } else {
       log(`cocos2d: warning: Uniform not found: ${uniform}`)
     }
-  },
+  }
 
-  setUniformVec4: function setUniformVec4(uniform, v1, v2, v3, v4) {
+  setUniformVec4(uniform: string, v1: number, v2: number, v3: number, v4: number) {
     const v = this.getUniformValue(uniform)
     if (v) {
       v.setVec4(v1, v2, v3, v4)
     } else {
       log(`cocos2d: warning: Uniform not found: ${uniform}`)
     }
-  },
+  }
 
-  setUniformVec4v: function setUniformVec4v(uniform, value) {
+  setUniformVec4v(uniform: string, value: number[]) {
     const v = this.getUniformValue(uniform)
     if (v) {
       v.setVec4v(value)
     } else {
       log(`cocos2d: warning: Uniform not found: ${uniform}`)
     }
-  },
+  }
 
-  setUniformMat4: function setUniformMat4(uniform, value) {
+  setUniformMat4(uniform: string, value: number[]) {
     const v = this.getUniformValue(uniform)
     if (v) {
       v.setMat4(value)
     } else {
       log(`cocos2d: warning: Uniform not found: ${uniform}`)
     }
-  },
+  }
 
-  setUniformCallback: function setUniformCallback(uniform, callback) {
+  setUniformCallback(uniform: string, callback: (glprogram: any, uniform: any) => void) {
     const v = this.getUniformValue(uniform)
     if (v) {
       v.setCallback(callback)
     } else {
       log(`cocos2d: warning: Uniform not found: ${uniform}`)
     }
-  },
+  }
 
-  setUniformTexture: function setUniformTexture(uniform, texture) {
+  setUniformTexture(uniform: string, texture: any) {
     const uniformValue = this.getUniformValue(uniform)
     if (uniformValue) {
       const textureUnit = this._boundTextureUnits[uniform]
@@ -257,16 +266,17 @@ GLProgramState.prototype = {
         this._boundTextureUnits[uniform] = this._textureUnitIndex++
       }
     }
-  },
-}
-
-GLProgramState._cache = {}
-GLProgramState.getOrCreateWithGLProgram = function (glprogram) {
-  let programState = GLProgramState._cache[glprogram.__instanceId]
-  if (!programState) {
-    programState = new GLProgramState(glprogram)
-    GLProgramState._cache[glprogram.__instanceId] = programState
   }
 
-  return programState
+  static _cache: Record<string, GLProgramState> = {}
+
+  static getOrCreateWithGLProgram(glprogram: any) {
+    let programState = GLProgramState._cache[glprogram.__instanceId]
+    if (!programState) {
+      programState = new GLProgramState(glprogram)
+      GLProgramState._cache[glprogram.__instanceId] = programState
+    }
+
+    return programState
+  }
 }

@@ -12,7 +12,7 @@ class BootScene extends Scene {
   // }
   onEnter() {
     super.onEnter()
-    loader.load(['button.png', 'ui.plist', 'ui.png'], (err, resources) => {
+    loader.load(['button.png', 'sliderThumb.png', 'ui.plist', 'ui.png'], (err, resources) => {
       if (err) {
         console.error('Failed to load image', err)
         return
