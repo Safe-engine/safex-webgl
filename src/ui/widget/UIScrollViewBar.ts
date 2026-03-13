@@ -5,12 +5,12 @@ import { helper } from '../base/UIHelper'
 import { ScrollView } from './UIScrollView'
 
 export class ScrollViewBar extends ProtectedNode {
-  _parentScroll: any = null
-  _direction: number | null = null
+  declare _parentScroll
+  declare _direction: number
 
-  _upperHalfCircle: any = null
-  _lowerHalfCircle: any = null
-  _body: any = null
+  declare _upperHalfCircle
+  declare _lowerHalfCircle
+  declare _body
 
   _opacity = 255
 

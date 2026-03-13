@@ -11,30 +11,30 @@ import { LayoutWebGLRenderCmd } from './UILayoutWebGLRenderCmd'
 
 export class Layout extends Widget {
   _clippingEnabled = false
-  _backGroundScale9Enabled = null
-  _backGroundImage = null
-  _backGroundImageFileName = null
-  _backGroundImageCapInsets = null
-  _colorType = null
+  declare _backGroundScale9Enabled: boolean
+  declare _backGroundImage
+  declare _backGroundImageFileName
+  declare _backGroundImageCapInsets: Rect
+  declare _colorType
   _bgImageTexType = Widget.LOCAL_TEXTURE
-  _colorRender = null
-  _gradientRender = null
-  _color = null
-  _startColor = null
-  _endColor = null
-  _alongVector = null
+  declare _colorRender
+  declare _gradientRender
+  declare _color
+  declare _startColor
+  declare _endColor
+  declare _alongVector
   _opacity = 255
-  _backGroundImageTextureSize = null
-  _layoutType = null
+  declare _backGroundImageTextureSize
+  declare _layoutType
   _doLayoutDirty = true
   _clippingRectDirty = true
-  _clippingType = null
-  _clippingStencil = null
+  declare _clippingType
+  _clippingStencil: DrawNode
   _scissorRectDirty = false
-  _clippingRect = null
-  _clippingParent = null
+  declare _clippingRect: Rect
+  declare _clippingParent
   _className = 'Layout'
-  _backGroundImageColor = null
+  declare _backGroundImageColor: Color
   _finalPositionX = 0
   _finalPositionY = 0
 
@@ -392,8 +392,8 @@ export class Layout extends Widget {
       rect[3] = p(0, size.height)
       const green = Color.GREEN
       this._clippingStencil.clear()
-      this._clippingStencil.setLocalBB && this._clippingStencil.setLocalBB(0, 0, size.width, size.height)
-      this._clippingStencil.drawPoly(rect, 4, green, 0, green)
+      this._clippingStencil.setLocalBB(0, 0, size.width, size.height)
+      this._clippingStencil.drawPoly(rect, green, 0, green)
     }
   }
 
@@ -763,8 +763,7 @@ export class Layout extends Widget {
    * @returns {Color}
    */
   getBackGroundImageColor() {
-    const color = this._backGroundImageColor
-    return color(color.r, color.g, color.b, color.a)
+    return color(this._backGroundImageColor)
   }
 
   /**
