@@ -1,8 +1,8 @@
 import { director, game, global, loader, sys, Vec2, view } from '../src'
-import { Color, LabelTTF, ResolutionPolicy, Scene, Sprite, spriteFrameCache } from '../src/core'
+import { Color, LabelTTF, Rect, ResolutionPolicy, Scene, Sprite, spriteFrameCache } from '../src/core'
 import { MotionStreak } from '../src/motion-streak'
 import { ProgressTimer } from '../src/progress-timer'
-import { Button, Slider, Text } from '../src/ui'
+import { Button, Scale9Sprite, Slider, Text } from '../src/ui'
 
 class BootScene extends Scene {
   // constructor() {
@@ -19,6 +19,10 @@ class BootScene extends Scene {
       }
       console.log('Resources loaded', resources)
       spriteFrameCache.addSpriteFrames('ui.plist', 'ui.png')
+      const sprite9 = new Scale9Sprite('button.png', Rect(10, 10, 20, 20))
+      sprite9.setContentSize(200, 234)
+      sprite9.setPosition(300, 900)
+      this.addChild(sprite9)
       const sprite = new Sprite('button.png')
       const sprite2 = new Sprite('button_plus.png')
       const frame = spriteFrameCache.getSpriteFrame('ui/buttons/back')

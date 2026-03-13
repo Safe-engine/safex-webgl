@@ -328,7 +328,6 @@ const scale9QuadGenerator = {
 export class Scale9Sprite extends Node {
   //resource data, could be async loaded.
   _spriteFrame: SpriteFrame = null
-  _scale9Image: any = null
 
   //scale 9 data
   _insetLeft = 0
@@ -406,7 +405,7 @@ export class Scale9Sprite extends Node {
   }
 
   getCapInsets() {
-    return rect(this._capInsetsInternal)
+    return Rect(this._capInsetsInternal)
   }
 
   _asyncSetCapInsets() {
@@ -432,7 +431,7 @@ export class Scale9Sprite extends Node {
   _updateCapInsets(rect, capInsets) {
     if (!capInsets || !rect || rectEqualToZero(capInsets)) {
       rect = rect || { x: 0, y: 0, width: this._contentSize.width, height: this._contentSize.height }
-      this._capInsetsInternal = rect(rect.width / 3, rect.height / 3, rect.width / 3, rect.height / 3)
+      this._capInsetsInternal = Rect(rect.width / 3, rect.height / 3, rect.width / 3, rect.height / 3)
     } else {
       this._capInsetsInternal = capInsets
     }
@@ -480,7 +479,7 @@ export class Scale9Sprite extends Node {
     //in this function, the texture already make sure is loaded.
     if (rectEqualToZero(rect)) {
       const textureSize = texture.getContentSize()
-      rect = rect(0, 0, textureSize.width, textureSize.height)
+      rect = Rect(0, 0, textureSize.width, textureSize.height)
     }
     this.setTexture(texture, rect)
     this._updateCapInsets(rect, capInsets)
@@ -520,14 +519,14 @@ export class Scale9Sprite extends Node {
   initWithSpriteFrame(spriteFrame, capInsets) {
     this.setSpriteFrame(spriteFrame)
 
-    capInsets = capInsets || rect(0, 0, 0, 0)
+    capInsets = capInsets || Rect(0, 0, 0, 0)
 
     this._updateCapInsets(spriteFrame._rect, capInsets)
   }
 
   initWithSpriteFrameName(spriteFrameName, capInsets) {
     if (!spriteFrameName) throw new Error('Scale9Sprite.initWithSpriteFrameName(): spriteFrameName should be non-null')
-    capInsets = capInsets || rect(0, 0, 0, 0)
+    capInsets = capInsets || Rect(0, 0, 0, 0)
 
     const frame = spriteFrameCache.getSpriteFrame(spriteFrameName)
     if (frame == null) {
@@ -536,7 +535,7 @@ export class Scale9Sprite extends Node {
     }
     this.setSpriteFrame(frame)
 
-    capInsets = capInsets || rect(0, 0, 0, 0)
+    capInsets = capInsets || Rect(0, 0, 0, 0)
 
     this._updateCapInsets(frame._rect, capInsets)
   }
