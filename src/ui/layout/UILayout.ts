@@ -52,6 +52,7 @@ export class Layout extends Widget {
    * @param {Widget} current
    */
   onPassFocusToChild = null
+  declare _renderCmd: LayoutWebGLRenderCmd
 
   /**
    * Allocates and initializes an UILayout.

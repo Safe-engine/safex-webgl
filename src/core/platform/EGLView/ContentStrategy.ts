@@ -27,7 +27,7 @@ export class ContentStrategy {
       contentH = containerH
     }
 
-    const viewport = new Rect(Math.round((containerW - contentW) / 2), Math.round((containerH - contentH) / 2), contentW, contentH)
+    const viewport = Rect(Math.round((containerW - contentW) / 2), Math.round((containerH - contentH) / 2), contentW, contentH)
 
     // Translate the content
     if (game.RENDER_TYPE_CANVAS) {
@@ -69,13 +69,11 @@ export class ShowAll extends ContentStrategy {
     const designH = designedResolution.height
     const scaleX = containerW / designW
     const scaleY = containerH / designH
-    let scale = 0
-    let contentW: number
-    let contentH: number
 
-    scaleX < scaleY
-      ? ((scale = scaleX), (contentW = containerW), (contentH = designH * scale))
-      : ((scale = scaleY), (contentW = designW * scale), (contentH = containerH))
+    const isScaleX = scaleX < scaleY
+    const scale = isScaleX ? scaleX : scaleY
+    const contentW = isScaleX ? containerW : designW * scale
+    const contentH = isScaleX ? designH * scale : containerH
 
     return this._buildResult(containerW, containerH, contentW, contentH, scale, scale)
   }

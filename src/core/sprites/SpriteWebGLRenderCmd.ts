@@ -12,7 +12,6 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
   declare _color: Uint32Array
   declare _dirty: boolean
   declare _recursiveDirty: boolean
-  // declare _spriteCmdCtor: any
   declare _textureLoaded: any
   declare _rect: Rect
   declare texture: any
@@ -20,7 +19,6 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
 
   constructor(renderable: Sprite) {
     super(renderable)
-    // new this._rootCtor(renderable)
     this._needDraw = true
 
     this._vertices = [
@@ -34,7 +32,6 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
     this._recursiveDirty = false
 
     this._shaderProgram = shaderCache.programForKey(SHADER_SPRITE_POSITION_TEXTURECOLOR)
-    // this._spriteCmdCtor = SpriteWebGLRenderCmd
   }
 
   declare updateBlendFunc: (blendFunc: any) => void

@@ -1,10 +1,10 @@
-import { _renderContext, game, renderer } from '..'
+import { _renderContext, renderer } from '..'
 import { Node } from '../core/base-nodes/Node'
 import { Color } from '../core/platform/Color'
 import { Sprite } from '../core/sprites/Sprite'
 import { log } from '../helper/Debugger'
-import { _renderType } from '../helper/engine'
 import { Texture2D } from '../textures/TexturesWebGL'
+import { RenderTextureWebGLRenderCmd } from './RenderTextureWebGLRenderCmd'
 
 /**
  * enum for jpg
@@ -76,7 +76,6 @@ export const NextPOT = function (x) {
  */
 export class RenderTexture extends Node {
   sprite: Sprite | null = null
-
   //
   // <p>Code for "auto" update<br/>
   // Valid flags: GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_STENCIL_BUFFER_BIT.<br/>
@@ -95,6 +94,7 @@ export class RenderTexture extends Node {
   _clearColor: Color | null = null
 
   _className = 'RenderTexture'
+  declare _renderCmd: any
 
   /**
    * creates a RenderTexture object with width and height in Points and a pixel format, only RGB and RGBA formats are valid
@@ -123,8 +123,7 @@ export class RenderTexture extends Node {
   }
 
   _createRenderCmd() {
-    if (_renderType === game.RENDER_TYPE_CANVAS) return new (RenderTexture as any).CanvasRenderCmd(this)
-    else return new (RenderTexture as any).WebGLRenderCmd(this)
+    return new RenderTextureWebGLRenderCmd(this)
   }
 
   visit(parent: any) {

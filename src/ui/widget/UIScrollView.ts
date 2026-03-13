@@ -29,8 +29,8 @@ export class ScrollView extends Layout {
   static MOVEDIR_LEFT = 2
   static MOVEDIR_RIGHT = 3
 
-  _innerContainer: any = null
-  _direction: any = null
+  declare _innerContainer
+  declare _direction
 
   _topBoundary = 0
   _bottomBoundary = 0
@@ -43,14 +43,14 @@ export class ScrollView extends Layout {
   _touchTotalTimeThreshold = 0.5
 
   _autoScrolling = false
-  _autoScrollTargetDelta: any = null
+  declare _autoScrollTargetDelta
   _autoScrollAttenuate = true
-  _autoScrollStartPosition: any = null
+  declare _autoScrollStartPosition
   _autoScrollTotalTime = 0
   _autoScrollAccumulatedTime = 0
   _autoScrollCurrentlyOutOfBoundary = false
   _autoScrollBraking = false
-  _autoScrollBrakingStartPosition: any = null
+  declare _autoScrollBrakingStartPosition
 
   _bePressed = false
 
@@ -58,19 +58,20 @@ export class ScrollView extends Layout {
 
   bounceEnabled = false
 
-  _outOfBoundaryAmount: any = null
+  declare _outOfBoundaryAmount
   _outOfBoundaryAmountDirty = true
 
   inertiaScrollEnabled = false
 
   _scrollBarEnabled = true
-  _verticalScrollBar: any = null
-  _horizontalScrollBar: any = null
+  declare _verticalScrollBar
+  declare _horizontalScrollBar
 
-  _scrollViewEventListener: any = null
-  _scrollViewEventSelector: any = null
+  declare _scrollViewEventListener
+  declare _scrollViewEventSelector
   _className = 'ScrollView'
-  _ccEventCallback: any
+  declare _ccEventCallback
+  declare _renderCmd: ScrollViewWebGLRenderCmd
 
   /**
    * Allocates and initializes a UIScrollView.

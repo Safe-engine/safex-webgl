@@ -3,6 +3,7 @@ import { NodeRenderCmd } from './NodeRenderCmd'
 
 export class NodeWebGLRenderCmd extends NodeRenderCmd {
   declare _glProgramState: GLProgramState
+  declare _stackMatrix
   // declare _rootCtor: typeof NodeWebGLRenderCmd
 
   constructor(renderable: any) {

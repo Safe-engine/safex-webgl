@@ -4,171 +4,173 @@ import { CustomRenderCmd } from '../../core/base-nodes/CustomRenderCmd'
 import { current_stack } from '../../core/kazmath/gl/matrix'
 import { log } from '../../helper/Debugger'
 import { ProtectedNodeWebGLRenderCmd } from '../base/ProtectedNodeWebGLRenderCmd'
+import { Layout } from './UILayout'
 
-export const LayoutWebGLRenderCmd = function (renderable) {
-  this._pNodeCmdCtor(renderable)
-  this._needDraw = false
+export class LayoutWebGLRenderCmd extends ProtectedNodeWebGLRenderCmd {
+  static _layer = -1
+  static _visit_once: boolean | null = null
 
-  this._currentStencilEnabled = 0
-  this._scissorOldState = false
-  this._clippingOldRect = null
+  _currentStencilEnabled = false
+  _scissorOldState = false
+  declare _clippingOldRect
 
-  this._mask_layer_le = 0
+  _mask_layer_le = 0
 
-  this._beforeVisitCmdStencil = null
-  this._afterDrawStencilCmd = null
-  this._afterVisitCmdStencil = null
-  this._beforeVisitCmdScissor = null
-  this._afterVisitCmdScissor = null
-}
+  declare _beforeVisitCmdStencil
+  declare _afterDrawStencilCmd
+  declare _afterVisitCmdStencil
+  declare _beforeVisitCmdScissor
+  declare _afterVisitCmdScissor
+  declare _node: Layout
 
-const proto = (LayoutWebGLRenderCmd.prototype = Object.create(ProtectedNodeWebGLRenderCmd.prototype))
-proto.constructor = LayoutWebGLRenderCmd
-proto._layoutCmdCtor = LayoutWebGLRenderCmd
+  constructor(renderable) {
+    super(renderable)
 
-proto._syncStatus = function (parentCmd) {
-  this._originSyncStatus(parentCmd)
+    this._needDraw = false
+    // this._layoutCmdCtor = LayoutWebGLRenderCmd
+  }
 
-  if (parentCmd && parentCmd._dirtyFlag & Node._dirtyFlags.transformDirty) this._node._clippingRectDirty = true
-}
+  _syncStatus(parentCmd) {
+    this._originSyncStatus(parentCmd)
 
-proto._onBeforeVisitStencil = function (ctx) {
-  const gl = ctx || _renderContext
+    if (parentCmd && parentCmd._dirtyFlag & Node._dirtyFlags.transformDirty) this._node._clippingRectDirty = true
+  }
 
-  LayoutWebGLRenderCmd._layer++
+  _onBeforeVisitStencil(ctx) {
+    const gl = ctx || _renderContext
 
-  const mask_layer = 0x1 << LayoutWebGLRenderCmd._layer
-  const mask_layer_l = mask_layer - 1
-  this._mask_layer_le = mask_layer | mask_layer_l
+    LayoutWebGLRenderCmd._layer++
 
-  // manually save the stencil state
-  this._currentStencilEnabled = gl.isEnabled(gl.STENCIL_TEST)
-
-  gl.clear(gl.DEPTH_BUFFER_BIT)
-
-  gl.enable(gl.STENCIL_TEST)
-
-  gl.depthMask(false)
-
-  gl.stencilFunc(gl.NEVER, mask_layer, mask_layer)
-  gl.stencilOp(gl.REPLACE, gl.KEEP, gl.KEEP)
-
-  gl.stencilMask(mask_layer)
-  gl.clear(gl.STENCIL_BUFFER_BIT)
-}
-
-proto._onAfterDrawStencil = function (ctx) {
-  const gl = ctx || _renderContext
-  gl.depthMask(true)
-  gl.stencilFunc(gl.EQUAL, this._mask_layer_le, this._mask_layer_le)
-  gl.stencilOp(gl.KEEP, gl.KEEP, gl.KEEP)
-}
-
-proto._onAfterVisitStencil = function (ctx) {
-  const gl = ctx || _renderContext
-
-  LayoutWebGLRenderCmd._layer--
-
-  if (this._currentStencilEnabled) {
     const mask_layer = 0x1 << LayoutWebGLRenderCmd._layer
     const mask_layer_l = mask_layer - 1
-    const mask_layer_le = mask_layer | mask_layer_l
+    this._mask_layer_le = mask_layer | mask_layer_l
+
+    // manually save the stencil state
+    this._currentStencilEnabled = gl.isEnabled(gl.STENCIL_TEST)
+
+    gl.clear(gl.DEPTH_BUFFER_BIT)
+
+    gl.enable(gl.STENCIL_TEST)
+
+    gl.depthMask(false)
+
+    gl.stencilFunc(gl.NEVER, mask_layer, mask_layer)
+    gl.stencilOp(gl.REPLACE, gl.KEEP, gl.KEEP)
 
     gl.stencilMask(mask_layer)
-    gl.stencilFunc(gl.EQUAL, mask_layer_le, mask_layer_le)
-  } else {
-    gl.disable(gl.STENCIL_TEST)
+    gl.clear(gl.STENCIL_BUFFER_BIT)
   }
-}
 
-proto._onBeforeVisitScissor = function (ctx) {
-  this._node._clippingRectDirty = true
-  const clippingRect = this._node._getClippingRect()
-  const gl = ctx || _renderContext
+  _onAfterDrawStencil(ctx) {
+    const gl = ctx || _renderContext
+    gl.depthMask(true)
+    gl.stencilFunc(gl.EQUAL, this._mask_layer_le, this._mask_layer_le)
+    gl.stencilOp(gl.KEEP, gl.KEEP, gl.KEEP)
+  }
 
-  this._scissorOldState = gl.isEnabled(gl.SCISSOR_TEST)
+  _onAfterVisitStencil(ctx) {
+    const gl = ctx || _renderContext
 
-  if (!this._scissorOldState) {
-    gl.enable(gl.SCISSOR_TEST)
-    view.setScissorInPoints(clippingRect.x, clippingRect.y, clippingRect.width, clippingRect.height)
-  } else {
-    this._clippingOldRect = view.getScissorRect()
-    if (!rectEqualToRect(this._clippingOldRect, clippingRect))
+    LayoutWebGLRenderCmd._layer--
+
+    if (this._currentStencilEnabled) {
+      const mask_layer = 0x1 << LayoutWebGLRenderCmd._layer
+      const mask_layer_l = mask_layer - 1
+      const mask_layer_le = mask_layer | mask_layer_l
+
+      gl.stencilMask(mask_layer)
+      gl.stencilFunc(gl.EQUAL, mask_layer_le, mask_layer_le)
+    } else {
+      gl.disable(gl.STENCIL_TEST)
+    }
+  }
+
+  _onBeforeVisitScissor(ctx) {
+    this._node._clippingRectDirty = true
+    const clippingRect = this._node._getClippingRect()
+    const gl = ctx || _renderContext
+
+    this._scissorOldState = gl.isEnabled(gl.SCISSOR_TEST)
+
+    if (!this._scissorOldState) {
+      gl.enable(gl.SCISSOR_TEST)
       view.setScissorInPoints(clippingRect.x, clippingRect.y, clippingRect.width, clippingRect.height)
-  }
-}
-
-proto._onAfterVisitScissor = function (ctx) {
-  const gl = ctx || _renderContext
-  if (this._scissorOldState) {
-    if (!rectEqualToRect(this._clippingOldRect, this._node._clippingRect)) {
-      view.setScissorInPoints(this._clippingOldRect.x, this._clippingOldRect.y, this._clippingOldRect.width, this._clippingOldRect.height)
+    } else {
+      this._clippingOldRect = view.getScissorRect()
+      if (!rectEqualToRect(this._clippingOldRect, clippingRect))
+        view.setScissorInPoints(clippingRect.x, clippingRect.y, clippingRect.width, clippingRect.height)
     }
-  } else {
-    gl.disable(gl.SCISSOR_TEST)
   }
-}
 
-proto.rebindStencilRendering = function (stencil) {}
-
-proto.transform = function (parentCmd, recursive) {
-  const node = this._node
-  this.pNodeTransform(parentCmd, recursive)
-  if (node._clippingStencil) node._clippingStencil._renderCmd.transform(this, recursive)
-}
-
-proto.stencilClippingVisit = function (parentCmd) {
-  const node = this._node
-  if (!node._clippingStencil || !node._clippingStencil.isVisible()) return
-
-  // all the _stencilBits are in use?
-  if (LayoutWebGLRenderCmd._layer + 1 === stencilBits) {
-    // warn once
-    LayoutWebGLRenderCmd._visit_once = true
-    if (LayoutWebGLRenderCmd._visit_once) {
-      log(
-        `Nesting more than ${stencilBits}stencils is not supported. Everything will be drawn without stencil for this node and its childs.`,
-      )
-      LayoutWebGLRenderCmd._visit_once = false
+  _onAfterVisitScissor(ctx) {
+    const gl = ctx || _renderContext
+    if (this._scissorOldState) {
+      if (!rectEqualToRect(this._clippingOldRect, this._node._clippingRect)) {
+        view.setScissorInPoints(this._clippingOldRect.x, this._clippingOldRect.y, this._clippingOldRect.width, this._clippingOldRect.height)
+      }
+    } else {
+      gl.disable(gl.SCISSOR_TEST)
     }
-    // draw everything, as if there where no stencil
-    return
   }
 
-  if (!this._beforeVisitCmdStencil) {
-    this._beforeVisitCmdStencil = new CustomRenderCmd(this, this._onBeforeVisitStencil)
-    this._afterDrawStencilCmd = new CustomRenderCmd(this, this._onAfterDrawStencil)
-    this._afterVisitCmdStencil = new CustomRenderCmd(this, this._onAfterVisitStencil)
+  rebindStencilRendering(stencil) {}
+
+  transform(parentCmd, recursive) {
+    const node = this._node
+    this.pNodeTransform(parentCmd, recursive)
+    if (node._clippingStencil) node._clippingStencil._renderCmd.transform(this, recursive)
   }
 
-  renderer.pushRenderCommand(this._beforeVisitCmdStencil)
+  stencilClippingVisit(parentCmd) {
+    const node = this._node
+    if (!node._clippingStencil || !node._clippingStencil.isVisible()) return
 
-  //optimize performance for javascript
-  const currentStack = current_stack
-  currentStack.stack.push(currentStack.top)
-  currentStack.top = this._stackMatrix
+    // all the _stencilBits are in use?
+    if (LayoutWebGLRenderCmd._layer + 1 === stencilBits) {
+      // warn once
+      LayoutWebGLRenderCmd._visit_once = true
+      if (LayoutWebGLRenderCmd._visit_once) {
+        log(
+          `Nesting more than ${stencilBits}stencils is not supported. Everything will be drawn without stencil for this node and its childs.`,
+        )
+        LayoutWebGLRenderCmd._visit_once = false
+      }
+      // draw everything, as if there where no stencil
+      return
+    }
 
-  node._clippingStencil.visit(this)
+    if (!this._beforeVisitCmdStencil) {
+      this._beforeVisitCmdStencil = new CustomRenderCmd(this, this._onBeforeVisitStencil)
+      this._afterDrawStencilCmd = new CustomRenderCmd(this, this._onAfterDrawStencil)
+      this._afterVisitCmdStencil = new CustomRenderCmd(this, this._onAfterVisitStencil)
+    }
 
-  renderer.pushRenderCommand(this._afterDrawStencilCmd)
-}
+    renderer.pushRenderCommand(this._beforeVisitCmdStencil)
 
-proto.postStencilVisit = function () {
-  renderer.pushRenderCommand(this._afterVisitCmdStencil)
-  current_stack.top = current_stack.stack.pop()
-}
+    //optimize performance for javascript
+    const currentStack = current_stack
+    currentStack.stack.push(currentStack.top)
+    currentStack.top = this._stackMatrix
 
-proto.scissorClippingVisit = function (parentCmd) {
-  if (!this._beforeVisitCmdScissor) {
-    this._beforeVisitCmdScissor = new CustomRenderCmd(this, this._onBeforeVisitScissor)
-    this._afterVisitCmdScissor = new CustomRenderCmd(this, this._onAfterVisitScissor)
+    node._clippingStencil.visit(this)
+
+    renderer.pushRenderCommand(this._afterDrawStencilCmd)
   }
-  renderer.pushRenderCommand(this._beforeVisitCmdScissor)
-}
 
-proto.postScissorVisit = function () {
-  renderer.pushRenderCommand(this._afterVisitCmdScissor)
-}
+  postStencilVisit() {
+    renderer.pushRenderCommand(this._afterVisitCmdStencil)
+    current_stack.top = current_stack.stack.pop()
+  }
 
-LayoutWebGLRenderCmd._layer = -1
-LayoutWebGLRenderCmd._visit_once = null
+  scissorClippingVisit(parentCmd) {
+    if (!this._beforeVisitCmdScissor) {
+      this._beforeVisitCmdScissor = new CustomRenderCmd(this, this._onBeforeVisitScissor)
+      this._afterVisitCmdScissor = new CustomRenderCmd(this, this._onAfterVisitScissor)
+    }
+    renderer.pushRenderCommand(this._beforeVisitCmdScissor)
+  }
+
+  postScissorVisit() {
+    renderer.pushRenderCommand(this._afterVisitCmdScissor)
+  }
+}

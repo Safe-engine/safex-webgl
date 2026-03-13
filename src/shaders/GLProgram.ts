@@ -1,4 +1,4 @@
-import { _renderContext, director, Game, game } from '..'
+import { _renderContext, director, Game, game, Node } from '..'
 import {
   KM_GL_MODELVIEW,
   KM_GL_PROJECTION,
@@ -681,7 +681,7 @@ export class GLProgram {
       this.setUniformLocationWith4f(this._uniforms[UNIFORM_RANDOM01_S], Math.random(), Math.random(), Math.random(), Math.random())
   }
 
-  _setUniformsForBuiltinsForRenderer(node: any): void {
+  _setUniformsForBuiltinsForRenderer(node: Node): void {
     if (!node || !node._renderCmd) return
 
     const matrixP = new Matrix4()

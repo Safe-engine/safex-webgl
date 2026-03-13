@@ -431,7 +431,7 @@ export const inputManager = {
 
           const pos = this.getHTMLElementPosition(element)
           const location = this.getPointByEvent(event, pos)
-          if (!rectContainsPoint(new Rect(pos.left, pos.top, pos.width, pos.height), location)) {
+          if (!rectContainsPoint(Rect(pos.left, pos.top, pos.width, pos.height), location)) {
             this.handleTouchesEnd([this.getTouchByXY(location.x, location.y, pos)])
 
             const mouseEvent = this.getMouseEvent(location, pos, EventMouse.UP)
