@@ -6,4 +6,5 @@ export * from './widget/UIRichText'
 export * from './widget/UIScrollView'
 export * from './widget/UISlider'
 export * from './widget/UIText'
+export * from './widget/UITextField'
 

@@ -1,10 +1,9 @@
-
 /**
  Orthogonal orientation
  * @constant
  * @type Number
  */
-cc.TMX_ORIENTATION_ORTHO = 0;
+export const TMX_ORIENTATION_ORTHO = 0
 
 /**
  * Hexagonal orientation
@@ -12,14 +11,14 @@ cc.TMX_ORIENTATION_ORTHO = 0;
  * @type Number
  */
 
-cc.TMX_ORIENTATION_HEX = 1;
+export const TMX_ORIENTATION_HEX = 1
 
 /**
  * Isometric orientation
  * @constant
  * @type Number
  */
-cc.TMX_ORIENTATION_ISO = 2;
+export const TMX_ORIENTATION_ISO = 2
 
 /**
  * <p>cc.TMXTiledMap knows how to parse and render a TMX map.</p>
@@ -96,17 +95,18 @@ cc.TMX_ORIENTATION_ISO = 2;
  * var xmlStr = cc.loader.getRes(filePath);
  * var tmxTiledMap = new cc.TMXTiledMap(xmlStr, resources);
  */
-cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
-	properties: null,
-	mapOrientation: null,
-	objectGroups: null,
+export const TMXTiledMap = cc.Node.extend(
+  /** @lends cc.TMXTiledMap# */ {
+    properties: null,
+    mapOrientation: null,
+    objectGroups: null,
 
     //the map's size property measured in tiles
     _mapSize: null,
     _tileSize: null,
     //tile properties
     _tileProperties: null,
-    _className: "TMXTiledMap",
+    _className: 'TMXTiledMap',
 
     /**
      * Creates a TMX Tiled Map with a TMX file  or content string. <br/>
@@ -114,124 +114,124 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
      * @param {String} tmxFile tmxFile fileName or content string
      * @param {String} resourcePath   If tmxFile is a file name ,it is not required.If tmxFile is content string ,it is must required.
      */
-    ctor:function(tmxFile,resourcePath){
-        cc.Node.prototype.ctor.call(this);
-        this._mapSize = cc.size(0, 0);
-        this._tileSize = cc.size(0, 0);
+    ctor: function (tmxFile, resourcePath) {
+      cc.Node.prototype.ctor.call(this)
+      this._mapSize = cc.size(0, 0)
+      this._tileSize = cc.size(0, 0)
 
-        if(resourcePath !== undefined){
-            this.initWithXML(tmxFile,resourcePath);
-        }else if(tmxFile !== undefined){
-            this.initWithTMXFile(tmxFile);
-        }
+      if (resourcePath !== undefined) {
+        this.initWithXML(tmxFile, resourcePath)
+      } else if (tmxFile !== undefined) {
+        this.initWithTMXFile(tmxFile)
+      }
     },
 
     /**
      * Gets the map size.
      * @return {cc.Size}
      */
-    getMapSize:function () {
-        return cc.size(this._mapSize.width, this._mapSize.height);
+    getMapSize: function () {
+      return cc.size(this._mapSize.width, this._mapSize.height)
     },
 
     /**
      * Set the map size.
      * @param {cc.Size} Var
      */
-    setMapSize:function (Var) {
-        this._mapSize.width = Var.width;
-        this._mapSize.height = Var.height;
+    setMapSize: function (Var) {
+      this._mapSize.width = Var.width
+      this._mapSize.height = Var.height
     },
 
-	_getMapWidth: function () {
-		return this._mapSize.width;
-	},
-	_setMapWidth: function (width) {
-		this._mapSize.width = width;
-	},
-	_getMapHeight: function () {
-		return this._mapSize.height;
-	},
-	_setMapHeight: function (height) {
-		this._mapSize.height = height;
-	},
+    _getMapWidth: function () {
+      return this._mapSize.width
+    },
+    _setMapWidth: function (width) {
+      this._mapSize.width = width
+    },
+    _getMapHeight: function () {
+      return this._mapSize.height
+    },
+    _setMapHeight: function (height) {
+      this._mapSize.height = height
+    },
 
     /**
      * Gets the tile size.
      * @return {cc.Size}
      */
-    getTileSize:function () {
-        return cc.size(this._tileSize.width, this._tileSize.height);
+    getTileSize: function () {
+      return cc.size(this._tileSize.width, this._tileSize.height)
     },
 
     /**
      * Set the tile size
      * @param {cc.Size} Var
      */
-    setTileSize:function (Var) {
-        this._tileSize.width = Var.width;
-        this._tileSize.height = Var.height;
+    setTileSize: function (Var) {
+      this._tileSize.width = Var.width
+      this._tileSize.height = Var.height
     },
 
-	_getTileWidth: function () {
-		return this._tileSize.width;
-	},
-	_setTileWidth: function (width) {
-		this._tileSize.width = width;
-	},
-	_getTileHeight: function () {
-		return this._tileSize.height;
-	},
-	_setTileHeight: function (height) {
-		this._tileSize.height = height;
-	},
+    _getTileWidth: function () {
+      return this._tileSize.width
+    },
+    _setTileWidth: function (width) {
+      this._tileSize.width = width
+    },
+    _getTileHeight: function () {
+      return this._tileSize.height
+    },
+    _setTileHeight: function (height) {
+      this._tileSize.height = height
+    },
 
     /**
      * map orientation
      * @return {Number}
      */
-    getMapOrientation:function () {
-        return this.mapOrientation;
+    getMapOrientation: function () {
+      return this.mapOrientation
     },
 
     /**
      * map orientation
      * @param {Number} Var
      */
-    setMapOrientation:function (Var) {
-        this.mapOrientation = Var;
+    setMapOrientation: function (Var) {
+      this.mapOrientation = Var
     },
 
     /**
      * object groups
      * @return {Array}
      */
-    getObjectGroups:function () {
-        return this.objectGroups;
+    getObjectGroups: function () {
+      return this.objectGroups
     },
 
     /**
      * object groups
      * @param {Array} Var
      */
-    setObjectGroups:function (Var) {
-        this.objectGroups = Var;
+    setObjectGroups: function (Var) {
+      this.objectGroups = Var
     },
 
     /**
      * Gets the properties
      * @return {object}
      */
-    getProperties:function () {
-        return this.properties;
+    getProperties: function () {
+      return this.properties
     },
 
     /**
      * Set the properties
      * @param {object} Var
      */
-    setProperties:function (Var) {
-        this.properties = Var;
+    setProperties: function (Var) {
+      this.properties = Var
     },
 
     /**
@@ -243,20 +243,18 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
      * var map = new cc.TMXTiledMap()
      * map.initWithTMXFile("hello.tmx");
      */
-    initWithTMXFile:function (tmxFile) {
-        if(!tmxFile || tmxFile.length === 0)
-            throw new Error("cc.TMXTiledMap.initWithTMXFile(): tmxFile should be non-null or non-empty string.");
-	    this.width = 0;
-	    this.height = 0;
-        var mapInfo = new cc.TMXMapInfo(tmxFile);
-        if (!mapInfo)
-            return false;
+    initWithTMXFile: function (tmxFile) {
+      if (!tmxFile || tmxFile.length === 0)
+        throw new Error('cc.TMXTiledMap.initWithTMXFile(): tmxFile should be non-null or non-empty string.')
+      this.width = 0
+      this.height = 0
+      const mapInfo = new cc.TMXMapInfo(tmxFile)
+      if (!mapInfo) return false
 
-        var locTilesets = mapInfo.getTilesets();
-        if(!locTilesets || locTilesets.length === 0)
-            cc.log("cc.TMXTiledMap.initWithTMXFile(): Map not found. Please check the filename.");
-        this._buildWithMapInfo(mapInfo);
-        return true;
+      const locTilesets = mapInfo.getTilesets()
+      if (!locTilesets || locTilesets.length === 0) cc.log('cc.TMXTiledMap.initWithTMXFile(): Map not found. Please check the filename.')
+      this._buildWithMapInfo(mapInfo)
+      return true
     },
 
     /**
@@ -265,42 +263,41 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
      * @param {String} resourcePath
      * @return {Boolean} Whether the initialization was successful.
      */
-    initWithXML:function(tmxString, resourcePath){
-        this.width = 0;
-	    this.height = 0;
+    initWithXML: function (tmxString, resourcePath) {
+      this.width = 0
+      this.height = 0
 
-        var mapInfo = new cc.TMXMapInfo(tmxString, resourcePath);
-        var locTilesets = mapInfo.getTilesets();
-        if(!locTilesets || locTilesets.length === 0)
-            cc.log("cc.TMXTiledMap.initWithXML(): Map not found. Please check the filename.");
-        this._buildWithMapInfo(mapInfo);
-        return true;
+      const mapInfo = new cc.TMXMapInfo(tmxString, resourcePath)
+      const locTilesets = mapInfo.getTilesets()
+      if (!locTilesets || locTilesets.length === 0) cc.log('cc.TMXTiledMap.initWithXML(): Map not found. Please check the filename.')
+      this._buildWithMapInfo(mapInfo)
+      return true
     },
 
-    _buildWithMapInfo:function (mapInfo) {
-        this._mapSize = mapInfo.getMapSize();
-        this._tileSize = mapInfo.getTileSize();
-        this.mapOrientation = mapInfo.orientation;
-        this.objectGroups = mapInfo.getObjectGroups();
-        this.properties = mapInfo.properties;
-        this._tileProperties = mapInfo.getTileProperties();
+    _buildWithMapInfo: function (mapInfo) {
+      this._mapSize = mapInfo.getMapSize()
+      this._tileSize = mapInfo.getTileSize()
+      this.mapOrientation = mapInfo.orientation
+      this.objectGroups = mapInfo.getObjectGroups()
+      this.properties = mapInfo.properties
+      this._tileProperties = mapInfo.getTileProperties()
 
-        var idx = 0;
-        var layers = mapInfo.getLayers();
-        if (layers) {
-            var layerInfo = null;
-            for (var i = 0, len = layers.length; i < len; i++) {
-                layerInfo = layers[i];
-                if (layerInfo && layerInfo.visible) {
-                    var child = this._parseLayer(layerInfo, mapInfo);
-                    this.addChild(child, idx, idx);
-                    // update content size with the max size
-	                this.width = Math.max(this.width, child.width);
-	                this.height = Math.max(this.height, child.height);
-                    idx++;
-                }
-            }
+      let idx = 0
+      const layers = mapInfo.getLayers()
+      if (layers) {
+        let layerInfo = null
+        for (let i = 0, len = layers.length; i < len; i++) {
+          layerInfo = layers[i]
+          if (layerInfo && layerInfo.visible) {
+            const child = this._parseLayer(layerInfo, mapInfo)
+            this.addChild(child, idx, idx)
+            // update content size with the max size
+            this.width = Math.max(this.width, child.width)
+            this.height = Math.max(this.height, child.height)
+            idx++
+          }
         }
+      }
     },
 
     /**
@@ -308,13 +305,13 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
      * @returns {Array}
      */
     allLayers: function () {
-        var retArr = [], locChildren = this._children;
-        for(var i = 0, len = locChildren.length;i< len;i++){
-            var layer = locChildren[i];
-            if(layer && layer instanceof cc.TMXLayer)
-                retArr.push(layer);
-        }
-        return retArr;
+      const retArr = [],
+        locChildren = this._children
+      for (let i = 0, len = locChildren.length; i < len; i++) {
+        const layer = locChildren[i]
+        if (layer && layer instanceof cc.TMXLayer) retArr.push(layer)
+      }
+      return retArr
     },
 
     /**
@@ -322,17 +319,16 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
      * @param {String} layerName
      * @return {cc.TMXLayer}
      */
-    getLayer:function (layerName) {
-        if(!layerName || layerName.length === 0)
-            throw new Error("cc.TMXTiledMap.getLayer(): layerName should be non-null or non-empty string.");
-        var locChildren = this._children;
-        for (var i = 0; i < locChildren.length; i++) {
-            var layer = locChildren[i];
-            if (layer && layer.layerName === layerName)
-                return layer;
-        }
-        // layer not found
-        return null;
+    getLayer: function (layerName) {
+      if (!layerName || layerName.length === 0)
+        throw new Error('cc.TMXTiledMap.getLayer(): layerName should be non-null or non-empty string.')
+      const locChildren = this._children
+      for (let i = 0; i < locChildren.length; i++) {
+        const layer = locChildren[i]
+        if (layer && layer.layerName === layerName) return layer
+      }
+      // layer not found
+      return null
     },
 
     /**
@@ -340,19 +336,19 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
      * @param {String} groupName
      * @return {cc.TMXObjectGroup}
      */
-    getObjectGroup:function (groupName) {
-        if(!groupName || groupName.length === 0)
-            throw new Error("cc.TMXTiledMap.getObjectGroup(): groupName should be non-null or non-empty string.");
-        if (this.objectGroups) {
-            for (var i = 0; i < this.objectGroups.length; i++) {
-                var objectGroup = this.objectGroups[i];
-                if (objectGroup && objectGroup.groupName === groupName) {
-                    return objectGroup;
-                }
-            }
+    getObjectGroup: function (groupName) {
+      if (!groupName || groupName.length === 0)
+        throw new Error('cc.TMXTiledMap.getObjectGroup(): groupName should be non-null or non-empty string.')
+      if (this.objectGroups) {
+        for (let i = 0; i < this.objectGroups.length; i++) {
+          const objectGroup = this.objectGroups[i]
+          if (objectGroup && objectGroup.groupName === groupName) {
+            return objectGroup
+          }
         }
-        // objectGroup not found
-        return null;
+      }
+      // objectGroup not found
+      return null
     },
 
     /**
@@ -360,8 +356,8 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
      * @param {String} propertyName
      * @return {String}
      */
-    getProperty:function (propertyName) {
-        return this.properties[propertyName.toString()];
+    getProperty: function (propertyName) {
+      return this.properties[propertyName.toString()]
     },
 
     /**
@@ -370,9 +366,9 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
      * @return {object}
      * @deprecated
      */
-    propertiesForGID:function (GID) {
-        cc.log("propertiesForGID is deprecated. Please use getPropertiesForGID instead.");
-        return this.getPropertiesForGID[GID];
+    propertiesForGID: function (GID) {
+      cc.log('propertiesForGID is deprecated. Please use getPropertiesForGID instead.')
+      return this.getPropertiesForGID[GID]
     },
 
     /**
@@ -380,65 +376,64 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
      * @param {Number} GID
      * @return {object}
      */
-    getPropertiesForGID: function(GID) {
-        return this._tileProperties[GID];
+    getPropertiesForGID: function (GID) {
+      return this._tileProperties[GID]
     },
 
-    _parseLayer:function (layerInfo, mapInfo) {
-        var tileset = this._tilesetForLayer(layerInfo, mapInfo);
-        var layer = new cc.TMXLayer(tileset, layerInfo, mapInfo);
-        // tell the layerinfo to release the ownership of the tiles map.
-        layerInfo.ownTiles = false;
-        return layer;
+    _parseLayer: function (layerInfo, mapInfo) {
+      const tileset = this._tilesetForLayer(layerInfo, mapInfo)
+      const layer = new cc.TMXLayer(tileset, layerInfo, mapInfo)
+      // tell the layerinfo to release the ownership of the tiles map.
+      layerInfo.ownTiles = false
+      return layer
     },
 
-    _tilesetForLayer:function (layerInfo, mapInfo) {
-        var size = layerInfo._layerSize;
-        var tilesets = mapInfo.getTilesets();
-        if (tilesets) {
-            for (var i = tilesets.length - 1; i >= 0; i--) {
-                var tileset = tilesets[i];
-                if (tileset) {
-                    for (var y = 0; y < size.height; y++) {
-                        for (var x = 0; x < size.width; x++) {
-                            var pos = x + size.width * y;
-                            var gid = layerInfo._tiles[pos];
-                            if (gid !== 0) {
-                                // Optimization: quick return
-                                // if the layer is invalid (more than 1 tileset per layer) an cc.assert will be thrown later
-                                if (((gid & cc.TMX_TILE_FLIPPED_MASK)>>>0) >= tileset.firstGid) {
-                                    return tileset;
-                                }
-                            }
-
-                        }
-                    }
+    _tilesetForLayer: function (layerInfo, mapInfo) {
+      const size = layerInfo._layerSize
+      const tilesets = mapInfo.getTilesets()
+      if (tilesets) {
+        for (let i = tilesets.length - 1; i >= 0; i--) {
+          const tileset = tilesets[i]
+          if (tileset) {
+            for (let y = 0; y < size.height; y++) {
+              for (let x = 0; x < size.width; x++) {
+                const pos = x + size.width * y
+                const gid = layerInfo._tiles[pos]
+                if (gid !== 0) {
+                  // Optimization: quick return
+                  // if the layer is invalid (more than 1 tileset per layer) an cc.assert will be thrown later
+                  if ((gid & cc.TMX_TILE_FLIPPED_MASK) >>> 0 >= tileset.firstGid) {
+                    return tileset
+                  }
                 }
+              }
             }
+          }
         }
+      }
 
-        // If all the tiles are 0, return empty tileset
-        cc.log("cocos2d: Warning: TMX Layer " + layerInfo.name + " has no tiles");
-        return null;
-    }
-});
+      // If all the tiles are 0, return empty tileset
+      cc.log(`cocos2d: Warning: TMX Layer ${layerInfo.name} has no tiles`)
+      return null
+    },
+  },
+)
 
-var _p = cc.TMXTiledMap.prototype;
+const _p = cc.TMXTiledMap.prototype
 
 // Extended properties
 /** @expose */
-_p.mapWidth;
-cc.defineGetterSetter(_p, "mapWidth", _p._getMapWidth, _p._setMapWidth);
+_p.mapWidth
+cc.defineGetterSetter(_p, 'mapWidth', _p._getMapWidth, _p._setMapWidth)
 /** @expose */
-_p.mapHeight;
-cc.defineGetterSetter(_p, "mapHeight", _p._getMapHeight, _p._setMapHeight);
+_p.mapHeight
+cc.defineGetterSetter(_p, 'mapHeight', _p._getMapHeight, _p._setMapHeight)
 /** @expose */
-_p.tileWidth;
-cc.defineGetterSetter(_p, "tileWidth", _p._getTileWidth, _p._setTileWidth);
+_p.tileWidth
+cc.defineGetterSetter(_p, 'tileWidth', _p._getTileWidth, _p._setTileWidth)
 /** @expose */
-_p.tileHeight;
-cc.defineGetterSetter(_p, "tileHeight", _p._getTileHeight, _p._setTileHeight);
-
+_p.tileHeight
+cc.defineGetterSetter(_p, 'tileHeight', _p._getTileHeight, _p._setTileHeight)
 
 /**
  * Creates a TMX Tiled Map with a TMX file  or content string.
@@ -448,6 +443,6 @@ cc.defineGetterSetter(_p, "tileHeight", _p._getTileHeight, _p._setTileHeight);
  * @param {String} resourcePath   If tmxFile is a file name ,it is not required.If tmxFile is content string ,it is must required.
  * @return {cc.TMXTiledMap|undefined}
  */
-cc.TMXTiledMap.create = function (tmxFile,resourcePath) {
-    return new cc.TMXTiledMap(tmxFile,resourcePath);
-};
+cc.TMXTiledMap.create = function (tmxFile, resourcePath) {
+  return new cc.TMXTiledMap(tmxFile, resourcePath)
+}
