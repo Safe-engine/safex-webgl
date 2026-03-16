@@ -1,3 +1,10 @@
+import { Node } from '../core'
+import { log } from '../helper/Debugger'
+import { defineGetterSetter } from '../helper/getset'
+import { TMXLayer } from './TMXLayer'
+import { TMXMapInfo } from './TMXMapInfo'
+import { TMX_TILE_FLIPPED_MASK } from './TMXXMLParser'
+
 /**
  Orthogonal orientation
  * @constant
@@ -20,83 +27,8 @@ export const TMX_ORIENTATION_HEX = 1
  */
 export const TMX_ORIENTATION_ISO = 2
 
-/**
- * <p>cc.TMXTiledMap knows how to parse and render a TMX map.</p>
- *
- * <p>It adds support for the TMX tiled map format used by http://www.mapeditor.org <br />
- * It supports isometric, hexagonal and orthogonal tiles.<br />
- * It also supports object groups, objects, and properties.</p>
- *
- * <p>Features: <br />
- * - Each tile will be treated as an cc.Sprite<br />
- * - The sprites are created on demand. They will be created only when you call "layer.getTileAt(position)" <br />
- * - Each tile can be rotated / moved / scaled / tinted / "opacitied", since each tile is a cc.Sprite<br />
- * - Tiles can be added/removed in runtime<br />
- * - The z-order of the tiles can be modified in runtime<br />
- * - Each tile has an anchorPoint of (0,0) <br />
- * - The anchorPoint of the TMXTileMap is (0,0) <br />
- * - The TMX layers will be added as a child <br />
- * - The TMX layers will be aliased by default <br />
- * - The tileset image will be loaded using the cc.TextureCache <br />
- * - Each tile will have a unique tag<br />
- * - Each tile will have a unique z value. top-left: z=1, bottom-right: z=max z<br />
- * - Each object group will be treated as an cc.MutableArray <br />
- * - Object class which will contain all the properties in a dictionary<br />
- * - Properties can be assigned to the Map, Layer, Object Group, and Object</p>
- *
- * <p>Limitations: <br />
- * - It only supports one tileset per layer. <br />
- * - Embedded images are not supported <br />
- * - It only supports the XML format (the JSON format is not supported)</p>
- *
- * <p>Technical description: <br />
- * Each layer is created using an cc.TMXLayer (subclass of cc.SpriteBatchNode). If you have 5 layers, then 5 cc.TMXLayer will be created, <br />
- * unless the layer visibility is off. In that case, the layer won't be created at all. <br />
- * You can obtain the layers (cc.TMXLayer objects) at runtime by: <br />
- * - map.getChildByTag(tag_number);  // 0=1st layer, 1=2nd layer, 2=3rd layer, etc...<br />
- * - map.getLayer(name_of_the_layer); </p>
- *
- * <p>Each object group is created using a cc.TMXObjectGroup which is a subclass of cc.MutableArray.<br />
- * You can obtain the object groups at runtime by: <br />
- * - map.getObjectGroup(name_of_the_object_group); </p>
- *
- * <p>Each object is a cc.TMXObject.</p>
- *
- * <p>Each property is stored as a key-value pair in an cc.MutableDictionary.<br />
- * You can obtain the properties at runtime by: </p>
- *
- * <p>map.getProperty(name_of_the_property); <br />
- * layer.getProperty(name_of_the_property); <br />
- * objectGroup.getProperty(name_of_the_property); <br />
- * object.getProperty(name_of_the_property);</p>
- * @class
- * @extends cc.Node
- * @param {String} tmxFile tmxFile fileName or content string
- * @param {String} resourcePath   If tmxFile is a file name ,it is not required.If tmxFile is content string ,it is must required.
-
- *
- * @property {Array}    properties      - Properties from the map. They can be added using tilemap editors
- * @property {Number}   mapOrientation  - Map orientation
- * @property {Array}    objectGroups    - Object groups of the map
- * @property {Number}   mapWidth        - Width of the map
- * @property {Number}   mapHeight       - Height of the map
- * @property {Number}   tileWidth       - Width of a tile
- * @property {Number}   tileHeight      - Height of a tile
- *
- * @example
- * //example
- * 1.
- * //create a TMXTiledMap with file name
- * var tmxTiledMap = new cc.TMXTiledMap("res/orthogonal-test1.tmx");
- * 2.
- * //create a TMXTiledMap with content string and resource path
- * var resources = "res/TileMaps";
- * var filePath = "res/TileMaps/orthogonal-test1.tmx";
- * var xmlStr = cc.loader.getRes(filePath);
- * var tmxTiledMap = new cc.TMXTiledMap(xmlStr, resources);
- */
-export const TMXTiledMap = cc.Node.extend(
-  /** @lends cc.TMXTiledMap# */ {
+export const TMXTiledMap = Node.extend(
+  /** @lends TMXTiledMap# */ {
     properties: null,
     mapOrientation: null,
     objectGroups: null,
@@ -110,14 +42,14 @@ export const TMXTiledMap = cc.Node.extend(
 
     /**
      * Creates a TMX Tiled Map with a TMX file  or content string. <br/>
-     * Constructor of cc.TMXTiledMap
+     * Constructor of TMXTiledMap
      * @param {String} tmxFile tmxFile fileName or content string
      * @param {String} resourcePath   If tmxFile is a file name ,it is not required.If tmxFile is content string ,it is must required.
      */
     ctor: function (tmxFile, resourcePath) {
-      cc.Node.prototype.ctor.call(this)
-      this._mapSize = cc.size(0, 0)
-      this._tileSize = cc.size(0, 0)
+      Node.prototype.ctor.call(this)
+      this._mapSize = size(0, 0)
+      this._tileSize = size(0, 0)
 
       if (resourcePath !== undefined) {
         this.initWithXML(tmxFile, resourcePath)
@@ -128,15 +60,15 @@ export const TMXTiledMap = cc.Node.extend(
 
     /**
      * Gets the map size.
-     * @return {cc.Size}
+     * @return {Size}
      */
     getMapSize: function () {
-      return cc.size(this._mapSize.width, this._mapSize.height)
+      return size(this._mapSize.width, this._mapSize.height)
     },
 
     /**
      * Set the map size.
-     * @param {cc.Size} Var
+     * @param {Size} Var
      */
     setMapSize: function (Var) {
       this._mapSize.width = Var.width
@@ -158,15 +90,15 @@ export const TMXTiledMap = cc.Node.extend(
 
     /**
      * Gets the tile size.
-     * @return {cc.Size}
+     * @return {Size}
      */
     getTileSize: function () {
-      return cc.size(this._tileSize.width, this._tileSize.height)
+      return size(this._tileSize.width, this._tileSize.height)
     },
 
     /**
      * Set the tile size
-     * @param {cc.Size} Var
+     * @param {Size} Var
      */
     setTileSize: function (Var) {
       this._tileSize.width = Var.width
@@ -235,30 +167,30 @@ export const TMXTiledMap = cc.Node.extend(
     },
 
     /**
-     * Initializes the instance of cc.TMXTiledMap with tmxFile
+     * Initializes the instance of TMXTiledMap with tmxFile
      * @param {String} tmxFile
      * @return {Boolean} Whether the initialization was successful.
      * @example
      * //example
-     * var map = new cc.TMXTiledMap()
+     * var map = new TMXTiledMap()
      * map.initWithTMXFile("hello.tmx");
      */
     initWithTMXFile: function (tmxFile) {
       if (!tmxFile || tmxFile.length === 0)
-        throw new Error('cc.TMXTiledMap.initWithTMXFile(): tmxFile should be non-null or non-empty string.')
+        throw new Error('TMXTiledMap.initWithTMXFile(): tmxFile should be non-null or non-empty string.')
       this.width = 0
       this.height = 0
-      const mapInfo = new cc.TMXMapInfo(tmxFile)
+      const mapInfo = new TMXMapInfo(tmxFile)
       if (!mapInfo) return false
 
       const locTilesets = mapInfo.getTilesets()
-      if (!locTilesets || locTilesets.length === 0) cc.log('cc.TMXTiledMap.initWithTMXFile(): Map not found. Please check the filename.')
+      if (!locTilesets || locTilesets.length === 0) log('TMXTiledMap.initWithTMXFile(): Map not found. Please check the filename.')
       this._buildWithMapInfo(mapInfo)
       return true
     },
 
     /**
-     * Initializes the instance of cc.TMXTiledMap with tmxString
+     * Initializes the instance of TMXTiledMap with tmxString
      * @param {String} tmxString
      * @param {String} resourcePath
      * @return {Boolean} Whether the initialization was successful.
@@ -267,9 +199,9 @@ export const TMXTiledMap = cc.Node.extend(
       this.width = 0
       this.height = 0
 
-      const mapInfo = new cc.TMXMapInfo(tmxString, resourcePath)
+      const mapInfo = new TMXMapInfo(tmxString, resourcePath)
       const locTilesets = mapInfo.getTilesets()
-      if (!locTilesets || locTilesets.length === 0) cc.log('cc.TMXTiledMap.initWithXML(): Map not found. Please check the filename.')
+      if (!locTilesets || locTilesets.length === 0) log('TMXTiledMap.initWithXML(): Map not found. Please check the filename.')
       this._buildWithMapInfo(mapInfo)
       return true
     },
@@ -309,7 +241,7 @@ export const TMXTiledMap = cc.Node.extend(
         locChildren = this._children
       for (let i = 0, len = locChildren.length; i < len; i++) {
         const layer = locChildren[i]
-        if (layer && layer instanceof cc.TMXLayer) retArr.push(layer)
+        if (layer && layer instanceof TMXLayer) retArr.push(layer)
       }
       return retArr
     },
@@ -317,11 +249,10 @@ export const TMXTiledMap = cc.Node.extend(
     /**
      * return the TMXLayer for the specific layer
      * @param {String} layerName
-     * @return {cc.TMXLayer}
+     * @return {TMXLayer}
      */
     getLayer: function (layerName) {
-      if (!layerName || layerName.length === 0)
-        throw new Error('cc.TMXTiledMap.getLayer(): layerName should be non-null or non-empty string.')
+      if (!layerName || layerName.length === 0) throw new Error('TMXTiledMap.getLayer(): layerName should be non-null or non-empty string.')
       const locChildren = this._children
       for (let i = 0; i < locChildren.length; i++) {
         const layer = locChildren[i]
@@ -334,11 +265,11 @@ export const TMXTiledMap = cc.Node.extend(
     /**
      * Return the TMXObjectGroup for the specific group
      * @param {String} groupName
-     * @return {cc.TMXObjectGroup}
+     * @return {TMXObjectGroup}
      */
     getObjectGroup: function (groupName) {
       if (!groupName || groupName.length === 0)
-        throw new Error('cc.TMXTiledMap.getObjectGroup(): groupName should be non-null or non-empty string.')
+        throw new Error('TMXTiledMap.getObjectGroup(): groupName should be non-null or non-empty string.')
       if (this.objectGroups) {
         for (let i = 0; i < this.objectGroups.length; i++) {
           const objectGroup = this.objectGroups[i]
@@ -367,7 +298,7 @@ export const TMXTiledMap = cc.Node.extend(
      * @deprecated
      */
     propertiesForGID: function (GID) {
-      cc.log('propertiesForGID is deprecated. Please use getPropertiesForGID instead.')
+      log('propertiesForGID is deprecated. Please use getPropertiesForGID instead.')
       return this.getPropertiesForGID[GID]
     },
 
@@ -382,7 +313,7 @@ export const TMXTiledMap = cc.Node.extend(
 
     _parseLayer: function (layerInfo, mapInfo) {
       const tileset = this._tilesetForLayer(layerInfo, mapInfo)
-      const layer = new cc.TMXLayer(tileset, layerInfo, mapInfo)
+      const layer = new TMXLayer(tileset, layerInfo, mapInfo)
       // tell the layerinfo to release the ownership of the tiles map.
       layerInfo.ownTiles = false
       return layer
@@ -401,8 +332,8 @@ export const TMXTiledMap = cc.Node.extend(
                 const gid = layerInfo._tiles[pos]
                 if (gid !== 0) {
                   // Optimization: quick return
-                  // if the layer is invalid (more than 1 tileset per layer) an cc.assert will be thrown later
-                  if ((gid & cc.TMX_TILE_FLIPPED_MASK) >>> 0 >= tileset.firstGid) {
+                  // if the layer is invalid (more than 1 tileset per layer) an assert will be thrown later
+                  if ((gid & TMX_TILE_FLIPPED_MASK) >>> 0 >= tileset.firstGid) {
                     return tileset
                   }
                 }
@@ -413,36 +344,36 @@ export const TMXTiledMap = cc.Node.extend(
       }
 
       // If all the tiles are 0, return empty tileset
-      cc.log(`cocos2d: Warning: TMX Layer ${layerInfo.name} has no tiles`)
+      log(`cocos2d: Warning: TMX Layer ${layerInfo.name} has no tiles`)
       return null
     },
   },
 )
 
-const _p = cc.TMXTiledMap.prototype
+const _p = TMXTiledMap.prototype
 
 // Extended properties
 /** @expose */
 _p.mapWidth
-cc.defineGetterSetter(_p, 'mapWidth', _p._getMapWidth, _p._setMapWidth)
+defineGetterSetter(_p, 'mapWidth', _p._getMapWidth, _p._setMapWidth)
 /** @expose */
 _p.mapHeight
-cc.defineGetterSetter(_p, 'mapHeight', _p._getMapHeight, _p._setMapHeight)
+defineGetterSetter(_p, 'mapHeight', _p._getMapHeight, _p._setMapHeight)
 /** @expose */
 _p.tileWidth
-cc.defineGetterSetter(_p, 'tileWidth', _p._getTileWidth, _p._setTileWidth)
+defineGetterSetter(_p, 'tileWidth', _p._getTileWidth, _p._setTileWidth)
 /** @expose */
 _p.tileHeight
-cc.defineGetterSetter(_p, 'tileHeight', _p._getTileHeight, _p._setTileHeight)
+defineGetterSetter(_p, 'tileHeight', _p._getTileHeight, _p._setTileHeight)
 
 /**
  * Creates a TMX Tiled Map with a TMX file  or content string.
- * Implementation cc.TMXTiledMap
- * @deprecated since v3.0 please use new cc.TMXTiledMap(tmxFile,resourcePath) instead.
+ * Implementation TMXTiledMap
+ * @deprecated since v3.0 please use new TMXTiledMap(tmxFile,resourcePath) instead.
  * @param {String} tmxFile tmxFile fileName or content string
  * @param {String} resourcePath   If tmxFile is a file name ,it is not required.If tmxFile is content string ,it is must required.
- * @return {cc.TMXTiledMap|undefined}
+ * @return {TMXTiledMap|undefined}
  */
-cc.TMXTiledMap.create = function (tmxFile, resourcePath) {
-  return new cc.TMXTiledMap(tmxFile, resourcePath)
+TMXTiledMap.create = function (tmxFile, resourcePath) {
+  return new TMXTiledMap(tmxFile, resourcePath)
 }

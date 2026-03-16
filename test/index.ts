@@ -1,4 +1,4 @@
-import { director, game, global, loader, sys, Vec2, view } from '../src'
+import { ClippingNode, director, game, global, loader, sys, Vec2, view } from '../src'
 import { Color, LabelTTF, Rect, ResolutionPolicy, Scene, Sprite, spriteFrameCache } from '../src/core'
 import { FontDefinition } from '../src/core/platform/FontDefinition'
 import { MotionStreak } from '../src/motion-streak'
@@ -31,6 +31,10 @@ class BootScene extends Scene {
       sprite2.setPosition(85, 226)
       sprite3.setPosition(100, 200)
       this.addChild(sprite3)
+      const mask = new ClippingNode(sprite3)
+      sprite2.setPosition(85, 226)
+      mask.setPosition(100, 200)
+      this.addChild(mask)
       const timer = new ProgressTimer(sprite)
       this.addChild(timer)
       timer.setPercentage(60)

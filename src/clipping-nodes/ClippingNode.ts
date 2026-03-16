@@ -20,10 +20,12 @@ import { ClippingNodeWebGLRenderCmd } from './ClippingNodeWebGLRenderCmd'
 export class ClippingNode extends Node {
   inverted = false
   _alphaThreshold = 0
-  _stencil: Node | null = null
-  _originStencilProgram: any = null
+  // _dirtyFlag: number
+  declare _stencil: Node
+  declare _originStencilProgram: any
   declare stencil: Node | null
   declare alphaThreshold: number
+  declare _renderCmd: ClippingNodeWebGLRenderCmd
 
   /**
    * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
@@ -37,7 +39,7 @@ export class ClippingNode extends Node {
     }
     this.alphaThreshold = 1
     this.inverted = false
-    ;(this._renderCmd as any).initStencilBits()
+    this._renderCmd.initStencilBits()
   }
 
   /**
@@ -95,7 +97,7 @@ export class ClippingNode extends Node {
   }
 
   visit(parent: Node) {
-    ;(this._renderCmd as any).clippingVisit(parent?._renderCmd)
+    this._renderCmd.clippingVisit(parent?._renderCmd)
   }
 
   _visitChildren() {
@@ -133,7 +135,7 @@ export class ClippingNode extends Node {
   setAlphaThreshold(alphaThreshold: number) {
     if (alphaThreshold === 1 && alphaThreshold !== this._alphaThreshold) {
       // should reset program used by _stencil
-      ;(this._renderCmd as any).resetProgramByStencil()
+      this._renderCmd.resetProgramByStencil()
     }
     this._alphaThreshold = alphaThreshold
   }
@@ -175,7 +177,7 @@ export class ClippingNode extends Node {
   setStencil(stencil: Node | null) {
     if (this._stencil === stencil) return
     if (stencil) this._originStencilProgram = stencil.getShaderProgram()
-    ;(this._renderCmd as any).setStencil(stencil)
+    this._renderCmd.setStencil(stencil)
   }
 
   _createRenderCmd() {

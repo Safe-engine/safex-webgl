@@ -33,7 +33,6 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "exclude": ["src/tilemap","src/particle"],
   "include": [
     "src"
   ]

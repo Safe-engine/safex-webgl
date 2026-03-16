@@ -1,45 +1,16 @@
-/****************************************************************************
- Copyright (c) 2008-2010 Ricardo Quesada
- Copyright (c) 2011-2012 cocos2d-x.org
- Copyright (c) 2013-2014 Chukong Technologies Inc.
+import { director, game } from '..'
+import { color, p } from '../core'
+import { _renderType } from '../helper/engine'
 
- http://www.cocos2d-x.org
-
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
-
- The above copyright notice and this permission notice shall be included in
- all copies or substantial portions of the Software.
-
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- THE SOFTWARE.
- ****************************************************************************/
-
-/**
- * A fire particle system
- * @class
- * @extends cc.ParticleSystem
- *
- * @example
- * var emitter = new cc.ParticleFire();
- */
-cc.ParticleFire = cc.ParticleSystem.extend(/** @lends cc.ParticleFire# */{
+export const ParticleFire = ParticleSystem.extend(
+  /** @lends ParticleFire# */ {
     /**
-     * <p>The cc.ParticleFire's constructor. <br/>
-     * This function will automatically be invoked when you create a node using new construction: "var node = new cc.ParticleFire()".<br/>
+     * <p>The ParticleFire's constructor. <br/>
+     * This function will automatically be invoked when you create a node using new construction: "var node = new ParticleFire()".<br/>
      * Override it to extend its behavior, remember to call "this._super()" in the extended "ctor" function.</p>
      */
-    ctor:function () {
-        cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc.game.RENDER_TYPE_WEBGL) ? 300 : 150);
+    ctor: function () {
+      ParticleSystem.prototype.ctor.call(this, _renderType === game.RENDER_TYPE_WEBGL ? 300 : 150)
     },
 
     /**
@@ -47,87 +18,87 @@ cc.ParticleFire = cc.ParticleSystem.extend(/** @lends cc.ParticleFire# */{
      * @param {Number} numberOfParticles
      * @return {Boolean}
      */
-    initWithTotalParticles:function (numberOfParticles) {
-        if (cc.ParticleSystem.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
-            // duration
-            this.setDuration(cc.ParticleSystem.DURATION_INFINITY);
+    initWithTotalParticles: function (numberOfParticles) {
+      if (ParticleSystem.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
+        // duration
+        this.setDuration(ParticleSystem.DURATION_INFINITY)
 
-            // Gravity Mode
-            this.setEmitterMode(cc.ParticleSystem.MODE_GRAVITY);
+        // Gravity Mode
+        this.setEmitterMode(ParticleSystem.MODE_GRAVITY)
 
+        // Gravity Mode: gravity
+        this.setGravity(p(0, 0))
 
-            // Gravity Mode: gravity
-            this.setGravity(cc.p(0, 0));
+        // Gravity Mode: radial acceleration
+        this.setRadialAccel(0)
+        this.setRadialAccelVar(0)
 
-            // Gravity Mode: radial acceleration
-            this.setRadialAccel(0);
-            this.setRadialAccelVar(0);
+        // Gravity Mode: speed of particles
+        this.setSpeed(60)
+        this.setSpeedVar(20)
 
-            // Gravity Mode: speed of particles
-            this.setSpeed(60);
-            this.setSpeedVar(20);
+        // starting angle
+        this.setAngle(90)
+        this.setAngleVar(10)
 
-            // starting angle
-            this.setAngle(90);
-            this.setAngleVar(10);
+        // emitter position
+        const winSize = director.getWinSize()
+        this.setPosition(winSize.width / 2, 60)
+        this.setPosVar(p(40, 20))
 
-            // emitter position
-            var winSize = cc.director.getWinSize();
-            this.setPosition(winSize.width / 2, 60);
-            this.setPosVar(cc.p(40, 20));
+        // life of particles
+        this.setLife(3)
+        this.setLifeVar(0.25)
 
-            // life of particles
-            this.setLife(3);
-            this.setLifeVar(0.25);
+        // size, in pixels
+        this.setStartSize(54.0)
+        this.setStartSizeVar(10.0)
+        this.setEndSize(ParticleSystem.START_SIZE_EQUAL_TO_END_SIZE)
 
+        // emits per frame
+        this.setEmissionRate(this.getTotalParticles() / this.getLife())
 
-            // size, in pixels
-            this.setStartSize(54.0);
-            this.setStartSizeVar(10.0);
-            this.setEndSize(cc.ParticleSystem.START_SIZE_EQUAL_TO_END_SIZE);
+        // color of particles
+        this.setStartColor(color(194, 64, 31, 255))
+        this.setStartColorVar(color(0, 0, 0, 0))
+        this.setEndColor(color(0, 0, 0, 255))
+        this.setEndColorVar(color(0, 0, 0, 0))
 
-            // emits per frame
-            this.setEmissionRate(this.getTotalParticles() / this.getLife());
-
-            // color of particles
-            this.setStartColor(cc.color(194,64,31,255));
-            this.setStartColorVar(cc.color(0,0,0,0));
-            this.setEndColor(cc.color(0,0,0,255));
-            this.setEndColorVar(cc.color(0,0,0,0));
-
-            // additive
-            this.setBlendAdditive(true);
-            return true;
-        }
-        return false;
-    }
-});
+        // additive
+        this.setBlendAdditive(true)
+        return true
+      }
+      return false
+    },
+  },
+)
 
 /**
  * Create a fire particle system
- * @deprecated since v3.0 please use new cc.ParticleFire() instead
- * @return {cc.ParticleFire}
+ * @deprecated since v3.0 please use new ParticleFire() instead
+ * @return {ParticleFire}
  */
-cc.ParticleFire.create = function () {
-    return new cc.ParticleFire();
-};
+ParticleFire.create = function () {
+  return new ParticleFire()
+}
 
 /**
  * A fireworks particle system
  * @class
- * @extends cc.ParticleSystem
+ * @extends ParticleSystem
  *
  * @example
- * var emitter = new cc.ParticleFireworks();
+ * var emitter = new ParticleFireworks();
  */
-cc.ParticleFireworks = cc.ParticleSystem.extend(/** @lends cc.ParticleFireworks# */{
+ParticleFireworks = ParticleSystem.extend(
+  /** @lends ParticleFireworks# */ {
     /**
-     * <p>The cc.ParticleFireworks's constructor. <br/>
-     * This function will automatically be invoked when you create a node using new construction: "var node = new cc.ParticleFireworks()".<br/>
+     * <p>The ParticleFireworks's constructor. <br/>
+     * This function will automatically be invoked when you create a node using new construction: "var node = new ParticleFireworks()".<br/>
      * Override it to extend its behavior, remember to call "this._super()" in the extended "ctor" function.</p>
      */
-    ctor:function () {
-        cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc.game.RENDER_TYPE_WEBGL) ? 1500 : 150);
+    ctor: function () {
+      ParticleSystem.prototype.ctor.call(this, _renderType === game.RENDER_TYPE_WEBGL ? 1500 : 150)
     },
 
     /**
@@ -135,84 +106,86 @@ cc.ParticleFireworks = cc.ParticleSystem.extend(/** @lends cc.ParticleFireworks#
      * @param {Number} numberOfParticles
      * @return {Boolean}
      */
-    initWithTotalParticles:function (numberOfParticles) {
-        if (cc.ParticleSystem.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
-            // duration
-            this.setDuration(cc.ParticleSystem.DURATION_INFINITY);
+    initWithTotalParticles: function (numberOfParticles) {
+      if (ParticleSystem.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
+        // duration
+        this.setDuration(ParticleSystem.DURATION_INFINITY)
 
-            // Gravity Mode
-            this.setEmitterMode(cc.ParticleSystem.MODE_GRAVITY);
+        // Gravity Mode
+        this.setEmitterMode(ParticleSystem.MODE_GRAVITY)
 
-            // Gravity Mode: gravity
-            this.setGravity(cc.p(0, -90));
+        // Gravity Mode: gravity
+        this.setGravity(p(0, -90))
 
-            // Gravity Mode:  radial
-            this.setRadialAccel(0);
-            this.setRadialAccelVar(0);
+        // Gravity Mode:  radial
+        this.setRadialAccel(0)
+        this.setRadialAccelVar(0)
 
-            //  Gravity Mode: speed of particles
-            this.setSpeed(180);
-            this.setSpeedVar(50);
+        //  Gravity Mode: speed of particles
+        this.setSpeed(180)
+        this.setSpeedVar(50)
 
-            // emitter position
-            var winSize = cc.director.getWinSize();
-            this.setPosition(winSize.width / 2, winSize.height / 2);
+        // emitter position
+        const winSize = director.getWinSize()
+        this.setPosition(winSize.width / 2, winSize.height / 2)
 
-            // angle
-            this.setAngle(90);
-            this.setAngleVar(20);
+        // angle
+        this.setAngle(90)
+        this.setAngleVar(20)
 
-            // life of particles
-            this.setLife(3.5);
-            this.setLifeVar(1);
+        // life of particles
+        this.setLife(3.5)
+        this.setLifeVar(1)
 
-            // emits per frame
-            this.setEmissionRate(this.getTotalParticles() / this.getLife());
+        // emits per frame
+        this.setEmissionRate(this.getTotalParticles() / this.getLife())
 
-            // color of particles
-            this.setStartColor(cc.color(128,128,128,255));
-            this.setStartColorVar(cc.color(128,128,128,255));
-            this.setEndColor(cc.color(26,26,26,51));
-            this.setEndColorVar(cc.color(26,26,26,51));
+        // color of particles
+        this.setStartColor(color(128, 128, 128, 255))
+        this.setStartColorVar(color(128, 128, 128, 255))
+        this.setEndColor(color(26, 26, 26, 51))
+        this.setEndColorVar(color(26, 26, 26, 51))
 
-            // size, in pixels
-            this.setStartSize(8.0);
-            this.setStartSizeVar(2.0);
-            this.setEndSize(cc.ParticleSystem.START_SIZE_EQUAL_TO_END_SIZE);
+        // size, in pixels
+        this.setStartSize(8.0)
+        this.setStartSizeVar(2.0)
+        this.setEndSize(ParticleSystem.START_SIZE_EQUAL_TO_END_SIZE)
 
-            // additive
-            this.setBlendAdditive(false);
-            return true;
-        }
-        return false;
-    }
-});
+        // additive
+        this.setBlendAdditive(false)
+        return true
+      }
+      return false
+    },
+  },
+)
 
 /**
  * Create a fireworks particle system
- * @deprecated since v3.0 please use new cc.ParticleFireworks() instead.
- * @return {cc.ParticleFireworks}
+ * @deprecated since v3.0 please use new ParticleFireworks() instead.
+ * @return {ParticleFireworks}
  */
-cc.ParticleFireworks.create = function () {
-    return new cc.ParticleFireworks();
-};
+ParticleFireworks.create = function () {
+  return new ParticleFireworks()
+}
 
 /**
  * A sun particle system
  * @class
- * @extends cc.ParticleSystem
+ * @extends ParticleSystem
  *
  * @example
- * var emitter = new cc.ParticleSun();
+ * var emitter = new ParticleSun();
  */
-cc.ParticleSun = cc.ParticleSystem.extend(/** @lends cc.ParticleSun# */{
+ParticleSun = ParticleSystem.extend(
+  /** @lends ParticleSun# */ {
     /**
-     * <p>The cc.ParticleSun's constructor. <br/>
-     * This function will automatically be invoked when you create a node using new construction: "var node = new cc.ParticleSun()".<br/>
+     * <p>The ParticleSun's constructor. <br/>
+     * This function will automatically be invoked when you create a node using new construction: "var node = new ParticleSun()".<br/>
      * Override it to extend its behavior, remember to call "this._super()" in the extended "ctor" function.</p>
      */
-    ctor:function () {
-        cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc.game.RENDER_TYPE_WEBGL) ? 350 : 150);
+    ctor: function () {
+      ParticleSystem.prototype.ctor.call(this, _renderType === game.RENDER_TYPE_WEBGL ? 350 : 150)
     },
 
     /**
@@ -220,87 +193,89 @@ cc.ParticleSun = cc.ParticleSystem.extend(/** @lends cc.ParticleSun# */{
      * @param {Number} numberOfParticles
      * @return {Boolean}
      */
-    initWithTotalParticles:function (numberOfParticles) {
-        if (cc.ParticleSystem.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
-            // additive
-            this.setBlendAdditive(true);
+    initWithTotalParticles: function (numberOfParticles) {
+      if (ParticleSystem.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
+        // additive
+        this.setBlendAdditive(true)
 
-            // duration
-            this.setDuration(cc.ParticleSystem.DURATION_INFINITY);
+        // duration
+        this.setDuration(ParticleSystem.DURATION_INFINITY)
 
-            // Gravity Mode
-            this.setEmitterMode(cc.ParticleSystem.MODE_GRAVITY);
+        // Gravity Mode
+        this.setEmitterMode(ParticleSystem.MODE_GRAVITY)
 
-            // Gravity Mode: gravity
-            this.setGravity(cc.p(0, 0));
+        // Gravity Mode: gravity
+        this.setGravity(p(0, 0))
 
-            // Gravity mode: radial acceleration
-            this.setRadialAccel(0);
-            this.setRadialAccelVar(0);
+        // Gravity mode: radial acceleration
+        this.setRadialAccel(0)
+        this.setRadialAccelVar(0)
 
-            // Gravity mode: speed of particles
-            this.setSpeed(20);
-            this.setSpeedVar(5);
+        // Gravity mode: speed of particles
+        this.setSpeed(20)
+        this.setSpeedVar(5)
 
-            // angle
-            this.setAngle(90);
-            this.setAngleVar(360);
+        // angle
+        this.setAngle(90)
+        this.setAngleVar(360)
 
-            // emitter position
-            var winSize = cc.director.getWinSize();
-            this.setPosition(winSize.width / 2, winSize.height / 2);
-            this.setPosVar(cc.p(0,0));
+        // emitter position
+        const winSize = director.getWinSize()
+        this.setPosition(winSize.width / 2, winSize.height / 2)
+        this.setPosVar(p(0, 0))
 
-            // life of particles
-            this.setLife(1);
-            this.setLifeVar(0.5);
+        // life of particles
+        this.setLife(1)
+        this.setLifeVar(0.5)
 
-            // size, in pixels
-            this.setStartSize(30.0);
-            this.setStartSizeVar(10.0);
-            this.setEndSize(cc.ParticleSystem.START_SIZE_EQUAL_TO_END_SIZE);
+        // size, in pixels
+        this.setStartSize(30.0)
+        this.setStartSizeVar(10.0)
+        this.setEndSize(ParticleSystem.START_SIZE_EQUAL_TO_END_SIZE)
 
-            // emits per seconds
-            this.setEmissionRate(this.getTotalParticles() / this.getLife());
+        // emits per seconds
+        this.setEmissionRate(this.getTotalParticles() / this.getLife())
 
-            // color of particles
-            this.setStartColor(cc.color(194, 64, 31, 255));
-            this.setStartColorVar(cc.color(0, 0, 0, 0));
-            this.setEndColor(cc.color(0, 0, 0, 255));
-            this.setEndColorVar(cc.color(0, 0, 0, 0));
+        // color of particles
+        this.setStartColor(color(194, 64, 31, 255))
+        this.setStartColorVar(color(0, 0, 0, 0))
+        this.setEndColor(color(0, 0, 0, 255))
+        this.setEndColorVar(color(0, 0, 0, 0))
 
-            return true;
-        }
-        return false;
-    }
-});
+        return true
+      }
+      return false
+    },
+  },
+)
 
 /**
  * Create a sun particle system
- * @deprecated since v3.0 please use new cc.ParticleSun() instead.
- * @return {cc.ParticleSun}
+ * @deprecated since v3.0 please use new ParticleSun() instead.
+ * @return {ParticleSun}
  */
-cc.ParticleSun.create = function () {
-    return new cc.ParticleSun();
-};
+ParticleSun.create = function () {
+  return new ParticleSun()
+}
 
 //! @brief A  particle system
 /**
  * A galaxy particle system
  * @class
- * @extends cc.ParticleSystem
+ * @extends ParticleSystem
  *
  * @example
- * var emitter = new cc.ParticleGalaxy();
+ * var emitter = new ParticleGalaxy();
  */
-cc.ParticleGalaxy = cc.ParticleSystem.extend(/** @lends cc.ParticleGalaxy# */{
+ParticleGalaxy = ParticleSystem.extend(
+  /** @lends ParticleGalaxy# */ {
     /**
-     * <p>The cc.ParticleGalaxy's constructor. <br/>
-     * This function will automatically be invoked when you create a node using new construction: "var node = new cc.ParticleGalaxy()".<br/>
+     * <p>The ParticleGalaxy's constructor. <br/>
+     * This function will automatically be invoked when you create a node using new construction: "var node = new ParticleGalaxy()".<br/>
      * Override it to extend its behavior, remember to call "this._super()" in the extended "ctor" function.</p>
      */
-    ctor:function () {
-        cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc.game.RENDER_TYPE_WEBGL) ? 200 : 100);
+    ctor: function () {
+      ParticleSystem.prototype.ctor.call(this, _renderType === game.RENDER_TYPE_WEBGL ? 200 : 100)
     },
 
     /**
@@ -308,88 +283,90 @@ cc.ParticleGalaxy = cc.ParticleSystem.extend(/** @lends cc.ParticleGalaxy# */{
      * @param {Number} numberOfParticles
      * @return {Boolean}
      */
-    initWithTotalParticles:function (numberOfParticles) {
-        if (cc.ParticleSystem.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
-            // duration
-            this.setDuration(cc.ParticleSystem.DURATION_INFINITY);
+    initWithTotalParticles: function (numberOfParticles) {
+      if (ParticleSystem.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
+        // duration
+        this.setDuration(ParticleSystem.DURATION_INFINITY)
 
-            // Gravity Mode
-            this.setEmitterMode(cc.ParticleSystem.MODE_GRAVITY);
+        // Gravity Mode
+        this.setEmitterMode(ParticleSystem.MODE_GRAVITY)
 
-            // Gravity Mode: gravity
-            this.setGravity(cc.p(0, 0));
+        // Gravity Mode: gravity
+        this.setGravity(p(0, 0))
 
-            // Gravity Mode: speed of particles
-            this.setSpeed(60);
-            this.setSpeedVar(10);
+        // Gravity Mode: speed of particles
+        this.setSpeed(60)
+        this.setSpeedVar(10)
 
-            // Gravity Mode: radial
-            this.setRadialAccel(-80);
-            this.setRadialAccelVar(0);
+        // Gravity Mode: radial
+        this.setRadialAccel(-80)
+        this.setRadialAccelVar(0)
 
-            // Gravity Mode: tangential
-            this.setTangentialAccel(80);
-            this.setTangentialAccelVar(0);
+        // Gravity Mode: tangential
+        this.setTangentialAccel(80)
+        this.setTangentialAccelVar(0)
 
-            // angle
-            this.setAngle(90);
-            this.setAngleVar(360);
+        // angle
+        this.setAngle(90)
+        this.setAngleVar(360)
 
-            // emitter position
-            var winSize = cc.director.getWinSize();
-            this.setPosition(winSize.width / 2, winSize.height / 2);
-            this.setPosVar(cc.p(0,0));
+        // emitter position
+        const winSize = director.getWinSize()
+        this.setPosition(winSize.width / 2, winSize.height / 2)
+        this.setPosVar(p(0, 0))
 
-            // life of particles
-            this.setLife(4);
-            this.setLifeVar(1);
+        // life of particles
+        this.setLife(4)
+        this.setLifeVar(1)
 
-            // size, in pixels
-            this.setStartSize(37.0);
-            this.setStartSizeVar(10.0);
-            this.setEndSize(cc.ParticleSystem.START_SIZE_EQUAL_TO_END_SIZE);
+        // size, in pixels
+        this.setStartSize(37.0)
+        this.setStartSizeVar(10.0)
+        this.setEndSize(ParticleSystem.START_SIZE_EQUAL_TO_END_SIZE)
 
-            // emits per second
-            this.setEmissionRate(this.getTotalParticles() / this.getLife());
+        // emits per second
+        this.setEmissionRate(this.getTotalParticles() / this.getLife())
 
-            // color of particles
-            this.setStartColor(cc.color(31, 64, 194, 255));
-            this.setStartColorVar(cc.color(0, 0, 0, 0));
-            this.setEndColor(cc.color(0, 0, 0, 255));
-            this.setEndColorVar(cc.color(0, 0, 0, 0));
+        // color of particles
+        this.setStartColor(color(31, 64, 194, 255))
+        this.setStartColorVar(color(0, 0, 0, 0))
+        this.setEndColor(color(0, 0, 0, 255))
+        this.setEndColorVar(color(0, 0, 0, 0))
 
-            // additive
-            this.setBlendAdditive(true);
-            return true;
-        }
-        return false;
-    }
-});
+        // additive
+        this.setBlendAdditive(true)
+        return true
+      }
+      return false
+    },
+  },
+)
 /**
  * Create a galaxy particle system
- * @deprecated since v3.0 please use new cc.OarticleGalaxy() instead.
- * @return {cc.ParticleGalaxy}
+ * @deprecated since v3.0 please use new OarticleGalaxy() instead.
+ * @return {ParticleGalaxy}
  */
-cc.ParticleGalaxy.create = function () {
-    return new cc.ParticleGalaxy();
-};
+ParticleGalaxy.create = function () {
+  return new ParticleGalaxy()
+}
 
 /**
  * A flower particle system
  * @class
- * @extends cc.ParticleSystem
+ * @extends ParticleSystem
  *
  * @example
- * var emitter = new cc.ParticleFlower();
+ * var emitter = new ParticleFlower();
  */
-cc.ParticleFlower = cc.ParticleSystem.extend(/** @lends cc.ParticleFlower# */{
+ParticleFlower = ParticleSystem.extend(
+  /** @lends ParticleFlower# */ {
     /**
-     * <p>The cc.ParticleFlower's constructor. <br/>
-     * This function will automatically be invoked when you create a node using new construction: "var node = new cc.ParticleFlower()".<br/>
+     * <p>The ParticleFlower's constructor. <br/>
+     * This function will automatically be invoked when you create a node using new construction: "var node = new ParticleFlower()".<br/>
      * Override it to extend its behavior, remember to call "this._super()" in the extended "ctor" function.</p>
      */
-    ctor : function () {
-        cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc.game.RENDER_TYPE_WEBGL) ? 250 : 100);
+    ctor: function () {
+      ParticleSystem.prototype.ctor.call(this, _renderType === game.RENDER_TYPE_WEBGL ? 250 : 100)
     },
 
     /**
@@ -397,90 +374,92 @@ cc.ParticleFlower = cc.ParticleSystem.extend(/** @lends cc.ParticleFlower# */{
      * @param {Number} numberOfParticles
      * @return {Boolean}
      */
-    initWithTotalParticles:function (numberOfParticles) {
-        if (cc.ParticleSystem.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
-            // duration
-            this.setDuration(cc.ParticleSystem.DURATION_INFINITY);
+    initWithTotalParticles: function (numberOfParticles) {
+      if (ParticleSystem.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
+        // duration
+        this.setDuration(ParticleSystem.DURATION_INFINITY)
 
-            // Gravity Mode
-            this.setEmitterMode(cc.ParticleSystem.MODE_GRAVITY);
+        // Gravity Mode
+        this.setEmitterMode(ParticleSystem.MODE_GRAVITY)
 
-            // Gravity Mode: gravity
-            this.setGravity(cc.p(0, 0));
+        // Gravity Mode: gravity
+        this.setGravity(p(0, 0))
 
-            // Gravity Mode: speed of particles
-            this.setSpeed(80);
-            this.setSpeedVar(10);
+        // Gravity Mode: speed of particles
+        this.setSpeed(80)
+        this.setSpeedVar(10)
 
-            // Gravity Mode: radial
-            this.setRadialAccel(-60);
-            this.setRadialAccelVar(0);
+        // Gravity Mode: radial
+        this.setRadialAccel(-60)
+        this.setRadialAccelVar(0)
 
-            // Gravity Mode: tangential
-            this.setTangentialAccel(15);
-            this.setTangentialAccelVar(0);
+        // Gravity Mode: tangential
+        this.setTangentialAccel(15)
+        this.setTangentialAccelVar(0)
 
-            // angle
-            this.setAngle(90);
-            this.setAngleVar(360);
+        // angle
+        this.setAngle(90)
+        this.setAngleVar(360)
 
-            // emitter position
-            var winSize = cc.director.getWinSize();
-            this.setPosition(winSize.width / 2, winSize.height / 2);
-            this.setPosVar(cc.p(0,0));
+        // emitter position
+        const winSize = director.getWinSize()
+        this.setPosition(winSize.width / 2, winSize.height / 2)
+        this.setPosVar(p(0, 0))
 
-            // life of particles
-            this.setLife(4);
-            this.setLifeVar(1);
+        // life of particles
+        this.setLife(4)
+        this.setLifeVar(1)
 
-            // size, in pixels
-            this.setStartSize(30.0);
-            this.setStartSizeVar(10.0);
-            this.setEndSize(cc.ParticleSystem.START_SIZE_EQUAL_TO_END_SIZE);
+        // size, in pixels
+        this.setStartSize(30.0)
+        this.setStartSizeVar(10.0)
+        this.setEndSize(ParticleSystem.START_SIZE_EQUAL_TO_END_SIZE)
 
-            // emits per second
-            this.setEmissionRate(this.getTotalParticles() / this.getLife());
+        // emits per second
+        this.setEmissionRate(this.getTotalParticles() / this.getLife())
 
-            // color of particles
-            this.setStartColor(cc.color(128, 128, 128, 255));
-            this.setStartColorVar(cc.color(128, 128, 128, 128));
-            this.setEndColor(cc.color(0, 0, 0, 255));
-            this.setEndColorVar(cc.color(0, 0, 0, 0));
+        // color of particles
+        this.setStartColor(color(128, 128, 128, 255))
+        this.setStartColorVar(color(128, 128, 128, 128))
+        this.setEndColor(color(0, 0, 0, 255))
+        this.setEndColorVar(color(0, 0, 0, 0))
 
-            // additive
-            this.setBlendAdditive(true);
-            return true;
-        }
-        return false;
-    }
-});
+        // additive
+        this.setBlendAdditive(true)
+        return true
+      }
+      return false
+    },
+  },
+)
 
 /**
  * Create a flower particle system
- * @deprecated since v3.0 please use new cc.ParticleFlower() instead.
- * @return {cc.ParticleFlower}
+ * @deprecated since v3.0 please use new ParticleFlower() instead.
+ * @return {ParticleFlower}
  */
-cc.ParticleFlower.create = function () {
-    return new cc.ParticleFlower();
-};
+ParticleFlower.create = function () {
+  return new ParticleFlower()
+}
 
 //! @brief A meteor particle system
 /**
  * A meteor particle system
  * @class
- * @extends cc.ParticleSystem
+ * @extends ParticleSystem
  *
  * @example
- * var emitter = new cc.ParticleMeteor();
+ * var emitter = new ParticleMeteor();
  */
-cc.ParticleMeteor = cc.ParticleSystem.extend(/** @lends cc.ParticleMeteor# */{
+ParticleMeteor = ParticleSystem.extend(
+  /** @lends ParticleMeteor# */ {
     /**
-     * <p>The cc.ParticleMeteor's constructor. <br/>
-     * This function will automatically be invoked when you create a node using new construction: "var node = new cc.ParticleMeteor()".<br/>
+     * <p>The ParticleMeteor's constructor. <br/>
+     * This function will automatically be invoked when you create a node using new construction: "var node = new ParticleMeteor()".<br/>
      * Override it to extend its behavior, remember to call "this._super()" in the extended "ctor" function.</p>
      */
-    ctor:function () {
-        cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc.game.RENDER_TYPE_WEBGL) ? 150 : 100);
+    ctor: function () {
+      ParticleSystem.prototype.ctor.call(this, _renderType === game.RENDER_TYPE_WEBGL ? 150 : 100)
     },
 
     /**
@@ -488,90 +467,91 @@ cc.ParticleMeteor = cc.ParticleSystem.extend(/** @lends cc.ParticleMeteor# */{
      * @param {Number} numberOfParticles
      * @return {Boolean}
      */
-    initWithTotalParticles:function (numberOfParticles) {
-        if (cc.ParticleSystem.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
-            // duration
-            this.setDuration(cc.ParticleSystem.DURATION_INFINITY);
+    initWithTotalParticles: function (numberOfParticles) {
+      if (ParticleSystem.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
+        // duration
+        this.setDuration(ParticleSystem.DURATION_INFINITY)
 
-            // Gravity Mode
-            this.setEmitterMode(cc.ParticleSystem.MODE_GRAVITY);
+        // Gravity Mode
+        this.setEmitterMode(ParticleSystem.MODE_GRAVITY)
 
-            // Gravity Mode: gravity
-            this.setGravity(cc.p(-200, 200));
+        // Gravity Mode: gravity
+        this.setGravity(p(-200, 200))
 
-            // Gravity Mode: speed of particles
-            this.setSpeed(15);
-            this.setSpeedVar(5);
+        // Gravity Mode: speed of particles
+        this.setSpeed(15)
+        this.setSpeedVar(5)
 
-            // Gravity Mode: radial
-            this.setRadialAccel(0);
-            this.setRadialAccelVar(0);
+        // Gravity Mode: radial
+        this.setRadialAccel(0)
+        this.setRadialAccelVar(0)
 
-            // Gravity Mode: tangential
-            this.setTangentialAccel(0);
-            this.setTangentialAccelVar(0);
+        // Gravity Mode: tangential
+        this.setTangentialAccel(0)
+        this.setTangentialAccelVar(0)
 
-            // angle
-            this.setAngle(90);
-            this.setAngleVar(360);
+        // angle
+        this.setAngle(90)
+        this.setAngleVar(360)
 
-            // emitter position
-            var winSize = cc.director.getWinSize();
-            this.setPosition(winSize.width / 2, winSize.height / 2);
-            this.setPosVar(cc.p(0,0));
+        // emitter position
+        const winSize = director.getWinSize()
+        this.setPosition(winSize.width / 2, winSize.height / 2)
+        this.setPosVar(p(0, 0))
 
-            // life of particles
-            this.setLife(2);
-            this.setLifeVar(1);
+        // life of particles
+        this.setLife(2)
+        this.setLifeVar(1)
 
-            // size, in pixels
-            this.setStartSize(60.0);
-            this.setStartSizeVar(10.0);
-            this.setEndSize(cc.ParticleSystem.START_SIZE_EQUAL_TO_END_SIZE);
+        // size, in pixels
+        this.setStartSize(60.0)
+        this.setStartSizeVar(10.0)
+        this.setEndSize(ParticleSystem.START_SIZE_EQUAL_TO_END_SIZE)
 
-            // emits per second
-            this.setEmissionRate(this.getTotalParticles() / this.getLife());
+        // emits per second
+        this.setEmissionRate(this.getTotalParticles() / this.getLife())
 
-            // color of particles
-            this.setStartColor(cc.color(51, 102, 179));
-            this.setStartColorVar(cc.color(0, 0, 51, 26));
-            this.setEndColor(cc.color(0, 0, 0, 255));
-            this.setEndColorVar(cc.color(0, 0, 0, 0));
+        // color of particles
+        this.setStartColor(color(51, 102, 179))
+        this.setStartColorVar(color(0, 0, 51, 26))
+        this.setEndColor(color(0, 0, 0, 255))
+        this.setEndColorVar(color(0, 0, 0, 0))
 
-            // additive
-            this.setBlendAdditive(true);
-            return true;
-        }
-        return false;
-    }
-});
+        // additive
+        this.setBlendAdditive(true)
+        return true
+      }
+      return false
+    },
+  },
+)
 
 /**
  * Create a meteor particle system
- * @deprecated since v3.0 please use new cc.ParticleMeteor() instead.
- * @return {cc.ParticleMeteor}
+ * @deprecated since v3.0 please use new ParticleMeteor() instead.
+ * @return {ParticleMeteor}
  */
-cc.ParticleMeteor.create = function () {
-    return new cc.ParticleMeteor();
-};
+ParticleMeteor.create = function () {
+  return new ParticleMeteor()
+}
 
 /**
  * A spiral particle system
  * @class
- * @extends cc.ParticleSystem
+ * @extends ParticleSystem
  *
  * @example
- * var emitter = new cc.ParticleSpiral();
+ * var emitter = new ParticleSpiral();
  */
-cc.ParticleSpiral = cc.ParticleSystem.extend(/** @lends cc.ParticleSpiral# */{
-
+ParticleSpiral = ParticleSystem.extend(
+  /** @lends ParticleSpiral# */ {
     /**
-     * <p>The cc.ParticleSpiral's constructor. <br/>
-     * This function will automatically be invoked when you create a node using new construction: "var node = new cc.ParticleSpiral()".<br/>
+     * <p>The ParticleSpiral's constructor. <br/>
+     * This function will automatically be invoked when you create a node using new construction: "var node = new ParticleSpiral()".<br/>
      * Override it to extend its behavior, remember to call "this._super()" in the extended "ctor" function.</p>
      */
-    ctor:function() {
-        cc.ParticleSystem.prototype.ctor.call(this,(cc._renderType === cc.game.RENDER_TYPE_WEBGL) ? 500 : 100);
+    ctor: function () {
+      ParticleSystem.prototype.ctor.call(this, _renderType === game.RENDER_TYPE_WEBGL ? 500 : 100)
     },
 
     /**
@@ -579,89 +559,91 @@ cc.ParticleSpiral = cc.ParticleSystem.extend(/** @lends cc.ParticleSpiral# */{
      * @param {Number} numberOfParticles
      * @return {Boolean}
      */
-    initWithTotalParticles:function (numberOfParticles) {
-        if (cc.ParticleSystem.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
-            // duration
-            this.setDuration(cc.ParticleSystem.DURATION_INFINITY);
+    initWithTotalParticles: function (numberOfParticles) {
+      if (ParticleSystem.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
+        // duration
+        this.setDuration(ParticleSystem.DURATION_INFINITY)
 
-            // Gravity Mode
-            this.setEmitterMode(cc.ParticleSystem.MODE_GRAVITY);
+        // Gravity Mode
+        this.setEmitterMode(ParticleSystem.MODE_GRAVITY)
 
-            // Gravity Mode: gravity
-            this.setGravity(cc.p(0, 0));
+        // Gravity Mode: gravity
+        this.setGravity(p(0, 0))
 
-            // Gravity Mode: speed of particles
-            this.setSpeed(150);
-            this.setSpeedVar(0);
+        // Gravity Mode: speed of particles
+        this.setSpeed(150)
+        this.setSpeedVar(0)
 
-            // Gravity Mode: radial
-            this.setRadialAccel(-380);
-            this.setRadialAccelVar(0);
+        // Gravity Mode: radial
+        this.setRadialAccel(-380)
+        this.setRadialAccelVar(0)
 
-            // Gravity Mode: tangential
-            this.setTangentialAccel(45);
-            this.setTangentialAccelVar(0);
+        // Gravity Mode: tangential
+        this.setTangentialAccel(45)
+        this.setTangentialAccelVar(0)
 
-            // angle
-            this.setAngle(90);
-            this.setAngleVar(0);
+        // angle
+        this.setAngle(90)
+        this.setAngleVar(0)
 
-            // emitter position
-            var winSize = cc.director.getWinSize();
-            this.setPosition(winSize.width / 2, winSize.height / 2);
-            this.setPosVar(cc.p(0,0));
+        // emitter position
+        const winSize = director.getWinSize()
+        this.setPosition(winSize.width / 2, winSize.height / 2)
+        this.setPosVar(p(0, 0))
 
-            // life of particles
-            this.setLife(12);
-            this.setLifeVar(0);
+        // life of particles
+        this.setLife(12)
+        this.setLifeVar(0)
 
-            // size, in pixels
-            this.setStartSize(20.0);
-            this.setStartSizeVar(0.0);
-            this.setEndSize(cc.ParticleSystem.START_SIZE_EQUAL_TO_END_SIZE);
+        // size, in pixels
+        this.setStartSize(20.0)
+        this.setStartSizeVar(0.0)
+        this.setEndSize(ParticleSystem.START_SIZE_EQUAL_TO_END_SIZE)
 
-            // emits per second
-            this.setEmissionRate(this.getTotalParticles() / this.getLife());
+        // emits per second
+        this.setEmissionRate(this.getTotalParticles() / this.getLife())
 
-            // color of particles
-            this.setStartColor(cc.color(128,128,128,255));
-            this.setStartColorVar(cc.color(128,128,128,0));
-            this.setEndColor(cc.color(128,128,128,255));
-            this.setEndColorVar(cc.color(128,128,128,0));
+        // color of particles
+        this.setStartColor(color(128, 128, 128, 255))
+        this.setStartColorVar(color(128, 128, 128, 0))
+        this.setEndColor(color(128, 128, 128, 255))
+        this.setEndColorVar(color(128, 128, 128, 0))
 
-            // additive
-            this.setBlendAdditive(false);
-            return true;
-        }
-        return false;
-    }
-});
+        // additive
+        this.setBlendAdditive(false)
+        return true
+      }
+      return false
+    },
+  },
+)
 
 /**
  * Create a spiral particle system
- * @deprecated since v3.0 please use new cc.ParticleSpiral() instead.
- * @return {cc.ParticleSpiral}
+ * @deprecated since v3.0 please use new ParticleSpiral() instead.
+ * @return {ParticleSpiral}
  */
-cc.ParticleSpiral.create = function () {
-    return new cc.ParticleSpiral();
-};
+ParticleSpiral.create = function () {
+  return new ParticleSpiral()
+}
 
 /**
  * An explosion particle system
  * @class
- * @extends cc.ParticleSystem
+ * @extends ParticleSystem
  *
  * @example
- * var emitter = new cc.ParticleExplosion();
+ * var emitter = new ParticleExplosion();
  */
-cc.ParticleExplosion = cc.ParticleSystem.extend(/** @lends cc.ParticleExplosion# */{
+ParticleExplosion = ParticleSystem.extend(
+  /** @lends ParticleExplosion# */ {
     /**
-     * <p>The cc.ParticleExplosion's constructor. <br/>
-     * This function will automatically be invoked when you create a node using new construction: "var node = new cc.ParticleExplosion()".<br/>
+     * <p>The ParticleExplosion's constructor. <br/>
+     * This function will automatically be invoked when you create a node using new construction: "var node = new ParticleExplosion()".<br/>
      * Override it to extend its behavior, remember to call "this._super()" in the extended "ctor" function.</p>
      */
-    ctor:function () {
-        cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc.game.RENDER_TYPE_WEBGL) ? 700 : 300);
+    ctor: function () {
+      ParticleSystem.prototype.ctor.call(this, _renderType === game.RENDER_TYPE_WEBGL ? 700 : 300)
     },
 
     /**
@@ -669,89 +651,90 @@ cc.ParticleExplosion = cc.ParticleSystem.extend(/** @lends cc.ParticleExplosion#
      * @param {Number} numberOfParticles
      * @return {Boolean}
      */
-    initWithTotalParticles:function (numberOfParticles) {
-        if (cc.ParticleSystem.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
-            // duration
-            this.setDuration(0.1);
+    initWithTotalParticles: function (numberOfParticles) {
+      if (ParticleSystem.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
+        // duration
+        this.setDuration(0.1)
 
-            this.setEmitterMode(cc.ParticleSystem.MODE_GRAVITY);
+        this.setEmitterMode(ParticleSystem.MODE_GRAVITY)
 
-            // Gravity Mode: gravity
-            this.setGravity(cc.p(0, 0));
+        // Gravity Mode: gravity
+        this.setGravity(p(0, 0))
 
-            // Gravity Mode: speed of particles
-            this.setSpeed(70);
-            this.setSpeedVar(40);
+        // Gravity Mode: speed of particles
+        this.setSpeed(70)
+        this.setSpeedVar(40)
 
-            // Gravity Mode: radial
-            this.setRadialAccel(0);
-            this.setRadialAccelVar(0);
+        // Gravity Mode: radial
+        this.setRadialAccel(0)
+        this.setRadialAccelVar(0)
 
-            // Gravity Mode: tangential
-            this.setTangentialAccel(0);
-            this.setTangentialAccelVar(0);
+        // Gravity Mode: tangential
+        this.setTangentialAccel(0)
+        this.setTangentialAccelVar(0)
 
-            // angle
-            this.setAngle(90);
-            this.setAngleVar(360);
+        // angle
+        this.setAngle(90)
+        this.setAngleVar(360)
 
-            // emitter position
-            var winSize = cc.director.getWinSize();
-            this.setPosition(winSize.width / 2, winSize.height / 2);
-            this.setPosVar(cc.p(0,0));
+        // emitter position
+        const winSize = director.getWinSize()
+        this.setPosition(winSize.width / 2, winSize.height / 2)
+        this.setPosVar(p(0, 0))
 
-            // life of particles
-            this.setLife(5.0);
-            this.setLifeVar(2);
+        // life of particles
+        this.setLife(5.0)
+        this.setLifeVar(2)
 
-            // size, in pixels
-            this.setStartSize(15.0);
-            this.setStartSizeVar(10.0);
-            this.setEndSize(cc.ParticleSystem.START_SIZE_EQUAL_TO_END_SIZE);
+        // size, in pixels
+        this.setStartSize(15.0)
+        this.setStartSizeVar(10.0)
+        this.setEndSize(ParticleSystem.START_SIZE_EQUAL_TO_END_SIZE)
 
-            // emits per second
-            this.setEmissionRate(this.getTotalParticles() / this.getDuration());
+        // emits per second
+        this.setEmissionRate(this.getTotalParticles() / this.getDuration())
 
-            // color of particles
-            this.setStartColor(cc.color(179, 26, 51, 255));
-            this.setStartColorVar(cc.color(128, 128, 128, 0));
-            this.setEndColor(cc.color(128, 128, 128, 0));
-            this.setEndColorVar(cc.color(128, 128, 128, 0));
+        // color of particles
+        this.setStartColor(color(179, 26, 51, 255))
+        this.setStartColorVar(color(128, 128, 128, 0))
+        this.setEndColor(color(128, 128, 128, 0))
+        this.setEndColorVar(color(128, 128, 128, 0))
 
-            // additive
-            this.setBlendAdditive(false);
-            return true;
-        }
-        return false;
-    }
-});
+        // additive
+        this.setBlendAdditive(false)
+        return true
+      }
+      return false
+    },
+  },
+)
 
 /**
  * Create an explosion particle system
- * @deprecated since v3.0 please use new cc.ParticleExplosion() instead.
- * @return {cc.ParticleExplosion}
+ * @deprecated since v3.0 please use new ParticleExplosion() instead.
+ * @return {ParticleExplosion}
  */
-cc.ParticleExplosion.create = function () {
-    return new cc.ParticleExplosion();
-};
+ParticleExplosion.create = function () {
+  return new ParticleExplosion()
+}
 
 /**
  * A smoke particle system
  * @class
- * @extends cc.ParticleSystem
+ * @extends ParticleSystem
  *
  * @example
- * var emitter = new cc.ParticleSmoke();
+ * var emitter = new ParticleSmoke();
  */
-cc.ParticleSmoke = cc.ParticleSystem.extend(/** @lends cc.ParticleSmoke# */{
-
+ParticleSmoke = ParticleSystem.extend(
+  /** @lends ParticleSmoke# */ {
     /**
-     * <p>The cc.ParticleSmoke's constructor. <br/>
-     * This function will automatically be invoked when you create a node using new construction: "var node = new cc.ParticleSmoke()".<br/>
+     * <p>The ParticleSmoke's constructor. <br/>
+     * This function will automatically be invoked when you create a node using new construction: "var node = new ParticleSmoke()".<br/>
      * Override it to extend its behavior, remember to call "this._super()" in the extended "ctor" function.</p>
      */
-    ctor:function () {
-        cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc.game.RENDER_TYPE_WEBGL) ? 200 : 100);
+    ctor: function () {
+      ParticleSystem.prototype.ctor.call(this, _renderType === game.RENDER_TYPE_WEBGL ? 200 : 100)
     },
 
     /**
@@ -759,86 +742,87 @@ cc.ParticleSmoke = cc.ParticleSystem.extend(/** @lends cc.ParticleSmoke# */{
      * @param {Number} numberOfParticles
      * @return {Boolean}
      */
-    initWithTotalParticles:function (numberOfParticles) {
-        if (cc.ParticleSystem.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
-            // duration
-            this.setDuration(cc.ParticleSystem.DURATION_INFINITY);
+    initWithTotalParticles: function (numberOfParticles) {
+      if (ParticleSystem.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
+        // duration
+        this.setDuration(ParticleSystem.DURATION_INFINITY)
 
-            // Emitter mode: Gravity Mode
-            this.setEmitterMode(cc.ParticleSystem.MODE_GRAVITY);
+        // Emitter mode: Gravity Mode
+        this.setEmitterMode(ParticleSystem.MODE_GRAVITY)
 
-            // Gravity Mode: gravity
-            this.setGravity(cc.p(0, 0));
+        // Gravity Mode: gravity
+        this.setGravity(p(0, 0))
 
-            // Gravity Mode: radial acceleration
-            this.setRadialAccel(0);
-            this.setRadialAccelVar(0);
+        // Gravity Mode: radial acceleration
+        this.setRadialAccel(0)
+        this.setRadialAccelVar(0)
 
-            // Gravity Mode: speed of particles
-            this.setSpeed(25);
-            this.setSpeedVar(10);
+        // Gravity Mode: speed of particles
+        this.setSpeed(25)
+        this.setSpeedVar(10)
 
-            // angle
-            this.setAngle(90);
-            this.setAngleVar(5);
+        // angle
+        this.setAngle(90)
+        this.setAngleVar(5)
 
-            // emitter position
-            var winSize = cc.director.getWinSize();
-            this.setPosition(winSize.width / 2, 0);
-            this.setPosVar(cc.p(20, 0));
+        // emitter position
+        const winSize = director.getWinSize()
+        this.setPosition(winSize.width / 2, 0)
+        this.setPosVar(p(20, 0))
 
-            // life of particles
-            this.setLife(4);
-            this.setLifeVar(1);
+        // life of particles
+        this.setLife(4)
+        this.setLifeVar(1)
 
-            // size, in pixels
-            this.setStartSize(60.0);
-            this.setStartSizeVar(10.0);
-            this.setEndSize(cc.ParticleSystem.START_SIZE_EQUAL_TO_END_SIZE);
+        // size, in pixels
+        this.setStartSize(60.0)
+        this.setStartSizeVar(10.0)
+        this.setEndSize(ParticleSystem.START_SIZE_EQUAL_TO_END_SIZE)
 
-            // emits per frame
-            this.setEmissionRate(this.getTotalParticles() / this.getLife());
+        // emits per frame
+        this.setEmissionRate(this.getTotalParticles() / this.getLife())
 
-            // color of particles
-            this.setStartColor(cc.color(204, 204, 204, 255));
-            this.setStartColorVar(cc.color(5, 5, 5, 0));
-            this.setEndColor(cc.color(0, 0, 0, 255));
-            this.setEndColorVar(cc.color(0, 0, 0, 0));
+        // color of particles
+        this.setStartColor(color(204, 204, 204, 255))
+        this.setStartColorVar(color(5, 5, 5, 0))
+        this.setEndColor(color(0, 0, 0, 255))
+        this.setEndColorVar(color(0, 0, 0, 0))
 
-            // additive
-            this.setBlendAdditive(false);
-            return true;
-        }
-        return false;
-    }
-});
+        // additive
+        this.setBlendAdditive(false)
+        return true
+      }
+      return false
+    },
+  },
+)
 
 /**
  * Create a smoke particle system
- * @deprecated since v3.0 please use new cc.ParticleSmoke() instead.
- * @return {cc.ParticleSmoke}
+ * @deprecated since v3.0 please use new ParticleSmoke() instead.
+ * @return {ParticleSmoke}
  */
-cc.ParticleSmoke.create = function () {
-    return new cc.ParticleSmoke();
-};
+ParticleSmoke.create = function () {
+  return new ParticleSmoke()
+}
 
 /**
  * A snow particle system
  * @class
- * @extends cc.ParticleSystem
+ * @extends ParticleSystem
  *
  * @example
- * var emitter = new cc.ParticleSnow();
+ * var emitter = new ParticleSnow();
  */
-cc.ParticleSnow = cc.ParticleSystem.extend(/** @lends cc.ParticleSnow# */{
-
+ParticleSnow = ParticleSystem.extend(
+  /** @lends ParticleSnow# */ {
     /**
-     * <p>The cc.ParticleSnow's constructor. <br/>
-     * This function will automatically be invoked when you create a node using new construction: "var node = new cc.ParticleSnow()".<br/>
+     * <p>The ParticleSnow's constructor. <br/>
+     * This function will automatically be invoked when you create a node using new construction: "var node = new ParticleSnow()".<br/>
      * Override it to extend its behavior, remember to call "this._super()" in the extended "ctor" function.</p>
      */
-    ctor:function () {
-        cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc.game.RENDER_TYPE_WEBGL) ? 700 : 250);
+    ctor: function () {
+      ParticleSystem.prototype.ctor.call(this, _renderType === game.RENDER_TYPE_WEBGL ? 700 : 250)
     },
 
     /**
@@ -846,91 +830,92 @@ cc.ParticleSnow = cc.ParticleSystem.extend(/** @lends cc.ParticleSnow# */{
      * @param {Number} numberOfParticles
      * @return {Boolean}
      */
-    initWithTotalParticles:function (numberOfParticles) {
-        if (cc.ParticleSystem.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
-            // duration
-            this.setDuration(cc.ParticleSystem.DURATION_INFINITY);
+    initWithTotalParticles: function (numberOfParticles) {
+      if (ParticleSystem.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
+        // duration
+        this.setDuration(ParticleSystem.DURATION_INFINITY)
 
-            // set gravity mode.
-            this.setEmitterMode(cc.ParticleSystem.MODE_GRAVITY);
+        // set gravity mode.
+        this.setEmitterMode(ParticleSystem.MODE_GRAVITY)
 
-            // Gravity Mode: gravity
-            this.setGravity(cc.p(0, -1));
+        // Gravity Mode: gravity
+        this.setGravity(p(0, -1))
 
-            // Gravity Mode: speed of particles
-            this.setSpeed(5);
-            this.setSpeedVar(1);
+        // Gravity Mode: speed of particles
+        this.setSpeed(5)
+        this.setSpeedVar(1)
 
-            // Gravity Mode: radial
-            this.setRadialAccel(0);
-            this.setRadialAccelVar(1);
+        // Gravity Mode: radial
+        this.setRadialAccel(0)
+        this.setRadialAccelVar(1)
 
-            // Gravity mode: tangential
-            this.setTangentialAccel(0);
-            this.setTangentialAccelVar(1);
+        // Gravity mode: tangential
+        this.setTangentialAccel(0)
+        this.setTangentialAccelVar(1)
 
-            // emitter position
-            var winSize = cc.director.getWinSize();
-            this.setPosition(winSize.width / 2, winSize.height + 10);
-            this.setPosVar(cc.p(winSize.width / 2, 0));
+        // emitter position
+        const winSize = director.getWinSize()
+        this.setPosition(winSize.width / 2, winSize.height + 10)
+        this.setPosVar(p(winSize.width / 2, 0))
 
-            // angle
-            this.setAngle(-90);
-            this.setAngleVar(5);
+        // angle
+        this.setAngle(-90)
+        this.setAngleVar(5)
 
-            // life of particles
-            this.setLife(45);
-            this.setLifeVar(15);
+        // life of particles
+        this.setLife(45)
+        this.setLifeVar(15)
 
-            // size, in pixels
-            this.setStartSize(10.0);
-            this.setStartSizeVar(5.0);
-            this.setEndSize(cc.ParticleSystem.START_SIZE_EQUAL_TO_END_SIZE);
+        // size, in pixels
+        this.setStartSize(10.0)
+        this.setStartSizeVar(5.0)
+        this.setEndSize(ParticleSystem.START_SIZE_EQUAL_TO_END_SIZE)
 
-            // emits per second
-            this.setEmissionRate(10);
+        // emits per second
+        this.setEmissionRate(10)
 
-            // color of particles
-            this.setStartColor(cc.color(255, 255, 255, 255));
-            this.setStartColorVar(cc.color(0, 0, 0, 0));
-            this.setEndColor(cc.color(255, 255, 255, 0));
-            this.setEndColorVar(cc.color(0, 0, 0, 0));
+        // color of particles
+        this.setStartColor(color(255, 255, 255, 255))
+        this.setStartColorVar(color(0, 0, 0, 0))
+        this.setEndColor(color(255, 255, 255, 0))
+        this.setEndColorVar(color(0, 0, 0, 0))
 
-            // additive
-            this.setBlendAdditive(false);
-            return true;
-        }
-        return false;
-    }
-});
+        // additive
+        this.setBlendAdditive(false)
+        return true
+      }
+      return false
+    },
+  },
+)
 
 /**
  * Create a snow particle system
- * @deprecated since v3.0 please use new cc.ParticleSnow() instead.
- * @return {cc.ParticleSnow}
+ * @deprecated since v3.0 please use new ParticleSnow() instead.
+ * @return {ParticleSnow}
  */
-cc.ParticleSnow.create = function () {
-    return new cc.ParticleSnow();
-};
+ParticleSnow.create = function () {
+  return new ParticleSnow()
+}
 
 //! @brief A rain particle system
 /**
  * A rain particle system
  * @class
- * @extends cc.ParticleSystem
+ * @extends ParticleSystem
  *
  * @example
- * var emitter = new cc.ParticleRain();
+ * var emitter = new ParticleRain();
  */
-cc.ParticleRain = cc.ParticleSystem.extend(/** @lends cc.ParticleRain# */{
-
+ParticleRain = ParticleSystem.extend(
+  /** @lends ParticleRain# */ {
     /**
-     * <p>The cc.ParticleRain's constructor. <br/>
-     * This function will automatically be invoked when you create a node using new construction: "var node = new cc.ParticleRain()".<br/>
+     * <p>The ParticleRain's constructor. <br/>
+     * This function will automatically be invoked when you create a node using new construction: "var node = new ParticleRain()".<br/>
      * Override it to extend its behavior, remember to call "this._super()" in the extended "ctor" function.</p>
      */
-    ctor:function () {
-        cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc.game.RENDER_TYPE_WEBGL) ? 1000 : 300);
+    ctor: function () {
+      ParticleSystem.prototype.ctor.call(this, _renderType === game.RENDER_TYPE_WEBGL ? 1000 : 300)
     },
 
     /**
@@ -938,69 +923,60 @@ cc.ParticleRain = cc.ParticleSystem.extend(/** @lends cc.ParticleRain# */{
      * @param {Number} numberOfParticles
      * @return {Boolean}
      */
-    initWithTotalParticles:function (numberOfParticles) {
-        if (cc.ParticleSystem.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
-            // duration
-            this.setDuration(cc.ParticleSystem.DURATION_INFINITY);
+    initWithTotalParticles: function (numberOfParticles) {
+      if (ParticleSystem.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
+        // duration
+        this.setDuration(ParticleSystem.DURATION_INFINITY)
 
-            this.setEmitterMode(cc.ParticleSystem.MODE_GRAVITY);
+        this.setEmitterMode(ParticleSystem.MODE_GRAVITY)
 
-            // Gravity Mode: gravity
-            this.setGravity(cc.p(10, -10));
+        // Gravity Mode: gravity
+        this.setGravity(p(10, -10))
 
-            // Gravity Mode: radial
-            this.setRadialAccel(0);
-            this.setRadialAccelVar(1);
+        // Gravity Mode: radial
+        this.setRadialAccel(0)
+        this.setRadialAccelVar(1)
 
-            // Gravity Mode: tangential
-            this.setTangentialAccel(0);
-            this.setTangentialAccelVar(1);
+        // Gravity Mode: tangential
+        this.setTangentialAccel(0)
+        this.setTangentialAccelVar(1)
 
-            // Gravity Mode: speed of particles
-            this.setSpeed(130);
-            this.setSpeedVar(30);
+        // Gravity Mode: speed of particles
+        this.setSpeed(130)
+        this.setSpeedVar(30)
 
-            // angle
-            this.setAngle(-90);
-            this.setAngleVar(5);
+        // angle
+        this.setAngle(-90)
+        this.setAngleVar(5)
 
+        // emitter position
+        const winSize = director.getWinSize()
+        this.setPosition(winSize.width / 2, winSize.height)
+        this.setPosVar(p(winSize.width / 2, 0))
 
-            // emitter position
-            var winSize = cc.director.getWinSize();
-            this.setPosition(winSize.width / 2, winSize.height);
-            this.setPosVar(cc.p(winSize.width / 2, 0));
+        // life of particles
+        this.setLife(4.5)
+        this.setLifeVar(0)
 
-            // life of particles
-            this.setLife(4.5);
-            this.setLifeVar(0);
+        // size, in pixels
+        this.setStartSize(4.0)
+        this.setStartSizeVar(2.0)
+        this.setEndSize(ParticleSystem.START_SIZE_EQUAL_TO_END_SIZE)
 
-            // size, in pixels
-            this.setStartSize(4.0);
-            this.setStartSizeVar(2.0);
-            this.setEndSize(cc.ParticleSystem.START_SIZE_EQUAL_TO_END_SIZE);
+        // emits per second
+        this.setEmissionRate(20)
 
-            // emits per second
-            this.setEmissionRate(20);
+        // color of particles
+        this.setStartColor(color(179, 204, 255, 255))
+        this.setStartColorVar(color(0, 0, 0, 0))
+        this.setEndColor(color(179, 204, 255, 128))
+        this.setEndColorVar(color(0, 0, 0, 0))
 
-            // color of particles
-            this.setStartColor(cc.color(179, 204, 255, 255));
-            this.setStartColorVar(cc.color(0, 0, 0, 0));
-            this.setEndColor(cc.color(179, 204, 255, 128));
-            this.setEndColorVar(cc.color(0, 0, 0, 0));
-
-            // additive
-            this.setBlendAdditive(false);
-            return true;
-        }
-        return false;
-    }
-});
-
-/**
- * Create a rain particle system
- * @deprecated since v3.0 please use cc.ParticleRain() instead.
- * @return {cc.ParticleRain}
- */
-cc.ParticleRain.create = function () {
-    return new cc.ParticleRain();
-};
+        // additive
+        this.setBlendAdditive(false)
+        return true
+      }
+      return false
+    },
+  },
+)

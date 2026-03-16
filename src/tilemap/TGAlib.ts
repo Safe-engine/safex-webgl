@@ -1,38 +1,9 @@
-/**
- * @constant
- * @type Number
- */
-cc.TGA_OK = 0
-
-/**
- * @constant
- * @type Number
- */
-cc.TGA_ERROR_FILE_OPEN = 1
-
-/**
- * @constant
- * @type Number
- */
-cc.TGA_ERROR_READING_FILE = 2
-
-/**
- * @constant
- * @type Number
- */
-cc.TGA_ERROR_INDEXED_COLOR = 3
-
-/**
- * @constant
- * @type Number
- */
-cc.TGA_ERROR_MEMORY = 4
-
-/**
- * @constant
- * @type Number
- */
-cc.TGA_ERROR_COMPRESSED_FILE = 5
+export const TGA_OK = 0
+export const TGA_ERROR_FILE_OPEN = 1
+export const TGA_ERROR_READING_FILE = 2
+export const TGA_ERROR_INDEXED_COLOR = 3
+export const TGA_ERROR_MEMORY = 4
+export const TGA_ERROR_COMPRESSED_FILE = 5
 
 /**
  * TGA format
@@ -45,7 +16,7 @@ cc.TGA_ERROR_COMPRESSED_FILE = 5
  * @param {Number} flipped
  * @constructor
  */
-cc.ImageTGA = function (status, type, pixelDepth, width, height, imageData, flipped) {
+export const ImageTGA = function (status, type, pixelDepth, width, height, imageData, flipped) {
   this.status = status || 0
   this.type = type || 0
   this.pixelDepth = pixelDepth || 0
@@ -59,14 +30,14 @@ cc.ImageTGA = function (status, type, pixelDepth, width, height, imageData, flip
  * load the image header field from stream. We only keep those that matter!
  * @param {Array} buffer
  * @param {Number} bufSize
- * @param {cc.ImageTGA} psInfo
+ * @param {ImageTGA} psInfo
  * @return {Boolean}
  */
-cc.tgaLoadHeader = function (buffer, bufSize, psInfo) {
+export const tgaLoadHeader = function (buffer, bufSize, psInfo) {
   let step = 2
   if (step + 1 > bufSize) return false
 
-  const binaryReader = new cc.BinaryStreamReader(buffer)
+  const binaryReader = new BinaryStreamReader(buffer)
 
   binaryReader.setOffset(step)
   psInfo.type = binaryReader.readByte()
@@ -91,21 +62,21 @@ cc.tgaLoadHeader = function (buffer, bufSize, psInfo) {
  * loads the image pixels. You shouldn't call this function directly.
  * @param {Array} buffer
  * @param {Number} bufSize
- * @param {cc.ImageTGA} psInfo
+ * @param {ImageTGA} psInfo
  * @return {Boolean}
  */
-cc.tgaLoadImageData = function (buffer, bufSize, psInfo) {
-  let mode, total, i, aux
+export const tgaLoadImageData = function (buffer, bufSize, psInfo) {
+  let i, aux
   const step = 18 // .size_t step = (sizeof(unsigned char) + sizeof(signed short)) * 6;
 
   // mode equal the number of components for each pixel
-  mode = 0 | (psInfo.pixelDepth / 2)
+  const mode = 0 | (psInfo.pixelDepth / 2)
   // total is the number of unsigned chars we'll have to read
-  total = psInfo.height * psInfo.width * mode
+  const total = psInfo.height * psInfo.width * mode
 
   if (step + total > bufSize) return false
 
-  psInfo.imageData = cc.__getSubArray(buffer, step, step + total)
+  psInfo.imageData = __getSubArray(buffer, step, step + total)
 
   // mode=3 or 4 implies that the image is RGB(A). However TGA
   // stores it as BGR(A) so we'll have to swap R and B.
@@ -121,9 +92,9 @@ cc.tgaLoadImageData = function (buffer, bufSize, psInfo) {
 
 /**
  * converts RGB to grayscale
- * @param {cc.ImageTGA} psInfo
+ * @param {ImageTGA} psInfo
  */
-cc.tgaRGBtogreyscale = function (psInfo) {
+export const tgaRGBtogreyscale = function (psInfo) {
   let i, j
 
   // if the image is already grayscale do nothing
@@ -149,13 +120,13 @@ cc.tgaRGBtogreyscale = function (psInfo) {
 
 /**
  * releases the memory used for the image
- * @param {cc.ImageTGA} psInfo
+ * @param {ImageTGA} psInfo
  */
-cc.tgaDestroy = function (psInfo) {
+export const tgaDestroy = function (psInfo) {
   if (!psInfo) return
 
   psInfo.imageData = null
-  psInfo = null
+  // psInfo = null
 }
 
 /**
@@ -165,12 +136,10 @@ cc.tgaDestroy = function (psInfo) {
  * @param psInfo
  * @returns {boolean}
  */
-cc.tgaLoadRLEImageData = function (buffer, bufSize, psInfo) {
-  let mode,
-    total,
-    i,
+export const tgaLoadRLEImageData = function (buffer, bufSize, psInfo) {
+  let skip
+  let i,
     index = 0,
-    skip = 0,
     flag = 0
   let aux = [],
     runlength = 0
@@ -178,9 +147,9 @@ cc.tgaLoadRLEImageData = function (buffer, bufSize, psInfo) {
   let step = 18 // . size_t step = (sizeof(unsigned char) + sizeof(signed short)) * 6;
 
   // mode equal the number of components for each pixel
-  mode = psInfo.pixelDepth / 8
+  const mode = psInfo.pixelDepth / 8
   // total is the number of unsigned chars we'll have to read
-  total = psInfo.height * psInfo.width
+  const total = psInfo.height * psInfo.width
 
   for (i = 0; i < total; i++) {
     // if we have a run length pending, run it
@@ -204,7 +173,7 @@ cc.tgaLoadRLEImageData = function (buffer, bufSize, psInfo) {
     if (!skip) {
       // no, read in the pixel data
       if (step + mode > bufSize) break
-      aux = cc.__getSubArray(buffer, step, step + mode)
+      aux = __getSubArray(buffer, step, step + mode)
       step += mode
 
       // mode=3 or 4 implies that the image is RGB(A). However TGA
@@ -227,27 +196,27 @@ cc.tgaLoadRLEImageData = function (buffer, bufSize, psInfo) {
 
 /**
  * ImageTGA Flip
- * @param {cc.ImageTGA} psInfo
+ * @param {ImageTGA} psInfo
  */
-cc.tgaFlipImage = function (psInfo) {
+export const tgaFlipImage = function (psInfo) {
   // mode equal the number of components for each pixel
   const mode = psInfo.pixelDepth / 8
   const rowbytes = psInfo.width * mode
 
   for (let y = 0; y < psInfo.height / 2; y++) {
-    const row = cc.__getSubArray(psInfo.imageData, y * rowbytes, y * rowbytes + rowbytes)
-    cc.__setDataToArray(cc.__getSubArray(psInfo.imageData, (psInfo.height - (y + 1)) * rowbytes, rowbytes), psInfo.imageData, y * rowbytes)
-    cc.__setDataToArray(row, psInfo.imageData, (psInfo.height - (y + 1)) * rowbytes)
+    const row = __getSubArray(psInfo.imageData, y * rowbytes, y * rowbytes + rowbytes)
+    __setDataToArray(__getSubArray(psInfo.imageData, (psInfo.height - (y + 1)) * rowbytes, rowbytes), psInfo.imageData, y * rowbytes)
+    __setDataToArray(row, psInfo.imageData, (psInfo.height - (y + 1)) * rowbytes)
   }
   psInfo.flipped = 0
 }
 
-cc.__getSubArray = function (array, start, end) {
+export const __getSubArray = function (array, start, end) {
   if (array instanceof Array) return array.slice(start, end)
   else return array.subarray(start, end)
 }
 
-cc.__setDataToArray = function (sourceData, destArray, startIndex) {
+export const __setDataToArray = function (sourceData, destArray, startIndex) {
   for (let i = 0; i < sourceData.length; i++) destArray[startIndex + i] = sourceData[i]
 }
 
@@ -257,13 +226,14 @@ cc.__setDataToArray = function (sourceData, destArray, startIndex) {
  * @class
  * @param binaryData
  */
-cc.BinaryStreamReader = class BinaryStreamReader {
+export class BinaryStreamReader {
   _binaryData = null
   _offset = 0
+  declare _data: Uint8Array
 
   /**
-   * <p>The cc.BinaryStreamReader's constructor. <br/>
-   * This function will automatically be invoked when you create a node using new construction: "var node = new cc.BinaryStreamReader()".<br/>
+   * <p>The BinaryStreamReader's constructor. <br/>
+   * This function will automatically be invoked when you create a node using new construction: "var node = new BinaryStreamReader()".<br/>
    * Override it to extend its behavior, remember to call "this._super()" in the extended "ctor" function.</p>
    * @param binaryData
    */
@@ -303,9 +273,10 @@ cc.BinaryStreamReader = class BinaryStreamReader {
     let significand = 0
     let divisor = 2
     let curByte = 0 //length + (-precisionBits >> 3) - 1;
+    let startBit
     do {
       const byteValue = this._readByte(++curByte, size)
-      const startBit = precisionBits % 8 || 8
+      startBit = precisionBits % 8 || 8
       let mask = 1 << startBit
       while ((mask >>= 1)) {
         if (byteValue & mask) significand += 1 / divisor
@@ -351,7 +322,7 @@ cc.BinaryStreamReader = class BinaryStreamReader {
     const offsetLeft = (start + length) % 8
     const offsetRight = start % 8
     const curByte = size - (start >> 3) - 1
-    const lastByte = size + (-(start + length) >> 3)
+    let lastByte = size + (-(start + length) >> 3)
     let diff = curByte - lastByte
 
     let sum = (this._readByte(curByte, size) >> offsetRight) & ((1 << (diff ? 8 - offsetRight : length)) - 1)

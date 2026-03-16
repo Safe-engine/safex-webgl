@@ -1,8 +1,24 @@
-/**
- * A png file reader
- * @name cc.tiffReader
- */
-cc.PNGReader = class PNGReader {
+export class PNGReader {
+  declare data: any
+  declare pos: number
+  declare palette: any[]
+  declare imgData: any
+  declare transparency
+  declare animation: any
+  declare text
+  declare width: number
+  declare height: number
+  declare bits: any
+  declare colorType: any
+  declare compressionMethod: any
+  declare filterMethod: any
+  declare interlaceMethod: any
+  declare colors: any
+  hasAlphaChannel: boolean
+  pixelBitlength: number
+  declare colorSpace: any
+  declare _decodedPalette: any
+
   constructor(data) {
     let chunkSize, colors, delayDen, delayNum, frame, i, index, key, section, ccshort, text, _i, _j, _ref
     this.data = data
@@ -16,9 +32,8 @@ cc.PNGReader = class PNGReader {
     while (true) {
       chunkSize = this.readUInt32()
       section = function () {
-        let _i, _results
-        _results = []
-        for (_i = 0; _i < 4; _i++) {
+        const _results = []
+        for (let _i = 0; _i < 4; _i++) {
           _results.push(String.fromCharCode(this.data[this.pos++]))
         }
         return _results
@@ -35,13 +50,14 @@ cc.PNGReader = class PNGReader {
           this.filterMethod = this.data[this.pos++]
           this.interlaceMethod = this.data[this.pos++]
           break
-        case 'acTL':
+        case 'acTL': {
           this.animation = {
             numFrames: this.readUInt32(),
             numPlays: this.readUInt32() || Infinity,
             frames: [],
           }
           break
+        }
         case 'PLTE':
           this.palette = this.read(chunkSize)
           break
@@ -93,12 +109,13 @@ cc.PNGReader = class PNGReader {
               this.transparency.rgb = this.read(chunkSize)
           }
           break
-        case 'tEXt':
+        case 'tEXt': {
           text = this.read(chunkSize)
           index = text.indexOf(0)
           key = String.fromCharCode.apply(String, text.slice(0, index))
           this.text[key] = String.fromCharCode.apply(String, text.slice(index + 1))
           break
+        }
         case 'IEND':
           if (frame) {
             this.animation.frames.push(frame)
@@ -125,7 +142,8 @@ cc.PNGReader = class PNGReader {
                 return 'DeviceRGB'
             }
           }.call(this)
-          if (Uint8Array != Array) this.imgData = new Uint8Array(this.imgData)
+          // if (Uint8Array != Array)
+          this.imgData = new Uint8Array(this.imgData)
           return
         default:
           this.pos += chunkSize
@@ -159,8 +177,8 @@ cc.PNGReader = class PNGReader {
     return b1 | b2
   }
 
-  decodePixels(data) {
-    let ccbyte, c, col, i, left, length, p, pa, paeth, pb, pc, pixelBytes, pixels, pos, row, scanlineLength, upper, upperLeft
+  decodePixels(data?) {
+    let ccbyte, c, col, row, i, left, p, pa, paeth, pb, pc, pos, upper, upperLeft
     if (data == null) {
       data = this.imgData
     }
@@ -170,10 +188,10 @@ cc.PNGReader = class PNGReader {
     const inflate = new Zlib.Inflate(data, { index: 0, verify: false })
     data = inflate.decompress()
 
-    pixelBytes = this.pixelBitlength / 8
-    scanlineLength = pixelBytes * this.width
-    pixels = new Uint8Array(scanlineLength * this.height)
-    length = data.length
+    const pixelBytes = this.pixelBitlength / 8
+    const scanlineLength = pixelBytes * this.width
+    const pixels = new Uint8Array(scanlineLength * this.height)
+    const length = data.length
     row = 0
     pos = 0
     c = 0
@@ -242,7 +260,7 @@ cc.PNGReader = class PNGReader {
   }
 
   copyToImageData(imageData, pixels) {
-    let alpha, colors, data, i, input, j, k, length, palette, v, _ref
+    let alpha, colors, i, j, k, palette, v, _ref
     colors = this.colors
     palette = null
     alpha = this.hasAlphaChannel
@@ -251,9 +269,9 @@ cc.PNGReader = class PNGReader {
       colors = 4
       alpha = true
     }
-    data = imageData.data || imageData
-    length = data.length
-    input = palette || pixels
+    const data = imageData.data || imageData
+    const length = data.length
+    const input = palette || pixels
     i = j = 0
     if (colors === 1) {
       while (i < length) {
@@ -278,10 +296,10 @@ cc.PNGReader = class PNGReader {
   }
 
   decodePalette() {
-    let c, i, palette, pos, ret, transparency, _i, _ref, _ref1
-    palette = this.palette
-    transparency = this.transparency.indexed || []
-    ret = new Uint8Array((transparency.length || 0) + palette.length)
+    let c, i, pos, _i, _ref, _ref1
+    const palette = this.palette
+    const transparency = this.transparency.indexed || []
+    const ret = new Uint8Array((transparency.length || 0) + palette.length)
     pos = 0
     c = 0
     for (i = _i = 0, _ref = palette.length; _i < _ref; i = _i += 3) {
@@ -294,11 +312,10 @@ cc.PNGReader = class PNGReader {
   }
 
   render(canvas) {
-    let ctx, data
     canvas.width = this.width
     canvas.height = this.height
-    ctx = canvas.getContext('2d')
-    data = ctx.createImageData(this.width, this.height)
+    const ctx = canvas.getContext('2d')
+    const data = ctx.createImageData(this.width, this.height)
     this.copyToImageData(data, this.decodePixels())
     return ctx.putImageData(data, 0, 0)
   }

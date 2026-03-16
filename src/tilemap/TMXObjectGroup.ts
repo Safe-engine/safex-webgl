@@ -37,8 +37,8 @@ export class TMXObjectGroup {
    * List of properties stored in a dictionary
    * @param {object} Var
    */
-  setProperties(Var) {
-    this.properties.push(Var)
+  setProperties(v) {
+    this.properties.push(v)
   }
 
   /**
