@@ -13,81 +13,82 @@ import { Layer } from './Layer'
  * // Example
  * var multiLayer = new LayerMultiple(layer1, layer2, layer3);//any number of layers
  */
-export const LayerMultiplex = Layer.extend(
-  /** @lends LayerMultiplex# */ {
-    _enabledLayer: 0,
-    _layers: null,
-    _className: 'LayerMultiplex',
+export class LayerMultiplex extends Layer {
+  _enabledLayer: number = 0
+  _layers: any[] | null = null
+  _className: string = 'LayerMultiplex'
 
-    /**
-     * Constructor of LayerMultiplex
-     * @param {Array} layers an array of Layer
-     */
-    ctor: function (layers) {
-      Layer.prototype.ctor.call(this)
-      if (layers instanceof Array) LayerMultiplex.prototype.initWithLayers.call(this, layers)
-      else LayerMultiplex.prototype.initWithLayers.call(this, Array.prototype.slice.call(arguments))
-    },
+  /**
+   * Constructor of LayerMultiplex
+   * @param {Array} layers an array of Layer
+   */
+  constructor(...args: any[]) {
+    super()
+    if (args.length === 1 && Array.isArray(args[0])) {
+      this.initWithLayers(args[0])
+    } else {
+      this.initWithLayers(args)
+    }
+  }
 
-    /**
-     * Initialization of the layer multiplex, please do not call this function by yourself, you should pass the parameters to constructor to initialize a layer multiplex
-     * @param {Array} layers an array of Layer
-     * @return {Boolean}
-     */
-    initWithLayers: function (layers) {
-      if (layers.length > 0 && layers[layers.length - 1] == null) log(_LogInfos.LayerMultiplex_initWithLayers)
+  /**
+   * Initialization of the layer multiplex, please do not call this function by yourself, you should pass the parameters to constructor to initialize a layer multiplex
+   * @param {Array} layers an array of Layer
+   * @return {Boolean}
+   */
+  initWithLayers(layers: any[]) {
+    if (layers.length > 0 && layers[layers.length - 1] == null) log(_LogInfos.LayerMultiplex_initWithLayers)
 
-      this._layers = layers
-      this._enabledLayer = 0
-      this.addChild(this._layers[this._enabledLayer])
-      return true
-    },
+    this._layers = layers
+    this._enabledLayer = 0
+    this.addChild(this._layers[this._enabledLayer])
+    return true
+  }
 
-    /**
-     * Switches to a certain layer indexed by n.<br/>
-     * The current (old) layer will be removed from it's parent with 'cleanup:YES'.
-     * @param {Number} n the layer index to switch to
-     */
-    switchTo: function (n) {
-      if (n >= this._layers.length) {
-        log(_LogInfos.LayerMultiplex_switchTo)
-        return
-      }
+  /**
+   * Switches to a certain layer indexed by n.<br/>
+   * The current (old) layer will be removed from it's parent with 'cleanup:YES'.
+   * @param {Number} n the layer index to switch to
+   */
+  switchTo(n: number) {
+    if (!this._layers || n >= this._layers.length) {
+      log(_LogInfos.LayerMultiplex_switchTo)
+      return
+    }
 
-      this.removeChild(this._layers[this._enabledLayer], true)
-      this._enabledLayer = n
-      this.addChild(this._layers[n])
-    },
+    this.removeChild(this._layers[this._enabledLayer], true)
+    this._enabledLayer = n
+    this.addChild(this._layers[n])
+  }
 
-    /**
-     * Release the current layer and switches to another layer indexed by n.<br/>
-     * The current (old) layer will be removed from it's parent with 'cleanup:YES'.
-     * @param {Number} n the layer index to switch to
-     */
-    switchToAndReleaseMe: function (n) {
-      if (n >= this._layers.length) {
-        log(_LogInfos.LayerMultiplex_switchToAndReleaseMe)
-        return
-      }
+  /**
+   * Release the current layer and switches to another layer indexed by n.<br/>
+   * The current (old) layer will be removed from it's parent with 'cleanup:YES'.
+   * @param {Number} n the layer index to switch to
+   */
+  switchToAndReleaseMe(n: number) {
+    if (!this._layers || n >= this._layers.length) {
+      log(_LogInfos.LayerMultiplex_switchToAndReleaseMe)
+      return
+    }
 
-      this.removeChild(this._layers[this._enabledLayer], true)
+    this.removeChild(this._layers[this._enabledLayer], true)
 
-      //[layers replaceObjectAtIndex:_enabledLayer withObject:[NSNull null]];
-      this._layers[this._enabledLayer] = null
-      this._enabledLayer = n
-      this.addChild(this._layers[n])
-    },
+    //[layers replaceObjectAtIndex:_enabledLayer withObject:[NSNull null]];
+    this._layers[this._enabledLayer] = null
+    this._enabledLayer = n
+    this.addChild(this._layers[n])
+  }
 
-    /**
-     * Add a layer to the multiplex layers list
-     * @param {Layer} layer
-     */
-    addLayer: function (layer) {
-      if (!layer) {
-        log(_LogInfos.LayerMultiplex_addLayer)
-        return
-      }
-      this._layers.push(layer)
-    },
-  },
-)
+  /**
+   * Add a layer to the multiplex layers list
+   * @param {Layer} layer
+   */
+  addLayer(layer: any) {
+    if (!layer || !this._layers) {
+      log(_LogInfos.LayerMultiplex_addLayer)
+      return
+    }
+    this._layers.push(layer)
+  }
+}
