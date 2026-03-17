@@ -7,6 +7,15 @@ import { sys } from './sys'
 
 const _isNodeJs = false
 window.ENABLE_IMAGE_POOL = true
+export function getXMLHttpRequest() {
+  const xhr = new XMLHttpRequest() as SafexXMLHttpRequest
+  xhr.timeout = 10000
+  if (xhr.ontimeout === undefined) {
+    xhr._timeoutId = -1
+  }
+  return xhr
+}
+
 const imagePool = {
   _pool: new Array(10),
   _MAX: 10,
@@ -65,19 +74,6 @@ export const loader = (function () {
      */
     cache: {},
 
-    /**
-     * Get XMLHttpRequest.
-     * @returns {XMLHttpRequest}
-     */
-    getXMLHttpRequest: function () {
-      const xhr = new XMLHttpRequest() as SafexXMLHttpRequest
-      xhr.timeout = 10000
-      if (xhr.ontimeout === undefined) {
-        xhr._timeoutId = -1
-      }
-      return xhr
-    },
-
     isLoading: function (url) {
       return _queue[url] !== undefined
     },
@@ -88,7 +84,7 @@ export const loader = (function () {
      */
     loadTxt: function (url, cb) {
       if (!_isNodeJs) {
-        const xhr: SafexXMLHttpRequest = this.getXMLHttpRequest(),
+        const xhr = getXMLHttpRequest(),
           errInfo = `load ${url} failed!`
         xhr.open('GET', url, true)
         if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {

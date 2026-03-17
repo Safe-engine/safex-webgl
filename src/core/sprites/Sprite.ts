@@ -378,7 +378,7 @@ export class Sprite extends Node {
         },
         this,
       )
-      return false
+      return
     }
     const frameOffset = newFrame.getOffset()
     this._unflippedOffsetPositionFromCenter.x = frameOffset.x

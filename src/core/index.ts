@@ -1,4 +1,5 @@
 export * from './base-nodes/Node'
+export * from './base-nodes/NodeWebGLRenderCmd'
 export * from './cocoa/AffineTransform'
 export * from './cocoa/Geometry'
 export * from './Director'
@@ -10,5 +11,6 @@ export * from './sprites/Sprite'
 export * from './sprites/SpriteFrame'
 export * from './sprites/SpriteFrameCache'
 export * from './support/PointExtension'
+export * from './utils/BinaryLoader'
 
 export { ResolutionPolicy } from './platform/EGLView/ResolutionPolicy'

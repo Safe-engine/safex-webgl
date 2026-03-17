@@ -1,5 +1,5 @@
 import { log } from '../helper/Debugger'
-import { loader } from '../helper/loader'
+import { getXMLHttpRequest, loader } from '../helper/loader'
 import { path } from '../helper/path'
 import { Audio } from './Audio'
 
@@ -48,7 +48,7 @@ const audioLoader = {
   loadBuffer: function (url, cb) {
     if (!SWA) return // WebAudio Buffer
 
-    const request = loader.getXMLHttpRequest()
+    const request = getXMLHttpRequest()
     request.open('GET', url, true)
     request.responseType = 'arraybuffer'
 

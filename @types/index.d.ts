@@ -19,6 +19,8 @@ interface Window {
   webkitAudioContext: any
   mozAudioContext: any
   __audioSupport: any
+  IEBinaryToArray_ByteStr: any
+  IEBinaryToArray_ByteStr_Last: any
 }
 type SafexXMLHttpRequest = XMLHttpRequest & { _timeoutId: number }
 

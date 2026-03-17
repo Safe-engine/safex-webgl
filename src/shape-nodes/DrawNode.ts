@@ -213,7 +213,7 @@ export class DrawNode extends Node {
     }
   }
 
-  drawRect(origin, destination, fillColor, lineWidth?, lineColor?) {
+  drawRect(origin, destination, fillColor?, lineWidth?, lineColor?) {
     lineWidth = lineWidth == null ? this._lineWidth : lineWidth
     lineColor = lineColor || this._drawColor
     this._vertices.length = 0
@@ -223,7 +223,7 @@ export class DrawNode extends Node {
     this._vertices.length = 0
   }
 
-  drawCircle(center, radius, angle, segments, drawLineToCenter, lineWidth, color) {
+  drawCircle(center, radius, angle, segments, drawLineToCenter?, lineWidth?, color?) {
     lineWidth = lineWidth || this._lineWidth
     color = color || this._drawColor
     const coef = (2.0 * Math.PI) / segments
@@ -503,7 +503,7 @@ export class DrawNode extends Node {
     this._dirty = true
   }
 
-  drawPoly(verts, fillColor: Color, borderWidth: number, borderColor: Color) {
+  drawPoly(verts, fillColor?: Color, borderWidth?: number, borderColor?: Color) {
     // Backward compatibility
     if (typeof verts[0] === 'object') {
       this._vertices.length = 0
