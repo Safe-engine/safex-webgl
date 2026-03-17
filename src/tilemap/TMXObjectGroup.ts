@@ -3,7 +3,7 @@ import { p, Point } from '../core'
 export class TMXObjectGroup {
   groupName: string
   _positionOffset: Point
-  properties: any[]
+  declare properties: any
   _objects: any[]
 
   constructor() {

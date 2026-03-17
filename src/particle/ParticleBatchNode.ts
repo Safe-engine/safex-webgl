@@ -1,12 +1,12 @@
 import { game, renderer } from '..'
 import { BLEND_DST, BLEND_SRC, BlendFunc, Node, ONE_MINUS_SRC_ALPHA, SRC_ALPHA } from '../core'
-import type { NodeWebGLRenderCmd } from '../core/base-nodes/NodeWebGLRenderCmd'
 import { isString } from '../helper/checkType'
 import { log } from '../helper/Debugger'
 import { _renderType } from '../helper/engine'
 import { defineGetterSetter } from '../helper/getset'
 import { Texture2D, textureCache } from '../textures'
 import { TextureAtlas } from '../textures/TextureAtlas'
+import { ParticleBatchNodeWebGLRenderCmd } from './ParticleBatchNodeWebGLRenderCmd'
 
 export const PARTICLE_DEFAULT_CAPACITY = 500
 
@@ -51,7 +51,7 @@ export class ParticleBatchNode extends Node {
   //the blend function used for drawing the quads
   _blendFunc: any = null
   _className = 'ParticleBatchNode'
-  declare _renderCmd: partca
+  declare _renderCmd: ParticleBatchNodeWebGLRenderCmd
 
   /**
    * initializes the particle system with the name of a file on disk (for a list of supported formats look at the Texture2D class), a capacity of particles
@@ -145,7 +145,8 @@ export class ParticleBatchNode extends Node {
    */
   addChild(child: any, zOrder?: any, tag?: any) {
     if (!child) throw new Error('ParticleBatchNode.addChild() : child should be non-null')
-    if (child.constructor.name !== 'ParticleSystem') throw new Error('ParticleBatchNode.addChild() : only supports ParticleSystem as children')
+    if (child.constructor.name !== 'ParticleSystem')
+      throw new Error('ParticleBatchNode.addChild() : only supports ParticleSystem as children')
     zOrder = zOrder == null ? child.zIndex : zOrder
     tag = tag == null ? child.tag : tag
 
@@ -157,7 +158,7 @@ export class ParticleBatchNode extends Node {
     if (this._children.length === 0) this.setBlendFunc(childBlendFunc)
     else {
       if (childBlendFunc.src !== this._blendFunc.src || childBlendFunc.dst !== this._blendFunc.dst) {
-        log("ParticleSystem.addChild() : Can't add a ParticleSystem that uses a different blending function")
+        log('ParticleSystem.addChild() : Cant add a ParticleSystem that uses a different blending function')
         return
       }
     }
@@ -166,7 +167,7 @@ export class ParticleBatchNode extends Node {
     const pos = this._addChildHelper(child, zOrder, tag)
 
     //get new atlasIndex
-    let atlasIndex = 0
+    let atlasIndex
 
     if (pos !== 0 && pos !== null) {
       const p = this._children[pos - 1] as any
@@ -211,9 +212,10 @@ export class ParticleBatchNode extends Node {
     // explicit nil handling
     if (child == null) return
 
-    if (child.constructor.name !== 'ParticleSystem') throw new Error('ParticleBatchNode.removeChild(): only supports ParticleSystem as children')
+    if (child.constructor.name !== 'ParticleSystem')
+      throw new Error('ParticleBatchNode.removeChild(): only supports ParticleSystem as children')
     if (this._children.indexOf(child) === -1) {
-      log("ParticleBatchNode.removeChild(): doesnt contain the sprite. Can't remove it")
+      log('ParticleBatchNode.removeChild(): doesnt contain the sprite. Cant remove it')
       return
     }
 
@@ -295,7 +297,7 @@ export class ParticleBatchNode extends Node {
   removeAllChildren(doCleanup?: any) {
     const locChildren = this._children
     for (let i = 0; i < locChildren.length; i++) {
-      (locChildren[i] as any).setBatchNode(null)
+      ;(locChildren[i] as any).setBatchNode(null)
     }
     super.removeAllChildren(doCleanup)
     this.textureAtlas.removeAllQuads()
@@ -315,7 +317,7 @@ export class ParticleBatchNode extends Node {
       quad.tl.vertices.y =
       quad.bl.vertices.x =
       quad.bl.vertices.y =
-      0.0
+        0.0
     this.textureAtlas._setDirty(true)
   }
 
@@ -441,7 +443,7 @@ export class ParticleBatchNode extends Node {
   _addChildHelper(child: any, z: any, aTag: any) {
     if (!child) throw new Error('ParticleBatchNode._addChildHelper(): child should be non-null')
     if (child.parent) {
-      log("ParticleBatchNode._addChildHelper(): child already added. It can't be added again")
+      log('ParticleBatchNode._addChildHelper(): child already added. It cant be added again')
       return null
     }
 

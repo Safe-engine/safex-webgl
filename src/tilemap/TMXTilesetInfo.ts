@@ -23,7 +23,7 @@ import { TMX_TILE_FLIPPED_MASK } from './TMXXMLParser'
  */
 export class TMXTilesetInfo {
   name: string
-  firstGid: string
+  firstGid: number
   _tileSize: Size
   spacing: number
   margin: number
@@ -32,7 +32,7 @@ export class TMXTilesetInfo {
 
   constructor() {
     this.name = ''
-    this.firstGid = '0'
+    this.firstGid = 0
     this._tileSize = null
     this.spacing = 0
     this.margin = 0
@@ -53,10 +53,10 @@ export class TMXTilesetInfo {
     rect.width = this._tileSize.width
     rect.height = this._tileSize.height
     gid &= TMX_TILE_FLIPPED_MASK
-    gid = gid - parseInt(this.firstGid, 10)
-    const max_x = parseInt((this.imageSize.width - this.margin * 2 + this.spacing) / (this._tileSize.width + this.spacing), 10)
-    rect.x = parseInt((gid % max_x) * (this._tileSize.width + this.spacing) + this.margin, 10)
-    rect.y = parseInt(parseInt(gid / max_x, 10) * (this._tileSize.height + this.spacing) + this.margin, 10)
+    gid = gid - this.firstGid
+    const max_x = (this.imageSize.width - this.margin * 2 + this.spacing) / (this._tileSize.width + this.spacing)
+    rect.x = (gid % max_x) * (this._tileSize.width + this.spacing) + this.margin
+    rect.y = (gid / max_x) * (this._tileSize.height + this.spacing) + this.margin
     return rect
   }
 }

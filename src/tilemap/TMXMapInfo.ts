@@ -1,9 +1,10 @@
-import { Inflate } from 'fflate'
+import { decompressSync } from 'fflate'
 import { director } from '../boot'
 import { p, Size } from '../core'
 import { _txtLoader } from '../core/platform/Loaders'
 import { SAXParser } from '../core/platform/SAXParser'
 import { path } from '../helper'
+import { decodeAsArray, uint8ArrayToUint32Array } from '../helper/Base64'
 import { log } from '../helper/Debugger'
 import { loader } from '../helper/loader'
 import { unzipBase64AsArray } from '../helper/ZipUtils'
@@ -338,7 +339,7 @@ export class TMXMapInfo extends SAXParser {
     }
 
     // PARSE <tileset>
-    let tilesets: any[] = map.getElementsByTagName('tileset')
+    let tilesets: any = map.getElementsByTagName('tileset')
     if (map.nodeName !== 'map') {
       tilesets = []
       tilesets.push(map)
@@ -388,7 +389,7 @@ export class TMXMapInfo extends SAXParser {
         if (tiles) {
           for (let tIdx = 0; tIdx < tiles.length; tIdx++) {
             const t = tiles[tIdx]
-            this.parentGID = parseInt(tileset.firstGid) + parseInt(t.getAttribute('id') || 0)
+            this.parentGID = tileset.firstGid + parseInt(t.getAttribute('id') || 0)
             const tp = t.querySelectorAll('properties > property')
             if (tp) {
               const dict = {}
@@ -421,9 +422,9 @@ export class TMXMapInfo extends SAXParser {
         const visible = selLayer.getAttribute('visible')
         layer.visible = !(visible == '0')
 
-        const opacity = selLayer.getAttribute('opacity') || 1
+        const opacity = selLayer.getAttribute('opacity') || '1'
 
-        if (opacity) layer._opacity = parseInt(255 * parseFloat(opacity))
+        if (opacity) layer._opacity = 255 * parseFloat(opacity)
         else layer._opacity = 255
         layer.offset = p(parseFloat(selLayer.getAttribute('x')) || 0, parseFloat(selLayer.getAttribute('y')) || 0)
 
@@ -445,14 +446,15 @@ export class TMXMapInfo extends SAXParser {
           case 'gzip':
             tiles = unzipBase64AsArray(nodeValue, 4)
             break
-          case 'zlib':
-            const inflator = new Inflate((Codec as any).Base64.decodeAsArray(nodeValue, 1))
-            tiles = (window as any).uint8ArrayToUint32Array(inflator.decompress())
+          case 'zlib': {
+            const inflator: any = decodeAsArray(nodeValue, 1)
+            tiles = uint8ArrayToUint32Array(decompressSync(inflator))
             break
+          }
           case null:
           case '':
             // Uncompressed
-            if (encoding === 'base64') tiles = (Codec as any).Base64.decodeAsArray(nodeValue, 4)
+            if (encoding === 'base64') tiles = decodeAsArray(nodeValue, 4)
             else if (encoding === 'csv') {
               tiles = []
               const csvTiles = nodeValue.split(',')
@@ -503,7 +505,7 @@ export class TMXMapInfo extends SAXParser {
         const groupProps = selGroup.querySelectorAll('objectgroup > properties > property')
         if (groupProps) {
           for (j = 0; j < groupProps.length; j++) {
-            const groupProp = {}
+            const groupProp: any = {}
             groupProp[groupProps[j].getAttribute('name')] = groupProps[j].getAttribute('value')
             // Add the property to the layer
             objectGroup.properties = groupProp
@@ -528,8 +530,8 @@ export class TMXMapInfo extends SAXParser {
             objectProp['width'] = parseInt(selObj.getAttribute('width')) || 0
             objectProp['height'] = parseInt(selObj.getAttribute('height')) || 0
 
-            objectProp['x'] = (((selObj.getAttribute('x') || 0) | 0) + objectGroup.getPositionOffset().x) / getContentScaleFactor
-            const y = ((selObj.getAttribute('y') || 0) | 0) + objectGroup.getPositionOffset().y / getContentScaleFactor
+            objectProp['x'] = (Number(selObj.getAttribute('x') ?? 0) + objectGroup.getPositionOffset().x) / getContentScaleFactor
+            const y = Number(selObj.getAttribute('y') ?? 0) + objectGroup.getPositionOffset().y / getContentScaleFactor
             // Correct y position. (Tiled uses Flipped, cocos2d uses Standard)
             objectProp['y'] =
               (parseInt((this.getMapSize().height * this.getTileSize().height) as any) - y - objectProp['height']) /

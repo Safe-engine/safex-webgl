@@ -297,9 +297,8 @@ export const tiffReader = /** @lends tiffReader# */ {
               } else {
                 const sampleInfo = this.getBits(sampleProperties[m].bitsPerSample, stripOffset + byteOffset, bitOffset)
                 pixel.push(sampleInfo.bits)
-                byteOffset = sampleInfo.byteOffset - stripOffset
-                bitOffset = sampleInfo.bitOffset
-
+                // byteOffset = sampleInfo.byteOffset - stripOffset
+                // bitOffset = sampleInfo.bitOffset
                 throw RangeError('Cannot handle sub-byte bits per sample')
               }
             }
@@ -309,7 +308,7 @@ export const tiffReader = /** @lends tiffReader# */ {
             if (hasBytesPerPixel) {
               jIncrement = bytesPerPixel
             } else {
-              jIncrement = 0
+              // jIncrement = 0
               throw RangeError('Cannot handle sub-byte bits per pixel')
             }
             break
@@ -345,13 +344,12 @@ export const tiffReader = /** @lends tiffReader# */ {
             break
 
           // PackBits
-          case 32773:
+          case 32773: {
             // Are we ready for a new block?
+            let blockLength
+            let iterations
             if (getHeader) {
               getHeader = false
-
-              var blockLength = 1
-              var iterations = 1
 
               // The header byte is signed.
               const header = this.getInt8(stripOffset + byteOffset)
@@ -404,7 +402,7 @@ export const tiffReader = /** @lends tiffReader# */ {
 
             jIncrement = 1
             break
-
+          }
           // Unknown compression algorithm
           default:
             // Do not attempt to parse the image data.
@@ -439,10 +437,10 @@ export const tiffReader = /** @lends tiffReader# */ {
         extraSamplesValues = fileDirectory['ExtraSamples'].values
         numExtraSamples = extraSamplesValues.length
       }
-
+      let colorMapValues, colorMapSampleSize
       if (fileDirectory['ColorMap']) {
-        const colorMapValues = fileDirectory['ColorMap'].values
-        const colorMapSampleSize = Math.pow(2, sampleProperties[0].bitsPerSample)
+        colorMapValues = fileDirectory['ColorMap'].values
+        colorMapSampleSize = Math.pow(2, sampleProperties[0].bitsPerSample)
       }
 
       // Loop through the strips in the image.
@@ -456,7 +454,7 @@ export const tiffReader = /** @lends tiffReader# */ {
         const yPadding = numRowsInPreviousStrip * i
 
         // Loop through the rows in the strip.
-        for (let y = 0, j = 0; y < numRowsInStrip, j < numPixels; y++) {
+        for (let y = 0, j = 0; y < numRowsInStrip && j < numPixels; y++) {
           // Loop through the pixels in the row.
           for (let x = 0; x < imageWidth; x++, j++) {
             const pixelSamples = strips[i][j]
@@ -490,10 +488,12 @@ export const tiffReader = /** @lends tiffReader# */ {
                 pixelSamples.forEach(function (sample, index, samples) {
                   samples[index] = invertValue - sample
                 })
+                red = green = blue = this.clampColorSample(pixelSamples[0], sampleProperties[0].bitsPerSample)
+                break
               }
               // Bilevel or Grayscale
               // BlackIsZero
-              // eslint-disable-next-line no-fallthrough
+
               case 1: {
                 red = green = blue = this.clampColorSample(pixelSamples[0], sampleProperties[0].bitsPerSample)
                 break
@@ -506,7 +506,7 @@ export const tiffReader = /** @lends tiffReader# */ {
                 break
               }
               // RGB Color Palette
-              case 3:
+              case 3: {
                 if (colorMapValues === undefined) {
                   throw Error('Palette image missing color map')
                 }
@@ -517,7 +517,7 @@ export const tiffReader = /** @lends tiffReader# */ {
                 green = this.clampColorSample(colorMapValues[colorMapSampleSize + colorMapIndex], 16)
                 blue = this.clampColorSample(colorMapValues[2 * colorMapSampleSize + colorMapIndex], 16)
                 break
-
+              }
               // Unknown Photometric Interpretation
               default:
                 throw RangeError('Unknown Photometric Interpretation:', photometricInterpretation)
