@@ -6,7 +6,7 @@ import { LayerColorWebGLRenderCmd } from './LayerWebGLRenderCmd'
 
 export class LayerColor extends Layer {
   _blendFunc: any = null
-  _className: string = 'LayerColor'
+  _className = 'LayerColor'
   declare _renderCmd: LayerColorWebGLRenderCmd
 
   /**
@@ -81,19 +81,19 @@ export class LayerColor extends Layer {
     width = width === undefined ? winSize.width : width
     height = height === undefined ? winSize.height : height
 
-    const locRealColor = this._realColor as any
+    const locRealColor = this._realColor
     locRealColor.r = c.r
     locRealColor.g = c.g
     locRealColor.b = c.b
     this._realOpacity = c.a
-    this._renderCmd.setDirtyFlag((Node as any)._dirtyFlags.colorDirty | (Node as any)._dirtyFlags.opacityDirty)
+    this._renderCmd.setDirtyFlag(Node._dirtyFlags.colorDirty | Node._dirtyFlags.opacityDirty)
 
     super.setContentSize(width, height)
     return true
   }
 
   visit(parent?: any) {
-    const cmd = this._renderCmd as any,
+    const cmd = this._renderCmd,
       parentCmd = parent ? parent._renderCmd : null
 
     // quick return if not visible
@@ -157,7 +157,7 @@ export class LayerColor extends Layer {
   }
 
   _createRenderCmd() {
-   return new  LayerColorWebGLRenderCmd(this as any)
+    return new LayerColorWebGLRenderCmd(this)
   }
 }
 

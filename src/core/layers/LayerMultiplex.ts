@@ -14,9 +14,9 @@ import { Layer } from './Layer'
  * var multiLayer = new LayerMultiple(layer1, layer2, layer3);//any number of layers
  */
 export class LayerMultiplex extends Layer {
-  _enabledLayer: number = 0
+  _enabledLayer = 0
   _layers: any[] | null = null
-  _className: string = 'LayerMultiplex'
+  _className = 'LayerMultiplex'
 
   /**
    * Constructor of LayerMultiplex

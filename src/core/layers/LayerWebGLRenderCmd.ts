@@ -33,6 +33,8 @@ export class LayerColorWebGLRenderCmd extends LayerWebGLRenderCmd {
   _dataDirty: boolean
   _color: Uint32Array
   _vertexBuffer: any
+  _bakeRenderCmd: any
+  _bakeSprite: any
 
   constructor(renderable: any) {
     super(renderable)

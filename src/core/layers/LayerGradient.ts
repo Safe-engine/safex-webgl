@@ -1,7 +1,13 @@
 import { _renderContext, view } from '../..'
 import { glBlendFunc } from '../../shaders/GLStateCache'
 import { Node } from '../base-nodes/Node'
-import { affineTransformMake, affineTransformRotate, affineTransformScale, pointApplyAffineTransform, rectApplyAffineTransformIn } from '../cocoa/AffineTransform'
+import {
+  affineTransformMake,
+  affineTransformRotate,
+  affineTransformScale,
+  pointApplyAffineTransform,
+  rectApplyAffineTransformIn,
+} from '../cocoa/AffineTransform'
 import { p, Rect } from '../cocoa/Geometry'
 import { Matrix4 } from '../kazmath/mat4'
 import { Color, color, radiansToDegrees, VERTEX_ATTRIB_COLOR, VERTEX_ATTRIB_POSITION } from '../platform'
@@ -44,11 +50,11 @@ import { LayerColorWebGLRenderCmd } from './LayerWebGLRenderCmd'
  */
 export class LayerGradient extends LayerColor {
   _endColor: any = null
-  _startOpacity: number = 255
-  _endOpacity: number = 255
+  _startOpacity = 255
+  _endOpacity = 255
   _alongVector: any = null
-  _compressedInterpolation: boolean = false
-  _className: string = 'LayerGradient'
+  _compressedInterpolation = false
+  _className = 'LayerGradient'
   _colorStops: any[] = []
 
   /**
@@ -113,7 +119,9 @@ export class LayerGradient extends LayerColor {
     this._compressedInterpolation = true
 
     super.init(color(start.r, start.g, start.b, 255))
-    ;(this._renderCmd as any).setDirtyFlag((Node as any)._dirtyFlags.colorDirty | (Node as any)._dirtyFlags.opacityDirty | (Node as any)._dirtyFlags.gradientDirty)
+    this._renderCmd.setDirtyFlag(
+      (Node as any)._dirtyFlags.colorDirty | (Node as any)._dirtyFlags.opacityDirty | (Node as any)._dirtyFlags.gradientDirty,
+    )
     return true
   }
 
@@ -124,17 +132,17 @@ export class LayerGradient extends LayerColor {
    */
   setContentSize(size: any, height?: any) {
     super.setContentSize(size, height)
-    ;(this._renderCmd as any).setDirtyFlag((Node as any)._dirtyFlags.gradientDirty)
+    this._renderCmd.setDirtyFlag((Node as any)._dirtyFlags.gradientDirty)
   }
 
   _setWidth(width: any) {
     ;(this as any)._setWidth(width)
-    ;(this._renderCmd as any).setDirtyFlag((Node as any)._dirtyFlags.gradientDirty)
+    this._renderCmd.setDirtyFlag((Node as any)._dirtyFlags.gradientDirty)
   }
 
   _setHeight(height: any) {
     ;(this as any)._setHeight(height)
-    ;(this._renderCmd as any).setDirtyFlag((Node as any)._dirtyFlags.gradientDirty)
+    this._renderCmd.setDirtyFlag((Node as any)._dirtyFlags.gradientDirty)
   }
 
   /**
@@ -186,7 +194,7 @@ export class LayerGradient extends LayerColor {
       selColor.g = c.g
       selColor.b = c.b
     }
-    ;(this._renderCmd as any).setDirtyFlag((Node as any)._dirtyFlags.colorDirty)
+    this._renderCmd.setDirtyFlag((Node as any)._dirtyFlags.colorDirty)
   }
 
   /**
@@ -206,7 +214,7 @@ export class LayerGradient extends LayerColor {
     //update the color stops
     const stops = this._colorStops
     if (stops && stops.length > 0) stops[0].color.a = o
-    ;(this._renderCmd as any).setDirtyFlag((Node as any)._dirtyFlags.opacityDirty)
+    this._renderCmd.setDirtyFlag((Node as any)._dirtyFlags.opacityDirty)
   }
 
   /**
@@ -225,7 +233,7 @@ export class LayerGradient extends LayerColor {
     this._endOpacity = o
     const stops = this._colorStops
     if (stops && stops.length > 0) stops[stops.length - 1].color.a = o
-    ;(this._renderCmd as any).setDirtyFlag((Node as any)._dirtyFlags.opacityDirty)
+    this._renderCmd.setDirtyFlag((Node as any)._dirtyFlags.opacityDirty)
   }
 
   /**
@@ -243,7 +251,7 @@ export class LayerGradient extends LayerColor {
   setVector(Var: any) {
     this._alongVector.x = Var.x
     this._alongVector.y = Var.y
-    ;(this._renderCmd as any).setDirtyFlag((Node as any)._dirtyFlags.gradientDirty)
+    this._renderCmd.setDirtyFlag((Node as any)._dirtyFlags.gradientDirty)
   }
 
   /**
@@ -268,7 +276,7 @@ export class LayerGradient extends LayerColor {
    */
   setCompressedInterpolation(compress: boolean) {
     this._compressedInterpolation = compress
-    ;(this._renderCmd as any).setDirtyFlag((Node as any)._dirtyFlags.gradientDirty)
+    this._renderCmd.setDirtyFlag((Node as any)._dirtyFlags.gradientDirty)
   }
 
   /**
@@ -298,11 +306,11 @@ export class LayerGradient extends LayerColor {
   setColorStops(colorStops: any[]) {
     this._colorStops = colorStops
     //todo need update  the start color and end color
-    ;(this._renderCmd as any).setDirtyFlag((Node as any)._dirtyFlags.colorDirty | (Node as any)._dirtyFlags.opacityDirty | (Node as any)._dirtyFlags.gradientDirty)
+    this._renderCmd.setDirtyFlag(Node._dirtyFlags.colorDirty | Node._dirtyFlags.opacityDirty | Node._dirtyFlags.gradientDirty)
   }
 
   _createRenderCmd() {
-    return new LayerGradientWebGLRenderCmd(this as any)
+    return new LayerGradientWebGLRenderCmd(this)
   }
 
   get startColor() {

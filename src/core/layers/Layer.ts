@@ -1,8 +1,9 @@
-import { Node, winSize, renderer } from '../..'
+import { Node, renderer, winSize } from '../..'
 import { LayerWebGLRenderCmd } from './LayerWebGLRenderCmd'
 
 export class Layer extends Node {
-  _className: string = 'Layer'
+  _className = 'Layer'
+  declare _renderCmd: LayerWebGLRenderCmd
 
   /**
    * <p>Constructor of Layer, override it to extend the construction behavior</p>
@@ -23,7 +24,7 @@ export class Layer extends Node {
    * @see Layer#unbake
    */
   bake() {
-    ;(this._renderCmd as any).bake()
+    this._renderCmd.bake()
   }
 
   /**
@@ -33,7 +34,7 @@ export class Layer extends Node {
    * @see Layer#bake
    */
   unbake() {
-    ;(this._renderCmd as any).unbake()
+    this._renderCmd.unbake()
   }
 
   /**
@@ -93,7 +94,7 @@ export class Layer extends Node {
 
   addChild(child: any, localZOrder?: any, tag?: any) {
     super.addChild(child, localZOrder, tag)
-    ;(this._renderCmd as any)._bakeForAddChild(child)
+    this._renderCmd._bakeForAddChild(child)
   }
 
   _createRenderCmd() {
