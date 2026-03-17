@@ -4,7 +4,7 @@ import { path } from '../../helper/path'
 import { textureCache } from '../../textures/TextureCache'
 import { plistParser } from './SAXParser'
 
-const _txtLoader = {
+export const _txtLoader = {
   load: function (realUrl, url, res, cb) {
     loader.loadTxt(realUrl, cb)
   },

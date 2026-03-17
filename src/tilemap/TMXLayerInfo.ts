@@ -1,6 +1,4 @@
-// Bits on the far end of the 32-bit global tile ID (GID's) are used for tile flags
-
-import { p } from '../core'
+import { p, Point } from '../core'
 
 /**
  * <p>TMXLayerInfo contains the information about the layers like: <br />
@@ -16,6 +14,22 @@ import { p } from '../core'
  * @property {Array}    properties  - Properties of the layer info.
  */
 export class TMXLayerInfo {
+  static ATTRIB_NONE = 1 << 0
+  static ATTRIB_BASE64 = 1 << 1
+  static ATTRIB_GZIP = 1 << 2
+  static ATTRIB_ZLIB = 1 << 3
+
+  properties: any
+  name: string
+  _layerSize: unknown
+  _tiles: unknown
+  visible: boolean
+  _opacity: number
+  ownTiles: boolean
+  _minGID: number
+  _maxGID: number
+  offset: Point
+
   constructor() {
     this.properties = []
     this.name = ''
@@ -41,28 +55,7 @@ export class TMXLayerInfo {
    * Set the Properties.
    * @param {object} value
    */
-  setProperties(value) {
+  setProperties(value: any) {
     this.properties = value
   }
 }
-
-/**
- * @constant
- * @type Number
- */
-TMXLayerInfo.ATTRIB_NONE = 1 << 0
-/**
- * @constant
- * @type Number
- */
-TMXLayerInfo.ATTRIB_BASE64 = 1 << 1
-/**
- * @constant
- * @type Number
- */
-TMXLayerInfo.ATTRIB_GZIP = 1 << 2
-/**
- * @constant
- * @type Number
- */
-TMXLayerInfo.ATTRIB_ZLIB = 1 << 3

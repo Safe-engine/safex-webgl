@@ -1,6 +1,11 @@
-import { p } from '../core'
+import { p, Point } from '../core'
 
 export class TMXObjectGroup {
+  groupName: string
+  _positionOffset: Point
+  properties: any[]
+  _objects: any[]
+
   constructor() {
     this.groupName = ''
     this._positionOffset = p(0, 0)
