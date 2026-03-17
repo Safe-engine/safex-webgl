@@ -45,7 +45,7 @@ export class Node extends EventHelper {
   declare _flippedX: boolean
   declare _flippedY: boolean
   declare _blendFunc: any
-  declare opacityModifyRGB: boolean
+  // declare opacityModifyRGB: boolean
   declare _textureLoaded: any
   declare _offsetPosition: any
   declare _opacityModifyRGB: any

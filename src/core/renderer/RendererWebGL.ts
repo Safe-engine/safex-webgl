@@ -257,7 +257,7 @@ export const rendererWebGL = (function () {
       }
     },
 
-    _increaseBatchingSize: function (increment, vertexType, indices) {
+    _increaseBatchingSize: function (increment, vertexType?, indices?) {
       vertexType = vertexType || VertexType.QUAD
       let i, curr
       switch (vertexType) {

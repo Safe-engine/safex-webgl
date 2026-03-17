@@ -161,8 +161,8 @@ export const tiffReader = /** @lends tiffReader# */ {
   parseFileDirectory: function (byteOffset) {
     const numDirEntries = this.getUint16(byteOffset)
     const tiffFields = []
-
-    for (var i = byteOffset + 2, entryCount = 0; entryCount < numDirEntries; i += 12, entryCount++) {
+    let i, entryCount
+    for (i = byteOffset + 2, entryCount = 0; entryCount < numDirEntries; i += 12, entryCount++) {
       const fieldTag = this.getUint16(i)
       const fieldType = this.getUint16(i + 2)
       const typeCount = this.getUint32(i + 4)
@@ -270,6 +270,7 @@ export const tiffReader = /** @lends tiffReader# */ {
     }
 
     // Loop through strips and decompress as necessary.
+    let byteOffset, bitOffset, jIncrement, getHeader, pixel, numBytes, sample, currentSample
     for (let i = 0; i < numStripOffsetValues; i++) {
       const stripOffset = stripOffsetValues[i]
       strips[i] = []
@@ -278,16 +279,17 @@ export const tiffReader = /** @lends tiffReader# */ {
 
       // Loop through pixels.
       for (
-        var byteOffset = 0, bitOffset = 0, jIncrement = 1, getHeader = true, pixel = [], numBytes = 0, sample = 0, currentSample = 0;
+        byteOffset = 0, bitOffset = 0, jIncrement = 1, getHeader = true, pixel = [], numBytes = 0, sample = 0, currentSample = 0;
         byteOffset < stripByteCount;
         byteOffset += jIncrement
       ) {
         // Decompress strip.
         switch (compression) {
           // Uncompressed
-          case 1:
+          case 1: {
             // Loop through samples (sub-pixels).
-            for (var m = 0, pixel = []; m < samplesPerPixel; m++) {
+            let m
+            for (m = 0; m < samplesPerPixel; m++) {
               if (sampleProperties[m].hasBytesPerSample) {
                 // XXX: This is wrong!
                 const sampleOffset = sampleProperties[m].bytesPerSample * m
@@ -311,7 +313,7 @@ export const tiffReader = /** @lends tiffReader# */ {
               throw RangeError('Cannot handle sub-byte bits per pixel')
             }
             break
-
+          }
           // CITT Group 3 1-Dimensional Modified Huffman run-length encoding
           case 2:
             // XXX: Use PDF.js code?
@@ -368,7 +370,7 @@ export const tiffReader = /** @lends tiffReader# */ {
               const currentByte = this.getUint8(stripOffset + byteOffset)
 
               // Duplicate bytes, if necessary.
-              for (var m = 0; m < iterations; m++) {
+              for (let m = 0; m < iterations; m++) {
                 if (sampleProperties[sample].hasBytesPerSample) {
                   // We're reading one byte at a time, so we need to handle multi-byte samples.
                   currentSample = (currentSample << (8 * numBytes)) | currentByte

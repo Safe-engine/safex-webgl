@@ -1,3 +1,5 @@
+import { decompressSync } from 'fflate'
+
 export class PNGReader {
   declare data: any
   declare pos: number
@@ -112,8 +114,10 @@ export class PNGReader {
         case 'tEXt': {
           text = this.read(chunkSize)
           index = text.indexOf(0)
-          key = String.fromCharCode.apply(String, text.slice(0, index))
-          this.text[key] = String.fromCharCode.apply(String, text.slice(index + 1))
+          const decoder = new TextDecoder()
+          const key = decoder.decode(text.subarray(0, index))
+          const value = decoder.decode(text.subarray(index + 1))
+          this.text[key] = value
           break
         }
         case 'IEND':
@@ -185,8 +189,8 @@ export class PNGReader {
     if (data.length === 0) {
       return new Uint8Array(0)
     }
-    const inflate = new Zlib.Inflate(data, { index: 0, verify: false })
-    data = inflate.decompress()
+    // const inflate = new Inflate({ input: data, index: 0, verify: false })
+    data = decompressSync(data)
 
     const pixelBytes = this.pixelBitlength / 8
     const scanlineLength = pixelBytes * this.width
