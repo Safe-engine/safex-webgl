@@ -40,11 +40,11 @@ export class Node extends EventHelper {
   declare _unflippedOffsetPositionFromCenter: Point
   declare _batchNode: any
   declare textureAtlas: any
-  declare _texture: any
+  // declare _texture: any
   declare _rectRotated: boolean
   declare _flippedX: boolean
   declare _flippedY: boolean
-  declare _blendFunc: any
+  // declare _blendFunc: any
   // declare opacityModifyRGB: boolean
   declare _textureLoaded: any
   declare _offsetPosition: any
