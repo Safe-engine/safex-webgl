@@ -1,14 +1,33 @@
-import { ClippingNode, Color, FontDefinition, LabelTTF, Rect, Scene, Sprite, Vec2, loader, spriteFrameCache, view } from '../src'
+import {
+  ClippingNode,
+  Color,
+  FontDefinition,
+  LabelTTF,
+  Rect,
+  Scene,
+  Sprite,
+  Vec2,
+  audioEngine,
+  director,
+  loader,
+  spriteFrameCache,
+  view,
+} from '../src'
 import { MotionStreak } from '../src/motion-streak'
 import { ProgressTimer } from '../src/progress-timer'
 import { Button, RichElementText, RichText, Scale9Sprite, Slider, Text } from '../src/ui'
 
 export class DemoScene extends Scene {
-  // constructor() {
-  //   super()
-  //   console.log("BootScene constructor")
-  //   this.scheduleUpdate()
-  // }
+  declare streak: MotionStreak
+  constructor() {
+    super()
+    console.log('BootScene constructor')
+    const motionStreak = new MotionStreak(1, 32, 13, Color.GREEN, 'particle.png')
+    motionStreak.setPosition(300, 400)
+    this.addChild(motionStreak)
+    this.streak = motionStreak
+    this.scheduleUpdate()
+  }
   onEnter() {
     super.onEnter()
     loader.load(['button.png', 'sliderThumb.png', 'ui.plist', 'ui.png'], (err: any, resources: any) => {
@@ -65,6 +84,7 @@ export class DemoScene extends Scene {
       this.addChild(button)
       button.addClickEventListener(() => {
         console.log('Button clicked')
+        audioEngine.playEffect('Button.mp3', false)
       })
       const slider = new Slider('sliderTrack.png', 'sliderThumb.png')
       slider.setPosition(400, 400)
@@ -75,13 +95,14 @@ export class DemoScene extends Scene {
         console.log('Slider value changed', percent, type)
       }, this)
       console.log('Slider', slider)
-      const motionStreak = new MotionStreak(1, 32, 13, Color.GREEN, 'button.png')
-      motionStreak.setPosition(300, 400)
-      this.addChild(motionStreak)
     })
   }
 
   update(dt: number) {
-    console.log('BootScene update', dt)
+    // console.log('BootScene update', dt)
+    this.streak.setPositionY(this.streak.getPositionY() + dt * 500)
+    if (this.streak.getPositionY() > director.getWinSize().height) {
+      this.streak.setPositionY(0)
+    }
   }
 }

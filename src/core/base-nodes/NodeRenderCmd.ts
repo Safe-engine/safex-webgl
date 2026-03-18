@@ -314,7 +314,7 @@ class NodeRenderCmd {
     this._syncStatus(parentCmd)
   }
 
-  _updateDisplayColor(parentColor?: any): void {
+  _updateDisplayColor(parentColor?: Color) {
     const node = this._node
     const locDispColor = this._displayedColor,
       locRealColor = node._realColor

@@ -2,7 +2,9 @@ import { game } from '..'
 import {
   BLEND_DST,
   BLEND_SRC,
+  BlendFunc,
   clampf,
+  Color,
   color,
   degreesToRadians,
   Node,
@@ -13,6 +15,7 @@ import {
   pIn,
   pMultIn,
   pNormalizeIn,
+  Point,
   pSubIn,
   pToAngle,
   pZeroIn,
@@ -193,15 +196,15 @@ export class ParticleSystem extends Node {
 
   // Different modes
   //! Mode A:Gravity + Tangential Accel + Radial Accel
-  modeA: any = null
+  modeA: ParticleSystemModeA
   //! Mode B: circular movement (gravity, radial accel and tangential accel don't are not used in this mode)
-  modeB: any = null
+  modeB: ParticleSystemModeB
 
   //private POINTZERO for ParticleSystem
   _pointZeroForParticle: any = p(0, 0)
 
   //! Array of particles
-  _particles: any = null
+  _particles: any[]
 
   // color modulate
   //  BOOL colorModulate;
@@ -211,7 +214,7 @@ export class ParticleSystem extends Node {
   //!  particle idx
   _particleIdx = 0
 
-  _batchNode: any = null
+  // _batchNode: any
   atlasIndex = 0
 
   //true if scaled or rotated
@@ -221,8 +224,8 @@ export class ParticleSystem extends Node {
   _isActive = false
   particleCount = 0
   duration = 0
-  _sourcePosition: any = null
-  _posVar: any = null
+  _sourcePosition: Point
+  _posVar: Point
   life = 0
   lifeVar = 0
   angle = 0
@@ -231,24 +234,24 @@ export class ParticleSystem extends Node {
   startSizeVar = 0
   endSize = 0
   endSizeVar = 0
-  _startColor: any = null
-  _startColorVar: any = null
-  _endColor: any = null
-  _endColorVar: any = null
+  _startColor: Color
+  _startColorVar: Color
+  _endColor: Color
+  _endColorVar: Color
   startSpin = 0
   startSpinVar = 0
   endSpin = 0
   endSpinVar = 0
   emissionRate = 0
   _totalParticles = 0
-  _texture: any = null
-  _blendFunc: any = null
+  _texture: Texture2D
+  _blendFunc: BlendFunc
   _opacityModifyRGB = false
-  positionType: any = null
+  positionType: number
   autoRemoveOnFinish = false
   emitterMode = 0
 
-  _textureLoaded: any = null
+  // _textureLoaded: any
   declare _renderCmd: ParticleSystemWebGLRenderCmd
 
   /**
@@ -304,7 +307,7 @@ export class ParticleSystem extends Node {
     this.endSpinVar = 0
     this.emissionRate = 0
     this._totalParticles = 0
-    this._texture = null
+    // this._texture = null
     this._opacityModifyRGB = false
     this.positionType = ParticleSystem.TYPE_FREE
     this.autoRemoveOnFinish = false
@@ -1072,11 +1075,11 @@ export class ParticleSystem extends Node {
    * set Texture of Particle System
    * @param {Texture2D } texture
    */
-  setTexture(texture) {
+  setTexture(texture: Texture2D) {
     if (!texture) return
 
     if (texture.isLoaded()) {
-      this.setTextureWithRect(texture, Rect(0, 0, texture.width, texture.height))
+      this.setTextureWithRect(texture, Rect(0, 0, texture._getWidth(), texture._getHeight()))
     } else {
       this._textureLoaded = false
       texture.addEventListener(
@@ -2153,7 +2156,7 @@ export class ParticleSystem extends Node {
   get texture() {
     return this.getTexture()
   }
-  set texture(value: any) {
+  set texture(value: Texture2D) {
     this.setTexture(value)
   }
 

@@ -1,8 +1,8 @@
 import { _renderContext } from '..'
 import { pDistanceSQ } from '../core'
 import { Node } from '../core/base-nodes/Node'
-import { p } from '../core/cocoa/Geometry'
-import { BlendFunc, ONE_MINUS_SRC_ALPHA, SRC_ALPHA } from '../core/platform'
+import { p, Point } from '../core/cocoa/Geometry'
+import { BlendFunc, Color, ONE_MINUS_SRC_ALPHA, SRC_ALPHA } from '../core/platform'
 import { vertexLineToPolygon } from '../core/support/Vertex'
 import { isString } from '../helper/checkType'
 import { log } from '../helper/Debugger'
@@ -14,7 +14,7 @@ export class MotionStreak extends Node {
   fastMode = false
   startingPositionInitialized = false
 
-  _blendFunc: any = null
+  _blendFunc: BlendFunc = null
 
   _stroke = 0
   _fadeDelta = 0
@@ -37,13 +37,13 @@ export class MotionStreak extends Node {
   _colorPointerBuffer: any = null
   _texCoordsBuffer: any = null
   _className = 'MotionStreak'
-  _positionR: any
+  _positionR: Point
   // inherited property placeholders
   anchorX: number
   anchorY: number
   ignoreAnchor: boolean
-  color: any
-  constructor(fade?: number, minSeg?: number, stroke?: number, color?: any, texture?: any) {
+  color: Color
+  constructor(fade?: number, minSeg?: number, stroke?: number, color?: Color, texture?: any) {
     super()
     this._positionR = p(0, 0)
     this._blendFunc = new BlendFunc(SRC_ALPHA, ONE_MINUS_SRC_ALPHA)
@@ -89,7 +89,7 @@ export class MotionStreak extends Node {
     return this._blendFunc
   }
 
-  setBlendFunc(src: any, dst?: any) {
+  setBlendFunc(src: any, dst?: number) {
     if (dst === undefined) {
       this._blendFunc = src
     } else {
@@ -137,7 +137,7 @@ export class MotionStreak extends Node {
     this._stroke = stroke
   }
 
-  initWithFade(fade: number, minSeg: number, stroke: number, color: any, texture: any) {
+  initWithFade(fade: number, minSeg: number, stroke: number, color: Color, texture: any) {
     if (!texture) throw new Error('MotionStreak.initWithFade(): Invalid filename or texture')
 
     if (isString(texture)) texture = textureCache.addImage(texture)
@@ -188,7 +188,7 @@ export class MotionStreak extends Node {
     return true
   }
 
-  tintWithColor(color: any) {
+  tintWithColor(color: Color) {
     this.color = color
 
     const locColorPointer = this._colorPointer
