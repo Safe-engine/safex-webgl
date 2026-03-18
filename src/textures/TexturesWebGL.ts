@@ -6,6 +6,7 @@ import { contentScaleFactor, SHADER_POSITION_TEXTURE, VERTEX_ATTRIB_POSITION, VE
 import { _LogInfos, assert, log } from '../helper/Debugger'
 import { loader } from '../helper/loader'
 import { NextPOT } from '../render-texture/RenderTexture'
+import { GLProgram, GLProgramState } from '../shaders'
 import { glBindTexture2D } from '../shaders/GLStateCache'
 import { shaderCache } from '../shaders/ShaderCache'
 
@@ -198,20 +199,20 @@ export class Texture2D extends EventHelper {
   _pixelsWide: number
   _pixelsHigh: number
   _name: string
-  _contentSize: any
+  _contentSize: Size
   maxS: number
   maxT: number
   _hasPremultipliedAlpha: boolean
   _hasMipmaps: boolean
 
-  shaderProgram: any
+  shaderProgram: GLProgram
 
   _textureLoaded: boolean
   _htmlElementObj: any
   _webTextureObj: WebGLTexture
 
-  url: any
-  _glProgramState: any
+  url: string
+  _glProgramState: GLProgramState
   _vertexBuffer: WebGLBuffer
   _texBuffer: WebGLBuffer
 
@@ -356,7 +357,7 @@ export class Texture2D extends EventHelper {
    * set shader program used by drawAtPoint and drawInRect
    * @param {GLProgram} shaderProgram
    */
-  setShaderProgram(shaderProgram: any) {
+  setShaderProgram(shaderProgram: GLProgram) {
     this.shaderProgram = shaderProgram
   }
 
@@ -753,32 +754,31 @@ export class Texture2D extends EventHelper {
     return -1
   }
 
-  _initPremultipliedATextureWithImage(uiImage: any, width: any, height: any) {
-    const tex2d: any = this.constructor as any
+  _initPremultipliedATextureWithImage(uiImage: any, width: number, height: number) {
     let tempData: any = uiImage.getData()
     let inPixel32: any
     let inPixel8: any
 
     const hasAlpha: any = uiImage.hasAlpha()
-    const imageSize: any = Size(uiImage.getWidth(), uiImage.getHeight())
-    let pixelFormat: any = tex2d.defaultPixelFormat
-    const bpp: any = uiImage.getBitsPerComponent()
+    const imageSize = Size(uiImage.getWidth(), uiImage.getHeight())
+    let pixelFormat: any = Texture2D.defaultPixelFormat
+    const bpp = uiImage.getBitsPerComponent()
 
     // compute pixel format
     if (!hasAlpha) {
       if (bpp >= 8) {
-        pixelFormat = tex2d.PIXEL_FORMAT_RGB888
+        pixelFormat = Texture2D.PIXEL_FORMAT_RGB888
       } else {
         log(_LogInfos.Texture2D__initPremultipliedATextureWithImage)
-        pixelFormat = tex2d.PIXEL_FORMAT_RGB565
+        pixelFormat = Texture2D.PIXEL_FORMAT_RGB565
       }
     }
 
     // Repack the pixel data into the right format
-    let i: any
-    const length: any = width * height
+    let i: number
+    const length: number = width * height
 
-    if (pixelFormat === tex2d.PIXEL_FORMAT_RGB565) {
+    if (pixelFormat === Texture2D.PIXEL_FORMAT_RGB565) {
       if (hasAlpha) {
         // Convert "RRRRRRRRRGGGGGGGGBBBBBBBBAAAAAAAA" to "RRRRRGGGGGGBBBBB"
         tempData = new Uint16Array(width * height)
@@ -802,7 +802,7 @@ export class Texture2D extends EventHelper {
             (((inPixel8[i] & 0xff) >> 3) << 0) // B
         }
       }
-    } else if (pixelFormat === tex2d.PIXEL_FORMAT_RGBA4444) {
+    } else if (pixelFormat === Texture2D.PIXEL_FORMAT_RGBA4444) {
       tempData = new Uint16Array(width * height)
       inPixel32 = uiImage.getData()
 
@@ -813,7 +813,7 @@ export class Texture2D extends EventHelper {
           ((((inPixel32[i] >> 16) & 0xff) >> 4) << 4) | // B
           ((((inPixel32[i] >> 24) & 0xff) >> 4) << 0) // A
       }
-    } else if (pixelFormat === tex2d.PIXEL_FORMAT_RGB5A1) {
+    } else if (pixelFormat === Texture2D.PIXEL_FORMAT_RGB5A1) {
       tempData = new Uint16Array(width * height)
       inPixel32 = uiImage.getData()
 
@@ -824,7 +824,7 @@ export class Texture2D extends EventHelper {
           ((((inPixel32[i] >> 16) & 0xff) >> 3) << 1) | // B
           ((((inPixel32[i] >> 24) & 0xff) >> 7) << 0) // A
       }
-    } else if (pixelFormat === tex2d.PIXEL_FORMAT_A8) {
+    } else if (pixelFormat === Texture2D.PIXEL_FORMAT_A8) {
       tempData = new Uint8Array(width * height)
       inPixel32 = uiImage.getData()
 
@@ -833,7 +833,7 @@ export class Texture2D extends EventHelper {
       }
     }
 
-    if (hasAlpha && pixelFormat === tex2d.PIXEL_FORMAT_RGB888) {
+    if (hasAlpha && pixelFormat === Texture2D.PIXEL_FORMAT_RGB888) {
       inPixel32 = uiImage.getData()
       tempData = new Uint8Array(width * height * 3)
 

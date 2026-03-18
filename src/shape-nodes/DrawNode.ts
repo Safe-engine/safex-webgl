@@ -12,7 +12,7 @@ import {
   SRC_ALPHA,
   VERTEX_ATTRIB_COLOR,
   VERTEX_ATTRIB_POSITION,
-  VERTEX_ATTRIB_TEX_COORDS
+  VERTEX_ATTRIB_TEX_COORDS,
 } from '../core/platform'
 import { DRAWNODE_TOTAL_VERTICES } from '../core/platform/Config'
 import { GlobalVertexBuffer } from '../core/renderer/GlobalVertexBuffer'
@@ -22,24 +22,24 @@ import { DrawNodeWebGLRenderCmd } from './DrawNodeWebGLRenderCmd'
 
 // 9600 vertices by default configurable in Config
 // 20 is 2 float for position, 4 int for color and 2 float for uv
-let _sharedBuffer: GlobalVertexBuffer = null
-let FLOAT_PER_VERTEX = 2 + 1 + 2
-let VERTEX_BYTE = FLOAT_PER_VERTEX * 4
+let _sharedBuffer: GlobalVertexBuffer
+const FLOAT_PER_VERTEX = 2 + 1 + 2
+const VERTEX_BYTE = FLOAT_PER_VERTEX * 4
 // let FLOAT_PER_TRIANGLE = 3 * FLOAT_PER_VERTEX
 // let TRIANGLE_BYTES = FLOAT_PER_TRIANGLE * 4
-let MAX_INCREMENT = 200
+const MAX_INCREMENT = 200
 
-let _vertices = []
-let _from = p()
-let _to = p()
-let _color = new Uint32Array(1)
+const _vertices = []
+const _from = p()
+const _to = p()
+const _color = new Uint32Array(1)
 
 // Used in drawSegment
-let _n = p()
-let _t = p()
-let _nw = p()
-let _tw = p()
-let _extrude = []
+const _n = p()
+const _t = p()
+const _nw = p()
+const _tw = p()
+const _extrude = []
 
 export class DrawNode extends Node {
   static TYPE_DOT = 0
@@ -208,7 +208,15 @@ export class DrawNode extends Node {
     _vertices.length = 0
   }
 
-  drawCircle(center: Point, radius: number, angle: number, segments: number, drawLineToCenter?: boolean, lineWidth?: number, color?: Color) {
+  drawCircle(
+    center: Point,
+    radius: number,
+    angle: number,
+    segments: number,
+    drawLineToCenter?: boolean,
+    lineWidth?: number,
+    color?: Color,
+  ) {
     lineWidth = lineWidth || this._lineWidth
     color = color || this._drawColor
     const coef = (2.0 * Math.PI) / segments

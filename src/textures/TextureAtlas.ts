@@ -13,18 +13,18 @@ import { Texture2D } from './TexturesWebGL'
 export class TextureAtlas {
   // WebGL only
   dirty = false
-  texture: any = null
+  declare texture: any
 
-  _indices: Uint16Array | null = null
+  declare _indices: Uint16Array | null
   // 0: vertex  1: indices
-  _buffersVBO: any[] | null = null
+  declare _buffersVBO: any[] | null
   _capacity = 0
   _totalQuads = 0
 
-  _quads: any[] | null = null
-  _quadsArrayBuffer: ArrayBuffer | null = null
-  _quadsWebBuffer: any = null
-  _quadsReader: Uint8Array | null = null
+  declare _quads: any[] | null
+  declare _quadsArrayBuffer: ArrayBuffer | null
+  declare _quadsWebBuffer: any
+  declare _quadsReader: Uint8Array | null
 
   /**
    * <p>Creates a TextureAtlas with an filename and with an initial capacity for Quads. <br />

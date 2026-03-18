@@ -7,12 +7,11 @@ import { textureCache } from './TextureCache'
 import { Texture2D } from './TexturesWebGL'
 
 _tmp.WebGLTextureCache = function () {
-  let _p = textureCache
+  const _p = textureCache
 
   _p.handleLoadedTexture = function (url, img) {
     let locTexs = this._textures,
-      tex,
-      ext
+      tex
     //remove judge(webgl)
     if (!game._rendererInitialized) {
       locTexs = this._loadedTexturesBefore
@@ -23,7 +22,7 @@ _tmp.WebGLTextureCache = function () {
       tex.url = url
     }
     tex.initWithElement(img)
-    ext = path.extname(url)
+    const ext = path.extname(url)
     if (ext === '.png') {
       tex.handleLoadedTexture(true)
     } else {
@@ -85,5 +84,5 @@ _tmp.WebGLTextureCache = function () {
   }
 
   _p.addImageAsync = _p.addImage
-  _p = null
+  // _p = null
 }
