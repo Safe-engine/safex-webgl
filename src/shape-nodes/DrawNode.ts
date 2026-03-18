@@ -12,7 +12,7 @@ import {
   SRC_ALPHA,
   VERTEX_ATTRIB_COLOR,
   VERTEX_ATTRIB_POSITION,
-  VERTEX_ATTRIB_TEX_COORDS,
+  VERTEX_ATTRIB_TEX_COORDS
 } from '../core/platform'
 import { DRAWNODE_TOTAL_VERTICES } from '../core/platform/Config'
 import { GlobalVertexBuffer } from '../core/renderer/GlobalVertexBuffer'
@@ -20,14 +20,35 @@ import { warn } from '../helper/Debugger'
 import { shaderCache } from '../shaders/ShaderCache'
 import { DrawNodeWebGLRenderCmd } from './DrawNodeWebGLRenderCmd'
 
+// 9600 vertices by default configurable in Config
+// 20 is 2 float for position, 4 int for color and 2 float for uv
+let _sharedBuffer: GlobalVertexBuffer = null
+let FLOAT_PER_VERTEX = 2 + 1 + 2
+let VERTEX_BYTE = FLOAT_PER_VERTEX * 4
+// let FLOAT_PER_TRIANGLE = 3 * FLOAT_PER_VERTEX
+// let TRIANGLE_BYTES = FLOAT_PER_TRIANGLE * 4
+let MAX_INCREMENT = 200
+
+let _vertices = []
+let _from = p()
+let _to = p()
+let _color = new Uint32Array(1)
+
+// Used in drawSegment
+let _n = p()
+let _t = p()
+let _nw = p()
+let _tw = p()
+let _extrude = []
+
 export class DrawNode extends Node {
   static TYPE_DOT = 0
   static TYPE_SEGMENT = 1
   static TYPE_POLY = 2
   declare _buffer
-  declare _blendFunc
+  declare _blendFunc: BlendFunc
   _lineWidth = 1
-  declare _drawColor
+  declare _drawColor: Color
   _localBB: Rect
   declare _renderCmd: DrawNodeWebGLRenderCmd
 
@@ -87,26 +108,6 @@ export class DrawNode extends Node {
   getDrawColor() {
     return color(this._drawColor.r, this._drawColor.g, this._drawColor.b, this._drawColor.a)
   }
-  // 9600 vertices by default configurable in ccConfig.js
-  // 20 is 2 float for position, 4 int for color and 2 float for uv
-  _sharedBuffer = null
-  FLOAT_PER_VERTEX = 2 + 1 + 2
-  VERTEX_BYTE = this.FLOAT_PER_VERTEX * 4
-  FLOAT_PER_TRIANGLE = 3 * this.FLOAT_PER_VERTEX
-  TRIANGLE_BYTES = this.FLOAT_PER_TRIANGLE * 4
-  MAX_INCREMENT = 200
-
-  _vertices = []
-  _from = p()
-  _to = p()
-  _color = new Uint32Array(1)
-
-  // Used in drawSegment
-  _n = p()
-  _t = p()
-  _nw = p()
-  _tw = p()
-  _extrude = []
 
   _bufferCapacity = 0
   _vertexCount = 0
@@ -124,8 +125,8 @@ export class DrawNode extends Node {
   constructor(capacity?: number, manualRelease?: boolean) {
     super()
 
-    if (!this._sharedBuffer) {
-      this._sharedBuffer = new GlobalVertexBuffer(_renderContext, DRAWNODE_TOTAL_VERTICES * this.VERTEX_BYTE)
+    if (!_sharedBuffer) {
+      _sharedBuffer = new GlobalVertexBuffer(_renderContext, DRAWNODE_TOTAL_VERTICES * VERTEX_BYTE)
     }
 
     this._renderCmd._shaderProgram = shaderCache.programForKey(SHADER_POSITION_LENGTHTEXTURECOLOR)
@@ -140,7 +141,7 @@ export class DrawNode extends Node {
   }
 
   onEnter() {
-    Node.prototype.onEnter.call(this)
+    super.onEnter()
     if (this._occupiedSize < this._bufferCapacity) {
       this._ensureCapacity(this._bufferCapacity)
     }
@@ -150,13 +151,13 @@ export class DrawNode extends Node {
     if (!this.manualRelease) {
       this.release()
     }
-    Node.prototype.onExit.call(this)
+    super.onExit()
   }
 
   release() {
     if (this._occupiedSize > 0) {
       this._vertexCount = 0
-      this._sharedBuffer.freeBuffer(this._offset, this.VERTEX_BYTE * this._occupiedSize)
+      _sharedBuffer.freeBuffer(this._offset, VERTEX_BYTE * this._occupiedSize)
       this._occupiedSize = 0
     }
   }
@@ -165,25 +166,25 @@ export class DrawNode extends Node {
     const prev = this._occupiedSize
     const prevOffset = this._offset
     if (count > prev || this._bufferCapacity > prev) {
-      const request = Math.max(Math.min(prev + prev, this.MAX_INCREMENT), count, this._bufferCapacity)
+      const request = Math.max(Math.min(prev + prev, MAX_INCREMENT), count, this._bufferCapacity)
       // free previous buffer
       if (prev !== 0) {
-        this._sharedBuffer.freeBuffer(prevOffset, this.VERTEX_BYTE * prev)
+        _sharedBuffer.freeBuffer(prevOffset, VERTEX_BYTE * prev)
         this._occupiedSize = 0
       }
-      const offset = (this._offset = this._sharedBuffer.requestBuffer(this.VERTEX_BYTE * request))
+      const offset = (this._offset = _sharedBuffer.requestBuffer(VERTEX_BYTE * request))
       if (offset >= 0) {
         this._occupiedSize = this._bufferCapacity = request
         // 5 floats per vertex
-        this._f32Buffer = new Float32Array(this._sharedBuffer.data, offset, this.FLOAT_PER_VERTEX * this._occupiedSize)
-        this._ui32Buffer = new Uint32Array(this._sharedBuffer.data, offset, this.FLOAT_PER_VERTEX * this._occupiedSize)
+        this._f32Buffer = new Float32Array(_sharedBuffer.data, offset, FLOAT_PER_VERTEX * this._occupiedSize)
+        this._ui32Buffer = new Uint32Array(_sharedBuffer.data, offset, FLOAT_PER_VERTEX * this._occupiedSize)
 
         // Copy old data
         if (prev !== 0 && prevOffset !== offset) {
           // offset is in byte, we need to transform to float32 index
-          const last = prevOffset / 4 + prev * this.FLOAT_PER_VERTEX
+          const last = prevOffset / 4 + prev * FLOAT_PER_VERTEX
           for (let i = offset / 4, j = prevOffset / 4; j < last; i++, j++) {
-            this._sharedBuffer.dataArray[i] = this._sharedBuffer.dataArray[j]
+            _sharedBuffer.dataArray[i] = _sharedBuffer.dataArray[j]
           }
         }
 
@@ -197,63 +198,63 @@ export class DrawNode extends Node {
     }
   }
 
-  drawRect(origin, destination, fillColor?, lineWidth?, lineColor?) {
+  drawRect(origin: Point, destination: Point, fillColor?: Color, lineWidth?: number, lineColor?: Color) {
     lineWidth = lineWidth == null ? this._lineWidth : lineWidth
     lineColor = lineColor || this._drawColor
-    this._vertices.length = 0
-    this._vertices.push(origin.x, origin.y, destination.x, origin.y, destination.x, destination.y, origin.x, destination.y)
-    if (fillColor == null) this._drawSegments(this._vertices, lineWidth, lineColor, true)
-    else this.drawPoly(this._vertices, fillColor, lineWidth, lineColor)
-    this._vertices.length = 0
+    _vertices.length = 0
+    _vertices.push(origin.x, origin.y, destination.x, origin.y, destination.x, destination.y, origin.x, destination.y)
+    if (fillColor == null) this._drawSegments(_vertices, lineWidth, lineColor, true)
+    else this.drawPoly(_vertices, fillColor, lineWidth, lineColor)
+    _vertices.length = 0
   }
 
-  drawCircle(center, radius, angle, segments, drawLineToCenter?, lineWidth?, color?) {
+  drawCircle(center: Point, radius: number, angle: number, segments: number, drawLineToCenter?: boolean, lineWidth?: number, color?: Color) {
     lineWidth = lineWidth || this._lineWidth
     color = color || this._drawColor
     const coef = (2.0 * Math.PI) / segments
     let i
     let len
-    this._vertices.length = 0
+    _vertices.length = 0
     for (i = 0; i <= segments; i++) {
       const rads = i * coef
       const j = radius * Math.cos(rads + angle) + center.x
       const k = radius * Math.sin(rads + angle) + center.y
-      this._vertices.push(j, k)
+      _vertices.push(j, k)
     }
-    if (drawLineToCenter) this._vertices.push(center.x, center.y)
+    if (drawLineToCenter) _vertices.push(center.x, center.y)
 
     lineWidth *= 0.5
-    for (i = 0, len = this._vertices.length - 2; i < len; i += 2) {
-      this._from.x = this._vertices[i]
-      this._from.y = this._vertices[i + 1]
-      this._to.x = this._vertices[i + 2]
-      this._to.y = this._vertices[i + 3]
-      this.drawSegment(this._from, this._to, lineWidth, color)
+    for (i = 0, len = _vertices.length - 2; i < len; i += 2) {
+      _from.x = _vertices[i]
+      _from.y = _vertices[i + 1]
+      _to.x = _vertices[i + 2]
+      _to.y = _vertices[i + 3]
+      this.drawSegment(_from, _to, lineWidth, color)
     }
-    this._vertices.length = 0
+    _vertices.length = 0
   }
 
   drawQuadBezier(origin, control, destination, segments, lineWidth, color) {
     lineWidth = lineWidth || this._lineWidth
     color = color || this._drawColor
     let t = 0.0
-    this._vertices.length = 0
+    _vertices.length = 0
     for (let i = 0; i < segments; i++) {
       const x = Math.pow(1 - t, 2) * origin.x + 2.0 * (1 - t) * t * control.x + t * t * destination.x
       const y = Math.pow(1 - t, 2) * origin.y + 2.0 * (1 - t) * t * control.y + t * t * destination.y
-      this._vertices.push(x, y)
+      _vertices.push(x, y)
       t += 1.0 / segments
     }
-    this._vertices.push(destination.x, destination.y)
-    this._drawSegments(this._vertices, lineWidth, color, false)
-    this._vertices.length = 0
+    _vertices.push(destination.x, destination.y)
+    this._drawSegments(_vertices, lineWidth, color, false)
+    _vertices.length = 0
   }
 
   drawCubicBezier(origin, control1, control2, destination, segments, lineWidth, color) {
     lineWidth = lineWidth || this._lineWidth
     color = color || this._drawColor
     let t = 0
-    this._vertices.length = 0
+    _vertices.length = 0
     for (let i = 0; i < segments; i++) {
       const x =
         Math.pow(1 - t, 3) * origin.x +
@@ -265,12 +266,12 @@ export class DrawNode extends Node {
         3.0 * Math.pow(1 - t, 2) * t * control1.y +
         3.0 * (1 - t) * t * t * control2.y +
         t * t * t * destination.y
-      this._vertices.push(x, y)
+      _vertices.push(x, y)
       t += 1.0 / segments
     }
-    this._vertices.push(destination.x, destination.y)
-    this._drawSegments(this._vertices, lineWidth, color, false)
-    this._vertices.length = 0
+    _vertices.push(destination.x, destination.y)
+    this._drawSegments(_vertices, lineWidth, color, false)
+    _vertices.length = 0
   }
 
   drawCatmullRom(points, segments, lineWidth, color) {
@@ -283,7 +284,7 @@ export class DrawNode extends Node {
     let p
     let lt
     const deltaT = 1.0 / config.length
-    this._vertices.length = 0
+    _vertices.length = 0
 
     for (let i = 0; i < segments + 1; i++) {
       const dt = i / segments
@@ -305,20 +306,20 @@ export class DrawNode extends Node {
         getControlPointAt(config, p + 2),
         tension,
         lt,
-        this._from,
+        _from,
       )
-      this._vertices.push(this._from.x, this._from.y)
+      _vertices.push(_from.x, _from.y)
     }
 
     lineWidth *= 0.5
-    for (let j = 0, len = this._vertices.length - 2; j < len; j += 2) {
-      this._from.x = this._vertices[j]
-      this._from.y = this._vertices[j + 1]
-      this._to.x = this._vertices[j + 2]
-      this._to.y = this._vertices[j + 3]
-      this.drawSegment(this._from, this._to, lineWidth, color)
+    for (let j = 0, len = _vertices.length - 2; j < len; j += 2) {
+      _from.x = _vertices[j]
+      _from.y = _vertices[j + 1]
+      _to.x = _vertices[j + 2]
+      _to.y = _vertices[j + 3]
+      this.drawSegment(_from, _to, lineWidth, color)
     }
-    this._vertices.length = 0
+    _vertices.length = 0
   }
 
   drawDots(points, radius, color) {
@@ -337,10 +338,10 @@ export class DrawNode extends Node {
 
     if (this._dirty) {
       // bindBuffer is done in updateSubData
-      this._sharedBuffer.updateSubData(this._offset, this._f32Buffer)
+      _sharedBuffer.updateSubData(this._offset, this._f32Buffer)
       this._dirty = false
     } else {
-      gl.bindBuffer(gl.ARRAY_BUFFER, this._sharedBuffer.vertexBuffer)
+      gl.bindBuffer(gl.ARRAY_BUFFER, _sharedBuffer.vertexBuffer)
     }
 
     gl.enableVertexAttribArray(VERTEX_ATTRIB_POSITION)
@@ -348,13 +349,13 @@ export class DrawNode extends Node {
     gl.enableVertexAttribArray(VERTEX_ATTRIB_TEX_COORDS)
 
     // vertex
-    gl.vertexAttribPointer(VERTEX_ATTRIB_POSITION, 2, gl.FLOAT, false, this.VERTEX_BYTE, 0)
+    gl.vertexAttribPointer(VERTEX_ATTRIB_POSITION, 2, gl.FLOAT, false, VERTEX_BYTE, 0)
     // color
-    gl.vertexAttribPointer(VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, this.VERTEX_BYTE, 8)
+    gl.vertexAttribPointer(VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, VERTEX_BYTE, 8)
     // texcood
-    gl.vertexAttribPointer(VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, this.VERTEX_BYTE, 12)
+    gl.vertexAttribPointer(VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, VERTEX_BYTE, 12)
 
-    gl.drawArrays(gl.TRIANGLES, this._offset / this.VERTEX_BYTE, this._vertexCount)
+    gl.drawArrays(gl.TRIANGLES, this._offset / VERTEX_BYTE, this._vertexCount)
     incrementGLDraws(1)
     //checkGLErrorDebug();
   }
@@ -362,11 +363,11 @@ export class DrawNode extends Node {
   appendVertexData(x: number, y: number, color: Color, u: number, v: number) {
     const f32Buffer = this._f32Buffer
     // Float offset = byte offset / 4 + vertex count * floats by vertex
-    const offset = this._vertexCount * this.FLOAT_PER_VERTEX
+    const offset = this._vertexCount * FLOAT_PER_VERTEX
     f32Buffer[offset] = x
     f32Buffer[offset + 1] = y
-    this._color[0] = (color.a << 24) | (color.b << 16) | (color.g << 8) | color.r
-    this._ui32Buffer[offset + 2] = this._color[0]
+    _color[0] = (color.a << 24) | (color.b << 16) | (color.g << 8) | color.r
+    this._ui32Buffer[offset + 2] = _color[0]
     f32Buffer[offset + 3] = u
     f32Buffer[offset + 4] = v
     this._vertexCount++
@@ -406,10 +407,6 @@ export class DrawNode extends Node {
     const a = from,
       b = to
     // var n = normalize(perp(sub(b, a)))
-    const _n = this._n,
-      _t = this._t,
-      _nw = this._nw,
-      _tw = this._tw
     _n.x = a.y - b.y
     _n.y = b.x - a.x
     pNormalizeIn(_n)
@@ -490,11 +487,11 @@ export class DrawNode extends Node {
   drawPoly(verts, fillColor?: Color, borderWidth?: number, borderColor?: Color) {
     // Backward compatibility
     if (typeof verts[0] === 'object') {
-      this._vertices.length = 0
+      _vertices.length = 0
       for (let i = 0; i < verts.length; i++) {
-        this._vertices.push(verts[i].x, verts[i].y)
+        _vertices.push(verts[i].x, verts[i].y)
       }
-      verts = this._vertices
+      verts = _vertices
     }
 
     if (fillColor == null) {
@@ -509,7 +506,7 @@ export class DrawNode extends Node {
     let factor, offx, offy
     let i
     let count = verts.length
-    this._extrude.length = 0
+    _extrude.length = 0
     for (i = 0; i < count; i += 2) {
       v0x = verts[(i - 2 + count) % count]
       v0y = verts[(i - 1 + count) % count]
@@ -519,8 +516,6 @@ export class DrawNode extends Node {
       v2y = verts[(i + 3) % count]
       // var n1 = normalize(perp(sub(v1, v0)));
       // var n2 = normalize(perp(sub(v2, v1)));
-      const _n = this._n,
-        _nw = this._nw
       _n.x = v0y - v1y
       _n.y = v1x - v0x
       _nw.x = v1y - v2y
@@ -532,7 +527,7 @@ export class DrawNode extends Node {
       offx = (_n.x + _nw.x) / factor
       offy = (_n.y + _nw.y) / factor
       // extrude[i] = {offset: offset, n: n2};
-      this._extrude.push(offx, offy, _nw.x, _nw.y)
+      _extrude.push(offx, offy, _nw.x, _nw.y)
     }
     // The actual input vertex count
     count = count / 2
@@ -545,14 +540,14 @@ export class DrawNode extends Node {
     const inset = outline == false ? 0.5 : 0.0
     for (i = 0; i < count - 2; i++) {
       // v0 = sub(verts[0], multi(extrude[0].offset, inset));
-      v0x = verts[0] - this._extrude[0] * inset
-      v0y = verts[1] - this._extrude[1] * inset
+      v0x = verts[0] - _extrude[0] * inset
+      v0y = verts[1] - _extrude[1] * inset
       // v1 = sub(verts[i + 1], multi(extrude[i + 1].offset, inset));
-      v1x = verts[i * 2 + 2] - this._extrude[(i + 1) * 4] * inset
-      v1y = verts[i * 2 + 3] - this._extrude[(i + 1) * 4 + 1] * inset
+      v1x = verts[i * 2 + 2] - _extrude[(i + 1) * 4] * inset
+      v1y = verts[i * 2 + 3] - _extrude[(i + 1) * 4 + 1] * inset
       // v2 = sub(verts[i + 2], multi(extrude[i + 2].offset, inset));
-      v2x = verts[i * 2 + 4] - this._extrude[(i + 2) * 4] * inset
-      v2y = verts[i * 2 + 5] - this._extrude[(i + 2) * 4 + 1] * inset
+      v2x = verts[i * 2 + 4] - _extrude[(i + 2) * 4] * inset
+      v2y = verts[i * 2 + 5] - _extrude[(i + 2) * 4 + 1] * inset
 
       this.appendVertexData(v0x, v0y, fillColor, 0, 0)
       this.appendVertexData(v1x, v1y, fillColor, 0, 0)
@@ -579,16 +574,15 @@ export class DrawNode extends Node {
       v0y = verts[i * 2 + 1]
       v1x = verts[j * 2]
       v1y = verts[j * 2 + 1]
-      const _n = this._n,
-        _nw = this._nw
-      _n.x = this._extrude[i * 4 + 2]
-      _n.y = this._extrude[i * 4 + 3]
+
+      _n.x = _extrude[i * 4 + 2]
+      _n.y = _extrude[i * 4 + 3]
       _nw.x = outline ? -_n.x : 0
       _nw.y = outline ? -_n.y : 0
-      off0x = this._extrude[i * 4]
-      off0y = this._extrude[i * 4 + 1]
-      off1x = this._extrude[j * 4]
-      off1y = this._extrude[j * 4 + 1]
+      off0x = _extrude[i * 4]
+      off0y = _extrude[i * 4 + 1]
+      off1x = _extrude[j * 4]
+      off1y = _extrude[j * 4 + 1]
 
       in0x = v0x - off0x * bw
       in0y = v0y - off0y * bw
@@ -607,8 +601,8 @@ export class DrawNode extends Node {
       this.appendVertexData(out0x, out0y, color, _n.x, _n.y)
       this.appendVertexData(out1x, out1y, color, _n.x, _n.y)
     }
-    this._extrude.length = 0
-    this._vertices.length = 0
+    _extrude.length = 0
+    _vertices.length = 0
     this._dirty = true
   }
 
@@ -631,7 +625,7 @@ export class DrawNode extends Node {
       offy,
       i,
       count = verts.length
-    this._extrude.length = 0
+    _extrude.length = 0
     for (i = 0; i < count; i += 2) {
       v0x = verts[(i - 2 + count) % count]
       v0y = verts[(i - 1 + count) % count]
@@ -641,8 +635,6 @@ export class DrawNode extends Node {
       v2y = verts[(i + 3) % count]
       // var n1 = normalize(perp(sub(v1, v0)));
       // var n2 = normalize(perp(sub(v2, v1)));
-      const _n = this._n,
-        _nw = this._nw
       _n.x = v0y - v1y
       _n.y = v1x - v0x
       _nw.x = v1y - v2y
@@ -654,7 +646,7 @@ export class DrawNode extends Node {
       offx = (_n.x + _nw.x) / factor
       offy = (_n.y + _nw.y) / factor
       // extrude[i] = {offset: offset, n: n2};
-      this._extrude.push(offx, offy, _nw.x, _nw.y)
+      _extrude.push(offx, offy, _nw.x, _nw.y)
     }
 
     // The actual input vertex count
@@ -683,13 +675,13 @@ export class DrawNode extends Node {
       v0y = verts[i * 2 + 1]
       v1x = verts[j * 2]
       v1y = verts[j * 2 + 1]
-      const _n = this._n
-      _n.x = this._extrude[i * 4 + 2]
-      _n.y = this._extrude[i * 4 + 3]
-      off0x = this._extrude[i * 4]
-      off0y = this._extrude[i * 4 + 1]
-      off1x = this._extrude[j * 4]
-      off1y = this._extrude[j * 4 + 1]
+
+      _n.x = _extrude[i * 4 + 2]
+      _n.y = _extrude[i * 4 + 3]
+      off0x = _extrude[i * 4]
+      off0y = _extrude[i * 4 + 1]
+      off1x = _extrude[j * 4]
+      off1y = _extrude[j * 4 + 1]
       in0x = v0x - off0x * borderWidth
       in0y = v0y - off0y * borderWidth
       in1x = v1x - off1x * borderWidth
@@ -707,7 +699,7 @@ export class DrawNode extends Node {
       this.appendVertexData(out0x, out0y, borderColor, _n.x, _n.y)
       this.appendVertexData(out1x, out1y, borderColor, _n.x, _n.y)
     }
-    this._extrude.length = 0
+    _extrude.length = 0
     this._dirty = true
   }
 

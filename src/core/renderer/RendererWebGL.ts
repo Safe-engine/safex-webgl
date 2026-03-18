@@ -1,4 +1,4 @@
-import { _renderContext } from '../..'
+import { _renderContext, Node } from '../..'
 import { global } from '../../helper/global'
 import { glBindTexture2DN, glBlendFunc } from '../../shaders/GLStateCache'
 import { Matrix4 } from '../kazmath/mat4'
@@ -135,7 +135,7 @@ export const rendererWebGL = (function () {
       return _maxVertexSize
     },
 
-    getRenderCmd: function (renderableObject) {
+    getRenderCmd: function (renderableObject: Node) {
       //TODO Add renderCmd pool here
       return renderableObject._createRenderCmd()
     },

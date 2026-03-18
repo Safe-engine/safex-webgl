@@ -63,7 +63,7 @@ export class GlobalVertexBuffer {
     return -1
   }
 
-  freeBuffer(offset: number, size: number): void {
+  freeBuffer(offset: number, size: number) {
     const spaces = this._spaces
     let i: number
     let key: string
@@ -90,11 +90,11 @@ export class GlobalVertexBuffer {
     this._spaces[offset] = size
   }
 
-  setDirty(): void {
+  setDirty() {
     this._dirty = true
   }
 
-  update(): void {
+  update() {
     if (this._dirty && this.vertexBuffer) {
       this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vertexBuffer)
       // Note: Can memorize different dirty zones and update them separately, maybe faster
@@ -103,14 +103,14 @@ export class GlobalVertexBuffer {
     }
   }
 
-  updateSubData(offset: number, dataArray: ArrayBufferView): void {
+  updateSubData(offset: number, dataArray: ArrayBufferView) {
     if (this.vertexBuffer) {
       this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vertexBuffer)
       this.gl.bufferSubData(this.gl.ARRAY_BUFFER, offset, dataArray)
     }
   }
 
-  destroy(): void {
+  destroy() {
     if (this.vertexBuffer) {
       this.gl.deleteBuffer(this.vertexBuffer)
     }
