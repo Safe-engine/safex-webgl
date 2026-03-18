@@ -212,7 +212,7 @@ export const LABELBMFONT_DEBUG_DRAW = 0
  */
 export const LABELATLAS_DEBUG_DRAW = 0
 
-export const DRAWNODE_TOTAL_VERTICES = 20000
+export const DRAWNODE_TOTAL_VERTICES = 1240000
 
 /**
  * Default engine

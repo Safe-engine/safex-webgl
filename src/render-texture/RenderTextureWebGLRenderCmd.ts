@@ -114,7 +114,7 @@ export class RenderTextureWebGLRenderCmd extends NodeWebGLRenderCmd {
 
   updateClearColor(clearColor) {}
 
-  initWithWidthAndHeight(width, height, format, depthStencilFormat) {
+  initWithWidthAndHeight(width: number, height: number, format, depthStencilFormat) {
     const node = this._node
     if (format === Texture2D.PIXEL_FORMAT_A8)
       log('RenderTexture._initWithWidthAndHeightForWebGL() : only RGB and RGBA formats are valid for a render texture;')
@@ -188,6 +188,7 @@ export class RenderTextureWebGLRenderCmd extends NodeWebGLRenderCmd {
     locTexture.setAliasTexParameters()
 
     const locSprite = (node.sprite = new Sprite(locTexture))
+
     locSprite.setScaleY(-1)
     locSprite.setBlendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA)
 

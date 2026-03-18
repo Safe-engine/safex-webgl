@@ -34,7 +34,9 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
     this._shaderProgram = shaderCache.programForKey(SHADER_SPRITE_POSITION_TEXTURECOLOR)
   }
 
-  declare updateBlendFunc: (blendFunc: any) => void
+  updateBlendFunc(blendFunc: any) {
+    //
+  }
 
   setDirtyFlag(dirtyFlag: any): void {
     super.setDirtyFlag(dirtyFlag)
@@ -200,7 +202,7 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
     }
   }
 
-  _setColorDirty(): void {}
+  _setColorDirty(): void { }
 
   _updateBlendFunc(): void {
     if (this._batchNode) {

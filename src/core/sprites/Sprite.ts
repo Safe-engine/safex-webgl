@@ -211,7 +211,7 @@ export class Sprite extends Node {
     return this._texture
   }
 
-  _softInit(fileName: any, rectArg: any, rotated: any) {
+  _softInit(fileName: any, rectArg: Rect, rotated: boolean) {
     if (fileName === undefined) this.init()
     else if (typeof fileName === 'string') {
       if (fileName[0] === '#') {

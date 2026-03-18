@@ -6,30 +6,10 @@ import { log } from '../helper/Debugger'
 import { Texture2D } from '../textures/TexturesWebGL'
 import { RenderTextureWebGLRenderCmd } from './RenderTextureWebGLRenderCmd'
 
-/**
- * enum for jpg
- * @constant
- * @type Number
- */
 export const IMAGE_FORMAT_JPEG = 0
-/**
- * enum for png
- * @constant
- * @type Number
- */
 export const IMAGE_FORMAT_PNG = 1
-/**
- * enum for raw
- * @constant
- * @type Number
- */
 export const IMAGE_FORMAT_RAWDATA = 9
 
-/**
- * @param {Number} x
- * @return {Number}
- * Constructor
- */
 export const NextPOT = function (x) {
   x = x - 1
   x = x | (x >> 1)
@@ -75,7 +55,7 @@ export const NextPOT = function (x) {
  * @property {Color}     clearColorVal   - Clear color value, valid only when "autoDraw" is true.
  */
 export class RenderTexture extends Node {
-  sprite: Sprite | null = null
+  declare sprite: Sprite
   //
   // <p>Code for "auto" update<br/>
   // Valid flags: GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_STENCIL_BUFFER_BIT.<br/>
@@ -87,14 +67,14 @@ export class RenderTexture extends Node {
   clearDepthVal = 0
   autoDraw = false
 
-  _texture: Texture2D | null = null
+  declare _texture: Texture2D
   _pixelFormat = 0
 
   clearStencilVal = 0
-  _clearColor: Color | null = null
+  declare _clearColor: Color
 
   _className = 'RenderTexture'
-  declare _renderCmd: any
+  declare _renderCmd: RenderTextureWebGLRenderCmd
 
   /**
    * creates a RenderTexture object with width and height in Points and a pixel format, only RGB and RGBA formats are valid
@@ -126,7 +106,7 @@ export class RenderTexture extends Node {
     return new RenderTextureWebGLRenderCmd(this)
   }
 
-  visit(parent: any) {
+  visit(parent: Node) {
     const cmd = this._renderCmd,
       parentCmd = parent ? parent._renderCmd : null
 

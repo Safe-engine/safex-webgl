@@ -342,7 +342,7 @@ export class Layout extends Widget {
    * If you really need this, please enable it. But it would reduce the rendering efficiency.
    * @param {Boolean} able clipping enabled.
    */
-  setClippingEnabled(able) {
+  setClippingEnabled(able: boolean) {
     if (able === this._clippingEnabled) return
     this._clippingEnabled = able
     switch (this._clippingType) {
