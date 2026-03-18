@@ -1,7 +1,7 @@
 import { _renderContext } from '..'
 import { cardinalSplineAt, getControlPointAt } from '../actions/ActionCatmullRom'
 import { Node, pNormalizeIn } from '../core'
-import { p, Rect } from '../core/cocoa/Geometry'
+import { p, Point, Rect } from '../core/cocoa/Geometry'
 import {
   BlendFunc,
   Color,
@@ -24,10 +24,10 @@ export class DrawNode extends Node {
   static TYPE_DOT = 0
   static TYPE_SEGMENT = 1
   static TYPE_POLY = 2
-  _buffer = null
-  _blendFunc = null
+  declare _buffer
+  declare _blendFunc
   _lineWidth = 1
-  _drawColor = null
+  declare _drawColor
   _localBB: Rect
   declare _renderCmd: DrawNodeWebGLRenderCmd
 
@@ -68,27 +68,15 @@ export class DrawNode extends Node {
     }
   }
 
-  /**
-   * line width setter
-   * @param {Number} width
-   */
-  setLineWidth(width) {
+  setLineWidth(width: number) {
     this._lineWidth = width
   }
 
-  /**
-   * line width getter
-   * @returns {Number}
-   */
   getLineWidth() {
     return this._lineWidth
   }
 
-  /**
-   * draw color setter
-   * @param {Color} color
-   */
-  setDrawColor(color) {
+  setDrawColor(color: Color) {
     const locDrawColor = this._drawColor
     locDrawColor.r = color.r
     locDrawColor.g = color.g
@@ -96,10 +84,6 @@ export class DrawNode extends Node {
     locDrawColor.a = color.a == null ? 255 : color.a
   }
 
-  /**
-   * draw color getter
-   * @returns {Color}
-   */
   getDrawColor() {
     return color(this._drawColor.r, this._drawColor.g, this._drawColor.b, this._drawColor.a)
   }
@@ -177,7 +161,7 @@ export class DrawNode extends Node {
     }
   }
 
-  _ensureCapacity(count) {
+  _ensureCapacity(count: number) {
     const prev = this._occupiedSize
     const prevOffset = this._offset
     if (count > prev || this._bufferCapacity > prev) {
@@ -375,7 +359,7 @@ export class DrawNode extends Node {
     //checkGLErrorDebug();
   }
 
-  appendVertexData(x, y, color, u, v) {
+  appendVertexData(x: number, y: number, color: Color, u: number, v: number) {
     const f32Buffer = this._f32Buffer
     // Float offset = byte offset / 4 + vertex count * floats by vertex
     const offset = this._vertexCount * this.FLOAT_PER_VERTEX
@@ -388,7 +372,7 @@ export class DrawNode extends Node {
     this._vertexCount++
   }
 
-  drawDot(pos, radius, color?) {
+  drawDot(pos: Point, radius: number, color?: Color) {
     color = color || this._drawColor
     if (color.a == null) color.a = 255
     const l = pos.x - radius,
@@ -411,7 +395,7 @@ export class DrawNode extends Node {
     this._dirty = true
   }
 
-  drawSegment(from, to, radius?, color?) {
+  drawSegment(from: Point, to: Point, radius?: number, color?: Color) {
     color = color || this.getDrawColor()
     if (color.a == null) color.a = 255
     radius = radius || this._lineWidth * 0.5
@@ -628,7 +612,7 @@ export class DrawNode extends Node {
     this._dirty = true
   }
 
-  _drawSegments(verts, borderWidth, borderColor, closePoly) {
+  _drawSegments(verts: Point[], borderWidth: number, borderColor: Color, closePoly: boolean) {
     borderWidth = borderWidth == null ? this._lineWidth : borderWidth
     if (borderWidth <= 0) return
 
