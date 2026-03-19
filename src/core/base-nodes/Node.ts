@@ -1048,6 +1048,7 @@ export class Node extends EventHelper {
     return this._renderCmd.getDisplayedColor()
   }
   setColor(col: Color) {
+    if (!col) return
     const locRealColor = this._realColor
     locRealColor.r = col.r
     locRealColor.g = col.g

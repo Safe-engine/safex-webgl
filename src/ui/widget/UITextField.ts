@@ -11,14 +11,14 @@ export class TextField extends Widget {
   static EVENT_DELETE_BACKWARD = 3
   static RENDERER_ZORDER = -1
 
-  TextFieldRenderer = null
+  _textFieldRenderer = null
   _touchWidth = 0
   _touchHeight = 0
   _useTouchArea = false
   _textFieldEventListener = null
   _textFieldEventSelector = null
-  _passwordStyleText = ''
-  TextFieldRendererAdaptDirty = true
+  _passwordStyleText = '*'
+  _textFieldRendererAdaptDirty = true
   _fontName = ''
   _fontSize = 12
 
@@ -36,6 +36,7 @@ export class TextField extends Widget {
    */
   constructor(placeholder?: string, fontName?: string, fontSize?: number) {
     super()
+    this._initRenderer()
     this.setTouchEnabled(true)
     if (fontName) this.setFontName(fontName)
     if (fontSize) this.setFontSize(fontSize)
@@ -52,8 +53,8 @@ export class TextField extends Widget {
   }
 
   _initRenderer() {
-    this.TextFieldRenderer = TextFieldRenderer.create('input words here', 'Thonburi', 20)
-    this.addProtectedChild(this.TextFieldRenderer, TextField.RENDERER_ZORDER, -1)
+    this._textFieldRenderer = TextFieldRenderer.create('input words here', 'Thonburi', 20)
+    this.addProtectedChild(this._textFieldRenderer, TextField.RENDERER_ZORDER, -1)
   }
 
   /**
@@ -120,12 +121,12 @@ export class TextField extends Widget {
     text = String(text)
     if (this.isMaxLengthEnabled()) text = text.substr(0, this.getMaxLength())
     if (this.isPasswordEnabled()) {
-      this.TextFieldRenderer.setPasswordText(text)
-      this.TextFieldRenderer.setString('')
-      this.TextFieldRenderer.insertText(text, text.length)
-    } else this.TextFieldRenderer.setString(text)
-    this.TextFieldRendererAdaptDirty = true
-    this._updateContentSizeWithTextureSize(this.TextFieldRenderer.getContentSize())
+      this._textFieldRenderer.setPasswordText(text)
+      this._textFieldRenderer.setString('')
+      this._textFieldRenderer.insertText(text, text.length)
+    } else this._textFieldRenderer.setString(text)
+    this._textFieldRendererAdaptDirty = true
+    this._updateContentSizeWithTextureSize(this._textFieldRenderer.getContentSize())
   }
 
   /**
@@ -134,9 +135,9 @@ export class TextField extends Widget {
    * @param {String} value
    */
   setPlaceHolder(value) {
-    this.TextFieldRenderer.setPlaceHolder(value)
-    this.TextFieldRendererAdaptDirty = true
-    this._updateContentSizeWithTextureSize(this.TextFieldRenderer.getContentSize())
+    this._textFieldRenderer.setPlaceHolder(value)
+    this._textFieldRendererAdaptDirty = true
+    this._updateContentSizeWithTextureSize(this._textFieldRenderer.getContentSize())
   }
 
   /**
@@ -144,7 +145,7 @@ export class TextField extends Widget {
    * @returns {String}
    */
   getPlaceHolder() {
-    return this.TextFieldRenderer.getPlaceHolder()
+    return this._textFieldRenderer.getPlaceHolder()
   }
 
   /**
@@ -152,7 +153,7 @@ export class TextField extends Widget {
    * @returns {Color}
    */
   getPlaceHolderColor() {
-    return this.TextFieldRenderer.getPlaceHolderColor()
+    return this._textFieldRenderer.getPlaceHolderColor()
   }
 
   /**
@@ -160,7 +161,7 @@ export class TextField extends Widget {
    * @param color
    */
   setPlaceHolderColor(color) {
-    this.TextFieldRenderer.setColorSpaceHolder(color)
+    this._textFieldRenderer.setColorSpaceHolder(color)
   }
 
   /**
@@ -168,7 +169,7 @@ export class TextField extends Widget {
    * @param textColor
    */
   setTextColor(textColor) {
-    this.TextFieldRenderer.setTextColor(textColor)
+    this._textFieldRenderer.setTextColor(textColor)
   }
 
   /**
@@ -176,10 +177,10 @@ export class TextField extends Widget {
    * @param {Number} size
    */
   setFontSize(size) {
-    this.TextFieldRenderer.setFontSize(size)
+    this._textFieldRenderer.setFontSize(size)
     this._fontSize = size
-    this.TextFieldRendererAdaptDirty = true
-    this._updateContentSizeWithTextureSize(this.TextFieldRenderer.getContentSize())
+    this._textFieldRendererAdaptDirty = true
+    this._updateContentSizeWithTextureSize(this._textFieldRenderer.getContentSize())
   }
 
   /**
@@ -195,10 +196,10 @@ export class TextField extends Widget {
    * @param {String} name
    */
   setFontName(name) {
-    this.TextFieldRenderer.setFontName(name)
+    this._textFieldRenderer.setFontName(name)
     this._fontName = name
-    this.TextFieldRendererAdaptDirty = true
-    this._updateContentSizeWithTextureSize(this.TextFieldRenderer.getContentSize())
+    this._textFieldRendererAdaptDirty = true
+    this._updateContentSizeWithTextureSize(this._textFieldRenderer.getContentSize())
   }
 
   /**
@@ -213,7 +214,7 @@ export class TextField extends Widget {
    * detach with IME
    */
   didNotSelectSelf() {
-    this.TextFieldRenderer.detachWithIME()
+    this._textFieldRenderer.detachWithIME()
   }
 
   /**
@@ -231,7 +232,7 @@ export class TextField extends Widget {
    * @returns {String}
    */
   getString() {
-    return this.TextFieldRenderer.getString()
+    return this._textFieldRenderer.getString()
   }
 
   /**
@@ -239,7 +240,7 @@ export class TextField extends Widget {
    * @returns {Number}
    */
   getStringLength() {
-    return this.TextFieldRenderer.getStringLength()
+    return this._textFieldRenderer.getStringLength()
   }
 
   /**
@@ -250,11 +251,11 @@ export class TextField extends Widget {
     const pass = super.onTouchBegan(touchPoint, unusedEvent)
     if (this._hit) {
       setTimeout(() => {
-        this.TextFieldRenderer.attachWithIME()
+        this._textFieldRenderer.attachWithIME()
       }, 0)
     } else {
       setTimeout(() => {
-        this.TextFieldRenderer.detachWithIME()
+        this._textFieldRenderer.detachWithIME()
       }, 0)
     }
     return pass
@@ -265,7 +266,7 @@ export class TextField extends Widget {
    * @param {Boolean} enable
    */
   setMaxLengthEnabled(enable) {
-    this.TextFieldRenderer.setMaxLengthEnabled(enable)
+    this._textFieldRenderer.setMaxLengthEnabled(enable)
   }
 
   /**
@@ -273,7 +274,7 @@ export class TextField extends Widget {
    * @returns {Boolean}
    */
   isMaxLengthEnabled() {
-    return this.TextFieldRenderer.isMaxLengthEnabled()
+    return this._textFieldRenderer.isMaxLengthEnabled()
   }
 
   /**
@@ -281,7 +282,7 @@ export class TextField extends Widget {
    * @param {number} length
    */
   setMaxLength(length) {
-    this.TextFieldRenderer.setMaxLength(length)
+    this._textFieldRenderer.setMaxLength(length)
     this.setString(this.getString())
   }
 
@@ -290,7 +291,7 @@ export class TextField extends Widget {
    * @returns {number} length
    */
   getMaxLength() {
-    return this.TextFieldRenderer.getMaxLength()
+    return this._textFieldRenderer.getMaxLength()
   }
 
   /**
@@ -298,7 +299,7 @@ export class TextField extends Widget {
    * @param {Boolean} enable
    */
   setPasswordEnabled(enable) {
-    this.TextFieldRenderer.setPasswordEnabled(enable)
+    this._textFieldRenderer.setPasswordEnabled(enable)
   }
 
   /**
@@ -306,7 +307,7 @@ export class TextField extends Widget {
    * @returns {Boolean}
    */
   isPasswordEnabled() {
-    return this.TextFieldRenderer.isPasswordEnabled()
+    return this._textFieldRenderer.isPasswordEnabled()
   }
 
   /**
@@ -314,7 +315,7 @@ export class TextField extends Widget {
    * @param styleText
    */
   setPasswordStyleText(styleText) {
-    this.TextFieldRenderer.setPasswordStyleText(styleText)
+    this._textFieldRenderer.setPasswordStyleText(styleText)
     this._passwordStyleText = styleText
 
     this.setString(this.getString())
@@ -338,15 +339,15 @@ export class TextField extends Widget {
       this.setAttachWithIME(false)
     }
     if (this.getInsertText()) {
-      this.TextFieldRendererAdaptDirty = true
-      this._updateContentSizeWithTextureSize(this.TextFieldRenderer.getContentSize())
+      this._textFieldRendererAdaptDirty = true
+      this._updateContentSizeWithTextureSize(this._textFieldRenderer.getContentSize())
 
       this._insertTextEvent()
       this.setInsertText(false)
     }
     if (this.getDeleteBackward()) {
-      this.TextFieldRendererAdaptDirty = true
-      this._updateContentSizeWithTextureSize(this.TextFieldRenderer.getContentSize())
+      this._textFieldRendererAdaptDirty = true
+      this._updateContentSizeWithTextureSize(this._textFieldRenderer.getContentSize())
 
       this._deleteBackwardEvent()
       this.setDeleteBackward(false)
@@ -358,7 +359,7 @@ export class TextField extends Widget {
    * @returns {Boolean}
    */
   getAttachWithIME() {
-    return this.TextFieldRenderer.getAttachWithIME()
+    return this._textFieldRenderer.getAttachWithIME()
   }
 
   /**
@@ -366,7 +367,7 @@ export class TextField extends Widget {
    * @param {Boolean} attach
    */
   setAttachWithIME(attach) {
-    this.TextFieldRenderer.setAttachWithIME(attach)
+    this._textFieldRenderer.setAttachWithIME(attach)
   }
 
   /**
@@ -374,7 +375,7 @@ export class TextField extends Widget {
    * @returns {Boolean}
    */
   getDetachWithIME() {
-    return this.TextFieldRenderer.getDetachWithIME()
+    return this._textFieldRenderer.getDetachWithIME()
   }
 
   /**
@@ -382,7 +383,7 @@ export class TextField extends Widget {
    * @param {Boolean} detach
    */
   setDetachWithIME(detach) {
-    this.TextFieldRenderer.setDetachWithIME(detach)
+    this._textFieldRenderer.setDetachWithIME(detach)
   }
 
   /**
@@ -390,7 +391,7 @@ export class TextField extends Widget {
    * @returns {String}
    */
   getInsertText() {
-    return this.TextFieldRenderer.getInsertText()
+    return this._textFieldRenderer.getInsertText()
   }
 
   /**
@@ -398,7 +399,7 @@ export class TextField extends Widget {
    * @param {String} insertText
    */
   setInsertText(insertText) {
-    this.TextFieldRenderer.setInsertText(insertText)
+    this._textFieldRenderer.setInsertText(insertText)
   }
 
   /**
@@ -406,7 +407,7 @@ export class TextField extends Widget {
    * @returns {Boolean}
    */
   getDeleteBackward() {
-    return this.TextFieldRenderer.getDeleteBackward()
+    return this._textFieldRenderer.getDeleteBackward()
   }
 
   /**
@@ -414,7 +415,7 @@ export class TextField extends Widget {
    * @param {Boolean} deleteBackward
    */
   setDeleteBackward(deleteBackward) {
-    this.TextFieldRenderer.setDeleteBackward(deleteBackward)
+    this._textFieldRenderer.setDeleteBackward(deleteBackward)
   }
 
   _attachWithIMEEvent() {
@@ -476,28 +477,28 @@ export class TextField extends Widget {
 
   _onSizeChanged() {
     super._onSizeChanged()
-    this.TextFieldRendererAdaptDirty = true
+    this._textFieldRendererAdaptDirty = true
   }
 
   _adaptRenderers() {
-    if (this.TextFieldRendererAdaptDirty) {
-      this.TextFieldRendererScaleChangedWithSize()
-      this.TextFieldRendererAdaptDirty = false
+    if (this._textFieldRendererAdaptDirty) {
+      this._textFieldRendererScaleChangedWithSize()
+      this._textFieldRendererAdaptDirty = false
     }
   }
 
-  TextFieldRendererScaleChangedWithSize() {
-    if (!this._ignoreSize) this.TextFieldRenderer.setDimensions(this._contentSize)
-    this.TextFieldRenderer.setPosition(this._contentSize.width / 2, this._contentSize.height / 2)
+  _textFieldRendererScaleChangedWithSize() {
+    if (!this._ignoreSize) this._textFieldRenderer.setDimensions(this._contentSize)
+    this._textFieldRenderer.setPosition(this._contentSize.width / 2, this._contentSize.height / 2)
   }
 
   //@since v3.3
   getAutoRenderSize() {
-    let virtualSize = this.TextFieldRenderer.getContentSize()
+    let virtualSize = this._textFieldRenderer.getContentSize()
     if (!this._ignoreSize) {
-      this.TextFieldRenderer.setDimensions(0, 0)
-      virtualSize = this.TextFieldRenderer.getContentSize()
-      this.TextFieldRenderer.setDimensions(this._contentSize.width, this._contentSize.height)
+      this._textFieldRenderer.setDimensions(0, 0)
+      virtualSize = this._textFieldRenderer.getContentSize()
+      this._textFieldRenderer.setDimensions(this._contentSize.width, this._contentSize.height)
     }
     return virtualSize
   }
@@ -507,7 +508,7 @@ export class TextField extends Widget {
    * @returns {Size}
    */
   getVirtualRendererSize() {
-    return this.TextFieldRenderer.getContentSize()
+    return this._textFieldRenderer.getContentSize()
   }
 
   /**
@@ -515,7 +516,7 @@ export class TextField extends Widget {
    * @returns {Node}
    */
   getVirtualRenderer() {
-    return this.TextFieldRenderer
+    return this._textFieldRenderer
   }
 
   /**
@@ -531,7 +532,7 @@ export class TextField extends Widget {
    * @return {Boolean}
    */
   attachWithIME() {
-    this.TextFieldRenderer.attachWithIME()
+    this._textFieldRenderer.attachWithIME()
   }
 
   _createCloneInstance() {
@@ -569,7 +570,7 @@ export class TextField extends Widget {
    * @param alignment
    */
   setTextHorizontalAlignment(alignment) {
-    this.TextFieldRenderer.setHorizontalAlignment(alignment)
+    this._textFieldRenderer.setHorizontalAlignment(alignment)
   }
 
   /**
@@ -577,16 +578,16 @@ export class TextField extends Widget {
    * @param alignment
    */
   setTextVerticalAlignment(alignment) {
-    this.TextFieldRenderer.setVerticalAlignment(alignment)
+    this._textFieldRenderer.setVerticalAlignment(alignment)
   }
 
   _setFont(font) {
-    this.TextFieldRenderer._setFont(font)
-    this.TextFieldRendererAdaptDirty = true
+    this._textFieldRenderer._setFont(font)
+    this._textFieldRendererAdaptDirty = true
   }
 
   _getFont() {
-    return this.TextFieldRenderer._getFont()
+    return this._textFieldRenderer._getFont()
   }
 
   _changePosition() {

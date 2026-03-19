@@ -1,28 +1,27 @@
-import { LabelTTF } from '../../core'
 import { TextFieldTTF } from '../../text-input/TextFieldTTF'
 
 export class TextFieldRenderer extends TextFieldTTF {
   _maxLengthEnabled = false
   _maxLength = 0
   _passwordEnabled = false
-  _passwordStyleText = ''
+  _passwordStyleText = '*'
   _attachWithIME = false
   _detachWithIME = false
   _insertText = false
   _deleteBackward = false
   _className = 'TextFieldRenderer'
 
-  constructor() {
-    super()
-    this._maxLengthEnabled = false
-    this._maxLength = 0
-    this._passwordEnabled = false
-    this._passwordStyleText = '*'
-    this._attachWithIME = false
-    this._detachWithIME = false
-    this._insertText = false
-    this._deleteBackward = false
-  }
+  // constructor() {
+  //   super()
+  //   this._maxLengthEnabled = false
+  //   this._maxLength = 0
+  //   this._passwordEnabled = false
+  //   this._passwordStyleText = '*'
+  //   this._attachWithIME = false
+  //   this._detachWithIME = false
+  //   this._insertText = false
+  //   this._deleteBackward = false
+  // }
 
   onEnter() {
     super.onEnter()
@@ -128,7 +127,7 @@ export class TextFieldRenderer extends TextFieldTTF {
 
     for (let i = 0; i < max; ++i) tempStr += this._passwordStyleText
 
-    LabelTTF.prototype.setString.call(this, tempStr)
+    super.setString(tempStr)
   }
 
   setAttachWithIME(attach) {
@@ -166,7 +165,7 @@ export class TextFieldRenderer extends TextFieldTTF {
   onDraw(sender) {
     return false
   }
-  static create(placeholder, fontName, fontSize) {
+  static create(placeholder: string, fontName: string, fontSize: number) {
     const ret = new TextFieldRenderer()
     if (ret && ret.initWithString('', fontName, fontSize)) {
       if (placeholder) ret.setPlaceHolder(placeholder)

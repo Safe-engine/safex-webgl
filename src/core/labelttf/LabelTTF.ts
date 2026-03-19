@@ -110,25 +110,23 @@ export class LabelTTF extends Sprite {
    * @param {Number} [vAlignment=]
    * @return {Boolean} return false on error
    */
-  initWithString(label, fontName?, fontSize?, dimensions?, hAlignment?, vAlignment?) {
-    let strInfo
-    if (label) strInfo = `${label}`
-    else strInfo = ''
-
-    fontSize = fontSize || 16
-    dimensions = dimensions || Size(0, 0 /*fontSize*/)
-    hAlignment = hAlignment || TEXT_ALIGNMENT_LEFT
-    vAlignment = vAlignment || VERTICAL_TEXT_ALIGNMENT_TOP
-
+  initWithString(
+    label = '',
+    fontName = 'Arial',
+    fontSize = 16,
+    dimensions = Size(0, 0 /*fontSize*/),
+    hAlignment = TEXT_ALIGNMENT_LEFT,
+    vAlignment = VERTICAL_TEXT_ALIGNMENT_TOP,
+  ) {
     this._opacityModifyRGB = false
     this._dimensions = Size(dimensions.width, dimensions.height)
-    this._fontName = fontName || 'Arial'
+    this._fontName = fontName
     this._hAlignment = hAlignment
     this._vAlignment = vAlignment
 
     this._fontSize = fontSize
     this._renderCmd._setFontStyle(this._fontName, fontSize, this._fontStyle, this._fontWeight)
-    this.setString(strInfo)
+    this.setString(label)
     this._renderCmd._setColorsString()
     this._renderCmd._updateTexture()
     this._setUpdateTextureDirty()
@@ -179,9 +177,11 @@ export class LabelTTF extends Sprite {
     }
   }
 
-  // init() {
-  //   return this.initWithString(' ', this._fontName, this._fontSize)
-  // }
+  init() {
+    this._textFillColor = color(255, 255, 255, 255)
+    this._strokeColor = color(255, 255, 255, 255)
+    return this.initWithString(' ', this._fontName, this._fontSize)
+  }
 
   description() {
     return `<LabelTTF | FontName =${this._fontName} FontSize = ${this._fontSize.toFixed(1)}>`
@@ -642,8 +642,7 @@ export class LabelTTF extends Sprite {
    * @warning Changing the string is as expensive as creating a new LabelTTF. To obtain better performance use LabelAtlas
    * @param {String} text Text content for the label
    */
-  setString(text) {
-    text = String(text)
+  setString(text = '') {
     if (this._originalText !== text) {
       this._originalText = `${text}`
 

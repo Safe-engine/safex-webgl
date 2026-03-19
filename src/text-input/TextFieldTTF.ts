@@ -1,6 +1,4 @@
-import { _renderContext, game } from '..'
 import { LabelTTF, color } from '../core'
-import { _renderType } from '../helper/engine'
 import { defineGetterSetter } from '../helper/getset'
 import { imeDispatcher } from './IMEDispatcher'
 
@@ -79,11 +77,11 @@ export class TextFieldDelegate {
  * var textField = new TextFieldTTF("<click here for input>", "Arial", 32);
  */
 export class TextFieldTTF extends LabelTTF {
-  delegate = null
-  colorSpaceHolder = null
+  declare delegate
+  declare colorSpaceHolder
 
-  _colorText = null
-  _lens = null
+  declare _colorText
+  declare _lens
   _inputText = ''
   _placeHolder = ''
   _charCount = 0
@@ -103,12 +101,17 @@ export class TextFieldTTF extends LabelTTF {
     this.colorSpaceHolder = color(127, 127, 127)
     this._colorText = color(255, 255, 255, 255)
 
+    const hasPlaceholder = placeholder != null
+    // Case 1: đủ 5 params
     if (fontSize !== undefined) {
       this.initWithPlaceHolder('', dimensions, alignment, fontName, fontSize)
-      if (placeholder) this.setPlaceHolder(placeholder)
-    } else if (fontName === undefined && alignment !== undefined) {
-      this.initWithString('', arguments[1], arguments[2])
-      if (placeholder) this.setPlaceHolder(placeholder)
+    }
+    // Case 2: (placeholder, fontName, fontSize)
+    else if (alignment !== undefined && fontName === undefined) {
+      this.initWithString('', dimensions, alignment)
+    }
+    if (hasPlaceholder) {
+      this.setPlaceHolder(placeholder)
     }
   }
 
@@ -194,36 +197,36 @@ export class TextFieldTTF extends LabelTTF {
    * // When three parameters
    * textField.initWithPlaceHolder("<click here for input>", "Arial", 32);
    */
-  initWithPlaceHolder(placeholder, dimensions, alignment, fontName, fontSize) {
-    switch (arguments.length) {
-      case 5:
-        if (placeholder) this.setPlaceHolder(placeholder)
-        return this.initWithString(this._placeHolder, fontName, fontSize, dimensions, alignment)
-      case 3:
-        if (placeholder) this.setPlaceHolder(placeholder)
-        return this.initWithString(this._placeHolder, arguments[1], arguments[2])
-      default:
-        throw new Error('Argument must be non-nil ')
+  initWithPlaceHolder(placeholder, ...args) {
+    if (placeholder) this.setPlaceHolder(placeholder)
+
+    if (args.length === 2) {
+      // (fontName, fontSize)
+      return this.initWithString(this._placeHolder, args[0], args[1])
     }
+
+    if (args.length === 4) {
+      // (dimensions, alignment, fontName, fontSize)
+      return this.initWithString(this._placeHolder, args[2], args[3], args[0], args[1])
+    }
+
+    throw new Error('Argument must be non-nil')
   }
 
   /**
    * Input text property
    * @param {String} text
    */
-  setString(text) {
-    text = String(text)
-    this._inputText = text || ''
-
+  setString(text = '') {
+    this._inputText = text
     // if there is no input text, display placeholder instead
     if (!this._inputText.length) {
-      LabelTTF.prototype.setString.call(this, this._placeHolder)
+      super.setString(this._placeHolder)
       this.setColor(this.colorSpaceHolder)
     } else {
-      LabelTTF.prototype.setString.call(this, this._inputText)
+      super.setString(this._inputText)
       this.setColor(this._colorText)
     }
-    if (_renderType === game.RENDER_TYPE_CANVAS) this._renderCmd._updateTexture()
     this._charCount = this._inputText.length
   }
 
@@ -240,10 +243,10 @@ export class TextFieldTTF extends LabelTTF {
    * display this string if string equal "".
    * @param {String} text
    */
-  setPlaceHolder(text) {
-    this._placeHolder = text || ''
+  setPlaceHolder(text = '') {
+    this._placeHolder = text
     if (!this._inputText.length) {
-      LabelTTF.prototype.setString.call(this, this._placeHolder)
+      super.setString(this._placeHolder)
       this.setColor(this.colorSpaceHolder)
     }
   }
@@ -263,10 +266,9 @@ export class TextFieldTTF extends LabelTTF {
    */
   draw() {
     //console.log("size",this._contentSize);
-    const context = _renderContext
+    // const context = _renderContext
     if (this.delegate && this.delegate.onDraw(this)) return
-
-    LabelTTF.prototype.draw.call(this, context)
+    // LabelTTF.prototype.draw.call(this, context)
   }
 
   //////////////////////////////////////////////////////////////////////////
