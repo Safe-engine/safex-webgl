@@ -3,7 +3,7 @@ import { _LogInfos, error } from '../../helper/Debugger'
 import { _renderType } from '../../helper/engine'
 import { textureCache } from '../../textures/TextureCache'
 import { Texture2D } from '../../textures/TexturesWebGL'
-import { p, Rect, Size } from '../cocoa/Geometry'
+import { p, Point, Rect, Size } from '../cocoa/Geometry'
 import { EventHelper } from '../event-manager/EventHelper'
 import { _pointPixelsToPointsOut, _sizePixelsToPointsOut, rectPixelsToPoints, rectPointsToPixels } from '../platform/Macro'
 
@@ -15,18 +15,18 @@ import { _pointPixelsToPointsOut, _sizePixelsToPointsOut, rectPixelsToPoints, re
  * and re-attaches EventHelper methods to the prototype for runtime compatibility.
  */
 export class SpriteFrame extends EventHelper {
-  _offset: any
-  _originalSize: any
-  _rectInPixels: any
-  _rotated: any
-  _rect: any
-  _offsetInPixels: any
-  _originalSizeInPixels: any
-  _texture: any
-  _textureFilename: string
-  _textureLoaded: boolean
+  declare _offset: Point
+  declare _originalSize: Size
+  declare _rectInPixels: Rect
+  declare _rotated: boolean
+  declare _rect: Rect
+  declare _offsetInPixels: any
+  declare _originalSizeInPixels: any
+  declare _texture: any
+  declare _textureFilename: string
+  declare _textureLoaded: boolean
 
-  constructor(filename?: any, rectArg?: any, rotated?: any, offset?: any, originalSize?: any) {
+  constructor(filename?: string | Texture2D, rectArg?: Rect, rotated?: boolean, offset?: Point, originalSize?: Size) {
     super()
     this._offset = p(0, 0)
     this._offsetInPixels = p(0, 0)
@@ -119,7 +119,7 @@ export class SpriteFrame extends EventHelper {
     this._originalSize.height = sizeInPixels.height
   }
 
-  getTexture() {
+  getTexture(): Texture2D {
     if (this._texture) return this._texture
     if (this._textureFilename !== '') {
       const locTexture = textureCache.addImage(this._textureFilename)
@@ -198,7 +198,7 @@ export class SpriteFrame extends EventHelper {
     return this.copyWithZone()
   }
 
-  initWithTexture(texture: any, rectArg: any, rotated?: any, offset?: any, originalSize?: any) {
+  initWithTexture(texture: string | Texture2D, rectArg: Rect, rotated?: boolean, offset?: Point, originalSize?: Size) {
     let rectLocal = rectArg
     if (arguments.length === 2) rectLocal = rectPointsToPixels(rectLocal)
 
@@ -243,15 +243,6 @@ export class SpriteFrame extends EventHelper {
     _sizePixelsToPointsOut(originalSize, this._originalSize)
     this._rotated = rotated
     return true
-  }
-
-  // legacy static helpers
-  static create(filename: any, rectArg: any, rotated?: any, offset?: any, originalSize?: any) {
-    return new SpriteFrame(filename, rectArg, rotated, offset, originalSize)
-  }
-
-  static createWithTexture(filename: any, rectArg: any, rotated?: any, offset?: any, originalSize?: any) {
-    return SpriteFrame.create(filename, rectArg, rotated, offset, originalSize)
   }
 
   static _frameWithTextureForCanvas(texture: any, rectArg: any, rotated: any, offset: any, originalSize: any) {

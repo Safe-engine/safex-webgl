@@ -653,7 +653,7 @@ export class Scale9Sprite extends Node {
   }
 
   // overrides
-  setContentSize(width, height?) {
+  setContentSize(width, height?: number) {
     if (height === undefined) {
       height = width.height
       width = width.width
@@ -662,7 +662,7 @@ export class Scale9Sprite extends Node {
       return
     }
 
-    Node.prototype.setContentSize.call(this, width, height)
+    super.setContentSize(width, height)
     this._quadsDirty = true
   }
 
@@ -678,12 +678,12 @@ export class Scale9Sprite extends Node {
   }
 
   _setWidth(value) {
-    Node.prototype._setWidth.call(this, value)
+    super._setWidth(value)
     this._quadsDirty = true
   }
 
   _setHeight(value) {
-    Node.prototype._setHeight.call(this, value)
+    super._setHeight(value)
     this._quadsDirty = true
   }
 

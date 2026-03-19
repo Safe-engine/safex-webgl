@@ -350,7 +350,7 @@ export class Node extends EventHelper {
   getContentSize() {
     return Size(this._contentSize)
   }
-  setContentSize(sz: any, height?: any) {
+  setContentSize(sz: any, height?: number) {
     const locContentSize = this._contentSize
     if (height === undefined) {
       if (sz.width === locContentSize.width && sz.height === locContentSize.height) return
