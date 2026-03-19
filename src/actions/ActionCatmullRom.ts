@@ -289,20 +289,6 @@ export const cardinalSplineTo = function (duration, points, tension) {
 }
 
 /**
- * Please use cardinalSplineTo instead. <br />
- * creates an action with a Cardinal Spline array of points and tension
- *
- * @function
- * @param {Number} duration
- * @param {Array} points array of control points
- * @param {Number} tension
- * @return {CardinalSplineTo}
- * @static
- * @deprecated since v3.0 please use cardinalSplineTo(duration, points, tension) instead.
- */
-CardinalSplineTo.create = cardinalSplineTo
-
-/**
  * Cardinal Spline path. {@link http://en.wikipedia.org/wiki/Cubic_Hermite_spline#Cardinal_spline}
  * Relative coordinates.
  *
@@ -401,19 +387,6 @@ export const cardinalSplineBy = function (duration, points, tension) {
 }
 
 /**
- * Please use cardinalSplineBy instead.
- * creates an action with a Cardinal Spline array of points and tension.
- * @function
- * @param {Number} duration
- * @param {Array} points
- * @param {Number} tension
- * @return {CardinalSplineBy}
- * @static
- * @deprecated since v3.0 please use cardinalSplineBy(duration, points, tension);
- */
-CardinalSplineBy.create = cardinalSplineBy
-
-/**
  * An action that moves the target with a CatmullRom curve to a destination point.<br/>
  * A Catmull Rom is a Cardinal Spline with a tension of 0.5.  <br/>
  * {@link http://en.wikipedia.org/wiki/Cubic_Hermite_spline#Catmull.E2.80.93Rom_spline}
@@ -460,17 +433,6 @@ export class CatmullRomTo extends CardinalSplineTo {
 export const catmullRomTo = function (dt, points) {
   return new CatmullRomTo(dt, points)
 }
-/**
- * Please use catmullRomTo instead.
- * creates an action with a Cardinal Spline array of points and tension.
- *
- * @param {Number} dt
- * @param {Array} points
- * @return {CatmullRomTo}
- * @static
- * @deprecated since v3.0 please use catmullRomTo(dt, points) instead.
- */
-CatmullRomTo.create = catmullRomTo
 
 /**
  * An action that moves the target with a CatmullRom curve by a certain distance.  <br/>
@@ -517,10 +479,3 @@ export class CatmullRomBy extends CardinalSplineBy {
 export const catmullRomBy = function (dt, points) {
   return new CatmullRomBy(dt, points)
 }
-/**
- * Please use catmullRomBy instead
- * Creates an action with a Cardinal Spline array of points and tension
- * @static
- * @deprecated since v3.0 please catmullRomBy(dt, points) instead.
- */
-CatmullRomBy.create = catmullRomBy

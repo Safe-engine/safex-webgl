@@ -1,5 +1,5 @@
 import { EventListener } from '../../core/event-manager/EventListener'
-import { eventManager } from '../../core/event-manager/EventManager'
+import { createEventListener, eventManager } from '../../core/event-manager/EventManager'
 import { KEY } from '../../core/platform/Common'
 import { Widget } from './UIWidget'
 
@@ -43,7 +43,7 @@ export class FocusNavigationController {
 
   _addKeyboardEventListener() {
     if (!this._keyboardListener) {
-      this._keyboardListener = EventListener.create({
+      this._keyboardListener = createEventListener({
         event: EventListener.KEYBOARD,
         onKeyReleased: this._onKeyPressed.bind(this),
       })

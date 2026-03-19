@@ -1,3 +1,4 @@
+import type { Matrix4 } from '../core/kazmath'
 import { log } from '../helper/Debugger'
 import { GLProgram } from './GLProgram'
 import { glBindTexture2DN } from './GLStateCache'
@@ -138,7 +139,7 @@ export class GLProgramState {
     }
   }
 
-  apply(modelView?: any) {
+  apply(modelView?: Matrix4) {
     this._glprogram.use()
     if (modelView) {
       this._glprogram._setUniformForMVPMatrixWithMat4(modelView)

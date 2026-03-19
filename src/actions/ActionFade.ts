@@ -55,7 +55,7 @@ export class FadeTo extends ActionInterval {
   update(time: number): void {
     time = this._computeEaseTime(time)
     const fromOpacity = this._fromOpacity !== undefined ? this._fromOpacity : 255
-    this.target.opacity = fromOpacity + (this._toOpacity - fromOpacity) * time
+    this.target.setOpacity(fromOpacity + (this._toOpacity - fromOpacity) * time)
   }
 
   /**
@@ -81,16 +81,6 @@ export class FadeTo extends ActionInterval {
 export const fadeTo = function (duration, opacity) {
   return new FadeTo(duration, opacity)
 }
-/**
- * Please use fadeTo instead.
- * Fades an object that implements the RGBAProtocol protocol. It modifies the opacity from the current value to a custom one.
- * @static
- * @deprecated since v3.0 please use fadeTo instead.
- * @param {Number} duration
- * @param {Number} opacity 0-255, 0 is transparent
- * @return {FadeTo}
- */
-FadeTo.create = fadeTo
 
 /** Fades In an object that implements the RGBAProtocol protocol. It modifies the opacity from 0 to 255.<br/>
  * The "reverse" of this action is FadeOut
@@ -156,15 +146,6 @@ export class FadeIn extends FadeTo {
 export const fadeIn = function (duration) {
   return new FadeIn(duration)
 }
-/**
- * Please use fadeIn instead.
- * Fades In an object that implements the RGBAProtocol protocol. It modifies the opacity from 0 to 255.
- * @static
- * @deprecated since v3.0 please use fadeIn() instead.
- * @param {Number} duration duration in seconds
- * @return {FadeIn}
- */
-FadeIn.create = fadeIn
 
 /** Fades Out an object that implements the RGBAProtocol protocol. It modifies the opacity from 255 to 0.
  * The "reverse" of this action is FadeIn
@@ -220,12 +201,3 @@ export class FadeOut extends FadeTo {
 export const fadeOut = function (d) {
   return new FadeOut(d)
 }
-/**
- * Please use fadeOut instead.
- * Fades Out an object that implements the RGBAProtocol protocol. It modifies the opacity from 255 to 0.
- * @static
- * @deprecated since v3.0 please use fadeOut instead.
- * @param {Number} d  duration in seconds
- * @return {FadeOut}
- */
-FadeOut.create = fadeOut

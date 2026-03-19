@@ -46,7 +46,4 @@ export class EventListenerMouse extends EventListener {
   }
   // Keep compatibility for mouse helper if exists
   static LISTENER_ID = '__cc_mouse'
-  static create = function () {
-    return new EventListenerMouse()
-  }
 }

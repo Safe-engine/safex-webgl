@@ -4,6 +4,7 @@ import { Node, pNormalizeIn } from '../core'
 import { p, Point, Rect } from '../core/cocoa/Geometry'
 import {
   BlendFunc,
+  checkGLErrorDebug,
   Color,
   color,
   incrementGLDraws,
@@ -365,7 +366,7 @@ export class DrawNode extends Node {
 
     gl.drawArrays(gl.TRIANGLES, this._offset / VERTEX_BYTE, this._vertexCount)
     incrementGLDraws(1)
-    //checkGLErrorDebug();
+    checkGLErrorDebug()
   }
 
   appendVertexData(x: number, y: number, color: Color, u: number, v: number) {

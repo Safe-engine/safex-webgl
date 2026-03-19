@@ -206,13 +206,3 @@ export const sequence = function (/*Multiple Arguments*/ tempArray) {
 
   return result
 }
-
-/**
- * Please use sequence instead.
- * helper constructor to create an array of sequenceable actions
- * @static
- * @deprecated since v3.0 <br /> Please use sequence instead.
- * @param {Array|FiniteTimeAction} tempArray
- * @return {Sequence}
- */
-Sequence.create = sequence

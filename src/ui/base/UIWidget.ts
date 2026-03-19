@@ -3,7 +3,7 @@ import { Node } from '../../core/base-nodes/Node'
 import { p, Rect, rectContainsPoint, Size } from '../../core/cocoa/Geometry'
 import { EventListener } from '../../core/event-manager'
 import { EventFocus } from '../../core/event-manager/EventFocus'
-import { eventManager } from '../../core/event-manager/EventManager'
+import { createEventListener, eventManager } from '../../core/event-manager/EventManager'
 import { arrayRemoveObject, SHADER_SPRITE_POSITION_TEXTURECOLOR, SHADER_SPRITE_POSITION_TEXTURECOLOR_GRAY } from '../../core/platform'
 import { log } from '../../helper/Debugger'
 import { shaderCache } from '../../shaders/ShaderCache'
@@ -543,7 +543,7 @@ export class Widget extends ProtectedNode {
     this._touchEnabled = enable //TODO need consider remove and re-add.
     if (this._touchEnabled) {
       if (!this._touchListener)
-        this._touchListener = EventListener.create({
+        this._touchListener = createEventListener({
           event: EventListener.TOUCH_ONE_BY_ONE,
           swallowTouches: true,
           onTouchBegan: this.onTouchBegan.bind(this),

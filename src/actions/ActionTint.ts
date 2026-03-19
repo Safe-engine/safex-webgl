@@ -66,7 +66,7 @@ export class TintTo extends ActionInterval {
   startWithTarget(target: any): void {
     super.startWithTarget(target)
 
-    this._from = this.target.color
+    this._from = this.target.getColor()
   }
 
   /**
@@ -182,7 +182,7 @@ export class TintBy extends ActionInterval {
   update(dt: number): void {
     dt = this._computeEaseTime(dt)
 
-    this.target.color = color(this._fromR + this._deltaR * dt, this._fromG + this._deltaG * dt, this._fromB + this._deltaB * dt)
+    this.target.setColor(color(this._fromR + this._deltaR * dt, this._fromG + this._deltaG * dt, this._fromB + this._deltaB * dt))
   }
 
   /**

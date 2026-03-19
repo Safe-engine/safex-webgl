@@ -112,5 +112,3 @@ export class Follow extends Action {
 export function follow(followedNode: any, rectArg?: any) {
   return new Follow(followedNode, rectArg)
 }
-
-Follow.create = follow as any

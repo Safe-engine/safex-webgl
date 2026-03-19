@@ -206,7 +206,7 @@ export const disableDefaultGLStates = function () {
  * @param {Number} addNumber
  * @function
  */
-export const incrementGLDraws = function (addNumber) {
+export const incrementGLDraws = function (addNumber: number) {
   global.g_NumberOfDraws += addNumber
 }
 

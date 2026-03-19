@@ -110,10 +110,4 @@ export class EventListener {
   static ACCELERATION = 6
   static FOCUS = 7
   static CUSTOM = 8
-
-  /**
-   * Create a EventListener object by json object
-   * @param argObj a json object
-   */
-  static create: (argObj: any) => EventListener | null
 }

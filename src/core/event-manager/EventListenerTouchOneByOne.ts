@@ -41,8 +41,4 @@ export class EventListenerTouchOneByOne extends EventListener {
     }
     return true
   }
-
-  static create() {
-    return new EventListenerTouchOneByOne()
-  }
 }

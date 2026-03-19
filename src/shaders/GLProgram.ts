@@ -108,7 +108,7 @@ export class GLProgram {
   /**
    * destroy program
    */
-  destroyProgram(): void {
+  destroyProgram() {
     this._vertShader = null
     this._fragShader = null
     this._uniforms = null
@@ -196,7 +196,7 @@ export class GLProgram {
    * @param {String} attributeName
    * @param {Number} index
    */
-  addAttribute(attributeName: string, index: number): void {
+  addAttribute(attributeName: string, index: number) {
     this._glContext.bindAttribLocation(this._programObj, index, attributeName)
   }
 
@@ -234,7 +234,7 @@ export class GLProgram {
   /**
    * it will call glUseProgram()
    */
-  use(): void {
+  use() {
     glUseProgram(this._programObj)
   }
 
@@ -245,7 +245,7 @@ export class GLProgram {
    *  UNIFORM_MVPMATRIX
    *  UNIFORM_SAMPLER
    */
-  updateUniforms(): void {
+  updateUniforms() {
     this._addUniformLocation(UNIFORM_PMATRIX_S)
     this._addUniformLocation(UNIFORM_MVMATRIX_S)
     this._addUniformLocation(UNIFORM_MVPMATRIX_S)
@@ -306,7 +306,7 @@ export class GLProgram {
    * @param {WebGLUniformLocation|String} location
    * @param {Number} i1
    */
-  setUniformLocationWith1i(location: any | string, i1: number): void {
+  setUniformLocationWith1i(location: any | string, i1: number) {
     const isString = typeof location === 'string'
     const name = isString ? location : location?._name
     if (name) {
@@ -325,7 +325,7 @@ export class GLProgram {
    * @param {Number} i1
    * @param {Number} i2
    */
-  setUniformLocationWith2i(location: any, i1: number, i2: number): void {
+  setUniformLocationWith2i(location: any, i1: number, i2: number) {
     const isString = typeof location === 'string'
     const name = isString ? location : location && location._name
     if (name) {
@@ -345,7 +345,7 @@ export class GLProgram {
    * @param {Number} i2
    * @param {Number} i3
    */
-  setUniformLocationWith3i(location: any, i1: number, i2: number, i3: number): void {
+  setUniformLocationWith3i(location: any, i1: number, i2: number, i3: number) {
     const isString = typeof location === 'string'
     const name = isString ? location : location && location._name
     if (name) {
@@ -366,7 +366,7 @@ export class GLProgram {
    * @param {Number} i3
    * @param {Number} i4
    */
-  setUniformLocationWith4i(location: any, i1: number, i2: number, i3: number, i4: number): void {
+  setUniformLocationWith4i(location: any, i1: number, i2: number, i3: number, i4: number) {
     const isString = typeof location === 'string'
     const name = isString ? location : location && location._name
     if (name) {
@@ -385,7 +385,7 @@ export class GLProgram {
    * @param {Int32Array} intArray
    * @param {Number} numberOfArrays
    */
-  setUniformLocationWith2iv(location: any, intArray: Int32Array): void {
+  setUniformLocationWith2iv(location: any, intArray: Int32Array) {
     const isString = typeof location === 'string'
     const name = isString ? location : location && location._name
     if (name) {
@@ -403,7 +403,7 @@ export class GLProgram {
    * @param {WebGLUniformLocation|String} location
    * @param {Int32Array} intArray
    */
-  setUniformLocationWith3iv(location: any, intArray: Int32Array): void {
+  setUniformLocationWith3iv(location: any, intArray: Int32Array) {
     const isString = typeof location === 'string'
     const name = isString ? location : location && location._name
     if (name) {
@@ -421,7 +421,7 @@ export class GLProgram {
    * @param {WebGLUniformLocation|String} location
    * @param {Int32Array} intArray
    */
-  setUniformLocationWith4iv(location: any, intArray: Int32Array): void {
+  setUniformLocationWith4iv(location: any, intArray: Int32Array) {
     const isString = typeof location === 'string'
     const name = isString ? location : location && location._name
     if (name) {
@@ -439,7 +439,7 @@ export class GLProgram {
    * @param {WebGLUniformLocation|String} location
    * @param {Number} i1
    */
-  setUniformLocationI32(location: any, i1: number): void {
+  setUniformLocationI32(location: any, i1: number) {
     this.setUniformLocationWith1i(location, i1)
   }
 
@@ -448,7 +448,7 @@ export class GLProgram {
    * @param {WebGLUniformLocation|String} location
    * @param {Number} f1
    */
-  setUniformLocationWith1f(location: any, f1: number): void {
+  setUniformLocationWith1f(location: any, f1: number) {
     const isString = typeof location === 'string'
     const name = isString ? location : location && location._name
     if (name) {
@@ -467,7 +467,7 @@ export class GLProgram {
    * @param {Number} f1
    * @param {Number} f2
    */
-  setUniformLocationWith2f(location: any, f1: number, f2: number): void {
+  setUniformLocationWith2f(location: any, f1: number, f2: number) {
     const isString = typeof location === 'string'
     const name = isString ? location : location && location._name
     if (name) {
@@ -487,7 +487,7 @@ export class GLProgram {
    * @param {Number} f2
    * @param {Number} f3
    */
-  setUniformLocationWith3f(location: any, f1: number, f2: number, f3: number): void {
+  setUniformLocationWith3f(location: any, f1: number, f2: number, f3: number) {
     const isString = typeof location === 'string'
     const name = isString ? location : location && location._name
     if (name) {
@@ -508,7 +508,7 @@ export class GLProgram {
    * @param {Number} f3
    * @param {Number} f4
    */
-  setUniformLocationWith4f(location: any, f1: number, f2: number, f3: number, f4: number): void {
+  setUniformLocationWith4f(location: any, f1: number, f2: number, f3: number, f4: number) {
     const isString = typeof location === 'string'
     const name = isString ? location : location && location._name
     if (name) {
@@ -527,7 +527,7 @@ export class GLProgram {
    * @param {WebGLUniformLocation|String} location
    * @param {Float32Array} floatArray
    */
-  setUniformLocationWith2fv(location: any, floatArray: Float32Array): void {
+  setUniformLocationWith2fv(location: any, floatArray: Float32Array) {
     const isString = typeof location === 'string'
     const name = isString ? location : location && location._name
     if (name) {
@@ -545,7 +545,7 @@ export class GLProgram {
    * @param {WebGLUniformLocation|String} location
    * @param {Float32Array} floatArray
    */
-  setUniformLocationWith3fv(location: any, floatArray: Float32Array): void {
+  setUniformLocationWith3fv(location: any, floatArray: Float32Array) {
     const isString = typeof location === 'string'
     const name = isString ? location : location && location._name
     if (name) {
@@ -563,7 +563,7 @@ export class GLProgram {
    * @param {WebGLUniformLocation|String} location
    * @param {Float32Array} floatArray
    */
-  setUniformLocationWith4fv(location: any, floatArray: Float32Array): void {
+  setUniformLocationWith4fv(location: any, floatArray: Float32Array) {
     const isString = typeof location === 'string'
     const name = isString ? location : location && location._name
     if (name) {
@@ -582,7 +582,7 @@ export class GLProgram {
    * @param {WebGLUniformLocation|String} location
    * @param {Float32Array} matrixArray
    */
-  setUniformLocationWithMatrix2fv(location: any, matrixArray: Float32Array): void {
+  setUniformLocationWithMatrix2fv(location: any, matrixArray: Float32Array) {
     const isString = typeof location === 'string'
     const name = isString ? location : location && location._name
     if (name) {
@@ -600,7 +600,7 @@ export class GLProgram {
    * @param {WebGLUniformLocation|String} location
    * @param {Float32Array} matrixArray
    */
-  setUniformLocationWithMatrix3fv(location: any, matrixArray: Float32Array): void {
+  setUniformLocationWithMatrix3fv(location: any, matrixArray: Float32Array) {
     console.log('setUniformLocationWithMatrix4fv', location, matrixArray)
     const isString = typeof location === 'string'
     const name = isString ? location : location && location._name
@@ -619,7 +619,7 @@ export class GLProgram {
    * @param {WebGLUniformLocation|String} location
    * @param {Float32Array} matrixArray
    */
-  setUniformLocationWithMatrix4fv(location: any | string, matrixArray: Float32Array, v1?: number): void {
+  setUniformLocationWithMatrix4fv(location: any | string, matrixArray: Float32Array, v1?: number) {
     // console.log('setUniformLocationWithMatrix4fv', location, matrixArray)
     const isString = typeof location === 'string'
     const name = isString ? location : location && location._name
@@ -633,7 +633,7 @@ export class GLProgram {
     }
   }
 
-  setUniformLocationF32(...args: any[]): void {
+  setUniformLocationF32(...args: any[]) {
     if (args.length < 2) return
 
     switch (args.length) {
@@ -655,7 +655,7 @@ export class GLProgram {
   /**
    * will update the builtin uniforms if they are different than the previous call for this same shader program.
    */
-  setUniformsForBuiltins(): void {
+  setUniformsForBuiltins() {
     const matrixP = new Matrix4()
     const matrixMV = new Matrix4()
     const matrixMVP = new Matrix4()
@@ -684,7 +684,7 @@ export class GLProgram {
       this.setUniformLocationWith4f(this._uniforms[UNIFORM_RANDOM01_S], Math.random(), Math.random(), Math.random(), Math.random())
   }
 
-  _setUniformsForBuiltinsForRenderer(node: Node): void {
+  _setUniformsForBuiltinsForRenderer(node: Node) {
     if (!node || !node._renderCmd) return
 
     const matrixP = new Matrix4()
@@ -718,30 +718,30 @@ export class GLProgram {
   /**
    * will update the MVP matrix on the MVP uniform if it is different than the previous call for this same shader program.
    */
-  setUniformForModelViewProjectionMatrix(): void {
+  setUniformForModelViewProjectionMatrix() {
     this.setUniformLocationWithMatrix4fv(
       this._uniforms[UNIFORM_MVPMATRIX_S],
       getMat4MultiplyValue(projection_matrix_stack.top, modelview_matrix_stack.top),
     )
   }
 
-  setUniformForModelViewProjectionMatrixWithMat4(swapMat4: any): void {
+  setUniformForModelViewProjectionMatrixWithMat4(swapMat4: Matrix4) {
     kmMat4Multiply(swapMat4, projection_matrix_stack.top, modelview_matrix_stack.top)
     this.setUniformLocationWithMatrix4fv(this._uniforms[UNIFORM_MVPMATRIX_S], swapMat4.mat)
   }
 
-  setUniformForModelViewAndProjectionMatrixWithMat4(): void {
+  setUniformForModelViewAndProjectionMatrixWithMat4() {
     this.setUniformLocationWithMatrix4fv(this._uniforms[UNIFORM_MVMATRIX_S], modelview_matrix_stack.top.mat)
     this.setUniformLocationWithMatrix4fv(this._uniforms[UNIFORM_PMATRIX_S], projection_matrix_stack.top.mat)
   }
 
-  _setUniformForMVPMatrixWithMat4(modelViewMatrix: any): void {
+  _setUniformForMVPMatrixWithMat4(modelViewMatrix: Matrix4) {
     if (!modelViewMatrix) throw new Error('modelView matrix is undefined.')
     this.setUniformLocationWithMatrix4fv(this._uniforms[UNIFORM_MVMATRIX_S], modelViewMatrix.mat)
     this.setUniformLocationWithMatrix4fv(this._uniforms[UNIFORM_PMATRIX_S], projection_matrix_stack.top.mat)
   }
 
-  _updateProjectionUniform(): void {
+  _updateProjectionUniform() {
     const stack = projection_matrix_stack
     if (stack.lastUpdated !== this._projectionUpdated) {
       this._glContext.uniformMatrix4fv(this._uniforms[UNIFORM_PMATRIX_S], false, stack.top.mat)
@@ -801,7 +801,7 @@ export class GLProgram {
    *  reload all shaders, this function is designed for android  <br/>
    *  when opengl context lost, so don't call it.
    */
-  reset(): void {
+  reset() {
     this._vertShader = null
     this._fragShader = null
     if (Object.keys(this._uniforms).length > 0) this._uniforms = {}
@@ -828,9 +828,9 @@ export class GLProgram {
    * and the ugly workaround is to use retain/release. So, these 2 methods were added to be compatible with JSB.
    * This is a hack, and should be removed once JSB fixes the retain/release bug
    */
-  retain(): void {}
+  retain() {}
 
-  release(): void {}
+  release() {}
 
   static _isHighpSupported(): boolean {
     const ctx = _renderContext
@@ -855,7 +855,7 @@ export class GLProgram {
  * @example
  * setGLProgram(node, shaderCache.programForKey(SHADER_POSITION_TEXTURECOLOR));
  */
-export function setProgram(node: any, program: GLProgram): void {
+export function setProgram(node: any, program: GLProgram) {
   node.shaderProgram = program
 
   const children = node.children

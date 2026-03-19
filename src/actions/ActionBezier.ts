@@ -158,17 +158,6 @@ export class BezierBy extends ActionInterval {
 export const bezierBy = function (t, c) {
   return new BezierBy(t, c)
 }
-/**
- * Please use bezierBy instead.
- * An action that moves the target with a cubic Bezier curve by a certain distance.
- * Relative to its movement.
- * @static
- * @deprecated since v3.0 please use bezierBy instead.
- * @param {Number} t time in seconds
- * @param {Array} c Array of points
- * @return {BezierBy}
- */
-BezierBy.create = bezierBy
 
 /** An action that moves the target with a cubic Bezier curve to a destination point.
  * @class
@@ -248,12 +237,3 @@ export class BezierTo extends BezierBy {
 export const bezierTo = function (t, c) {
   return new BezierTo(t, c)
 }
-/**
- * Please use bezierTo instead
- * @static
- * @deprecated since v3.0 please use bezierTo instead.
- * @param {Number} t
- * @param {Array} c array of points
- * @return {BezierTo}
- */
-BezierTo.create = bezierTo

@@ -51,10 +51,6 @@ export class EventListenerAcceleration extends EventListener {
   clone(): EventListenerAcceleration {
     return new EventListenerAcceleration(this._onAccelerationEvent)
   }
-
-  static create(callback: ((acc: any, event: EventAcceleration) => void) | null) {
-    return new EventListenerAcceleration(callback)
-  }
 }
 
 // Keyboard listener
@@ -89,9 +85,5 @@ export class EventListenerKeyboard extends EventListener {
       return false
     }
     return true
-  }
-
-  static create() {
-    return new EventListenerKeyboard()
   }
 }

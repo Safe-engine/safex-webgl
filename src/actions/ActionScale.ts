@@ -82,8 +82,8 @@ export class ScaleTo extends ActionInterval {
   update(dt: number): void {
     dt = this._computeEaseTime(dt)
     if (this.target) {
-      this.target.scaleX = this._startScaleX + this._deltaX * dt
-      this.target.scaleY = this._startScaleY + this._deltaY * dt
+      this.target.setScaleX(this._startScaleX + this._deltaX * dt)
+      this.target.setScaleY(this._startScaleY + this._deltaY * dt)
     }
   }
 }

@@ -1,14 +1,15 @@
+import type { Node, Sprite } from '../core'
 import { log } from '../helper/Debugger'
 
 // Default Action tag
 export const ACTION_TAG_INVALID = -1
 
 export class Action {
-  public originalTarget: any = null
-  public target: any = null
+  declare public originalTarget: Node
+  declare public target: Sprite
   public tag: number = ACTION_TAG_INVALID
-  _speedMethod: any
-  _speed: any
+  declare _speedMethod: boolean
+  declare _speed: number
 
   constructor() {
     this.originalTarget = null
@@ -33,7 +34,7 @@ export class Action {
     return true
   }
 
-  startWithTarget(target: any) {
+  startWithTarget(target: Sprite) {
     this.originalTarget = target
     this.target = target
   }
@@ -54,7 +55,7 @@ export class Action {
     return this.target
   }
 
-  setTarget(target: any) {
+  setTarget(target: Sprite) {
     this.target = target
   }
 
@@ -62,7 +63,7 @@ export class Action {
     return this.originalTarget
   }
 
-  setOriginalTarget(originalTarget: any) {
+  setOriginalTarget(originalTarget: Node) {
     this.originalTarget = originalTarget
   }
 
@@ -76,7 +77,6 @@ export class Action {
 
   retain() {}
   release() {}
-  static create = action as any
 }
 
 export function action() {

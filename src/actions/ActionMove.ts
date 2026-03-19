@@ -94,10 +94,6 @@ export class MoveBy extends ActionInterval {
     this._reverseEaseList(action)
     return action
   }
-
-  static create(duration, deltaPos, deltaY) {
-    return new MoveBy(duration, deltaPos, deltaY)
-  }
 }
 
 /**
@@ -115,9 +111,6 @@ export class MoveBy extends ActionInterval {
 export function moveBy(duration, deltaPos, deltaY?) {
   return new MoveBy(duration, deltaPos, deltaY)
 }
-
-// backward compatibility alias
-MoveBy.create = moveBy
 
 /**
  * Moves a CCNode object to the position x,y. x and y are absolute coordinates by modifying it's position attribute. <br/>
@@ -169,10 +162,6 @@ export class MoveTo extends MoveBy {
     this._positionDelta.x = this._endPosition.x - target.getPositionX()
     this._positionDelta.y = this._endPosition.y - target.getPositionY()
   }
-
-  static create(duration, position, y) {
-    return new MoveTo(duration, position, y)
-  }
 }
 
 /**
@@ -190,6 +179,3 @@ export class MoveTo extends MoveBy {
 export function moveTo(duration, position, y?) {
   return new MoveTo(duration, position, y)
 }
-
-// backward compatibility alias
-MoveTo.create = moveTo

@@ -6,7 +6,7 @@ import { FiniteTimeAction } from './FiniteTimeAction'
 export class ActionInterval extends FiniteTimeAction {
   _elapsed = 0
   _firstTick = false
-  _easeList: any = null
+  declare _easeList
   _timesForRepeat = 1
   _repeatForever = false
   _repeatMethod = false //Compatible with repeat class, Discard after can be deleted
@@ -66,7 +66,7 @@ export class ActionInterval extends FiniteTimeAction {
    * @param {Action} action
    * @private
    */
-  _cloneDecoration(action: ActionInterval): void {
+  _cloneDecoration(action: ActionInterval) {
     action._repeatForever = this._repeatForever
     action._speed = this._speed
     action._timesForRepeat = this._timesForRepeat
@@ -75,7 +75,7 @@ export class ActionInterval extends FiniteTimeAction {
     action._repeatMethod = this._repeatMethod
   }
 
-  _reverseEaseList(action: ActionInterval): void {
+  _reverseEaseList(action: ActionInterval) {
     if (this._easeList) {
       action._easeList = []
       for (let i = 0; i < this._easeList.length; i++) {
@@ -123,7 +123,7 @@ export class ActionInterval extends FiniteTimeAction {
    *
    * @param {Number} dt
    */
-  step(dt: number): void {
+  step(dt: number) {
     if (this._firstTick) {
       this._firstTick = false
       this._elapsed = 0
@@ -153,7 +153,7 @@ export class ActionInterval extends FiniteTimeAction {
    * Start this action with target.
    * @param {Node} target
    */
-  startWithTarget(target: any): void {
+  startWithTarget(target: any) {
     Action.prototype.startWithTarget.call(this, target)
     this._elapsed = 0
     this._firstTick = true
@@ -175,7 +175,7 @@ export class ActionInterval extends FiniteTimeAction {
    * @warning It should be overridden in subclass.
    * @param {Number} amp
    */
-  setAmplitudeRate(amp: number): void {
+  setAmplitudeRate(amp: number) {
     // Abstract class needs implementation
     log('ActionInterval.setAmplitudeRate(): it should be overridden in subclass.')
   }

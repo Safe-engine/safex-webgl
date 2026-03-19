@@ -58,7 +58,7 @@ export class Show extends ActionInstant {
   }
 
   update(dt: number) {
-    this.target.visible = true
+    this.target.setVisible(true)
   }
 
   reverse(): Hide {
@@ -83,14 +83,6 @@ export const show = function () {
 }
 
 /**
- * Show the Node. Please use show instead.
- * @static
- * @deprecated since v3.0 <br /> Please use show instead.
- * @return {Show}
- */
-Show.create = show
-
-/**
  * Hide the node.
  */
 export class Hide extends ActionInstant {
@@ -99,7 +91,7 @@ export class Hide extends ActionInstant {
   }
 
   update(dt: number) {
-    this.target.visible = false
+    this.target.setVisible(false)
   }
 
   reverse(): Show {
@@ -124,17 +116,6 @@ export const hide = function () {
 }
 
 /**
- * Hide the node. Please use hide instead.
- * @static
- * @deprecated since v3.0 <br /> Please use hide instead.
- * @return {Hide}
- * @example
- * // example
- * var hideAction = hide();
- */
-Hide.create = hide
-
-/**
  * Toggles the visibility of a node.
  */
 export class ToggleVisibility extends ActionInstant {
@@ -143,7 +124,7 @@ export class ToggleVisibility extends ActionInstant {
   }
 
   update(dt: number) {
-    this.target.visible = !this.target.visible
+    this.target.setVisible(!this.target.isVisible())
   }
 
   reverse(): ToggleVisibility {
@@ -166,14 +147,6 @@ export class ToggleVisibility extends ActionInstant {
 export const toggleVisibility = function () {
   return new ToggleVisibility()
 }
-
-/**
- * Toggles the visibility of a node. Please use toggleVisibility instead.
- * @static
- * @deprecated since v3.0 <br /> Please use toggleVisibility instead.
- * @return {ToggleVisibility}
- */
-ToggleVisibility.create = toggleVisibility
 
 /**
  * Delete self in the next frame.
@@ -227,17 +200,6 @@ export const removeSelf = function (isNeedCleanUp?: boolean) {
 }
 
 /**
- * Please use removeSelf instead.
- * Create a RemoveSelf object with a flag indicate whether the target should be cleaned up while removing.
- *
- * @static
- * @deprecated since v3.0 <br /> Please use removeSelf instead.
- * @param {Boolean} [isNeedCleanUp=true]
- * @return {RemoveSelf}
- */
-RemoveSelf.create = removeSelf
-
-/**
  * Flips the sprite horizontally.
  */
 export class FlipX extends ActionInstant {
@@ -255,7 +217,7 @@ export class FlipX extends ActionInstant {
   }
 
   update(dt: number) {
-    this.target.flippedX = this._flippedX
+    this.target._flippedX = this._flippedX
   }
 
   reverse(): FlipX {
@@ -283,17 +245,6 @@ export const flipX = function (flip?: boolean) {
 }
 
 /**
- * Plese use flipX instead.
- * Create a FlipX action to flip or unflip the target
- *
- * @static
- * @deprecated since v3.0 <br /> Plese use flipX instead.
- * @param {Boolean} flip Indicate whether the target should be flipped or not
- * @return {FlipX}
- */
-FlipX.create = flipX
-
-/**
  * Flips the sprite vertically
  * @class
  * @extends ActionInstant
@@ -316,7 +267,7 @@ export class FlipY extends ActionInstant {
   }
 
   update(dt: number) {
-    this.target.flippedY = this._flippedY
+    this.target._flippedY = this._flippedY
   }
 
   reverse(): FlipY {
@@ -342,17 +293,6 @@ export class FlipY extends ActionInstant {
 export const flipY = function (flip?: boolean) {
   return new FlipY(flip)
 }
-
-/**
- * Please use flipY instead
- * Create a FlipY action to flip or unflip the target
- *
- * @static
- * @deprecated since v3.0 <br /> Please use flipY instead.
- * @param {Boolean} flip
- * @return {FlipY}
- */
-FlipY.create = flipY
 
 /**
  * Places the node in a certain position
@@ -413,17 +353,6 @@ export class Place extends ActionInstant {
 export const place = function (pos?: any, y?: number) {
   return new Place(pos, y)
 }
-
-/**
- * Please use place instead.
- * Creates a Place action with a position.
- * @static
- * @deprecated since v3.0 <br /> Please use place instead.
- * @param {Point|Number} pos
- * @param {Number} [y]
- * @return {Place}
- */
-Place.create = place
 
 /**
  * Calls a 'callback'.

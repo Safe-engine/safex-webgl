@@ -1,5 +1,5 @@
-import { director } from '..'
-import { ACTION_TAG_INVALID, Action } from '../actions/Action'
+import { director, Sprite } from '..'
+import { Action, ACTION_TAG_INVALID } from '../actions/Action'
 import { _LogInfos, assert, log } from '../helper/Debugger'
 import { Node } from './base-nodes/Node'
 
@@ -50,16 +50,16 @@ export class ActionManager {
   }
 
   /** Adds an action with a target. */
-  addAction(action: Action, target: Node, paused: boolean) {
+  addAction(action: Action, target: Sprite, paused: boolean) {
     if (!action) throw new Error('ActionManager.addAction(): action must be non-null')
     if (!target) throw new Error('ActionManager.addAction(): target must be non-null')
 
     // check if the action target already exists
-    let element = this._hashTargets[(target as any).__instanceId]
+    let element = this._hashTargets[target.__instanceId]
     // if doesn't exist, create a hashelement and push in mpTargets
     if (!element) {
       element = this._getElement(target, paused)
-      this._hashTargets[(target as any).__instanceId] = element
+      this._hashTargets[target.__instanceId] = element
       this._arrayTargets.push(element)
     } else if (!element.actions) {
       element.actions = []
@@ -81,7 +81,7 @@ export class ActionManager {
   /** Removes all actions from a certain target. */
   removeAllActionsFromTarget(target: Node | null) {
     if (target == null) return
-    const element = this._hashTargets[(target as any).__instanceId]
+    const element = this._hashTargets[target.__instanceId]
     if (element) {
       element.actions.length = 0
       this._deleteHashElement(element)
@@ -92,7 +92,7 @@ export class ActionManager {
   removeAction(action: Action | null) {
     if (action == null) return
     const target = action.getOriginalTarget()
-    const element = this._hashTargets[(target as any).__instanceId]
+    const element = this._hashTargets[target.__instanceId]
 
     if (element) {
       for (let i = 0; i < element.actions.length; i++) {
@@ -147,7 +147,7 @@ export class ActionManager {
 
   /** Returns the numbers of actions that are running in a certain target. */
   numberOfRunningActionsInTarget(target: Node): number {
-    const element = this._hashTargets[(target as any).__instanceId]
+    const element = this._hashTargets[target.__instanceId]
     if (element) return element.actions ? element.actions.length : 0
 
     return 0
@@ -155,13 +155,13 @@ export class ActionManager {
 
   /** Pauses the target: all running actions and newly added actions will be paused. */
   pauseTarget(target: Node) {
-    const element = this._hashTargets[(target as any).__instanceId]
+    const element = this._hashTargets[target.__instanceId]
     if (element) element.paused = true
   }
 
   /** Resumes the target. All queued actions will be resumed. */
   resumeTarget(target: Node) {
-    const element = this._hashTargets[(target as any).__instanceId]
+    const element = this._hashTargets[target.__instanceId]
     if (element) element.paused = false
   }
 

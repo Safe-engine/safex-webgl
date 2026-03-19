@@ -29,8 +29,4 @@ export class EventListenerTouchAllAtOnce extends EventListener {
     }
     return true
   }
-
-  static create() {
-    return new EventListenerTouchAllAtOnce()
-  }
 }

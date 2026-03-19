@@ -101,8 +101,8 @@ export class RotateTo extends ActionInterval {
   update(dt: number): void {
     dt = this._computeEaseTime(dt)
     if (this.target) {
-      this.target.rotationX = this._startAngleX + this._diffAngleX * dt
-      this.target.rotationY = this._startAngleY + this._diffAngleY * dt
+      this.target.setRotationX(this._startAngleX + this._diffAngleX * dt)
+      this.target.setRotationY(this._startAngleY + this._diffAngleY * dt)
     }
   }
 }
@@ -196,8 +196,8 @@ export class RotateBy extends ActionInterval {
   update(dt: number): void {
     dt = this._computeEaseTime(dt)
     if (this.target) {
-      this.target.rotationX = this._startAngleX + this._angleX * dt
-      this.target.rotationY = this._startAngleY + this._angleY * dt
+      this.target.setRotationX(this._startAngleX + this._angleX * dt)
+      this.target.setRotationY(this._startAngleY + this._angleY * dt)
     }
   }
 

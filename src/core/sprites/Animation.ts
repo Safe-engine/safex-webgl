@@ -92,14 +92,6 @@ export class AnimationFrame {
   setUserInfo(userInfo: any) {
     this._userInfo = userInfo
   }
-
-  /**
-   * Creates an animation frame.  Legacy convenience method kept for compatibility.
-   * @deprecated since v3.0, please use the constructor instead.
-   */
-  static create(spriteFrame?: SpriteFrame, delayUnits?: number, userInfo?: any) {
-    return new AnimationFrame(spriteFrame, delayUnits, userInfo)
-  }
 }
 
 /**

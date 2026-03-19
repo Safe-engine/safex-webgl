@@ -621,7 +621,7 @@ export const eventManager = /** @lends eventManager# */ {
     assert(listener && nodeOrPriority, _LogInfos.eventManager_addListener_2)
     if (!(listener instanceof EventListener)) {
       assert(!isNumber(nodeOrPriority), _LogInfos.eventManager_addListener_3)
-      listener = EventListener.create(listener)
+      listener = createEventListener(listener)
     } else {
       if (listener._isRegistered()) {
         log(_LogInfos.eventManager_addListener_4)
@@ -902,7 +902,7 @@ export const eventManager = /** @lends eventManager# */ {
   },
 }
 
-EventListener.create = function (argObj: any) {
+export function createEventListener(argObj: any) {
   assert(argObj && argObj.event, _LogInfos.EventListener_create)
 
   const listenerType = argObj.event

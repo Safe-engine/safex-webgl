@@ -154,13 +154,3 @@ export const spawn = function (/*Multiple Arguments*/ tempArray) {
   }
   return prev
 }
-
-/**
- * Please use spawn instead.
- * Create a spawn action which runs several actions in parallel.
- * @static
- * @deprecated since v3.0 <br /> Please use spawn instead.
- * @param {Array|FiniteTimeAction}tempArray
- * @return {Spawn}
- */
-Spawn.create = spawn

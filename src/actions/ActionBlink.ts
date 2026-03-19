@@ -56,7 +56,7 @@ export class Blink extends ActionInterval {
     if (this.target && !this.isDone()) {
       const slice = 1.0 / this._times
       const m = dt % slice
-      this.target.visible = m > slice / 2
+      this.target.setVisible(m > slice / 2)
     }
   }
 
@@ -73,7 +73,7 @@ export class Blink extends ActionInterval {
    * stop the action
    */
   stop(): void {
-    this.target.visible = this._originalState
+    this.target.setVisible(this._originalState)
     super.stop()
   }
 
@@ -101,13 +101,3 @@ export class Blink extends ActionInterval {
 export const blink = function (duration, blinks) {
   return new Blink(duration, blinks)
 }
-/**
- * Please use blink instead.
- * Blinks a Node object by modifying it's visible attribute.
- * @static
- * @deprecated since v3.0 please use blink instead.
- * @param {Number} duration  duration in seconds
- * @param blinks blinks in times
- * @return {Blink}
- */
-Blink.create = blink

@@ -1,14 +1,4 @@
-import { ActionInterval, actionInterval } from './ActionInterval'
-
-/**
- * Please use actionInterval instead.
- * An interval action is an action that takes place within a certain period of time.
- * @static
- * @deprecated since v3.0 <br /> Please use actionInterval instead.
- * @param {Number} d duration in seconds
- * @return {ActionInterval}
- */
-ActionInterval.create = actionInterval
+import { ActionInterval } from './ActionInterval'
 
 /**
  * Skews a Node object to given angles by modifying it's skewX and skewY attributes
@@ -94,8 +84,8 @@ export class SkewTo extends ActionInterval {
    */
   update(dt: number): void {
     dt = this._computeEaseTime(dt)
-    this.target.skewX = this._startSkewX + this._deltaX * dt
-    this.target.skewY = this._startSkewY + this._deltaY * dt
+    this.target.setSkewX(this._startSkewX + this._deltaX * dt)
+    this.target.setSkewY(this._startSkewY + this._deltaY * dt)
   }
 }
 /**

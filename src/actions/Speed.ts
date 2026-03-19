@@ -66,5 +66,3 @@ export class Speed extends Action {
 export function speed(actionObj: any, speedVal: number) {
   return new Speed(actionObj, speedVal)
 }
-
-Speed.create = speed as any

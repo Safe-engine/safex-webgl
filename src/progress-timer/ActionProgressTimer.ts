@@ -94,9 +94,6 @@ export function progressTo(duration: number, percent: number): ProgressTo {
   return new ProgressTo(duration, percent)
 }
 
-/** @deprecated since v3.0, please use progressTo instead */
-ProgressTo.create = progressTo
-
 /**
  * Progress from a percentage to another percentage
  * @class

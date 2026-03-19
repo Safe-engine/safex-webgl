@@ -174,8 +174,7 @@ export class TMXTiledMap extends Node {
    * map.initWithTMXFile("hello.tmx");
    */
   initWithTMXFile(tmxFile: any) {
-    if (!tmxFile || tmxFile.length === 0)
-      throw new Error('TMXTiledMap.initWithTMXFile(): tmxFile should be non-null or non-empty string.')
+    if (!tmxFile || tmxFile.length === 0) throw new Error('TMXTiledMap.initWithTMXFile(): tmxFile should be non-null or non-empty string.')
     this.width = 0
     this.height = 0
     const mapInfo = new TMXMapInfo(tmxFile)
@@ -376,17 +375,5 @@ export class TMXTiledMap extends Node {
   }
   set tileHeight(height: any) {
     this._setTileHeight(height)
-  }
-
-  /**
-   * Creates a TMX Tiled Map with a TMX file  or content string.
-   * Implementation TMXTiledMap
-   * @deprecated since v3.0 please use new TMXTiledMap(tmxFile,resourcePath) instead.
-   * @param {String} tmxFile tmxFile fileName or content string
-   * @param {String} resourcePath   If tmxFile is a file name ,it is not required.If tmxFile is content string ,it is must required.
-   * @return {TMXTiledMap|undefined}
-   */
-  static create(tmxFile: any, resourcePath?: any) {
-    return new TMXTiledMap(tmxFile, resourcePath)
   }
 }
