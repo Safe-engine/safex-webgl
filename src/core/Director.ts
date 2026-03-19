@@ -61,18 +61,18 @@ export class Director {
   _winSizeInPoints: Size = { width: 0, height: 0 }
 
   private _lastUpdate: number = Date.now()
-  private _nextScene: Scene | null = null
-  private _notificationNode: Node | null = null
-  _openGLView: any = null
+  declare private _nextScene: Scene | null
+  declare private _notificationNode: Node | null
+  declare _openGLView: any
   public _scenesStack: Scene[] = []
-  _projectionDelegate: DirectorDelegate | null = null
-  private _runningScene: Scene | null = null
+  declare _projectionDelegate: DirectorDelegate | null
+  declare private _runningScene: Scene | null
 
   private _totalFrames = 0
   private _secondsPerFrame = 0
 
   private _scheduler: Scheduler
-  private _actionManager: ActionManager | null = null
+  declare private _actionManager: ActionManager | null
   _eventProjectionChanged: EventCustom
   private _eventAfterUpdate: EventCustom
   private _eventAfterVisit: EventCustom
@@ -655,7 +655,7 @@ export class DisplayLinkDirector extends Director {
 // Default FPS
 export const defaultFPS = 60
 
-function recursiveChild(node: any) {
+function recursiveChild(node: Node) {
   if (node && node._renderCmd) {
     node._renderCmd.setDirtyFlag(Node._dirtyFlags.transformDirty)
     const children = node._children

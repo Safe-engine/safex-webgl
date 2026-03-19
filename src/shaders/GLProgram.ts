@@ -1,12 +1,14 @@
 import { _renderContext, director, Game, game, Node } from '..'
 import {
+  getMat4MultiplyValue,
   KM_GL_MODELVIEW,
   KM_GL_PROJECTION,
   kmGLGetMatrix,
+  kmMat4Multiply,
+  Matrix4,
   modelview_matrix_stack,
   projection_matrix_stack,
-} from '../core/kazmath/gl/matrix'
-import { getMat4MultiplyValue, kmMat4Multiply, Matrix4 } from '../core/kazmath/mat4'
+} from '../core/kazmath'
 import {
   checkGLErrorDebug,
   UNIFORM_COSTIME_S,

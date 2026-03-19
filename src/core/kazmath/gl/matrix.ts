@@ -139,6 +139,5 @@ export const kmGLGetMatrix = function (mode, pOut) {
       break
     default:
       throw new Error('Invalid matrix mode specified') //TODO: Proper error handling
-      break
   }
 }

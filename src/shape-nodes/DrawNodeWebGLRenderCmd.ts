@@ -10,8 +10,6 @@ export class DrawNodeWebGLRenderCmd extends NodeWebGLRenderCmd {
 
   constructor(renderableObject: DrawNode) {
     super(renderableObject)
-    this._needDraw = true
-    this._matrix = new Matrix4()
     this._matrix.identity()
   }
 

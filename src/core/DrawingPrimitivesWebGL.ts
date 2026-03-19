@@ -1,5 +1,6 @@
 import { _renderContext } from '..'
 import { cardinalSplineAt, getControlPointAt } from '../actions/ActionCatmullRom'
+import type { GLProgram } from '../shaders'
 import { GLProgramState } from '../shaders/GLProgramState'
 import { shaderCache } from '../shaders/ShaderCache'
 import { Point } from './cocoa/Geometry'
@@ -8,12 +9,12 @@ import { SHADER_POSITION_UCOLOR, VERTEX_ATTRIB_POSITION, contentScaleFactor, inc
 export class DrawingPrimitiveWebGL {
   private _renderContext: WebGLRenderingContext
   private _initialized = false
-  private _shader: any = null
+  declare private _shader: GLProgram
   private _colorLocation = 'u_color'
   private _colorArray: Float32Array
   private _pointSizeLocation = 'u_pointSize'
   private _pointSize = -1
-  private _glProgramState: any = null
+  declare private _glProgramState: GLProgramState
 
   constructor(ctx?: WebGLRenderingContext) {
     if (!ctx) ctx = _renderContext

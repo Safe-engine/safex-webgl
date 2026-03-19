@@ -5,13 +5,13 @@ const MAX_POOL_SIZE = 20
 
 // ListEntry: double-linked list node for updates with priority
 class ListEntry {
-  prev: ListEntry | null
-  next: ListEntry | null
-  callback: (dt: number) => void
-  target: any
-  priority: number
-  paused: boolean
-  markedForDeletion: boolean
+  declare prev: ListEntry | null
+  declare next: ListEntry | null
+  declare callback: (dt: number) => void
+  declare target: any
+  declare priority: number
+  declare paused: boolean
+  declare markedForDeletion: boolean
 
   constructor(
     prev: ListEntry | null,

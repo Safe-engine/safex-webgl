@@ -18,7 +18,7 @@ export class ActionManager {
   private _elementPool: HashElement[] = []
   private _hashTargets: { [id: string]: HashElement } = {}
   private _arrayTargets: HashElement[] = []
-  private _currentTarget: HashElement | null = null
+  declare private _currentTarget: HashElement
 
   constructor() {}
 
