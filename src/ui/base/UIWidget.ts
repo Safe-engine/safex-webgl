@@ -289,7 +289,7 @@ export class Widget extends ProtectedNode {
 
     if (this._running) {
       const widgetParent = this.getWidgetParent()
-      const locWidth = widgetParent ? widgetParent.width : this._parent.width
+      const locWidth = widgetParent ? widgetParent._getWidth() : this._parent._getWidth()
       this._sizePercent.x = locWidth > 0 ? this._customSize.width / locWidth : 0
     }
 
@@ -314,7 +314,7 @@ export class Widget extends ProtectedNode {
 
     if (this._running) {
       const widgetParent = this.getWidgetParent()
-      const locH = widgetParent ? widgetParent.height : this._parent.height
+      const locH = widgetParent ? widgetParent._getHeight() : this._parent._getHeight()
       this._sizePercent.y = locH > 0 ? this._customSize.height / locH : 0
     }
 
@@ -337,11 +337,11 @@ export class Widget extends ProtectedNode {
     if (this._running) {
       const widgetParent = this.getWidgetParent()
       if (widgetParent) {
-        width = widgetParent.width * percent.x
-        height = widgetParent.height * percent.y
+        width = widgetParent._getWidth() * percent.x
+        height = widgetParent._getHeight() * percent.y
       } else {
-        width = this._parent.width * percent.x
-        height = this._parent.height * percent.y
+        width = this._parent._getWidth() * percent.x
+        height = this._parent._getHeight() * percent.y
       }
     }
     if (this._ignoreSize) this.setContentSize(this.getVirtualRendererSize())
@@ -356,7 +356,7 @@ export class Widget extends ProtectedNode {
     let width = this._customSize.width
     if (this._running) {
       const widgetParent = this.getWidgetParent()
-      width = (widgetParent ? widgetParent.width : this._parent.width) * percent
+      width = (widgetParent ? widgetParent._getWidth() : this._parent._getWidth()) * percent
     }
     if (this._ignoreSize) this._setWidth(this.getVirtualRendererSize().width)
     else this._setWidth(width)
@@ -367,7 +367,7 @@ export class Widget extends ProtectedNode {
     let height = this._customSize.height
     if (this._running) {
       const widgetParent = this.getWidgetParent()
-      height = (widgetParent ? widgetParent.height : this._parent.height) * percent
+      height = (widgetParent ? widgetParent._getHeight() : this._parent._getHeight()) * percent
     }
     if (this._ignoreSize) this._setHeight(this.getVirtualRendererSize().height)
     else this._setHeight(height)
@@ -992,7 +992,7 @@ export class Widget extends ProtectedNode {
     if (this._running) {
       const widgetParent = this.getWidgetParent()
       if (widgetParent) {
-        const pw = widgetParent.width
+        const pw = widgetParent._getWidth()
         if (pw <= 0) this._positionPercent.x = 0
         else this._positionPercent.x = x / pw
       }
@@ -1004,7 +1004,7 @@ export class Widget extends ProtectedNode {
     if (this._running) {
       const widgetParent = this.getWidgetParent()
       if (widgetParent) {
-        const ph = widgetParent.height
+        const ph = widgetParent._getHeight()
         if (ph <= 0) this._positionPercent.y = 0
         else this._positionPercent.y = y / ph
       }

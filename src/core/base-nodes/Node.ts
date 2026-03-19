@@ -17,7 +17,6 @@ import { Color, color } from '../platform/Color'
 import { arrayRemoveObject, REPEAT_FOREVER } from '../platform/Macro'
 import { Scheduler } from '../Scheduler'
 import { pAdd, pSub } from '../support/PointExtension'
-import { PrototypeCCNode } from './BaseNodesPropertyDefine'
 import { dirtyFlags } from './NodeRenderCmd'
 import { NodeWebGLRenderCmd } from './NodeWebGLRenderCmd'
 
@@ -29,9 +28,9 @@ export function s_globalOrderOfArrivalPP() {
 
 export class Node extends EventHelper {
   // declare findNextFocusedWidget: (direction: any, arg1: this) => void
-  declare zIndex: number
-  declare width: number
-  declare height: number
+  // declare zIndex: number
+  // declare width: number
+  // declare height: number
   declare _imageRenderer: any
   // declare _doLayout: (target: any) => void
   declare _doLayoutDirty: boolean
@@ -1147,7 +1146,7 @@ export class Node extends EventHelper {
   }
 }
 
-PrototypeCCNode()
+// PrototypeCCNode()
 // Minimal runtime fallbacks used during migration
 // export const REPEAT_FOREVER = -1
 export const ACTION_TAG_INVALID = -1

@@ -175,8 +175,7 @@ export class TMXTiledMap extends Node {
    */
   initWithTMXFile(tmxFile: any) {
     if (!tmxFile || tmxFile.length === 0) throw new Error('TMXTiledMap.initWithTMXFile(): tmxFile should be non-null or non-empty string.')
-    this.width = 0
-    this.height = 0
+    this.setContentSize(0, 0)
     const mapInfo = new TMXMapInfo(tmxFile)
     if (!mapInfo) return false
 
@@ -193,8 +192,7 @@ export class TMXTiledMap extends Node {
    * @return {Boolean} Whether the initialization was successful.
    */
   initWithXML(tmxString: any, resourcePath: any) {
-    this.width = 0
-    this.height = 0
+    this.setContentSize(0, 0)
 
     const mapInfo = new TMXMapInfo(tmxString, resourcePath)
     const locTilesets = mapInfo.getTilesets()
@@ -221,8 +219,9 @@ export class TMXTiledMap extends Node {
           const child = this._parseLayer(layerInfo, mapInfo)
           this.addChild(child, idx, idx)
           // update content size with the max size
-          this.width = Math.max(this.width, child.width)
-          this.height = Math.max(this.height, child.height)
+          const width = Math.max(this._getWidth(), child._getWidth())
+          const height = Math.max(this._getHeight(), child._getHeight())
+          this.setContentSize(width, height)
           idx++
         }
       }

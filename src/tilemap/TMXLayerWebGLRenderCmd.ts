@@ -161,12 +161,12 @@ export class TMXLayerWebGLRenderCmd extends NodeWebGLRenderCmd {
           case TMX_ORIENTATION_ISO:
             left = (maptw / 2) * (cols + col - row - 1)
             bottom = (mapth / 2) * (rows * 2 - col - row - 2)
-            z = node._vertexZ + (renderer.assignedZStep * (node.height - bottom)) / node.height
+            z = node._vertexZ + (renderer.assignedZStep * (node._getHeight() - bottom)) / node._getHeight()
             break
           case TMX_ORIENTATION_HEX:
             left = (col * maptw * 3) / 4
             bottom = (rows - row - 1) * mapth + (col % 2 === 1 ? -mapth / 2 : 0)
-            z = node._vertexZ + (renderer.assignedZStep * (node.height - bottom)) / node.height
+            z = node._vertexZ + (renderer.assignedZStep * (node._getHeight() - bottom)) / node._getHeight()
             break
         }
         right = left + tilew

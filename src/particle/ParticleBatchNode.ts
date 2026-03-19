@@ -390,7 +390,7 @@ export class ParticleBatchNode extends Node {
     const locChildren = this._children
     const count = locChildren.length
     for (let i = 0; i < count; i++) {
-      if (locChildren[i].zIndex > z) return i
+      if (locChildren[i].getLocalZOrder() > z) return i
     }
     return count
   }
@@ -408,7 +408,7 @@ export class ParticleBatchNode extends Node {
     for (let i = 0; i < count; i++) {
       const pNode = locChildren[i]
       // new index
-      if (pNode.zIndex > z && !foundNewIdx) {
+      if (pNode.getLocalZOrder() > z && !foundNewIdx) {
         newIndex = i
         foundNewIdx = true
 

@@ -8,7 +8,6 @@ import { animationCache } from './AnimationCache'
 import { SpriteFrame } from './SpriteFrame'
 import { spriteFrameCache } from './SpriteFrameCache'
 import { SpriteLoadManager } from './SpriteLoadManager'
-import { PrototypeSprite } from './SpritesPropertyDefine'
 import { SpriteWebGLRenderCmd } from './SpriteWebGLRenderCmd'
 
 export class Sprite extends Node {
@@ -452,4 +451,4 @@ export class Sprite extends Node {
   static readonly INDEX_NOT_INITIALIZED = -1
 }
 
-PrototypeSprite()
+// PrototypeSprite()

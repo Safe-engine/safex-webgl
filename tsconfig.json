@@ -4,6 +4,7 @@
     "target": "ES2022",
     "declaration": true,
     "declarationMap": true,
+    "sourceMap": true,
     "useDefineForClassFields": true,
     "module": "ESNext",
     "lib": [

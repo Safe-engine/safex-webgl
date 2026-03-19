@@ -7,7 +7,6 @@ import { Color, color, contentScaleFactor } from '../platform'
 import { FontDefinition } from '../platform/FontDefinition'
 import { TEXT_ALIGNMENT_CENTER, TEXT_ALIGNMENT_LEFT, VERTICAL_TEXT_ALIGNMENT_TOP } from '../platform/Types'
 import { Sprite } from '../sprites/Sprite'
-import { PrototypeLabelTTF } from './LabelTTFPropertyDefine'
 import { LabelTTFWebGLRenderCmd } from './LabelTTFWebGLRenderCmd'
 
 /**
@@ -888,7 +887,7 @@ export class LabelTTF extends Sprite {
   static __fontHeightCache = {}
 }
 
-PrototypeLabelTTF()
+// PrototypeLabelTTF()
 
 // Only support style in this format: "18px Verdana" or "18px 'Helvetica Neue'"
 

@@ -138,9 +138,9 @@ export class SpriteBatchNode extends Node {
    * @return {Number}
    * @deprecated since v3.12
    */
-  highestAtlasIndexInChild(sprite: any): any {
-    const children = sprite.children
-    if (!children || children.length === 0) return sprite.zIndex
+  highestAtlasIndexInChild(sprite: Node) {
+    const children = sprite.getChildren()
+    if (!children || children.length === 0) return sprite.getLocalZOrder()
     else return this.highestAtlasIndexInChild(children[children.length - 1])
   }
 
@@ -150,9 +150,9 @@ export class SpriteBatchNode extends Node {
    * @return {Number}
    * @deprecated since v3.12
    */
-  lowestAtlasIndexInChild(sprite: any): any {
-    const children = sprite.children
-    if (!children || children.length === 0) return sprite.zIndex
+  lowestAtlasIndexInChild(sprite: Node) {
+    const children = sprite.getChildren()
+    if (!children || children.length === 0) return sprite.getLocalZOrder()
     else return this.lowestAtlasIndexInChild(children[children.length - 1])
   }
 
@@ -162,8 +162,8 @@ export class SpriteBatchNode extends Node {
    * @return {Number}
    * @deprecated since v3.12
    */
-  atlasIndexForChild(sprite: any) {
-    return sprite.zIndex
+  atlasIndexForChild(sprite: Node) {
+    return sprite.getLocalZOrder()
   }
 
   /**
@@ -335,7 +335,7 @@ export class SpriteBatchNode extends Node {
 
     if (!this._isValidChild(child)) return
 
-    zOrder = zOrder === undefined ? child.zIndex : zOrder
+    zOrder = zOrder ?? child.getLocalZOrder()
     tag = tag === undefined ? child.tag : tag
     super.addChild(child, zOrder, tag)
 

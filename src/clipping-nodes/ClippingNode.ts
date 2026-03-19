@@ -1,5 +1,4 @@
 import { Node } from '../core/base-nodes/Node'
-import { defineGetterSetter } from '../helper/getset'
 import { ClippingNodeWebGLRenderCmd } from './ClippingNodeWebGLRenderCmd'
 
 /**
@@ -189,6 +188,6 @@ export class ClippingNode extends Node {
 ClippingNode.prototype._className = 'ClippingNode'
 
 // Extended properties
-const _p = ClippingNode.prototype
-defineGetterSetter(_p, 'stencil', _p.getStencil, _p.setStencil)
-defineGetterSetter(_p, 'alphaThreshold', _p.getAlphaThreshold, _p.setAlphaThreshold)
+// const _p = ClippingNode.prototype
+// defineGetterSetter(_p, 'stencil', _p.getStencil, _p.setStencil)
+// defineGetterSetter(_p, 'alphaThreshold', _p.getAlphaThreshold, _p.setAlphaThreshold)

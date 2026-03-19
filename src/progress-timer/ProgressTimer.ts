@@ -202,7 +202,7 @@ export class ProgressTimer extends Node {
     if (this._sprite !== sprite) {
       this._sprite = sprite
       if (sprite) {
-        this.setContentSize(sprite.width, sprite.height)
+        this.setContentSize(sprite._getWidth(), sprite._getHeight())
         sprite.ignoreAnchorPointForPosition(true)
       } else {
         this.setContentSize(0, 0)

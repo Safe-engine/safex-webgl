@@ -94,7 +94,7 @@ export class TMXLayer extends SpriteBatchNode {
    */
   constructor(tilesetInfo?: any, layerInfo?: any, mapInfo?: any) {
     super()
-    ;(this as any)._descendants = []
+    // this._descendants = []
 
     this._layerSize = Size(0, 0)
     this._mapTileSize = Size(0, 0)

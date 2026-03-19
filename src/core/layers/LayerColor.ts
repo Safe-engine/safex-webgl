@@ -1,5 +1,4 @@
 import { color, director, Node, renderer } from '../..'
-import { defineGetterSetter } from '../../helper/getset'
 import { BlendFunc } from '../platform'
 import { Layer } from './Layer'
 import { LayerColorWebGLRenderCmd } from './LayerWebGLRenderCmd'
@@ -24,9 +23,8 @@ export class LayerColor extends Layer {
    * @param {Number} w width
    * @param {Number} h height
    */
-  changeWidthAndHeight(w: any, h: any) {
-    this.width = w
-    this.height = h
+  changeWidthAndHeight(w: number, h: number) {
+    this.setContentSize(w, h)
   }
 
   /**
@@ -35,8 +33,8 @@ export class LayerColor extends Layer {
    * @see Node#setContentSize
    * @param {Number} w width
    */
-  changeWidth(w: any) {
-    this.width = w
+  changeWidth(w: number) {
+    this._setWidth(w)
   }
 
   /**
@@ -46,7 +44,7 @@ export class LayerColor extends Layer {
    * @param {Number} h height
    */
   changeHeight(h: any) {
-    this.height = h
+    this._setHeight(h)
   }
 
   setOpacityModifyRGB(value: any) {}
@@ -160,9 +158,3 @@ export class LayerColor extends Layer {
     return new LayerColorWebGLRenderCmd(this)
   }
 }
-
-;(function () {
-  const proto = LayerColor.prototype
-  defineGetterSetter(proto, 'width', proto._getWidth, proto._setWidth)
-  defineGetterSetter(proto, 'height', proto._getHeight, proto._setHeight)
-})()
