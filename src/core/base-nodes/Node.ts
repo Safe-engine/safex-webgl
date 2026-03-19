@@ -67,16 +67,16 @@ export class Node extends EventHelper {
   _rotationY = 0.0
   _scaleX = 1.0
   _scaleY = 1.0
-  _position: Point = null
-  _normalizedPosition = null
+  declare _position: Point
+  declare _normalizedPosition
   _usingNormalizedPosition = false
   _normalizedPositionDirty = false
   _skewX = 0.0
   _skewY = 0.0
   _children: Node[] = []
   _visible = true
-  _anchorPoint: Point = null
-  _contentSize: Size = null
+  declare _anchorPoint: Point
+  declare _contentSize: Size
   _running = false
   _parent: Node = null
   _ignoreAnchorPointForPosition = false
@@ -96,7 +96,7 @@ export class Node extends EventHelper {
   _showNode = false
   _name = ''
   _realOpacity = 255
-  _realColor: Color = null
+  declare _realColor: Color
   _cascadeColorEnabled = false
   _cascadeOpacityEnabled = false
   declare _renderCmd: NodeWebGLRenderCmd
@@ -371,7 +371,7 @@ export class Node extends EventHelper {
   getParent() {
     return this._parent
   }
-  setParent(parent: any) {
+  setParent(parent: Node) {
     this._parent = parent
     this._renderCmd.setDirtyFlag(Node._dirtyFlags.transformDirty)
   }
@@ -379,7 +379,7 @@ export class Node extends EventHelper {
   isIgnoreAnchorPointForPosition() {
     return this._ignoreAnchorPointForPosition
   }
-  ignoreAnchorPointForPosition(newValue: any) {
+  ignoreAnchorPointForPosition(newValue: boolean) {
     if (newValue !== this._ignoreAnchorPointForPosition) {
       this._ignoreAnchorPointForPosition = newValue
       this._renderCmd.setDirtyFlag(Node._dirtyFlags.transformDirty)

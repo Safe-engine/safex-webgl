@@ -7,7 +7,7 @@ import { warn } from '../../helper/Debugger'
  * @extends Class
  */
 export class SAXParser {
-  private _parser: DOMParser | null = null
+  declare private _parser: DOMParser
 
   constructor() {
     this._parser = new DOMParser()

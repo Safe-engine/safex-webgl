@@ -14,12 +14,12 @@ import { Vertex2F } from './Vertex2F'
 export class Quad2 {
   static BYTES_PER_ELEMENT = 32
 
-  _arrayBuffer: ArrayBuffer
-  _offset: number
-  _tl: Vertex2F
-  _tr: Vertex2F
-  _bl: Vertex2F
-  _br: Vertex2F
+  declare _arrayBuffer: ArrayBuffer
+  declare _offset: number
+  declare _tl: Vertex2F
+  declare _tr: Vertex2F
+  declare _bl: Vertex2F
+  declare _br: Vertex2F
 
   constructor(tl?: Vertex2F, tr?: Vertex2F, bl?: Vertex2F, br?: Vertex2F, arrayBuffer?: ArrayBuffer, offset?: number) {
     this._arrayBuffer = arrayBuffer || new ArrayBuffer(Quad2.BYTES_PER_ELEMENT)

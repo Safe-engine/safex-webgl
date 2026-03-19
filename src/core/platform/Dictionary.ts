@@ -12,7 +12,7 @@ export class Dictionary {
     return `key_${this.__currId}`
   }
 
-  setObject(value: any, key: any): void {
+  setObject(value: any, key: any) {
     if (key == null) return
 
     const keyId = this.__getKey()
@@ -34,7 +34,7 @@ export class Dictionary {
     return this.objectForKey(key)
   }
 
-  removeObjectForKey(key: any): void {
+  removeObjectForKey(key: any) {
     if (key == null) return
 
     const locKeyMapTb = this._keyMapTb
@@ -47,7 +47,7 @@ export class Dictionary {
     }
   }
 
-  removeObjectsForKeys(keys: any[]): void {
+  removeObjectsForKeys(keys: any[]) {
     if (keys == null) return
 
     for (let i = 0; i < keys.length; i++) this.removeObjectForKey(keys[i])
@@ -60,12 +60,12 @@ export class Dictionary {
     return keyArr
   }
 
-  removeAllObjects(): void {
+  removeAllObjects() {
     this._keyMapTb = {}
     this._valueMapTb = {}
   }
 
-  count(): number {
+  count() {
     return this.allKeys().length
   }
 }

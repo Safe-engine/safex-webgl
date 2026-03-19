@@ -1,15 +1,16 @@
 import { isString } from '../../helper/checkType'
 import { _LogInfos, assert, log } from '../../helper/Debugger'
-import { defineGetterSetter } from '../../helper/getset'
+import type { GLProgram } from '../../shaders'
 import { Texture2D, textureCache } from '../../textures'
 import { Node } from '../base-nodes/Node'
 import { BLEND_DST, BLEND_SRC, BlendFunc } from '../platform'
 import { Sprite } from './Sprite'
 
 export class SpriteBatchNode extends Node {
-  _blendFunc: any = null
+  declare _blendFunc: BlendFunc
   // all descendants: chlidren, gran children, etc...
-  _texture: any = null
+  declare _texture: Texture2D
+  declare _children: Sprite[]
   _className = 'SpriteBatchNode'
 
   constructor(fileImage?: any) {
@@ -288,14 +289,14 @@ export class SpriteBatchNode extends Node {
    * @function
    * @param {Texture2D} texture
    */
-  setTexture(texture: any) {
+  setTexture(texture: Texture2D) {
     this._texture = texture
 
     if (texture._textureLoaded) {
       const children = this._children
       const len = children.length
       for (let i = 0; i < len; ++i) {
-        ;(children[i] as any).setTexture(texture)
+        children[i].setTexture(texture)
       }
     } else {
       texture.addEventListener(
@@ -304,7 +305,7 @@ export class SpriteBatchNode extends Node {
           const children = this._children
           const len = children.length
           for (let i = 0; i < len; ++i) {
-            ;(children[i] as any).setTexture(texture)
+            children[i].setTexture(texture)
           }
         },
         this,
@@ -312,12 +313,12 @@ export class SpriteBatchNode extends Node {
     }
   }
 
-  setShaderProgram(newShaderProgram: any) {
+  setShaderProgram(newShaderProgram: GLProgram) {
     this._renderCmd.setShaderProgram(newShaderProgram)
     const children = this._children
     const len = children.length
     for (let i = 0; i < len; ++i) {
-      ;(children[i] as any).setShaderProgram(newShaderProgram)
+      children[i].setShaderProgram(newShaderProgram)
     }
   }
 
@@ -329,7 +330,7 @@ export class SpriteBatchNode extends Node {
    * @param {Number} [zOrder]
    * @param {Number} [tag]
    */
-  addChild(child: any, zOrder?: any, tag?: any) {
+  addChild(child: Node, zOrder?: number, tag?: number) {
     assert(child !== undefined, _LogInfos.CCSpriteBatchNode_addChild_3)
 
     if (!this._isValidChild(child)) return
@@ -340,11 +341,11 @@ export class SpriteBatchNode extends Node {
 
     // Apply shader
     if (this._renderCmd._shaderProgram) {
-      child.shaderProgram = this._renderCmd._shaderProgram
+      child.setShaderProgram(this._renderCmd._shaderProgram)
     }
   }
 
-  _isValidChild(child: any) {
+  _isValidChild(child: Node) {
     if (!(child instanceof Sprite)) {
       log(_LogInfos.Sprite_addChild_4)
       return false
@@ -357,8 +358,8 @@ export class SpriteBatchNode extends Node {
   }
 }
 
-const _p: any = SpriteBatchNode.prototype
+// const _p: any = SpriteBatchNode.prototype
 
-// Override properties
-defineGetterSetter(_p, 'texture', _p.getTexture, _p.setTexture)
-defineGetterSetter(_p, 'shaderProgram', _p.getShaderProgram, _p.setShaderProgram)
+// // Override properties
+// defineGetterSetter(_p, 'texture', _p.getTexture, _p.setTexture)
+// defineGetterSetter(_p, 'shaderProgram', _p.getShaderProgram, _p.setShaderProgram)

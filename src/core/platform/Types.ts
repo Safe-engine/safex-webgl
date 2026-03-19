@@ -385,14 +385,8 @@ _p._setC = function (cValue) {
   locC.texCoords = cValue.texCoords
 }
 
-/** @expose */
-_p.a
 defineGetterSetter(_p, 'a', _p._getA, _p._setA)
-/** @expose */
-_p.b
 defineGetterSetter(_p, 'b', _p._getB, _p._setB)
-/** @expose */
-_p.c
 defineGetterSetter(_p, 'c', _p._getC, _p._setC)
 
 /**

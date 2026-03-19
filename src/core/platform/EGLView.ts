@@ -75,16 +75,16 @@ let _scissorRect: Rect | null = null
 
 export class EGLView {
   // fields
-  _delegate: any = null
+  declare _delegate: any
   // Size of parent node that contains game.container and game.canvas
-  _frameSize: Size
+  declare _frameSize: Size
   // resolution size, it is the size appropriate for the app resources.
-  _designResolutionSize: Size
-  _originalDesignResolutionSize: Size
+  declare _designResolutionSize: Size
+  declare _originalDesignResolutionSize: Size
   // Viewport is the container's Rect related to content's coordinates in pixel
-  _viewPortRect: Rect
+  declare _viewPortRect: Rect
   // The visible Rect in content's coordinate in point
-  _visibleRect: Rect
+  declare _visibleRect: Rect
   _retinaEnabled = false
   _autoFullScreen = false
   // The device's pixel ratio (for retina displays)
@@ -92,7 +92,7 @@ export class EGLView {
   // the view name
   _viewName = ''
   // Custom callback for resize event
-  _resizeCallback: (() => void) | null = null
+  declare _resizeCallback: (() => void) | null
 
   _orientationChanging = true
   _resizing = false

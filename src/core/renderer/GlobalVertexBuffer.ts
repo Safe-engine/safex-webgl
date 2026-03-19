@@ -3,14 +3,14 @@ import { V3F_C4B_T2F_Quad } from '../platform/Types'
 const VERTICES_SIZE = 888
 
 export class GlobalVertexBuffer {
-  gl: WebGLRenderingContext
-  vertexBuffer: WebGLBuffer | null
-  size: number
-  byteLength: number
-  data: ArrayBuffer | null
-  dataArray: Float32Array | null
-  _dirty: boolean
-  _spaces: Record<number, number>
+  declare gl: WebGLRenderingContext
+  declare vertexBuffer: WebGLBuffer | null
+  declare size: number
+  declare byteLength: number
+  declare data: ArrayBuffer | null
+  declare dataArray: Float32Array | null
+  declare _dirty: boolean
+  declare _spaces: Record<number, number>
 
   constructor(gl: WebGLRenderingContext, byteLength?: number) {
     // WebGL buffer

@@ -1,9 +1,9 @@
 export class Vertex3F {
   static BYTES_PER_ELEMENT = 12
 
-  _arrayBuffer: ArrayBuffer
-  _offset: number
-  _view: Float32Array
+  declare _arrayBuffer: ArrayBuffer
+  declare _offset: number
+  declare _view: Float32Array
 
   constructor(x = 0, y = 0, z = 0, arrayBuffer?: ArrayBuffer, offset?: number) {
     this._arrayBuffer = arrayBuffer || new ArrayBuffer(Vertex3F.BYTES_PER_ELEMENT)

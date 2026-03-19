@@ -1,5 +1,3 @@
-import { defineGetterSetter } from '../../../helper/getset'
-
 /**
  * @class Tex2F
  * @param {Number} u
@@ -11,9 +9,9 @@ import { defineGetterSetter } from '../../../helper/getset'
 export class Tex2F {
   static BYTES_PER_ELEMENT = 8
 
-  _arrayBuffer: ArrayBuffer
-  _offset: number
-  _view: Float32Array
+  declare _arrayBuffer: ArrayBuffer
+  declare _offset: number
+  declare _view: Float32Array
 
   constructor(u?: number, v?: number, arrayBuffer?: ArrayBuffer, offset?: number) {
     this._arrayBuffer = arrayBuffer || new ArrayBuffer(Tex2F.BYTES_PER_ELEMENT)
@@ -41,5 +39,5 @@ export class Tex2F {
   }
 }
 
-defineGetterSetter(Tex2F.prototype, 'u', Tex2F.prototype._getU, Tex2F.prototype._setU)
-defineGetterSetter(Tex2F.prototype, 'v', Tex2F.prototype._getV, Tex2F.prototype._setV)
+// defineGetterSetter(Tex2F.prototype, 'u', Tex2F.prototype._getU, Tex2F.prototype._setU)
+// defineGetterSetter(Tex2F.prototype, 'v', Tex2F.prototype._getV, Tex2F.prototype._setV)

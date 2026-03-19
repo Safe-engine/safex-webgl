@@ -9,8 +9,4 @@ export class Scene extends Node {
     this.setAnchorPoint(0.5, 0.5)
     this.setContentSize(director.getWinSize())
   }
-
-  static create = function () {
-    return new Scene()
-  }
 }

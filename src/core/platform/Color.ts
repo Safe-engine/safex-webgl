@@ -1,5 +1,5 @@
 export class Color {
-  _val: number
+  declare _val: number
   static WHITE = new Color(255, 255, 255, 255)
   static YELLOW = new Color(255, 255, 0)
   static BLUE = new Color(0, 0, 255, 255)

@@ -7,9 +7,9 @@ import { SpriteFrame } from './SpriteFrame'
  * with per-frame timing and optionally user-defined metadata.
  */
 export class AnimationFrame {
-  _spriteFrame: SpriteFrame | null = null
+  declare _spriteFrame: SpriteFrame
   _delayPerUnit = 0
-  _userInfo: any | null = null
+  declare _userInfo: any
 
   constructor(spriteFrame?: SpriteFrame, delayUnits?: number, userInfo?: any) {
     this._spriteFrame = spriteFrame || null

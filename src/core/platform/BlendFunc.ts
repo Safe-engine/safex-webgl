@@ -8,8 +8,8 @@ import { ONE, ONE_MINUS_SRC_ALPHA, SRC_ALPHA, ZERO } from './Macro'
  * @param {Number} dst1 destination blend function
  */
 export class BlendFunc {
-  src: number
-  dst: number
+  declare src: number
+  declare dst: number
 
   constructor(src1: number, dst1: number) {
     this.src = src1

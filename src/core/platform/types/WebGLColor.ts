@@ -1,11 +1,10 @@
-
 export class WebGLColor {
   static BYTES_PER_ELEMENT = 4
 
-  _arrayBuffer: ArrayBuffer
-  _offset: number
-  _view: Uint8Array
-  a_undefined?: boolean
+  declare _arrayBuffer: ArrayBuffer
+  declare _offset: number
+  declare _view: Uint8Array
+  declare a_undefined?: boolean
 
   constructor(r?: number, g?: number, b?: number, a?: number, arrayBuffer?: ArrayBuffer, offset?: number) {
     this._arrayBuffer = arrayBuffer || new ArrayBuffer(WebGLColor.BYTES_PER_ELEMENT)
@@ -31,7 +30,7 @@ export class WebGLColor {
     this._view[0] = value < 0 ? 0 : value
   }
 
-  get g () {
+  get g() {
     return this._view[1]
   }
 
