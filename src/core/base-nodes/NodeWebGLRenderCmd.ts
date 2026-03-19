@@ -1,20 +1,22 @@
 import { GLProgram, GLProgramState } from '../../shaders'
+import type { Node } from './Node'
 import { NodeRenderCmd } from './NodeRenderCmd'
 
 export class NodeWebGLRenderCmd extends NodeRenderCmd {
   declare _glProgramState: GLProgramState
   declare _stackMatrix
   // declare _rootCtor: typeof NodeWebGLRenderCmd
+  declare _node: Node
 
-  constructor(renderable: any) {
+  constructor(renderable: Node) {
     super(renderable)
     this._glProgramState = null
     // this._rootCtor = NodeWebGLRenderCmd
   }
 
-  _updateColor(): void {}
+  _updateColor() {}
 
-  setShaderProgram(shaderProgram: any): void {
+  setShaderProgram(shaderProgram: GLProgram) {
     this._glProgramState = GLProgramState.getOrCreateWithGLProgram(shaderProgram)
   }
 
@@ -22,11 +24,11 @@ export class NodeWebGLRenderCmd extends NodeRenderCmd {
     return this._glProgramState ? this._glProgramState.getGLProgram() : null
   }
 
-  getGLProgramState(): any {
+  getGLProgramState() {
     return this._glProgramState
   }
 
-  setGLProgramState(glProgramState: any): void {
+  setGLProgramState(glProgramState: GLProgramState) {
     this._glProgramState = glProgramState
   }
 

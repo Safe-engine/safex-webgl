@@ -6,13 +6,18 @@ import { Quaternion } from './quaternion'
 import { EPSILON } from './utility'
 import { Vec3 } from './vec3'
 
-export const Matrix4 = function (mat4?) {
-  if (mat4 && mat4.mat) {
-    this.mat = new Float32Array(mat4.mat)
-  } else {
-    this.mat = new Float32Array(16)
+export class Matrix4 {
+  mat: Float32Array
+
+  constructor(mat4?: Matrix4) {
+    if (mat4 && mat4.mat) {
+      this.mat = new Float32Array(mat4.mat)
+    } else {
+      this.mat = new Float32Array(16)
+    }
   }
 }
+
 export const kmMat4 = Matrix4
 const proto = Matrix4.prototype
 

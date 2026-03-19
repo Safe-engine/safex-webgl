@@ -49,7 +49,7 @@ export class DrawNode extends Node {
   declare _blendFunc: BlendFunc
   _lineWidth = 1
   declare _drawColor: Color
-  _localBB: Rect
+  declare _localBB: Rect
   declare _renderCmd: DrawNodeWebGLRenderCmd
 
   setLocalBB(rectorX, y, width, height) {

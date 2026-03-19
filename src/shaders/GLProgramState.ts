@@ -270,7 +270,7 @@ export class GLProgramState {
 
   static _cache: Record<string, GLProgramState> = {}
 
-  static getOrCreateWithGLProgram(glprogram: any) {
+  static getOrCreateWithGLProgram(glprogram: GLProgram) {
     let programState = GLProgramState._cache[glprogram.__instanceId]
     if (!programState) {
       programState = new GLProgramState(glprogram)

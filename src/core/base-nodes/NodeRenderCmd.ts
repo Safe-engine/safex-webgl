@@ -1,6 +1,6 @@
 import { renderer } from '../..'
 import { affineTransformConcatIn, affineTransformInvertOut } from '../cocoa/AffineTransform'
-import { p } from '../cocoa/Geometry'
+import { p, Point } from '../cocoa/Geometry'
 import { color, Color } from '../platform/Color'
 import { Node } from './Node'
 
@@ -62,8 +62,8 @@ function transformChildTree(root) {
 }
 
 class NodeRenderCmd {
-  _node: Node
-  _anchorPointInPoints: { x: number; y: number }
+  declare _node: Node
+  declare _anchorPointInPoints: Point
   declare _displayedColor: Color
 
   _needDraw = false
@@ -74,13 +74,13 @@ class NodeRenderCmd {
   _cascadeColorEnabledDirty = false
   _cascadeOpacityEnabledDirty = false
 
-  _transform: any = null
-  _worldTransform: any = null
+  declare _transform: any
+  declare _worldTransform: any
   declare _inverse: any
 
   declare _updateCurrentRegions?: () => void
   // _notifyRegionStatus?: (status: any) => void
-  _cacheDirty?: boolean
+  declare _cacheDirty?: boolean
 
   constructor(renderable: Node) {
     this._node = renderable

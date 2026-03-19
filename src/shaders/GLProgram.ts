@@ -23,12 +23,13 @@ import { loader } from '../helper/loader'
 import { glDeleteProgram, glUseProgram } from './GLStateCache'
 
 export class GLProgram {
-  _glContext: WebGLRenderingContext = null
-  _programObj: WebGLProgram = null
-  _vertShader: WebGLShader = null
-  _fragShader: WebGLShader = null
-  _uniforms: any = null
-  _hashForUniforms: any = null
+  declare _glContext: WebGLRenderingContext
+  declare _programObj: WebGLProgram
+  declare _vertShader: WebGLShader
+  declare _fragShader: WebGLShader
+  declare _uniforms: any
+  declare _hashForUniforms: any
+  declare __instanceId: any
   _usesTime = false
   _projectionUpdated = -1
 

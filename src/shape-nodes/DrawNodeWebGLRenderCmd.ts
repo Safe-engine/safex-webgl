@@ -1,15 +1,17 @@
 import { NodeWebGLRenderCmd } from '../core/base-nodes/NodeWebGLRenderCmd'
 import { Matrix4 } from '../core/kazmath/mat4'
 import { glBlendFunc } from '../shaders/GLStateCache'
-import { DrawNode } from './DrawNode'
+import type { DrawNode } from './DrawNode'
 
 export class DrawNodeWebGLRenderCmd extends NodeWebGLRenderCmd {
   _needDraw = true
   _matrix = new Matrix4()
   declare _node: DrawNode
 
-  constructor(renderableObject) {
+  constructor(renderableObject: DrawNode) {
     super(renderableObject)
+    this._needDraw = true
+    this._matrix = new Matrix4()
     this._matrix.identity()
   }
 
