@@ -207,7 +207,7 @@ export class Texture2D extends EventHelper {
 
   shaderProgram: GLProgram
 
-  _textureLoaded: boolean
+  // _textureLoaded: boolean
   _htmlElementObj: any
   _webTextureObj: WebGLTexture
 

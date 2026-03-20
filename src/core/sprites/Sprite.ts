@@ -38,7 +38,7 @@ export class Sprite extends Node {
   declare _setReorderChildDirtyRecursively: () => void
   declare _renderCmd: SpriteWebGLRenderCmd
 
-  constructor(fileName?: string, rectArg?: Rect, rotated?: boolean) {
+  constructor(fileName?: string | Texture2D | SpriteFrame, rectArg?: Rect, rotated?: boolean) {
     super()
     this.setAnchorPoint(0.5, 0.5)
     this._loader = new SpriteLoadManager()
