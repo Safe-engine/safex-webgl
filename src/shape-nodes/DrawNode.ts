@@ -1,7 +1,7 @@
 import { _renderContext } from '..'
 import { cardinalSplineAt, getControlPointAt } from '../actions/ActionCatmullRom'
 import { Node, pNormalizeIn } from '../core'
-import { p, Point, Rect } from '../core/cocoa/Geometry'
+import { p, Point } from '../core/cocoa/Geometry'
 import {
   BlendFunc,
   checkGLErrorDebug,
@@ -50,23 +50,23 @@ export class DrawNode extends Node {
   declare _blendFunc: BlendFunc
   _lineWidth = 1
   declare _drawColor: Color
-  declare _localBB: Rect
+  // declare _localBB: Rect
   declare _renderCmd: DrawNodeWebGLRenderCmd
 
-  setLocalBB(rectorX, y, width, height) {
-    const localBB = this._localBB
-    if (y === undefined) {
-      localBB.x = rectorX.x
-      localBB.y = rectorX.y
-      localBB.width = rectorX.width
-      localBB.height = rectorX.height
-    } else {
-      localBB.x = rectorX
-      localBB.y = y
-      localBB.width = width
-      localBB.height = height
-    }
-  }
+  // setLocalBB(rectorX, y, width, height) {
+  //   const localBB = this._localBB
+  //   if (y === undefined) {
+  //     localBB.x = rectorX.x
+  //     localBB.y = rectorX.y
+  //     localBB.width = rectorX.width
+  //     localBB.height = rectorX.height
+  //   } else {
+  //     localBB.x = rectorX
+  //     localBB.y = y
+  //     localBB.width = width
+  //     localBB.height = height
+  //   }
+  // }
   /**
    * Gets the blend func
    * @returns {Object}
@@ -138,7 +138,7 @@ export class DrawNode extends Node {
     this.manualRelease = manualRelease
 
     this._dirty = true
-    this._localBB = Rect()
+    // this._localBB = Rect()
   }
 
   onEnter() {

@@ -392,7 +392,7 @@ export class Layout extends Widget {
       rect[3] = p(0, size.height)
       const green = Color.GREEN
       this._clippingStencil.clear()
-      this._clippingStencil.setLocalBB(0, 0, size.width, size.height)
+      // this._clippingStencil.setLocalBB(0, 0, size.width, size.height)
       this._clippingStencil.drawPoly(rect, green, 0, green)
     }
   }
