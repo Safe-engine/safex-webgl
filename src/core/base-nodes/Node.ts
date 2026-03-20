@@ -37,7 +37,7 @@ export class Node extends EventHelper {
   declare _isFocusPassing: boolean
   declare _rect: Rect
   declare _unflippedOffsetPositionFromCenter: Point
-  declare _batchNode: any
+  // declare _batchNode: any
   declare _protectedChildren
   // declare textureAtlas: any
   // declare _texture: any

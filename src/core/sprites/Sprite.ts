@@ -6,6 +6,7 @@ import { Node } from '../base-nodes/Node'
 import { p, Point, Rect, Size } from '../cocoa/Geometry'
 import { BLEND_DST, BLEND_SRC, pointPointsToPixels, rectPointsToPixels, sizePointsToPixels } from '../platform/Macro'
 import { animationCache } from './AnimationCache'
+import type { SpriteBatchNode } from './SpriteBatchNode'
 import { SpriteFrame } from './SpriteFrame'
 import { spriteFrameCache } from './SpriteFrameCache'
 import { SpriteLoadManager } from './SpriteLoadManager'
@@ -15,7 +16,7 @@ export class Sprite extends Node {
   declare dirty
   declare atlasIndex
   declare textureAtlas: TextureAtlas
-  // declare _batchNode: any
+  declare _batchNode: SpriteBatchNode
   declare _recursiveDirty: boolean
   declare _hasChildren: boolean
   _shouldBeHidden = false
@@ -121,7 +122,7 @@ export class Sprite extends Node {
     // legacy no-op placeholder
   }
 
-  setVertexRect(r: any) {
+  setVertexRect(r: Rect) {
     const locRect = this._rect
     locRect.x = r.x
     locRect.y = r.y
@@ -189,7 +190,6 @@ export class Sprite extends Node {
   }
 
   _softInit(fileName: any, rectArg: Rect, rotated: boolean) {
-    console.log('_softInit sprite', fileName, arguments.length)
     if (fileName === undefined) this.init()
     else if (typeof fileName === 'string') {
       if (fileName[0] === '#') {
@@ -231,7 +231,6 @@ export class Sprite extends Node {
   }
 
   init(fileName?: string, rectArg?: Rect) {
-    console.log('init sprite', fileName, arguments.length)
     if (arguments.length > 0) return this.initWithFile(fileName, rectArg)
     // super.init()
     this._recursiveDirty = false
@@ -245,7 +244,6 @@ export class Sprite extends Node {
     this._offsetPosition.x = 0
     this._offsetPosition.y = 0
     this._hasChildren = false
-    console.log('init sprite', arguments.length)
     this.setTextureRect(Rect(0, 0, 0, 0), false, Size(0, 0))
     return true
   }

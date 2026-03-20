@@ -95,7 +95,7 @@ export class GlobalVertexBuffer {
   }
 
   update() {
-    if (this._dirty && this.vertexBuffer) {
+    if (this._dirty) {
       this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vertexBuffer)
       // Note: Can memorize different dirty zones and update them separately, maybe faster
       this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, this.dataArray!)
@@ -104,19 +104,13 @@ export class GlobalVertexBuffer {
   }
 
   updateSubData(offset: number, dataArray: ArrayBufferView) {
-    if (this.vertexBuffer) {
-      this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vertexBuffer)
-      this.gl.bufferSubData(this.gl.ARRAY_BUFFER, offset, dataArray)
-    }
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vertexBuffer)
+    this.gl.bufferSubData(this.gl.ARRAY_BUFFER, offset, dataArray)
   }
 
   destroy() {
-    if (this.vertexBuffer) {
-      this.gl.deleteBuffer(this.vertexBuffer)
-    }
-
+    this.gl.deleteBuffer(this.vertexBuffer)
     this.data = null
-    this.dataArray = null
     this.vertexBuffer = null
   }
 }

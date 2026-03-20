@@ -22,6 +22,7 @@ import { log } from '../helper/Debugger'
 import { glBindTexture2D, glBlendFuncForParticle } from '../shaders/GLStateCache'
 import { shaderCache } from '../shaders/ShaderCache'
 import { Particle } from './Particle'
+import type { ParticleBatchNode } from './ParticleBatchNode'
 import type { ParticleSystem } from './ParticleSystem'
 
 export class ParticleSystemWebGLRenderCmd extends NodeWebGLRenderCmd {
@@ -32,7 +33,7 @@ export class ParticleSystemWebGLRenderCmd extends NodeWebGLRenderCmd {
   _quadsArrayBuffer: ArrayBuffer | null = null
   declare _node: ParticleSystem
 
-  constructor(renderable: any) {
+  constructor(renderable: ParticleSystem) {
     super(renderable)
     this._needDraw = true
   }
@@ -42,7 +43,7 @@ export class ParticleSystemWebGLRenderCmd extends NodeWebGLRenderCmd {
   getShapeType() {}
   setShapeType(_shapeType: any) {}
 
-  setBatchNode(batchNode: Node) {
+  setBatchNode(batchNode: ParticleBatchNode) {
     const node = this._node
     if (node._batchNode !== batchNode) {
       const oldBatch = node._batchNode

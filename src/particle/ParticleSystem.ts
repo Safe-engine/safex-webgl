@@ -32,6 +32,7 @@ import { loader } from '../helper/loader'
 import { unzipBase64AsArray } from '../helper/ZipUtils'
 import { Texture2D, textureCache } from '../textures'
 import { Particle } from './Particle'
+import type { ParticleBatchNode } from './ParticleBatchNode'
 import { ParticleSystemWebGLRenderCmd } from './ParticleSystemWebGLRenderCmd'
 import { PNGReader } from './PNGReader'
 
@@ -214,7 +215,7 @@ export class ParticleSystem extends Node {
   //!  particle idx
   _particleIdx = 0
 
-  // _batchNode: any
+  declare _batchNode: ParticleBatchNode
   atlasIndex = 0
 
   //true if scaled or rotated
@@ -251,7 +252,6 @@ export class ParticleSystem extends Node {
   autoRemoveOnFinish = false
   emitterMode = 0
 
-  // _textureLoaded: any
   declare _renderCmd: ParticleSystemWebGLRenderCmd
 
   /**

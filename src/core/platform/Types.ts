@@ -35,11 +35,11 @@ export const Acceleration = function (x, y, z, timestamp) {
 export class V3F_C4B_T2F {
   static BYTES_PER_ELEMENT = 24
 
-  _arrayBuffer: ArrayBuffer
-  _offset: number
-  _vertices: any
-  _colors: any
-  _texCoords: any
+  declare _arrayBuffer: ArrayBuffer
+  declare _offset: number
+  declare _vertices: any
+  declare _colors: any
+  declare _texCoords: any
 
   constructor(
     vertices?: any | null,

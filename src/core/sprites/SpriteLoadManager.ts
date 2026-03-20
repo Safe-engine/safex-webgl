@@ -1,3 +1,5 @@
+import type { Node } from '..'
+
 export class SpriteLoadManager {
   list: any[] = []
 
@@ -5,7 +7,7 @@ export class SpriteLoadManager {
     this.list = []
   }
 
-  add(source: any, callback: any, target: any): void {
+  add(source: any, callback: any, target: Node) {
     if (!source || !source.addEventListener) return
     source.addEventListener('load', callback, target)
     this.list.push({
@@ -15,7 +17,7 @@ export class SpriteLoadManager {
     })
   }
 
-  once(source: any, callback: any, target: any): void {
+  once(source: any, callback: any, target: Node) {
     if (!source || !source.addEventListener) return
     const tmpCallback = function (event: any) {
       source.removeEventListener('load', tmpCallback, target)
@@ -29,7 +31,7 @@ export class SpriteLoadManager {
     })
   }
 
-  clear(): void {
+  clear() {
     while (this.list.length > 0) {
       const item = this.list.pop()
       item.source.removeEventListener('load', item.listener, item.target)

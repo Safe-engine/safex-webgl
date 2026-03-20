@@ -1,4 +1,4 @@
-import { _renderContext, Game, game } from '..'
+import { _renderContext } from '..'
 import { cardinalSplineAt, getControlPointAt } from '../actions/ActionCatmullRom'
 import { Node, pNormalizeIn } from '../core'
 import { p, Point, Rect } from '../core/cocoa/Geometry'
@@ -24,8 +24,8 @@ import { DrawNodeWebGLRenderCmd } from './DrawNodeWebGLRenderCmd'
 // 9600 vertices by default configurable in Config
 // 20 is 2 float for position, 4 int for color and 2 float for uv
 let _sharedBuffer: GlobalVertexBuffer
-const FLOAT_PER_VERTEX = 2 + 1 + 2
-const VERTEX_BYTE = FLOAT_PER_VERTEX * 4
+const FLOAT_PER_VERTEX = 5 //2 + 1 + 2
+const VERTEX_BYTE = 20 //FLOAT_PER_VERTEX * 4
 // let FLOAT_PER_TRIANGLE = 3 * FLOAT_PER_VERTEX
 // let TRIANGLE_BYTES = FLOAT_PER_TRIANGLE * 4
 const MAX_INCREMENT = 200
@@ -42,10 +42,6 @@ const _nw = p()
 const _tw = p()
 const _extrude = []
 
-game.addEventListener(Game.EVENT_RENDERER_INITD, function () {
-  console.log('EVENT_RENDERER_INITD')
-  _sharedBuffer = new GlobalVertexBuffer(_renderContext, DRAWNODE_TOTAL_VERTICES * VERTEX_BYTE)
-})
 export class DrawNode extends Node {
   static TYPE_DOT = 0
   static TYPE_SEGMENT = 1
@@ -119,8 +115,8 @@ export class DrawNode extends Node {
 
   _offset = 0
   _occupiedSize = 0
-  _f32Buffer = null
-  _ui32Buffer = null
+  declare _f32Buffer: Float32Array
+  declare _ui32Buffer: Uint32Array
 
   _dirty = false
   _className = 'DrawNodeWebGL'
@@ -287,11 +283,11 @@ export class DrawNode extends Node {
     _vertices.length = 0
   }
 
-  drawCatmullRom(points, segments, lineWidth, color) {
+  drawCatmullRom(points: Point[], segments: number, lineWidth: number, color: Color) {
     this.drawCardinalSpline(points, 0.5, segments, lineWidth, color)
   }
 
-  drawCardinalSpline(config, tension, segments, lineWidth, color) {
+  drawCardinalSpline(config: Point[], tension, segments: number, lineWidth: number, color: Color) {
     lineWidth = lineWidth || this._lineWidth
     color = color || this._drawColor
     let p

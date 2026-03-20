@@ -1,4 +1,4 @@
-import { renderer } from '../..'
+import { Node, renderer } from '../..'
 import { _LogInfos, error, log } from '../../helper/Debugger'
 import { shaderCache } from '../../shaders/ShaderCache'
 import { NodeWebGLRenderCmd } from '../base-nodes/NodeWebGLRenderCmd'
@@ -52,11 +52,11 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
     const l = locChildren ? locChildren.length : 0
     for (let i = 0; i < l; i++) {
       child = locChildren[i]
-      child instanceof Sprite && child._renderCmd.setDirtyRecursively(value)
+      if (child instanceof Sprite) child._renderCmd.setDirtyRecursively(value)
     }
   }
 
-  _setBatchNodeForAddChild(child: any): boolean {
+  _setBatchNodeForAddChild(child: Node): boolean {
     const node = this._node
     if (node._batchNode) {
       if (!(child instanceof Sprite)) {
@@ -85,40 +85,41 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
     )
   }
 
-  _textureLoadedCallback(sender: any): void {
+  _textureLoadedCallback(sender: Sprite): void {
     if (this._textureLoaded) return
 
     this._textureLoaded = true
     let locRect = this._rect
     if (!locRect) {
-      locRect = Rect(0, 0, sender.width, sender.height)
+      locRect = Rect(0, 0, sender._getWidth(), sender._getHeight())
     } else if (rectEqualToZero(locRect)) {
-      locRect.width = sender.width
-      locRect.height = sender.height
+      locRect.width = sender._getWidth()
+      locRect.height = sender._getHeight()
     }
 
     this.texture = sender
-    this.setTextureRect(locRect, this._rectRotated)
+    const node = this._node
+    node.setTextureRect(locRect, node._rectRotated)
 
     // by default use "Self Render".
     // if the sprite is added to a batchnode, then it will automatically switch to "batchnode Render"
-    this.setBatchNode(this._batchNode)
-    this.dispatchEvent('load')
+    node.setBatchNode(node._batchNode)
+    node.dispatchEvent('load')
 
     // Force refresh the render command list
     renderer.childrenOrderDirty = true
   }
-  setTextureRect(locRect: any, _rectRotated: any) {
-    throw new Error('Method not implemented.')
-  }
-  _rectRotated: boolean
-  setBatchNode(_batchNode: any) {
-    throw new Error('Method not implemented.')
-  }
-  _batchNode: any
-  dispatchEvent(arg0: string) {
-    throw new Error('Method not implemented.')
-  }
+  // setTextureRect(locRect: any, _rectRotated: any) {
+  //   throw new Error('Method not implemented.')
+  // }
+  // _rectRotated: boolean
+  // setBatchNode(_batchNode: any) {
+  //   throw new Error('Method not implemented.')
+  // }
+  // _batchNode: any
+  // dispatchEvent(arg0: string) {
+  //   throw new Error('Method not implemented.')
+  // }
 
   _setTextureCoords(rect: any, needConvert?: boolean): void {
     if (needConvert === undefined) needConvert = true
@@ -202,10 +203,10 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
     }
   }
 
-  _setColorDirty(): void { }
+  _setColorDirty(): void {}
 
   _updateBlendFunc(): void {
-    if (this._batchNode) {
+    if (this._node._batchNode) {
       log(_LogInfos.Sprite__updateBlendFunc)
       return
     }

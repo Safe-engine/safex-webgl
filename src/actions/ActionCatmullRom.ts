@@ -1,4 +1,4 @@
-import { p } from '../core/cocoa/Geometry'
+import { p, Point } from '../core/cocoa/Geometry'
 import { ENABLE_STACKABLE_ACTIONS } from '../core/platform/Config'
 import { pSub } from '../core/support/PointExtension'
 import { ActionInterval } from './ActionInterval'
@@ -82,7 +82,7 @@ export const copyControlPoints = cloneControlPoints
  * @param {Number} pos
  * @return {Array}
  */
-export const getControlPointAt = function (controlPoints, pos) {
+export const getControlPointAt = function (controlPoints: Point[], pos: number) {
   const p = Math.min(controlPoints.length - 1, Math.max(pos, 0))
   return controlPoints[p]
 }
