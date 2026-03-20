@@ -1,14 +1,9 @@
 // The event helper
 export class EventHelper {
-  // apply(object: any) {
-  //   object.addEventListener = this.addEventListener;
-  //   object.hasEventListener = this.hasEventListener;
-  //   object.removeEventListener = this.removeEventListener;
-  //   object.removeEventTarget = this.removeEventTarget;
-  //   object.dispatchEvent = this.dispatchEvent;
-  // }
+  declare _textureLoaded: boolean
+  declare _listeners: any
 
-  addEventListener(this: any, type: any, listener: any, target?: any) {
+  addEventListener(type: any, listener: any, target?: any) {
     // check 'type' status, if the status is ready, dispatch event next frame
     if (type === 'load' && this._textureLoaded) {
       // only load event checked.
@@ -26,7 +21,7 @@ export class EventHelper {
     if (!this.hasEventListener(type, listener, target)) listeners[type].push({ callback: listener, eventTarget: target })
   }
 
-  hasEventListener(this: any, type: any, listener: any, target?: any) {
+  hasEventListener(type: any, listener: any, target?: any) {
     if (this._listeners === undefined) return false
 
     const listeners = this._listeners
@@ -40,7 +35,7 @@ export class EventHelper {
     return false
   }
 
-  removeEventListener(this: any, type: any, listener: any, target?: any) {
+  removeEventListener(type: any, listener: any, target?: any) {
     if (this._listeners === undefined) return
 
     const listeners = this._listeners
@@ -55,7 +50,7 @@ export class EventHelper {
     }
   }
 
-  removeEventTarget(this: any, type: any, target?: any) {
+  removeEventTarget(type: any, target?: any) {
     if (this._listeners === undefined) return
 
     const listeners = this._listeners
@@ -70,7 +65,7 @@ export class EventHelper {
     }
   }
 
-  dispatchEvent(this: any, event: any, clearAfterDispatch?: boolean) {
+  dispatchEvent(event: string, clearAfterDispatch?: boolean) {
     if (this._listeners === undefined) return
 
     if (clearAfterDispatch == null) clearAfterDispatch = true

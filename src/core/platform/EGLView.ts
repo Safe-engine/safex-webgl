@@ -420,7 +420,7 @@ export class EGLView {
   }
 
   isOpenGLReady(): boolean {
-    return game.canvas && game._renderContext && true
+    return game.canvas && _renderContext && true
   }
 
   setFrameZoomFactor(zoomFactor: number) {

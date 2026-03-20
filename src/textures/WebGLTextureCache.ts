@@ -1,12 +1,11 @@
 import { game } from '..'
 import { _LogInfos, assert } from '../helper/Debugger'
-import { _tmp } from '../helper/global'
 import { loader } from '../helper/loader'
 import { path } from '../helper/path'
 import { textureCache } from './TextureCache'
 import { Texture2D } from './TexturesWebGL'
 
-_tmp.WebGLTextureCache = function () {
+export const WebGLTextureCache = function () {
   const _p = textureCache
 
   _p.handleLoadedTexture = function (url, img) {

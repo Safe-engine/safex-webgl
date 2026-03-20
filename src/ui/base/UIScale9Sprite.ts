@@ -342,8 +342,8 @@ export class Scale9Sprite extends Node {
   _brightState = 0
   _opacityModifyRGB = false
   //rendering quads shared by canvas and webgl
-  _rawVerts: any = null
-  _rawUvs: any = null
+  // _rawVerts: any = null
+  // _rawUvs: any = null
   declare _vertices: Float32Array
   declare _uvs: Float32Array
   _vertCount = 0
@@ -371,7 +371,7 @@ export class Scale9Sprite extends Node {
    * @param {Rect} capInsets
    * @returns {Scale9Sprite}
    */
-  constructor(file?: any, rectOrCapInsets?: any, capInsets?: any) {
+  constructor(file?: any, rectOrCapInsets?: Rect, capInsets?: Rect) {
     super()
 
     //for async texture load
@@ -381,8 +381,8 @@ export class Scale9Sprite extends Node {
     this._blendFunc = BlendFunc._alphaPremultiplied()
     this.setAnchorPoint(p(0.5, 0.5))
     // Init vertex data for simple
-    this._rawVerts = null
-    this._rawUvs = null
+    // this._rawVerts = null
+    // this._rawUvs = null
     this._vertices = dataPool.get(8) || new Float32Array(8)
     this._uvs = dataPool.get(8) || new Float32Array(8)
 
@@ -428,7 +428,7 @@ export class Scale9Sprite extends Node {
     this._updateCapInsets(this._spriteFrame._rect, this._capInsetsInternal)
   }
 
-  _updateCapInsets(rect, capInsets) {
+  _updateCapInsets(rect: Rect, capInsets: Rect) {
     if (!capInsets || !rect || rectEqualToZero(capInsets)) {
       rect = rect || { x: 0, y: 0, width: this._contentSize.width, height: this._contentSize.height }
       this._capInsetsInternal = Rect(rect.width / 3, rect.height / 3, rect.width / 3, rect.height / 3)
@@ -516,11 +516,8 @@ export class Scale9Sprite extends Node {
    * Initializes a 9-slice sprite with an sprite frame
    * @param spriteFrameOrSFName The sprite frame object.
    */
-  initWithSpriteFrame(spriteFrame, capInsets) {
+  initWithSpriteFrame(spriteFrame: SpriteFrame, capInsets = Rect(0, 0, 0, 0)) {
     this.setSpriteFrame(spriteFrame)
-
-    capInsets = capInsets || Rect(0, 0, 0, 0)
-
     this._updateCapInsets(spriteFrame._rect, capInsets)
   }
 

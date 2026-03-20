@@ -1,4 +1,5 @@
 import { _LogInfos, assert, log } from '../../helper/Debugger'
+import type { TextureAtlas } from '../../textures/TextureAtlas'
 import { textureCache } from '../../textures/TextureCache'
 import { Texture2D } from '../../textures/TexturesWebGL'
 import { Node } from '../base-nodes/Node'
@@ -13,12 +14,12 @@ import { SpriteWebGLRenderCmd } from './SpriteWebGLRenderCmd'
 export class Sprite extends Node {
   declare dirty
   declare atlasIndex
-  declare textureAtlas: any
+  declare textureAtlas: TextureAtlas
   // declare _batchNode: any
   declare _recursiveDirty: boolean
   declare _hasChildren: boolean
   _shouldBeHidden = false
-  declare _transformToBatch: any
+  // declare _transformToBatch: any
   declare _texture: Texture2D
   // declare texture: Texture2D
   declare _rect: Rect
@@ -37,7 +38,7 @@ export class Sprite extends Node {
   declare _setReorderChildDirtyRecursively: () => void
   declare _renderCmd: SpriteWebGLRenderCmd
 
-  constructor(fileName?: any, rectArg?: any, rotated?: any) {
+  constructor(fileName?: string, rectArg?: Rect, rotated?: boolean) {
     super()
     this.setAnchorPoint(0.5, 0.5)
     this._loader = new SpriteLoadManager()
@@ -84,7 +85,7 @@ export class Sprite extends Node {
     return this.textureAtlas
   }
 
-  setTextureAtlas(textureAtlas: any) {
+  setTextureAtlas(textureAtlas: TextureAtlas) {
     this.textureAtlas = textureAtlas
   }
 

@@ -1,4 +1,4 @@
-import { _renderContext } from '..'
+import { _renderContext, Game, game } from '..'
 import { cardinalSplineAt, getControlPointAt } from '../actions/ActionCatmullRom'
 import { Node, pNormalizeIn } from '../core'
 import { p, Point, Rect } from '../core/cocoa/Geometry'
@@ -42,6 +42,10 @@ const _nw = p()
 const _tw = p()
 const _extrude = []
 
+game.addEventListener(Game.EVENT_RENDERER_INITD, function () {
+  console.log('EVENT_RENDERER_INITD')
+  _sharedBuffer = new GlobalVertexBuffer(_renderContext, DRAWNODE_TOTAL_VERTICES * VERTEX_BYTE)
+})
 export class DrawNode extends Node {
   static TYPE_DOT = 0
   static TYPE_SEGMENT = 1
