@@ -2,7 +2,7 @@ import { _LogInfos, assert, log } from '../../helper/Debugger'
 import { textureCache } from '../../textures/TextureCache'
 import { Texture2D } from '../../textures/TexturesWebGL'
 import { Node } from '../base-nodes/Node'
-import { p, Rect, Size } from '../cocoa/Geometry'
+import { p, Point, Rect, Size } from '../cocoa/Geometry'
 import { BLEND_DST, BLEND_SRC, pointPointsToPixels, rectPointsToPixels, sizePointsToPixels } from '../platform/Macro'
 import { animationCache } from './AnimationCache'
 import { SpriteFrame } from './SpriteFrame'
@@ -11,25 +11,19 @@ import { SpriteLoadManager } from './SpriteLoadManager'
 import { SpriteWebGLRenderCmd } from './SpriteWebGLRenderCmd'
 
 export class Sprite extends Node {
-  getLineHeight() {
-    throw new Error('Method not implemented.')
-  }
-  _getFontStyle() {
-    throw new Error('Method not implemented.')
-  }
   declare dirty
   declare atlasIndex
   declare textureAtlas: any
-  declare _batchNode: any
-  declare _recursiveDirty: any
-  declare _hasChildren: any
+  // declare _batchNode: any
+  declare _recursiveDirty: boolean
+  declare _hasChildren: boolean
   _shouldBeHidden = false
   declare _transformToBatch: any
   declare _texture: Texture2D
   // declare texture: Texture2D
   declare _rect: Rect
   _rectRotated = false
-  declare _offsetPosition: any
+  declare _offsetPosition: Point
   declare _unflippedOffsetPositionFromCenter: any
   _opacityModifyRGB = false
   _flippedX = false
@@ -37,28 +31,11 @@ export class Sprite extends Node {
   _textureLoaded = false
   _className = 'Sprite'
   _blendFunc = { src: BLEND_SRC, dst: BLEND_DST }
-  _loader: SpriteLoadManager = null
-  anchorX = 0.5
-  anchorY = 0.5
+  declare _loader: SpriteLoadManager
+  declare anchorX
+  declare anchorY
   declare _setReorderChildDirtyRecursively: () => void
   declare _renderCmd: SpriteWebGLRenderCmd
-  _needUpdateTexture: boolean
-  _string: any
-  _shadowColor: any
-  _strokeColor: any
-  declare _textFillColor: any
-  _shadowOpacity: any
-  _dimensions: any
-  _strokeEnabled: any
-  _strokeSize: number
-  _shadowEnabled: any
-  _shadowOffset: any
-  _fontSize: number
-  _strokeShadowOffsetX: number
-  _strokeShadowOffsetY: number
-  _vAlignment: any
-  _hAlignment: any
-  _shadowBlur: any
 
   constructor(fileName?: any, rectArg?: any, rotated?: any) {
     super()
@@ -211,6 +188,7 @@ export class Sprite extends Node {
   }
 
   _softInit(fileName: any, rectArg: Rect, rotated: boolean) {
+    console.log('_softInit sprite', fileName, arguments.length)
     if (fileName === undefined) this.init()
     else if (typeof fileName === 'string') {
       if (fileName[0] === '#') {
@@ -252,18 +230,21 @@ export class Sprite extends Node {
   }
 
   init(fileName?: string, rectArg?: Rect) {
+    console.log('init sprite', fileName, arguments.length)
     if (arguments.length > 0) return this.initWithFile(fileName, rectArg)
-    super.init()
-    this.dirty = this._recursiveDirty = false
+    // super.init()
+    this._recursiveDirty = false
+    this.dirty = false
     this._blendFunc.src = BLEND_SRC
     this._blendFunc.dst = BLEND_DST
-    // this.texture = null
+    this.setTexture(null)
     this._flippedX = this._flippedY = false
     this.anchorX = 0.5
     this.anchorY = 0.5
     this._offsetPosition.x = 0
     this._offsetPosition.y = 0
     this._hasChildren = false
+    console.log('init sprite', arguments.length)
     this.setTextureRect(Rect(0, 0, 0, 0), false, Size(0, 0))
     return true
   }
@@ -450,5 +431,3 @@ export class Sprite extends Node {
 
   static readonly INDEX_NOT_INITIALIZED = -1
 }
-
-// PrototypeSprite()

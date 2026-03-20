@@ -4,11 +4,8 @@ import { assert, log } from '../../helper/Debugger'
 import { ProtectedNodeWebGLRenderCmd } from './ProtectedNodeWebGLRenderCmd'
 
 export class ProtectedNode extends Node {
-  // static setContentSize(_customSize: any) {
-  //   throw new Error('Method not implemented.')
-  // }
-  _protectedChildren: any
-  _reorderProtectedChildDirty: boolean
+  declare _protectedChildren: ProtectedNode[]
+  declare _reorderProtectedChildDirty: boolean
   declare _renderCmd: ProtectedNodeWebGLRenderCmd
 
   constructor() {
@@ -122,7 +119,7 @@ export class ProtectedNode extends Node {
   getProtectedChildByTag(tag) {
     assert(tag !== NODE_TAG_INVALID, 'Invalid tag')
     const locChildren = this._protectedChildren
-    for (let i = 0, len = locChildren.length; i < len; i++) if (locChildren.getTag() === tag) return locChildren[i]
+    for (let i = 0, len = locChildren.length; i < len; i++) if (locChildren[i].getTag() === tag) return locChildren[i]
     return null
   }
 

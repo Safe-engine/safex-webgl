@@ -5,6 +5,7 @@ import {
   contentScaleFactor,
   degreesToRadians,
   ONE_MINUS_SRC_ALPHA,
+  Point,
   Rect,
   SHADER_POSITION_TEXTURECOLOR,
   SRC_ALPHA,
@@ -21,26 +22,28 @@ import { log } from '../helper/Debugger'
 import { glBindTexture2D, glBlendFuncForParticle } from '../shaders/GLStateCache'
 import { shaderCache } from '../shaders/ShaderCache'
 import { Particle } from './Particle'
+import type { ParticleSystem } from './ParticleSystem'
 
 export class ParticleSystemWebGLRenderCmd extends NodeWebGLRenderCmd {
-  _matrix: any = null
+  declare _matrix: Matrix4
   _buffersVBO: any[] = [0, 0]
   _quads: any[] = []
   _indices: any = []
   _quadsArrayBuffer: ArrayBuffer | null = null
+  declare _node: ParticleSystem
 
   constructor(renderable: any) {
     super(renderable)
     this._needDraw = true
   }
 
-  getDrawMode(): void {}
-  setDrawMode(_drawMode: any): void {}
-  getShapeType(): void {}
-  setShapeType(_shapeType: any): void {}
+  getDrawMode() {}
+  setDrawMode(_drawMode: any) {}
+  getShapeType() {}
+  setShapeType(_shapeType: any) {}
 
-  setBatchNode(batchNode: any): void {
-    const node: any = this._node
+  setBatchNode(batchNode: Node) {
+    const node = this._node
     if (node._batchNode !== batchNode) {
       const oldBatch = node._batchNode
       node._batchNode = batchNode //weak reference
@@ -93,9 +96,9 @@ export class ParticleSystemWebGLRenderCmd extends NodeWebGLRenderCmd {
     this.updateQuadWithParticle(particle, position)
   }
 
-  updateQuadWithParticle(particle: any, newPosition: any): void {
+  updateQuadWithParticle(particle: any, newPosition: Point): void {
     let quad
-    const node: any = this._node
+    const node = this._node
     if (node._batchNode) {
       const batchQuads = node._batchNode.textureAtlas.quads
       quad = batchQuads[node.atlasIndex + particle.atlasIndex]

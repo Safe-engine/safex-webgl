@@ -31,25 +31,26 @@ export class Node extends EventHelper {
   // declare zIndex: number
   // declare width: number
   // declare height: number
-  declare _imageRenderer: any
+  // declare _imageRenderer: any
   // declare _doLayout: (target: any) => void
   declare _doLayoutDirty: boolean
   declare _isFocusPassing: boolean
   declare _rect: Rect
   declare _unflippedOffsetPositionFromCenter: Point
   declare _batchNode: any
-  declare textureAtlas: any
+  declare _protectedChildren
+  // declare textureAtlas: any
   // declare _texture: any
   declare _rectRotated: boolean
   declare _flippedX: boolean
   declare _flippedY: boolean
   // declare _blendFunc: any
   // declare opacityModifyRGB: boolean
-  declare _textureLoaded: any
-  declare _offsetPosition: any
-  declare _opacityModifyRGB: any
+  declare _textureLoaded: boolean
+  declare _offsetPosition: Point
+  declare _opacityModifyRGB: boolean
   // Static members
-  static _stateCallbackType: any = { onEnter: 1, onExit: 2, cleanup: 3, onEnterTransitionDidFinish: 4, onExitTransitionDidStart: 5, max: 6 }
+  static _stateCallbackType = { onEnter: 1, onExit: 2, cleanup: 3, onEnterTransitionDidFinish: 4, onExitTransitionDidStart: 5, max: 6 }
   static _performStacks: any[] = [[]]
   static _performing = 0
   static _dirtyFlags = dirtyFlags
@@ -637,11 +638,11 @@ export class Node extends EventHelper {
     this.resume()
   }
 
-  _performRecursive(callbackType: any) {
+  _performRecursive(callbackType: number) {
     const nodeCallbackType = Node._stateCallbackType
     if (callbackType >= nodeCallbackType.max) return
     let index = 0
-    let children: any, child: any, curr: any, i: any, len: any
+    let children: Node[], child: Node, curr: Node, i: number, len: number
     let stack = Node._performStacks[Node._performing]
     if (!stack) {
       stack = []
