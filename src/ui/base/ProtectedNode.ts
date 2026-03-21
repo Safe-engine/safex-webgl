@@ -1,5 +1,5 @@
-import { renderer } from '../..'
-import { Node, NODE_TAG_INVALID, s_globalOrderOfArrival, s_globalOrderOfArrivalPP } from '../../core/base-nodes/Node'
+import { global, renderer } from '../..'
+import { Node, NODE_TAG_INVALID } from '../../core/base-nodes/Node'
 import { assert, log } from '../../helper/Debugger'
 import { ProtectedNodeWebGLRenderCmd } from './ProtectedNodeWebGLRenderCmd'
 
@@ -100,7 +100,7 @@ export class ProtectedNode extends Node {
 
     this._insertProtectedChild(child, localZOrder)
     child.setParent(this)
-    child.setOrderOfArrival(s_globalOrderOfArrival)
+    child.setOrderOfArrival(global.s_globalOrderOfArrival)
 
     if (this._running) {
       child._performRecursive(Node._stateCallbackType.onEnter)
@@ -207,7 +207,7 @@ export class ProtectedNode extends Node {
   reorderProtectedChild(child, localZOrder) {
     assert(child != null, 'Child must be non-nil')
     this._reorderProtectedChildDirty = true
-    child.setOrderOfArrival(s_globalOrderOfArrivalPP())
+    child.setOrderOfArrival(global.s_globalOrderOfArrival++)
     child._setLocalZOrder(localZOrder)
   }
 

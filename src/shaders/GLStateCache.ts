@@ -51,13 +51,13 @@ export const glInvalidateStateCache = function () {
  * @param {WebGLProgram} program
  */
 export const glUseProgram = ENABLE_GL_STATE_CACHE
-  ? function (program) {
+  ? function (program: WebGLProgram) {
       if (program !== _currentShaderProgram) {
         _currentShaderProgram = program
         _renderContext.useProgram(program)
       }
     }
-  : function (program) {
+  : function (program: WebGLProgram) {
       _renderContext.useProgram(program)
     }
 

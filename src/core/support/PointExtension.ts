@@ -10,7 +10,7 @@
  * - pAdd( cpv(1,1), cpv(2,2) ); // mixing chipmunk and cocos2d (avoid)</p>
  */
 
-import { p } from '../cocoa/Geometry'
+import { p, Point, Size } from '../cocoa/Geometry'
 
 /**
  * smallest such that 1.0+FLT_EPSILON != 1.0
@@ -34,7 +34,7 @@ export const pNeg = function (point) {
  * @param {Point} v2
  * @return {Point}
  */
-export const pAdd = function (v1, v2) {
+export const pAdd = function (v1: Point, v2: Point) {
   return p(v1.x + v2.x, v1.y + v2.y)
 }
 
@@ -44,7 +44,7 @@ export const pAdd = function (v1, v2) {
  * @param {Point} v2
  * @return {Point}
  */
-export const pSub = function (v1, v2) {
+export const pSub = function (v1: Point, v2: Point) {
   return p(v1.x - v2.x, v1.y - v2.y)
 }
 
@@ -54,7 +54,7 @@ export const pSub = function (v1, v2) {
  * @param {Number} floatVar
  * @return {Point}
  */
-export const pMult = function (point, floatVar) {
+export const pMult = function (point: Point, floatVar: number) {
   return p(point.x * floatVar, point.y * floatVar)
 }
 
@@ -64,7 +64,7 @@ export const pMult = function (point, floatVar) {
  * @param {Point} v2
  * @return {Point}
  */
-export const pMidpoint = function (v1, v2) {
+export const pMidpoint = function (v1: Point, v2: Point) {
   return pMult(pAdd(v1, v2), 0.5)
 }
 
@@ -74,7 +74,7 @@ export const pMidpoint = function (v1, v2) {
  * @param {Point} v2
  * @return {Number}
  */
-export const pDot = function (v1, v2) {
+export const pDot = function (v1: Point, v2: Point) {
   return v1.x * v2.x + v1.y * v2.y
 }
 
@@ -84,7 +84,7 @@ export const pDot = function (v1, v2) {
  * @param {Point} v2
  * @return {Number}
  */
-export const pCross = function (v1, v2) {
+export const pCross = function (v1: Point, v2: Point) {
   return v1.x * v2.y - v1.y * v2.x
 }
 
@@ -93,7 +93,7 @@ export const pCross = function (v1, v2) {
  * @param {Point} point
  * @return {Point}
  */
-export const pPerp = function (point) {
+export const pPerp = function (point: Point) {
   return p(-point.y, point.x)
 }
 
@@ -102,7 +102,7 @@ export const pPerp = function (point) {
  * @param {Point} point
  * @return {Point}
  */
-export const pRPerp = function (point) {
+export const pRPerp = function (point: Point) {
   return p(point.y, -point.x)
 }
 
@@ -112,7 +112,7 @@ export const pRPerp = function (point) {
  * @param {Point} v2
  * @return {Point}
  */
-export const pProject = function (v1, v2) {
+export const pProject = function (v1: Point, v2: Point) {
   return pMult(v2, pDot(v1, v2) / pDot(v2, v2))
 }
 
@@ -122,7 +122,7 @@ export const pProject = function (v1, v2) {
  * @param  {Point} v2
  * @return {Point}
  */
-export const pRotate = function (v1, v2) {
+export const pRotate = function (v1: Point, v2: Point) {
   return p(v1.x * v2.x - v1.y * v2.y, v1.x * v2.y + v1.y * v2.x)
 }
 
@@ -132,7 +132,7 @@ export const pRotate = function (v1, v2) {
  * @param  {Point} v2
  * @return {Point}
  */
-export const pUnrotate = function (v1, v2) {
+export const pUnrotate = function (v1: Point, v2: Point) {
   return p(v1.x * v2.x + v1.y * v2.y, v1.y * v2.x - v1.x * v2.y)
 }
 
@@ -141,7 +141,7 @@ export const pUnrotate = function (v1, v2) {
  * @param  {Point} v
  *@return {Number}
  */
-export const pLengthSQ = function (v) {
+export const pLengthSQ = function (v: Point) {
   return pDot(v, v)
 }
 
@@ -151,7 +151,7 @@ export const pLengthSQ = function (v) {
  * @param {Point} point2
  * @return {Number}
  */
-export const pDistanceSQ = function (point1, point2) {
+export const pDistanceSQ = function (point1: Point, point2: Point) {
   return pLengthSQ(pSub(point1, point2))
 }
 
@@ -160,7 +160,7 @@ export const pDistanceSQ = function (point1, point2) {
  * @param  {Point} v
  * @return {Number}
  */
-export const pLength = function (v) {
+export const pLength = function (v: Point) {
   return Math.sqrt(pLengthSQ(v))
 }
 
@@ -170,7 +170,7 @@ export const pLength = function (v) {
  * @param {Point} v2
  * @return {Number}
  */
-export const pDistance = function (v1, v2) {
+export const pDistance = function (v1: Point, v2: Point) {
   return pLength(pSub(v1, v2))
 }
 
@@ -179,7 +179,7 @@ export const pDistance = function (v1, v2) {
  * @param {Point} v
  * @return {Point}
  */
-export const pNormalize = function (v) {
+export const pNormalize = function (v: Point) {
   const n = pLength(v)
   return n === 0 ? p(v) : pMult(v, 1.0 / n)
 }
@@ -189,7 +189,7 @@ export const pNormalize = function (v) {
  * @param {Number} a
  * @return {Point}
  */
-export const pForAngle = function (a) {
+export const pForAngle = function (a: number) {
   return p(Math.cos(a), Math.sin(a))
 }
 
@@ -198,7 +198,7 @@ export const pForAngle = function (a) {
  * @param {Point} v
  * @return {Number}
  */
-export const pToAngle = function (v) {
+export const pToAngle = function (v: Point) {
   return Math.atan2(v.y, v.x)
 }
 
@@ -209,7 +209,7 @@ export const pToAngle = function (v) {
  * @param {Number} max_inclusive
  * @return {Number}
  */
-export const clampf = function (value, min_inclusive, max_inclusive) {
+export const clampf = function (value: number, min_inclusive: number, max_inclusive: number) {
   if (min_inclusive > max_inclusive) {
     const temp = min_inclusive
     min_inclusive = max_inclusive
@@ -225,7 +225,7 @@ export const clampf = function (value, min_inclusive, max_inclusive) {
  * @param {Number} max_inclusive
  * @return {Point}
  */
-export const pClamp = function (pt, min_inclusive, max_inclusive) {
+export const pClamp = function (pt: Point, min_inclusive: Point, max_inclusive: Point) {
   return p(clampf(pt.x, min_inclusive.x, max_inclusive.x), clampf(pt.y, min_inclusive.y, max_inclusive.y))
 }
 
@@ -234,7 +234,7 @@ export const pClamp = function (pt, min_inclusive, max_inclusive) {
  * @param {Size} s
  * @return {Point}
  */
-export const pFromSize = function (s) {
+export const pFromSize = function (s: Size) {
   return p(s.width, s.height)
 }
 
@@ -248,8 +248,8 @@ export const pFromSize = function (s) {
  * //For example: let's try to take the floor of x,y
  * var p = pCompOp(p(10,10),Math.abs);
  */
-export const pCompOp = function (p, opFunc) {
-  return p(opFunc(p.x), opFunc(p.y))
+export const pCompOp = function (pt: Point, opFunc: (n: number) => number) {
+  return p(opFunc(pt.x), opFunc(pt.y))
 }
 
 /**
@@ -262,7 +262,7 @@ export const pCompOp = function (p, opFunc) {
  * @param {Number} alpha
  * @return {Point}
  */
-export const pLerp = function (a, b, alpha) {
+export const pLerp = function (a: Point, b: Point, alpha: number) {
   return pAdd(pMult(a, 1 - alpha), pMult(b, alpha))
 }
 
@@ -272,7 +272,7 @@ export const pLerp = function (a, b, alpha) {
  * @param {Number} variance
  * @return {Boolean} if points have fuzzy equality which means equal with some degree of variance.
  */
-export const pFuzzyEqual = function (a, b, variance) {
+export const pFuzzyEqual = function (a: Point, b: Point, variance: number) {
   if (a.x - variance <= b.x && b.x <= a.x + variance) {
     if (a.y - variance <= b.y && b.y <= a.y + variance) return true
   }
@@ -285,7 +285,7 @@ export const pFuzzyEqual = function (a, b, variance) {
  * @param {Point} b
  * @return {Point}
  */
-export const pCompMult = function (a, b) {
+export const pCompMult = function (a: Point, b: Point) {
   return p(a.x * b.x, a.y * b.y)
 }
 
@@ -294,7 +294,7 @@ export const pCompMult = function (a, b) {
  * @param {Point} b
  * @return {Number} the signed angle in radians between two vector directions
  */
-export const pAngleSigned = function (a, b) {
+export const pAngleSigned = function (a: Point, b: Point) {
   const a2 = pNormalize(a)
   const b2 = pNormalize(b)
   const angle = Math.atan2(a2.x * b2.y - a2.y * b2.x, pDot(a2, b2))
@@ -307,7 +307,7 @@ export const pAngleSigned = function (a, b) {
  * @param {Point} b
  * @return {Number} the angle in radians between two vector directions
  */
-export const pAngle = function (a, b) {
+export const pAngle = function (a: Point, b: Point) {
   const angle = Math.acos(pDot(pNormalize(a), pNormalize(b)))
   if (Math.abs(angle) < POINT_EPSILON) return 0.0
   return angle
@@ -320,7 +320,7 @@ export const pAngle = function (a, b) {
  * @param {Number} angle angle is the angle of rotation cw in radians
  * @return {Point} the rotated point
  */
-export const pRotateByAngle = function (v, pivot, angle) {
+export const pRotateByAngle = function (v: Point, pivot: Point, angle: number) {
   const r = pSub(v, pivot)
   const cosa = Math.cos(angle),
     sina = Math.sin(angle)
@@ -345,7 +345,7 @@ export const pRotateByAngle = function (v, pivot, angle) {
  * retP.y is the range for a hitpoint in P3 (pa = p2 + t*(p4 - p3)).
  * @return {Boolean}
  */
-export const pLineIntersect = function (A, B, C, D, retP) {
+export const pLineIntersect = function (A: Point, B: Point, C: Point, D: Point, retP: Point) {
   if ((A.x === B.x && A.y === B.y) || (C.x === D.x && C.y === D.y)) {
     return false
   }
@@ -384,7 +384,7 @@ export const pLineIntersect = function (A, B, C, D, retP) {
  * @param {Point} D
  * @return {Boolean}
  */
-export const pSegmentIntersect = function (A, B, C, D) {
+export const pSegmentIntersect = function (A: Point, B: Point, C: Point, D: Point) {
   const retP = p(0, 0)
   if (pLineIntersect(A, B, C, D, retP)) if (retP.x >= 0.0 && retP.x <= 1.0 && retP.y >= 0.0 && retP.y <= 1.0) return true
   return false
@@ -398,7 +398,7 @@ export const pSegmentIntersect = function (A, B, C, D) {
  * @param {Point} D
  * @return {Point}
  */
-export const pIntersectPoint = function (A, B, C, D) {
+export const pIntersectPoint = function (A: Point, B: Point, C: Point, D: Point) {
   const retP = p(0, 0)
 
   if (pLineIntersect(A, B, C, D, retP)) {
@@ -418,7 +418,7 @@ export const pIntersectPoint = function (A, B, C, D) {
  * @param {Point} B B ccp b to be compared
  * @return {Boolean} the true if both ccp are same
  */
-export const pSameAs = function (A, B) {
+export const pSameAs = function (A: Point, B: Point) {
   if (A != null && B != null) {
     return A.x === B.x && A.y === B.y
   }
@@ -431,7 +431,7 @@ export const pSameAs = function (A, B) {
  * sets the position of the point to 0
  * @param {Point} v
  */
-export const pZeroIn = function (v) {
+export const pZeroIn = function (v: Point) {
   v.x = 0
   v.y = 0
 }
@@ -441,7 +441,7 @@ export const pZeroIn = function (v) {
  * @param {Point} v1
  * @param {Point} v2
  */
-export const pIn = function (v1, v2) {
+export const pIn = function (v1: Point, v2: Point) {
   v1.x = v2.x
   v1.y = v2.y
 }
@@ -451,7 +451,7 @@ export const pIn = function (v1, v2) {
  * @param {Point} point
  * @param {Number} floatVar
  */
-export const pMultIn = function (point, floatVar) {
+export const pMultIn = function (point: Point, floatVar: number) {
   point.x *= floatVar
   point.y *= floatVar
 }
@@ -461,7 +461,7 @@ export const pMultIn = function (point, floatVar) {
  * @param {Point} v1
  * @param {Point} v2
  */
-export const pSubIn = function (v1, v2) {
+export const pSubIn = function (v1: Point, v2: Point) {
   v1.x -= v2.x
   v1.y -= v2.y
 }
@@ -471,7 +471,7 @@ export const pSubIn = function (v1, v2) {
  * @param {Point} v1
  * @param {Point} v2
  */
-export const pAddIn = function (v1, v2) {
+export const pAddIn = function (v1: Point, v2: Point) {
   v1.x += v2.x
   v1.y += v2.y
 }
@@ -480,7 +480,7 @@ export const pAddIn = function (v1, v2) {
  * normalizes the point (inplace)
  * @param {Point} v
  */
-export const pNormalizeIn = function (v) {
+export const pNormalizeIn = function (v: Point) {
   const n = Math.sqrt(v.x * v.x + v.y * v.y)
   if (n !== 0) pMultIn(v, 1.0 / n)
 }

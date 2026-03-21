@@ -39,8 +39,8 @@ export class MotionStreak extends Node {
   _className = 'MotionStreak'
   _positionR: Point
   // inherited property placeholders
-  anchorX: number
-  anchorY: number
+  // anchorX: number
+  // anchorY: number
   ignoreAnchor: boolean
   color: Color
   constructor(fade?: number, minSeg?: number, stroke?: number, color?: Color, texture?: any) {
@@ -143,8 +143,7 @@ export class MotionStreak extends Node {
     if (isString(texture)) texture = textureCache.addImage(texture)
 
     this.setPosition(p(0, 0))
-    this.anchorX = 0
-    this.anchorY = 0
+    this.setAnchorPoint(0, 0)
     this.ignoreAnchor = true
     this.startingPositionInitialized = false
 

@@ -34,8 +34,8 @@ export class Sprite extends Node {
   _className = 'Sprite'
   _blendFunc = { src: BLEND_SRC, dst: BLEND_DST }
   declare _loader: SpriteLoadManager
-  declare anchorX
-  declare anchorY
+  // declare anchorX
+  // declare anchorY
   declare _setReorderChildDirtyRecursively: () => void
   declare _renderCmd: SpriteWebGLRenderCmd
 
@@ -239,8 +239,7 @@ export class Sprite extends Node {
     this._blendFunc.dst = BLEND_DST
     this.setTexture(null)
     this._flippedX = this._flippedY = false
-    this.anchorX = 0.5
-    this.anchorY = 0.5
+    this.setAnchorPoint(0.5, 0.5)
     this._offsetPosition.x = 0
     this._offsetPosition.y = 0
     this._hasChildren = false

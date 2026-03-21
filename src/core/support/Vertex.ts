@@ -1,9 +1,9 @@
-import { p } from '../cocoa/Geometry'
+import { p, Point } from '../cocoa/Geometry'
 import { degreesToRadians } from '../platform'
 import { vertex2 } from '../platform/Types'
 import { pCross, pDot, pMidpoint, pMult, pNormalize, pPerp, pSub } from './PointExtension'
 
-export const vertexLineToPolygon = function (points, stroke, vertices, offset, nuPoints) {
+export const vertexLineToPolygon = function (points: number[], stroke: number, vertices: number[], offset: number, nuPoints: number) {
   nuPoints += offset
   if (nuPoints <= 1) return
 
@@ -75,7 +75,16 @@ export const vertexLineToPolygon = function (points, stroke, vertices, offset, n
  * @param {Number} Dy
  * @return {Object}
  */
-export const vertexLineIntersect = function (Ax, Ay, Bx, By, Cx, Cy, Dx, Dy) {
+export const vertexLineIntersect = function (
+  Ax: number,
+  Ay: number,
+  Bx: number,
+  By: number,
+  Cx: number,
+  Cy: number,
+  Dx: number,
+  Dy: number,
+) {
   let newX
   // FAIL: Line undefined
   if ((Ax === Bx && Ay === By) || (Cx === Dx && Cy === Dy)) return { isSuccess: false, value: 0 }
@@ -116,7 +125,7 @@ export const vertexLineIntersect = function (Ax, Ay, Bx, By, Cx, Cy, Dx, Dy) {
  * @param {Array} verts
  * @return {Boolean}
  */
-export const vertexListIsClockwise = function (verts) {
+export const vertexListIsClockwise = function (verts: Point[]) {
   for (let i = 0, len = verts.length; i < len; i++) {
     const a = verts[i]
     const b = verts[(i + 1) % len]

@@ -1412,7 +1412,7 @@ export class Widget extends ProtectedNode {
    * @param {Number} tag
    * @deprecated since v3.0, please use addChild instead.
    */
-  addNode(node, zOrder, tag) {
+  addNode(node: Node, zOrder: number, tag: number) {
     if (node instanceof Widget) {
       log('Please use addChild to add a Widget.')
       return
@@ -1427,7 +1427,7 @@ export class Widget extends ProtectedNode {
    * @param {Number} tag
    * @returns {Node}
    */
-  getNodeByTag(tag) {
+  getNodeByTag(tag: number) {
     const _nodes = this._nodes
     for (let i = 0; i < _nodes.length; i++) {
       const node = _nodes[i]
@@ -1453,7 +1453,7 @@ export class Widget extends ProtectedNode {
    * @param {Node} node
    * @param {Boolean} cleanup
    */
-  removeNode(node, cleanup) {
+  removeNode(node, cleanup?: boolean) {
     Node.prototype.removeChild.call(this, node, cleanup)
     arrayRemoveObject(this._nodes, node)
   }
@@ -1472,7 +1472,7 @@ export class Widget extends ProtectedNode {
    * @param {Number} tag
    * @param {Boolean} [cleanup]
    */
-  removeNodeByTag(tag, cleanup) {
+  removeNodeByTag(tag: number, cleanup?: boolean) {
     const node = this.getChildByTag(tag)
     if (!node) log('cocos2d: removeNodeByTag(tag = %d): child not found!', tag)
     else this.removeChild(node, cleanup)

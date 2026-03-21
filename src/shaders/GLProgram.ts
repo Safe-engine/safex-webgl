@@ -26,12 +26,12 @@ import { glDeleteProgram, glUseProgram } from './GLStateCache'
 
 export class GLProgram {
   declare _glContext: WebGLRenderingContext
-  declare _programObj: WebGLProgram
+  declare _programObj: WebGLShader
   declare _vertShader: WebGLShader
   declare _fragShader: WebGLShader
-  declare _uniforms: any
-  declare _hashForUniforms: any
-  declare __instanceId: any
+  declare _uniforms: { [key: string]: WebGLUniformLocation }
+  declare _hashForUniforms: { [key: string]: any[] }
+  declare __instanceId: string
   _usesTime = false
   _projectionUpdated = -1
 
@@ -78,7 +78,7 @@ export class GLProgram {
     return `<CCGLProgram = ${this.toString()} | Program = ${this._programObj.toString()}, VertexShader = ${this._vertShader.toString()}, FragmentShader = ${this._fragShader.toString()}>`
   }
 
-  _compileShader(shader: any, type: any, source: string): boolean {
+  _compileShader(shader: WebGLShader, type: number, source: string): boolean {
     if (!source || !shader) return false
 
     const preStr = GLProgram._isHighpSupported() ? 'precision highp float;\n' : 'precision mediump float;\n'
@@ -262,7 +262,7 @@ export class GLProgram {
     this.setUniformLocationWith1i(this._uniforms[UNIFORM_SAMPLER_S], 0)
   }
 
-  _addUniformLocation(name: string): any {
+  _addUniformLocation(name: string) {
     const location: any = this._glContext.getUniformLocation(this._programObj, name)
     if (location) location._name = name
     this._uniforms[name] = location
@@ -274,7 +274,7 @@ export class GLProgram {
    * @param {String} name
    * @returns {Number}
    */
-  getUniformLocationForName(name: string): any {
+  getUniformLocationForName(name: string) {
     if (!name) throw new Error('GLProgram.getUniformLocationForName(): uniform name should be non-null')
     if (!this._programObj)
       throw new Error(
@@ -289,7 +289,7 @@ export class GLProgram {
    * get uniform MVP matrix
    * @returns {WebGLUniformLocation}
    */
-  getUniformMVPMatrix(): any {
+  getUniformMVPMatrix() {
     return this._uniforms[UNIFORM_MVPMATRIX_S]
   }
 
@@ -297,7 +297,7 @@ export class GLProgram {
    * get uniform sampler
    * @returns {WebGLUniformLocation}
    */
-  getUniformSampler(): any {
+  getUniformSampler() {
     return this._uniforms[UNIFORM_SAMPLER_S]
   }
 

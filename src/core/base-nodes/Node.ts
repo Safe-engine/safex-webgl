@@ -1,7 +1,10 @@
-import { director, renderer } from '../..'
+import { director, global, renderer, Touch } from '../..'
+import type { ActionInterval } from '../../actions'
 import { _LogInfos, assert, log } from '../../helper/Debugger'
+import type { GLProgram, GLProgramState } from '../../shaders'
 import { ActionManager } from '../ActionManager'
 import {
+  AffineTransform,
   affineTransformConcat,
   affineTransformConcatIn,
   affineTransformInvert,
@@ -21,10 +24,7 @@ import { dirtyFlags } from './NodeRenderCmd'
 import { NodeWebGLRenderCmd } from './NodeWebGLRenderCmd'
 
 export const NODE_TAG_INVALID = -1
-export let s_globalOrderOfArrival = 1
-export function s_globalOrderOfArrivalPP() {
-  return s_globalOrderOfArrival++
-}
+export const ACTION_TAG_INVALID = -1
 
 export class Node extends EventHelper {
   // declare findNextFocusedWidget: (direction: any, arg1: this) => void
@@ -129,7 +129,7 @@ export class Node extends EventHelper {
   getSkewX() {
     return this._skewX
   }
-  setSkewX(newSkewX: any) {
+  setSkewX(newSkewX: number) {
     this._skewX = newSkewX
     this._renderCmd.setDirtyFlag(Node._dirtyFlags.transformDirty)
   }
@@ -137,19 +137,19 @@ export class Node extends EventHelper {
   getSkewY() {
     return this._skewY
   }
-  setSkewY(newSkewY: any) {
+  setSkewY(newSkewY: number) {
     this._skewY = newSkewY
     this._renderCmd.setDirtyFlag(Node._dirtyFlags.transformDirty)
   }
 
-  setLocalZOrder(localZOrder: any) {
+  setLocalZOrder(localZOrder: number) {
     if (localZOrder === this._localZOrder) return
     if (this._parent) this._parent.reorderChild(this, localZOrder)
     else this._localZOrder = localZOrder
     eventManager._setDirtyForNode(this)
   }
 
-  _setLocalZOrder(localZOrder: any) {
+  _setLocalZOrder(localZOrder: number) {
     this._localZOrder = localZOrder
   }
   getLocalZOrder() {
@@ -160,12 +160,12 @@ export class Node extends EventHelper {
     log(_LogInfos.Node_getZOrder)
     return this.getLocalZOrder()
   }
-  setZOrder(z: any) {
+  setZOrder(z: number) {
     log(_LogInfos.Node_setZOrder)
     this.setLocalZOrder(z)
   }
 
-  setGlobalZOrder(globalZOrder: any) {
+  setGlobalZOrder(globalZOrder: number) {
     if (this._globalZOrder !== globalZOrder) {
       this._globalZOrder = globalZOrder
       eventManager._setDirtyForNode(this)
@@ -178,7 +178,7 @@ export class Node extends EventHelper {
   getVertexZ() {
     return this._vertexZ
   }
-  setVertexZ(Var: any) {
+  setVertexZ(Var: number) {
     this._customZ = this._vertexZ = Var
   }
 
@@ -186,7 +186,7 @@ export class Node extends EventHelper {
     if (this._rotationX !== this._rotationY) log(_LogInfos.Node_getRotation)
     return this._rotationX
   }
-  setRotation(newRotation: any) {
+  setRotation(newRotation: number) {
     this._rotationX = this._rotationY = newRotation
     this._renderCmd.setDirtyFlag(Node._dirtyFlags.transformDirty)
   }
@@ -194,14 +194,14 @@ export class Node extends EventHelper {
   getRotationX() {
     return this._rotationX
   }
-  setRotationX(rotationX: any) {
+  setRotationX(rotationX: number) {
     this._rotationX = rotationX
     this._renderCmd.setDirtyFlag(Node._dirtyFlags.transformDirty)
   }
   getRotationY() {
     return this._rotationY
   }
-  setRotationY(rotationY: any) {
+  setRotationY(rotationY: number) {
     this._rotationY = rotationY
     this._renderCmd.setDirtyFlag(Node._dirtyFlags.transformDirty)
   }
@@ -210,7 +210,7 @@ export class Node extends EventHelper {
     if (this._scaleX !== this._scaleY) log(_LogInfos.Node_getScale)
     return this._scaleX
   }
-  setScale(scale: any, scaleY?: any) {
+  setScale(scale: number, scaleY?: number) {
     this._scaleX = scale
     this._scaleY = scaleY || scaleY === 0 ? scaleY : scale
     this._renderCmd.setDirtyFlag(Node._dirtyFlags.transformDirty)
@@ -218,19 +218,19 @@ export class Node extends EventHelper {
   getScaleX() {
     return this._scaleX
   }
-  setScaleX(newScaleX: any) {
+  setScaleX(newScaleX: number) {
     this._scaleX = newScaleX
     this._renderCmd.setDirtyFlag(Node._dirtyFlags.transformDirty)
   }
   getScaleY() {
     return this._scaleY
   }
-  setScaleY(newScaleY: any) {
+  setScaleY(newScaleY: number) {
     this._scaleY = newScaleY
     this._renderCmd.setDirtyFlag(Node._dirtyFlags.transformDirty)
   }
 
-  setPosition(newPosOrxValue: any, yValue?: any) {
+  setPosition(newPosOrxValue: any, yValue?: number) {
     const locPosition = this._position
     if (yValue === undefined) {
       if (locPosition.x === newPosOrxValue.x && locPosition.y === newPosOrxValue.y) return
@@ -245,7 +245,7 @@ export class Node extends EventHelper {
     this._renderCmd.setDirtyFlag(Node._dirtyFlags.transformDirty)
   }
 
-  setNormalizedPosition(posOrX: any, y?: any) {
+  setNormalizedPosition(posOrX: any, y?: number) {
     const locPosition = this._normalizedPosition
     if (y === undefined) {
       locPosition.x = posOrX.x
@@ -267,14 +267,14 @@ export class Node extends EventHelper {
   getPositionX() {
     return this._position.x
   }
-  setPositionX(x: any) {
+  setPositionX(x: number) {
     this._position.x = x
     this._renderCmd.setDirtyFlag(Node._dirtyFlags.transformDirty)
   }
   getPositionY() {
     return this._position.y
   }
-  setPositionY(y: any) {
+  setPositionY(y: number) {
     this._position.y = y
     this._renderCmd.setDirtyFlag(Node._dirtyFlags.transformDirty)
   }
@@ -288,7 +288,7 @@ export class Node extends EventHelper {
   isVisible() {
     return this._visible
   }
-  setVisible(visible: any) {
+  setVisible(visible: boolean) {
     if (this._visible !== visible) {
       this._visible = visible
       this._renderCmd.setDirtyFlag(Node._dirtyFlags.transformDirty)
@@ -299,7 +299,7 @@ export class Node extends EventHelper {
   getAnchorPoint() {
     return p(this._anchorPoint)
   }
-  setAnchorPoint(point: any, y?: any) {
+  setAnchorPoint(point: any, y?: number) {
     const locAnchorPoint = this._anchorPoint
     if (y === undefined) {
       if (point.x === locAnchorPoint.x && point.y === locAnchorPoint.y) return
@@ -316,7 +316,7 @@ export class Node extends EventHelper {
   _getAnchorX() {
     return this._anchorPoint.x
   }
-  _setAnchorX(x: any) {
+  _setAnchorX(x: number) {
     if (this._anchorPoint.x === x) return
     this._anchorPoint.x = x
     this._renderCmd._updateAnchorPointInPoint()
@@ -324,7 +324,7 @@ export class Node extends EventHelper {
   _getAnchorY() {
     return this._anchorPoint.y
   }
-  _setAnchorY(y: any) {
+  _setAnchorY(y: number) {
     if (this._anchorPoint.y === y) return
     this._anchorPoint.y = y
     this._renderCmd._updateAnchorPointInPoint()
@@ -336,14 +336,14 @@ export class Node extends EventHelper {
   _getWidth() {
     return this._contentSize.width
   }
-  _setWidth(width: any) {
+  _setWidth(width: number) {
     this._contentSize.width = width
     this._renderCmd._updateAnchorPointInPoint()
   }
   _getHeight() {
     return this._contentSize.height
   }
-  _setHeight(height: any) {
+  _setHeight(height: number) {
     this._contentSize.height = height
     this._renderCmd._updateAnchorPointInPoint()
   }
@@ -389,10 +389,10 @@ export class Node extends EventHelper {
   getTag() {
     return this.tag
   }
-  setTag(tag: any) {
+  setTag(tag: number) {
     this.tag = tag
   }
-  setName(name: any) {
+  setName(name: string) {
     this._name = name
   }
   getName() {
@@ -484,9 +484,9 @@ export class Node extends EventHelper {
     return null
   }
 
-  addChild(child: any, localZOrder?: any, tag?: any) {
+  addChild(child: Node, localZOrder?: number, tag?: number) {
     localZOrder = localZOrder === undefined ? child._localZOrder : localZOrder
-    let name: any,
+    let name: string,
       setTag = false
     if (tag === undefined) {
       name = child._name
@@ -502,13 +502,13 @@ export class Node extends EventHelper {
     this._addChildHelper(child, localZOrder, tag, name, setTag)
   }
 
-  _addChildHelper(child: any, localZOrder: any, tag: any, name: any, setTag: boolean) {
+  _addChildHelper(child: Node, localZOrder: number, tag: number, name: string, setTag: boolean) {
     if (!this._children) this._children = []
     this._insertChild(child, localZOrder)
     if (setTag) child.setTag(tag)
     else child.setName(name)
     child.setParent(this)
-    child.setOrderOfArrival(s_globalOrderOfArrival++)
+    child.setOrderOfArrival(global.s_globalOrderOfArrival++)
     if (this._running) {
       child._performRecursive(Node._stateCallbackType.onEnter)
       if (this._isTransitionFinished) child._performRecursive(Node._stateCallbackType.onEnterTransitionDidFinish)
@@ -518,35 +518,35 @@ export class Node extends EventHelper {
     if (this._cascadeOpacityEnabled) child._renderCmd.setDirtyFlag(Node._dirtyFlags.opacityDirty)
   }
 
-  removeFromParent(cleanup?: any) {
+  removeFromParent(cleanup?: boolean) {
     if (this._parent) {
       if (cleanup === undefined) cleanup = true
       this._parent.removeChild(this, cleanup)
     }
   }
-  removeFromParentAndCleanup(cleanup?: any) {
+  removeFromParentAndCleanup(cleanup?: boolean) {
     log(_LogInfos.Node_removeFromParentAndCleanup)
     this.removeFromParent(cleanup)
   }
 
-  removeChild(child: any, cleanup?: any) {
+  removeChild(child: Node, cleanup?: boolean) {
     if (this._children.length === 0) return
     if (cleanup === undefined) cleanup = true
     if (this._children.indexOf(child) > -1) this._detachChild(child, cleanup)
     renderer.childrenOrderDirty = true
   }
 
-  removeChildByTag(tag: any, cleanup?: any) {
+  removeChildByTag(tag: number, cleanup?: boolean) {
     if (tag === NODE_TAG_INVALID) log(_LogInfos.Node_removeChildByTag)
     const child = this.getChildByTag(tag)
     if (!child) log(_LogInfos.Node_removeChildByTag_2, tag)
     else this.removeChild(child, cleanup)
   }
 
-  removeAllChildrenWithCleanup(cleanup?: any) {
+  removeAllChildrenWithCleanup(cleanup?: boolean) {
     this.removeAllChildren(cleanup)
   }
-  removeAllChildren(cleanup?: any) {
+  removeAllChildren(cleanup?: boolean) {
     const __children = this._children
     if (__children !== null) {
       if (cleanup === undefined) cleanup = true
@@ -567,18 +567,18 @@ export class Node extends EventHelper {
     }
   }
 
-  _detachChild(child: any, doCleanup: any) {
+  _detachChild(child: Node, doCleanup: boolean) {
     if (this._running) {
       child._performRecursive(Node._stateCallbackType.onExitTransitionDidStart)
       child._performRecursive(Node._stateCallbackType.onExit)
     }
     if (doCleanup) child._performRecursive(Node._stateCallbackType.cleanup)
-    child.parent = null
+    child.setParent(null)
     child._renderCmd.detachFromParent()
     arrayRemoveObject(this._children, child)
   }
 
-  _insertChild(child: any, z: any) {
+  _insertChild(child: Node, z: number) {
     renderer.childrenOrderDirty = this._reorderChildDirty = true
     this._children.push(child)
     child._setLocalZOrder(z)
@@ -587,15 +587,15 @@ export class Node extends EventHelper {
     this._renderCmd.setDirtyFlag(Node._dirtyFlags.transformDirty)
   }
 
-  reorderChild(child: any, zOrder: any) {
+  reorderChild(child: Node, zOrder: number) {
     assert(child, _LogInfos.Node_reorderChild)
     if (this._children.indexOf(child) === -1) {
       log(_LogInfos.Node_reorderChild_2)
       return
     }
     renderer.childrenOrderDirty = this._reorderChildDirty = true
-    child.arrivalOrder = s_globalOrderOfArrival
-    s_globalOrderOfArrival++
+    child.arrivalOrder = global.s_globalOrderOfArrival
+    global.s_globalOrderOfArrival++
     child._setLocalZOrder(zOrder)
     this._renderCmd.setDirtyFlag(Node._dirtyFlags.orderDirty)
   }
@@ -704,7 +704,7 @@ export class Node extends EventHelper {
     this.removeAllComponents()
   }
 
-  runAction(action: any) {
+  runAction(action: ActionInterval) {
     assert(action, _LogInfos.Node_runAction)
     this.actionManager.addAction(action, this, !this._running)
     return action
@@ -712,17 +712,17 @@ export class Node extends EventHelper {
   stopAllActions() {
     this.actionManager && this.actionManager.removeAllActionsFromTarget(this)
   }
-  stopAction(action: any) {
+  stopAction(action: ActionInterval) {
     this.actionManager.removeAction(action)
   }
-  stopActionByTag(tag: any) {
+  stopActionByTag(tag: number) {
     if (tag === ACTION_TAG_INVALID) {
       log(_LogInfos.Node_stopActionByTag)
       return
     }
     this.actionManager.removeActionByTag(tag, this)
   }
-  getActionByTag(tag: any) {
+  getActionByTag(tag: number) {
     if (tag === ACTION_TAG_INVALID) {
       log(_LogInfos.Node_getActionByTag)
       return null
@@ -736,14 +736,14 @@ export class Node extends EventHelper {
   scheduleUpdate() {
     this.scheduleUpdateWithPriority(0)
   }
-  scheduleUpdateWithPriority(priority: any) {
+  scheduleUpdateWithPriority(priority: number) {
     this.scheduler.scheduleUpdate(this, priority, !this._running)
   }
   unscheduleUpdate() {
     this.scheduler.unscheduleUpdate(this)
   }
 
-  schedule(callback: any, interval?: any, repeat?: any, delay?: any, key?: any) {
+  schedule(callback: any, interval?: number, repeat?: number, delay?: number, key?: string) {
     const len = arguments.length
     if (typeof callback === 'function') {
       if (len === 1) {
@@ -791,7 +791,7 @@ export class Node extends EventHelper {
     this.scheduler.schedule(callback, this, interval, repeat, delay, !this._running, key)
   }
 
-  scheduleOnce(callback: any, delay: any, key?: any) {
+  scheduleOnce(callback: any, delay: number, key?: string) {
     if (key === undefined) key = this.__instanceId
     this.schedule(callback, 0, 0, delay, key)
   }
@@ -851,36 +851,36 @@ export class Node extends EventHelper {
     return this.getWorldToNodeTransform()
   }
 
-  convertToNodeSpace(worldPoint: any) {
+  convertToNodeSpace(worldPoint: Point) {
     return pointApplyAffineTransform(worldPoint, this.getWorldToNodeTransform())
   }
-  convertToWorldSpace(nodePoint?: any) {
+  convertToWorldSpace(nodePoint?: Point) {
     nodePoint = nodePoint || p(0, 0)
     return pointApplyAffineTransform(nodePoint, this.getNodeToWorldTransform())
   }
-  convertToNodeSpaceAR(worldPoint: any) {
+  convertToNodeSpaceAR(worldPoint: Point) {
     return pSub(this.convertToNodeSpace(worldPoint), this._renderCmd.getAnchorPointInPoints())
   }
-  convertToWorldSpaceAR(nodePoint?: any) {
+  convertToWorldSpaceAR(nodePoint?: Point) {
     nodePoint = nodePoint || p(0, 0)
     const pt = pAdd(nodePoint, this._renderCmd.getAnchorPointInPoints())
     return this.convertToWorldSpace(pt)
   }
 
-  _convertToWindowSpace(nodePoint: any) {
+  _convertToWindowSpace(nodePoint: Point) {
     const worldPoint = this.convertToWorldSpace(nodePoint)
     return director.convertToUI(worldPoint)
   }
-  convertTouchToNodeSpace(touch: any) {
+  convertTouchToNodeSpace(touch: Touch) {
     const point = touch.getLocation()
     return this.convertToNodeSpace(point)
   }
-  convertTouchToNodeSpaceAR(touch: any) {
+  convertTouchToNodeSpaceAR(touch: Touch) {
     const point = director.convertToGL(touch.getLocation())
     return this.convertToNodeSpaceAR(point)
   }
 
-  update(dt: any) {
+  update(dt: number) {
     if (this._componentContainer && !this._componentContainer.isEmpty()) this._componentContainer.visit(dt)
   }
   updateTransform() {
@@ -942,10 +942,10 @@ export class Node extends EventHelper {
     return this.getNodeToParentTransform()
   }
 
-  getNodeToParentTransform(ancestor?: any) {
+  getNodeToParentTransform(ancestor?: Node) {
     const t = this._renderCmd.getNodeToParentTransform()
     if (ancestor) {
-      const T: any = { a: t.a, b: t.b, c: t.c, d: t.d, tx: t.tx, ty: t.ty }
+      const T: AffineTransform = { a: t.a, b: t.b, c: t.c, d: t.d, tx: t.tx, ty: t.ty }
       for (let p = this._parent; p != null && p != ancestor; p = p.getParent()) affineTransformConcatIn(T, p.getNodeToParentTransform())
       return T
     } else {
@@ -953,7 +953,7 @@ export class Node extends EventHelper {
     }
   }
 
-  getNodeToParentAffineTransform(ancestor?: any) {
+  getNodeToParentAffineTransform(ancestor?: Node) {
     return this.getNodeToParentTransform(ancestor)
   }
   getCamera() {
@@ -968,10 +968,10 @@ export class Node extends EventHelper {
   getShaderProgram() {
     return this._renderCmd.getShaderProgram()
   }
-  setShaderProgram(newShaderProgram: any) {
+  setShaderProgram(newShaderProgram: GLProgram) {
     this._renderCmd.setShaderProgram(newShaderProgram)
   }
-  setGLProgramState(glProgramState: any) {
+  setGLProgramState(glProgramState: GLProgramState) {
     this._renderCmd.setGLProgramState(glProgramState)
   }
   getGLProgramState() {
@@ -1023,18 +1023,18 @@ export class Node extends EventHelper {
   getDisplayedOpacity() {
     return this._renderCmd.getDisplayedOpacity()
   }
-  setOpacity(opacity: any) {
+  setOpacity(opacity: number) {
     this._realOpacity = opacity
     this._renderCmd.setDirtyFlag(Node._dirtyFlags.opacityDirty)
   }
-  updateDisplayedOpacity(parentOpacity: any) {
+  updateDisplayedOpacity(parentOpacity: number) {
     this._renderCmd._updateDisplayOpacity(parentOpacity)
   }
 
   isCascadeOpacityEnabled() {
     return this._cascadeOpacityEnabled
   }
-  setCascadeOpacityEnabled(cascadeOpacityEnabled: any) {
+  setCascadeOpacityEnabled(cascadeOpacityEnabled: boolean) {
     if (this._cascadeOpacityEnabled === cascadeOpacityEnabled) return
     this._cascadeOpacityEnabled = cascadeOpacityEnabled
     this._renderCmd.setCascadeOpacityEnabledDirty()
@@ -1099,7 +1099,7 @@ export class Node extends EventHelper {
     else this.doEnumerate(newName, callback)
   }
 
-  doEnumerateRecursive(node: any, name: any, callback: any) {
+  doEnumerateRecursive(node: Node, name: string, callback: any) {
     let ret = false
     if (node.doEnumerate(name, callback)) ret = true
     else {
@@ -1117,7 +1117,7 @@ export class Node extends EventHelper {
     return ret
   }
 
-  doEnumerate(name: any, callback: any) {
+  doEnumerate(name: string, callback: any) {
     const pos = name.indexOf('/')
     let searchName = name
     let needRecursive = false
@@ -1150,4 +1150,3 @@ export class Node extends EventHelper {
 // PrototypeCCNode()
 // Minimal runtime fallbacks used during migration
 // export const REPEAT_FOREVER = -1
-export const ACTION_TAG_INVALID = -1

@@ -1,5 +1,5 @@
 import { renderer } from '../..'
-import { affineTransformConcatIn, affineTransformInvertOut } from '../cocoa/AffineTransform'
+import { AffineTransform, affineTransformConcatIn, affineTransformInvertOut } from '../cocoa/AffineTransform'
 import { p, Point } from '../cocoa/Geometry'
 import { color, Color } from '../platform/Color'
 import { Node } from './Node'
@@ -20,9 +20,9 @@ export const dirtyFlags = {
   all: (1 << 10) - 1,
 }
 
-function transformChildTree(root) {
+function transformChildTree(root: Node) {
   let index = 1
-  let children, child, curr, parentCmd, i, len
+  let children: Node[], child: Node, curr: Node, parentCmd, i, len
   let stack = Node._performStacks[Node._performing]
   if (!stack) {
     stack = []
@@ -74,9 +74,9 @@ class NodeRenderCmd {
   _cascadeColorEnabledDirty = false
   _cascadeOpacityEnabledDirty = false
 
-  declare _transform: any
-  declare _worldTransform: any
-  declare _inverse: any
+  declare _transform: AffineTransform
+  declare _worldTransform: AffineTransform
+  declare _inverse: AffineTransform
 
   declare _updateCurrentRegions?: () => void
   // _notifyRegionStatus?: (status: any) => void
@@ -115,7 +115,7 @@ class NodeRenderCmd {
     this.setDirtyFlag(Node._dirtyFlags.opacityDirty)
   }
 
-  getParentToNodeTransform(): any {
+  getParentToNodeTransform() {
     if (!this._inverse) {
       this._inverse = { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 }
     }
@@ -281,10 +281,10 @@ class NodeRenderCmd {
       }
     }
 
-    if (this._updateCurrentRegions) {
-      this._updateCurrentRegions()
-      // this._notifyRegionStatus && this._notifyRegionStatus(Node.CanvasRenderCmd.RegionStatus.DirtyDouble)
-    }
+    // if (this._updateCurrentRegions) {
+    //   this._updateCurrentRegions()
+    // this._notifyRegionStatus && this._notifyRegionStatus(Node.CanvasRenderCmd.RegionStatus.DirtyDouble)
+    // }
 
     if (recursive) {
       transformChildTree(node)
@@ -293,7 +293,7 @@ class NodeRenderCmd {
     this._cacheDirty = true
   }
 
-  getNodeToParentTransform(): any {
+  getNodeToParentTransform() {
     if (!this._transform || this._dirtyFlag & Node._dirtyFlags.transformDirty) {
       this.transform()
     }

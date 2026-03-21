@@ -13,13 +13,15 @@ import { rectGetMaxX, rectGetMaxY, rectGetMinX, rectGetMinY } from './Geometry'
  * @param {Number} ty
  * @see affineTransformMake
  */
-export const AffineTransform = function (a, b, c, d, tx, ty) {
-  this.a = a
-  this.b = b
-  this.c = c
-  this.d = d
-  this.tx = tx
-  this.ty = ty
+export class AffineTransform {
+  constructor(
+    public a: number,
+    public b: number,
+    public c: number,
+    public d: number,
+    public tx: number,
+    public ty: number,
+  ) {}
 }
 
 /**

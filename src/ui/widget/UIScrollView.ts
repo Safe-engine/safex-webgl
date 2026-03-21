@@ -29,8 +29,8 @@ export class ScrollView extends Layout {
   static MOVEDIR_LEFT = 2
   static MOVEDIR_RIGHT = 3
 
-  declare _innerContainer
-  declare _direction
+  declare _innerContainer: Layout
+  declare _direction: number
 
   _topBoundary = 0
   _bottomBoundary = 0
@@ -270,34 +270,34 @@ export class ScrollView extends Layout {
     const locW = this._contentSize.width
     let innerWidth = locW
     const container = this._innerContainer
-    const oldInnerWidth = container.width
+    const oldInnerWidth = container._getWidth()
     if (width < locW) log('Inner width <= scrollview width, it will be force sized!')
     else innerWidth = width
-    container.width = innerWidth
+    container._setWidth(innerWidth)
 
     switch (this._direction) {
       case ScrollView.DIR_HORIZONTAL:
       case ScrollView.DIR_BOTH:
         if (container.getRightBoundary() <= locW) {
-          const newInnerWidth = container.width
+          const newInnerWidth = container._getWidth()
           const offset = oldInnerWidth - newInnerWidth
           this._scrollChildren(offset, 0)
         }
         break
     }
-    const innerAX = container.anchorX
-    if (container.getLeftBoundary() > 0.0) container.x = innerAX * innerWidth
-    if (container.getRightBoundary() < locW) container.x = locW - (1.0 - innerAX) * innerWidth
+    const innerAX = container._getAnchorX()
+    if (container.getLeftBoundary() > 0.0) container.setPositionX(innerAX * innerWidth)
+    if (container.getRightBoundary() < locW) container.setPositionX(locW - (1.0 - innerAX) * innerWidth)
   }
 
   _setInnerHeight(height: number): void {
     const locH = this._contentSize.height
     let innerHeight = locH
     const container = this._innerContainer
-    const oldInnerHeight = container.height
+    const oldInnerHeight = container._getHeight()
     if (height < locH) log('Inner height <= scrollview height, it will be force sized!')
     else innerHeight = height
-    container.height = innerHeight
+    container._setHeight(innerHeight)
 
     switch (this._direction) {
       case ScrollView.DIR_VERTICAL:
@@ -308,9 +308,9 @@ export class ScrollView extends Layout {
         break
       }
     }
-    const innerAY = container.anchorY
-    if (container.getLeftBoundary() > 0.0) container.y = innerAY * innerHeight
-    if (container.getRightBoundary() < locH) container.y = locH - (1.0 - innerAY) * innerHeight
+    const innerAY = container._getAnchorY()
+    if (container.getLeftBoundary() > 0.0) container.setPositionY(innerAY * innerHeight)
+    if (container.getRightBoundary() < locH) container.setPositionY(locH - (1.0 - innerAY) * innerHeight)
   }
   /**
    * Set inner container position
@@ -341,7 +341,7 @@ export class ScrollView extends Layout {
    *
    * @return The inner container position.
    */
-  getInnerContainerPosition(): any {
+  getInnerContainerPosition() {
     return this._innerContainer.getPosition()
   }
 
@@ -356,11 +356,11 @@ export class ScrollView extends Layout {
   }
 
   _getInnerWidth(): number {
-    return this._innerContainer.width
+    return this._innerContainer._getWidth()
   }
 
   _getInnerHeight(): number {
-    return this._innerContainer.height
+    return this._innerContainer._getHeight()
   }
 
   _isInContainer(widget): any {
@@ -1680,7 +1680,7 @@ export class ScrollView extends Layout {
    * @param {Number} tag
    * @deprecated since v3.0, please use removeChildByTag instead.
    */
-  removeNodeByTag(tag): any {
+  removeNodeByTag(tag: number) {
     this._innerContainer.removeNodeByTag(tag)
   }
 
@@ -1688,7 +1688,7 @@ export class ScrollView extends Layout {
    * Remove all node from ScrollView.
    * @deprecated since v3.0, please use removeAllChildren instead.
    */
-  removeAllNodes(): any {
+  removeAllNodes() {
     this._innerContainer.removeAllNodes()
   }
 
