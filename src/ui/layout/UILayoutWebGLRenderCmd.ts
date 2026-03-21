@@ -19,8 +19,8 @@ export class LayoutWebGLRenderCmd extends ProtectedNodeWebGLRenderCmd {
   declare _beforeVisitCmdStencil
   declare _afterDrawStencilCmd
   declare _afterVisitCmdStencil
-  declare _beforeVisitCmdScissor
-  declare _afterVisitCmdScissor
+  declare _beforeVisitCmdScissor: CustomRenderCmd
+  declare _afterVisitCmdScissor: CustomRenderCmd
   declare _node: Layout
 
   constructor(renderable) {
@@ -152,7 +152,7 @@ export class LayoutWebGLRenderCmd extends ProtectedNodeWebGLRenderCmd {
     currentStack.stack.push(currentStack.top)
     currentStack.top = this._stackMatrix
 
-    node._clippingStencil.visit(this)
+    node._clippingStencil.visit(node)
 
     renderer.pushRenderCommand(this._afterDrawStencilCmd)
   }

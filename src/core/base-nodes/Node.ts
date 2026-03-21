@@ -908,7 +908,7 @@ export class Node extends EventHelper {
     if (this._componentContainer) this._componentContainer.removeAll()
   }
 
-  visit(parent?: any) {
+  visit(parent?: Node) {
     const cmd = this._renderCmd,
       parentCmd = parent ? parent._renderCmd : null
     if (!this._visible) {
@@ -916,10 +916,10 @@ export class Node extends EventHelper {
       return
     }
     cmd.visit(parentCmd)
-    let i: any
+    let i: number
     const children = this._children,
       len = children.length
-    let child: any
+    let child: Node
     if (len > 0) {
       if (this._reorderChildDirty) this.sortAllChildren()
       for (i = 0; i < len; i++) {

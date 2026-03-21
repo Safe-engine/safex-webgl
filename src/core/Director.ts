@@ -1,5 +1,5 @@
-import { _renderContext, director, Game, game, renderer, view } from '..'
-import { _LogInfos, log } from '../helper/Debugger'
+import { _renderContext, Color, director, Game, game, renderer, view } from '..'
+import { _LogInfos, assert, log } from '../helper/Debugger'
 import { global } from '../helper/global'
 import { glBlendFunc, setProjectionMatrixDirty } from '../shaders/GLStateCache'
 import { textureCache } from '../textures/TextureCache'
@@ -83,20 +83,6 @@ export class Director {
     eventManager.addCustomListener(game.EVENT_SHOW, () => {
       this._lastUpdate = Date.now()
     })
-
-    this._scheduler = new Scheduler()
-    if (ActionManager) {
-      this._actionManager = new ActionManager()
-      this._scheduler.scheduleUpdate(this._actionManager, Scheduler.PRIORITY_SYSTEM, false)
-    }
-    this._eventAfterUpdate = new EventCustom(Director.EVENT_AFTER_UPDATE)
-    this._eventAfterUpdate.setUserData(this)
-    this._eventAfterVisit = new EventCustom(Director.EVENT_AFTER_VISIT)
-    this._eventAfterVisit.setUserData(this)
-    this._eventAfterDraw = new EventCustom(Director.EVENT_AFTER_DRAW)
-    this._eventAfterDraw.setUserData(this)
-    this._eventProjectionChanged = new EventCustom(Director.EVENT_PROJECTION_CHANGED)
-    this._eventProjectionChanged.setUserData(this)
   }
 
   public init(): boolean {
@@ -108,17 +94,13 @@ export class Director {
     this._lastUpdate = Date.now()
     this._paused = false
     this._purgeDirectorInNextLoop = false
-    this._winSizeInPoints = { width: 0, height: 0 }
+    this._winSizeInPoints = Size(0, 0)
     this._openGLView = null
     this._contentScaleFactor = 1.0
 
     this._scheduler = new Scheduler()
-    if (ActionManager) {
-      this._actionManager = new ActionManager()
-      this._scheduler.scheduleUpdate(this._actionManager, Scheduler.PRIORITY_SYSTEM, false)
-    } else {
-      this._actionManager = null
-    }
+    this._actionManager = new ActionManager()
+    this._scheduler.scheduleUpdate(this._actionManager, Scheduler.PRIORITY_SYSTEM, false)
 
     this._eventAfterUpdate = new EventCustom(Director.EVENT_AFTER_UPDATE)
     this._eventAfterUpdate.setUserData(this)
@@ -128,7 +110,6 @@ export class Director {
     this._eventAfterDraw.setUserData(this)
     this._eventProjectionChanged = new EventCustom(Director.EVENT_PROJECTION_CHANGED)
     this._eventProjectionChanged.setUserData(this)
-
     return true
   }
 
@@ -240,14 +221,11 @@ export class Director {
   }
 
   public getWinSize(): Size {
-    return { ...this._winSizeInPoints }
+    return Size(this._winSizeInPoints)
   }
 
   public getWinSizeInPixels(): Size {
-    return {
-      width: this._winSizeInPoints.width * this._contentScaleFactor,
-      height: this._winSizeInPoints.height * this._contentScaleFactor,
-    }
+    return Size(this._winSizeInPoints.width * this._contentScaleFactor, this._winSizeInPoints.height * this._contentScaleFactor)
   }
 
   // public getVisibleSize: (() => Size) | null = null;
@@ -262,7 +240,7 @@ export class Director {
   }
 
   public popScene(): void {
-    if (!this._runningScene) throw new Error('No running scene to pop.')
+    assert(this._runningScene, _LogInfos.Director_popScene)
     this._scenesStack.pop()
     const c = this._scenesStack.length
     if (c === 0) {
@@ -298,14 +276,14 @@ export class Director {
   }
 
   public pushScene(scene: Scene): void {
-    if (!scene) throw new Error('Scene must not be null.')
+    assert(scene, _LogInfos.Director_pushScene)
     this._sendCleanupToScene = false
     this._scenesStack.push(scene)
     this._nextScene = scene
   }
 
   public runScene(scene: Scene): void {
-    if (!scene) throw new Error('Scene must not be null.')
+    assert(scene, _LogInfos.Director_pushScene)
     if (!this._runningScene) {
       this.pushScene(scene)
       this.startAnimation()
@@ -327,6 +305,9 @@ export class Director {
     if (!this._paused) return
     this.setAnimationInterval(this._oldAnimationInterval)
     this._lastUpdate = Date.now()
+    if (!this._lastUpdate) {
+      log(_LogInfos.Director_resume)
+    }
     this._paused = false
     this._deltaTime = 0
   }
@@ -340,7 +321,7 @@ export class Director {
   // public setDepthTest: ((on: boolean) => void) | null = null;
   // public setClearColor: ((clearColor: any) => void) | null = null;
 
-  public setDefaultValues(): void {}
+  // public setDefaultValues(): void {}
 
   public setNextDeltaTimeZero(nextDeltaTimeZero: boolean): void {
     this._nextDeltaTimeZero = nextDeltaTimeZero
@@ -443,7 +424,7 @@ export class Director {
   }
 
   public popToSceneStackLevel(level: number): void {
-    if (!this._runningScene) throw new Error('No running scene.')
+    assert(this._runningScene, _LogInfos.Director_popToSceneStackLevel_2)
     const locScenesStack = this._scenesStack
     let c = locScenesStack.length
     if (level === 0) {
@@ -502,12 +483,11 @@ export class Director {
   }
 
   setProjection(projection: number) {
-    const _t = this as Director
-    const size = _t._winSizeInPoints
+    const size = this._winSizeInPoints
 
-    _t.setViewport()
+    this.setViewport()
 
-    const view = _t._openGLView
+    const view = this._openGLView
     const ox = view._viewPortRect.x / view._scaleX
     const oy = view._viewPortRect.y / view._scaleY
 
@@ -522,7 +502,7 @@ export class Director {
         break
       }
       case Director.PROJECTION_3D: {
-        const zeye = _t.getZEye()
+        const zeye = this.getZEye()
         const matrixPerspective = Matrix4.createPerspectiveProjection(60, size.width / size.height, 0.1, zeye * 2)
         kmGLMatrixMode(KM_GL_PROJECTION)
         kmGLLoadIdentity()
@@ -540,14 +520,14 @@ export class Director {
         break
       }
       case Director.PROJECTION_CUSTOM:
-        if (_t._projectionDelegate) _t._projectionDelegate.updateProjection()
+        if (this._projectionDelegate) this._projectionDelegate.updateProjection()
         break
       default:
         log(_LogInfos.Director_setProjection)
         break
     }
-    _t._projection = projection
-    eventManager.dispatchEvent(_t._eventProjectionChanged)
+    this._projection = projection
+    eventManager.dispatchEvent(this._eventProjectionChanged)
     setProjectionMatrixDirty()
     renderer.childrenOrderDirty = true
   }
@@ -556,22 +536,21 @@ export class Director {
     renderer.setDepthTest(on)
   }
 
-  setClearColor(clearColor: any) {
+  setClearColor(clearColor: Color) {
     renderer._clearColor = clearColor
   }
 
   setOpenGLView(openGLView: any) {
-    const _t = this as Director
-    _t._winSizeInPoints.width = game.canvas.width
-    _t._winSizeInPoints.height = game.canvas.height
-    _t._openGLView = openGLView || view
+    this._winSizeInPoints.width = game.canvas.width
+    this._winSizeInPoints.height = game.canvas.height
+    this._openGLView = openGLView || view
 
     // Configuration. Gather GPU info
     const conf = configuration
     conf.gatherGPUInfo()
     conf.dumpInfo()
 
-    _t.setGLDefaultValues()
+    this.setGLDefaultValues()
 
     if (eventManager) eventManager.setEnabled(true)
   }
