@@ -80,7 +80,7 @@ export const glDeleteProgram = function (program) {
  * @param {Number} sfactor
  * @param {Number} dfactor
  */
-export const setBlending = function (sfactor, dfactor) {
+export const setBlending = function (sfactor: number, dfactor: number) {
   const ctx = _renderContext
   if (sfactor === ctx.ONE && dfactor === ctx.ZERO) {
     ctx.disable(ctx.BLEND)

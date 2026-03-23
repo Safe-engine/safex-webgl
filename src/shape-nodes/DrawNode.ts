@@ -9,7 +9,6 @@ import {
   color,
   incrementGLDraws,
   ONE_MINUS_SRC_ALPHA,
-  SHADER_POSITION_LENGTHTEXTURECOLOR,
   SRC_ALPHA,
   VERTEX_ATTRIB_COLOR,
   VERTEX_ATTRIB_POSITION,
@@ -18,7 +17,6 @@ import {
 import { DRAWNODE_TOTAL_VERTICES } from '../core/platform/Config'
 import { GlobalVertexBuffer } from '../core/renderer/GlobalVertexBuffer'
 import { warn } from '../helper/Debugger'
-import { shaderCache } from '../shaders/ShaderCache'
 import { DrawNodeWebGLRenderCmd } from './DrawNodeWebGLRenderCmd'
 
 // 9600 vertices by default configurable in Config
@@ -130,7 +128,6 @@ export class DrawNode extends Node {
       _sharedBuffer = new GlobalVertexBuffer(_renderContext, DRAWNODE_TOTAL_VERTICES * VERTEX_BYTE)
     }
 
-    this._renderCmd._shaderProgram = shaderCache.programForKey(SHADER_POSITION_LENGTHTEXTURECOLOR)
     this._blendFunc = new BlendFunc(SRC_ALPHA, ONE_MINUS_SRC_ALPHA)
     this._drawColor = color(255, 255, 255, 255)
 
@@ -142,6 +139,7 @@ export class DrawNode extends Node {
   }
 
   onEnter() {
+    console.log('draw onenter')
     super.onEnter()
     if (this._occupiedSize < this._bufferCapacity) {
       this._ensureCapacity(this._bufferCapacity)

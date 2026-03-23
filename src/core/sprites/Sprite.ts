@@ -305,7 +305,7 @@ export class Sprite extends Node {
       this._rect.width = rectArg.width
       this._rect.height = rectArg.height
     }
-    if (!rectArg) rectArg = Rect(0, 0, textureIns.width, textureIns.height)
+    if (!rectArg) rectArg = Rect(0, 0, textureIns._getWidth(), textureIns._getHeight())
     this._renderCmd._checkTextureBoundary(textureIns, rectArg, rotated)
     this.setTexture(textureIns)
     this.setTextureRect(rectArg, rotated)
@@ -313,7 +313,7 @@ export class Sprite extends Node {
     return true
   }
 
-  setTextureRect(rectArg: any, rotated?: boolean, untrimmedSize?: any, needConvert?: any) {
+  setTextureRect(rectArg: Rect, rotated?: boolean, untrimmedSize?: any, needConvert?: any) {
     this._rectRotated = rotated || false
     this.setContentSize(untrimmedSize || rectArg)
     this.setVertexRect(rectArg)
@@ -327,7 +327,7 @@ export class Sprite extends Node {
     this._offsetPosition.y = relativeOffsetY + (this._contentSize.height - locRect.height) / 2
   }
 
-  addChild(child: any, localZOrder?: number, tag?: number) {
+  addChild(child: Node, localZOrder?: number, tag?: number) {
     assert(child, _LogInfos.CCSpriteBatchNode_addChild_2)
     if (localZOrder == null) localZOrder = child._localZOrder
     if (tag == null) tag = child.tag
@@ -337,7 +337,7 @@ export class Sprite extends Node {
     }
   }
 
-  setSpriteFrame(newFrame: any) {
+  setSpriteFrame(newFrame: SpriteFrame) {
     if (typeof newFrame === 'string') {
       newFrame = spriteFrameCache.getSpriteFrame(newFrame)
       assert(newFrame, _LogInfos.Sprite_setSpriteFrame)
@@ -417,7 +417,7 @@ export class Sprite extends Node {
     this._textureLoaded = true
   }
 
-  _changeRectWithTexture(texture: any) {
+  _changeRectWithTexture(texture: Texture2D) {
     const contentSize = texture._contentSize
     const r = Rect(0, 0, contentSize.width, contentSize.height)
     this.setTextureRect(r)

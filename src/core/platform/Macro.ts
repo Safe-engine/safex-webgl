@@ -1,4 +1,4 @@
-import { _renderContext, director } from '../..'
+import { _renderContext, director, NodeWebGLRenderCmd } from '../..'
 import { isObject, isUndefined } from '../../helper/checkType'
 import { _LogInfos, log } from '../../helper/Debugger'
 import { global } from '../../helper/global'
@@ -151,7 +151,7 @@ export const REPEAT_FOREVER = Number.MAX_VALUE - 1
  * @param {export const Node} node setup node
  * @function
  */
-export const nodeDrawSetup = function (node) {
+export const nodeDrawSetup = function (node: NodeWebGLRenderCmd) {
   //export const glEnable(node._glServerState);
   if (node._shaderProgram) {
     //export const _renderContext.useProgram(node._shaderProgram._programObj);

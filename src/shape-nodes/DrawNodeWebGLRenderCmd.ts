@@ -1,5 +1,7 @@
+import { SHADER_POSITION_LENGTHTEXTURECOLOR } from '../core'
 import { NodeWebGLRenderCmd } from '../core/base-nodes/NodeWebGLRenderCmd'
 import { Matrix4 } from '../core/kazmath/mat4'
+import { shaderCache } from '../shaders'
 import { glBlendFunc } from '../shaders/GLStateCache'
 import type { DrawNode } from './DrawNode'
 
@@ -11,6 +13,7 @@ export class DrawNodeWebGLRenderCmd extends NodeWebGLRenderCmd {
   constructor(renderableObject: DrawNode) {
     super(renderableObject)
     this._matrix.identity()
+    this._shaderProgram = shaderCache.programForKey(SHADER_POSITION_LENGTHTEXTURECOLOR)
   }
 
   rendering(ctx) {

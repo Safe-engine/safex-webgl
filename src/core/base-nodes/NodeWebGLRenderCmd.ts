@@ -36,7 +36,7 @@ export class NodeWebGLRenderCmd extends NodeRenderCmd {
     return this.getShaderProgram()
   }
 
-  set _shaderProgram(value) {
+  set _shaderProgram(value: GLProgram) {
     this.setShaderProgram(value)
   }
 }

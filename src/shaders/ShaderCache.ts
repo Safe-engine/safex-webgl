@@ -143,7 +143,7 @@ export const shaderCache = /** @lends shaderCache# */ {
     return true
   },
 
-  _loadDefaultShader: function (program, type) {
+  _loadDefaultShader: function (program: GLProgram, type: string) {
     switch (type) {
       case SHADER_POSITION_TEXTURECOLOR:
         program.initWithVertexShaderByteArray(SHADER_POSITION_TEXTURE_COLOR_VERT, SHADER_POSITION_TEXTURE_COLOR_FRAG)
@@ -219,7 +219,7 @@ export const shaderCache = /** @lends shaderCache# */ {
     program.link()
     program.updateUniforms()
 
-    //checkGLErrorDebug();
+    // checkGLErrorDebug()
   },
 
   /**
@@ -303,7 +303,7 @@ export const shaderCache = /** @lends shaderCache# */ {
    * returns a GL program for a given key
    * @param {String} key
    */
-  programForKey: function (key) {
+  programForKey: function (key: string) {
     if (!this._programs[key]) {
       const program = new GLProgram()
       this._loadDefaultShader(program, key)

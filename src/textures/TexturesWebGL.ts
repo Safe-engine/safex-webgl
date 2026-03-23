@@ -723,7 +723,7 @@ export class Texture2D extends EventHelper {
   }
 
   setAliasTexParameters() {
-    const gl: any = _renderContext
+    const gl = _renderContext
 
     glBindTexture2D(this)
     if (!this._hasMipmaps) gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
@@ -743,12 +743,12 @@ export class Texture2D extends EventHelper {
   }
 
   stringForFormat() {
-    return (this.constructor as any)._M[this._pixelFormat]
+    return Texture2D._M[this._pixelFormat]
   }
 
   bitsPerPixelForFormat(format?: any) {
     format = format || this._pixelFormat
-    const value = (this.constructor as any)._B[format]
+    const value = Texture2D._B[format]
     if (value != null) return value
     log(_LogInfos.Texture2D_bitsPerPixelForFormat, format)
     return -1

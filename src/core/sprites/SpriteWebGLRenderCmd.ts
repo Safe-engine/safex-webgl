@@ -1,6 +1,6 @@
-import { Node, renderer } from '../..'
+import { Node, renderer, SpriteFrame, Texture2D } from '../..'
 import { _LogInfos, error, log } from '../../helper/Debugger'
-import { shaderCache } from '../../shaders/ShaderCache'
+import { shaderCache } from '../../shaders'
 import { NodeWebGLRenderCmd } from '../base-nodes/NodeWebGLRenderCmd'
 import { pointEqualToPoint, Rect, rectEqualToRect, rectEqualToZero } from '../cocoa/Geometry'
 import { FIX_ARTIFACTS_BY_STRECHING_TEXEL } from '../platform/Config'
@@ -38,12 +38,12 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
     //
   }
 
-  setDirtyFlag(dirtyFlag: any): void {
+  setDirtyFlag(dirtyFlag: any) {
     super.setDirtyFlag(dirtyFlag)
     this._dirty = true
   }
 
-  setDirtyRecursively(value: boolean): void {
+  setDirtyRecursively(value: boolean) {
     this._recursiveDirty = value
     this._dirty = value
     // recursively set dirty
@@ -72,11 +72,11 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
     return true
   }
 
-  _handleTextureForRotatedTexture(texture: any): any {
+  _handleTextureForRotatedTexture(texture: Texture2D) {
     return texture
   }
 
-  isFrameDisplayed(frame: any): boolean {
+  isFrameDisplayed(frame: SpriteFrame): boolean {
     const node = this._node
     return (
       rectEqualToRect(frame.getRect(), node._rect) &&
@@ -85,7 +85,7 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
     )
   }
 
-  _textureLoadedCallback(sender: Sprite): void {
+  _textureLoadedCallback(sender: Sprite) {
     if (this._textureLoaded) return
 
     this._textureLoaded = true
@@ -109,19 +109,8 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
     // Force refresh the render command list
     renderer.childrenOrderDirty = true
   }
-  // setTextureRect(locRect: any, _rectRotated: any) {
-  //   throw new Error('Method not implemented.')
-  // }
-  // _rectRotated: boolean
-  // setBatchNode(_batchNode: any) {
-  //   throw new Error('Method not implemented.')
-  // }
-  // _batchNode: any
-  // dispatchEvent(arg0: string) {
-  //   throw new Error('Method not implemented.')
-  // }
 
-  _setTextureCoords(rect: any, needConvert?: boolean): void {
+  _setTextureCoords(rect: any, needConvert?: boolean) {
     if (needConvert === undefined) needConvert = true
     if (needConvert) rect = rectPointsToPixels(rect)
     const node = this._node
@@ -203,9 +192,9 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
     }
   }
 
-  _setColorDirty(): void {}
+  _setColorDirty() {}
 
-  _updateBlendFunc(): void {
+  _updateBlendFunc() {
     if (this._node._batchNode) {
       log(_LogInfos.Sprite__updateBlendFunc)
       return
@@ -227,7 +216,7 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
     }
   }
 
-  _setTexture(texture: any): void {
+  _setTexture(texture: any) {
     const node = this._node
     if (node._texture !== texture) {
       node._textureLoaded = texture ? texture._textureLoaded : false
@@ -248,7 +237,7 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
     }
   }
 
-  _checkTextureBoundary(texture: any, rect: any, rotated: boolean): void {
+  _checkTextureBoundary(texture: any, rect: any, rotated: boolean) {
     if (texture && texture.url) {
       let _x, _y
       if (rotated) {
@@ -267,7 +256,7 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
     }
   }
 
-  transform(parentCmd: any, recursive?: boolean): void {
+  transform(parentCmd: any, recursive?: boolean) {
     this.originTransform(parentCmd, recursive)
 
     const node = this._node,
