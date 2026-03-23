@@ -139,7 +139,6 @@ export class DrawNode extends Node {
   }
 
   onEnter() {
-    console.log('draw onenter')
     super.onEnter()
     if (this._occupiedSize < this._bufferCapacity) {
       this._ensureCapacity(this._bufferCapacity)

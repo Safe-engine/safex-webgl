@@ -12,9 +12,9 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
   declare _color: Uint32Array
   declare _dirty: boolean
   declare _recursiveDirty: boolean
-  declare _textureLoaded: any
+  declare _textureLoaded: boolean
   declare _rect: Rect
-  declare texture: any
+  declare texture: Texture2D
   declare _node: Sprite
 
   constructor(renderable: Sprite) {
@@ -38,7 +38,7 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
     //
   }
 
-  setDirtyFlag(dirtyFlag: any) {
+  setDirtyFlag(dirtyFlag: number) {
     super.setDirtyFlag(dirtyFlag)
     this._dirty = true
   }
@@ -85,7 +85,7 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
     )
   }
 
-  _textureLoadedCallback(sender: Sprite) {
+  _textureLoadedCallback(sender: Texture2D) {
     if (this._textureLoaded) return
 
     this._textureLoaded = true
@@ -110,8 +110,7 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
     renderer.childrenOrderDirty = true
   }
 
-  _setTextureCoords(rect: any, needConvert?: boolean) {
-    if (needConvert === undefined) needConvert = true
+  _setTextureCoords(rect: Rect, needConvert = true) {
     if (needConvert) rect = rectPointsToPixels(rect)
     const node = this._node
 
@@ -119,8 +118,8 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
     const uvs = this._vertices
     if (!tex) return
 
-    const atlasWidth = tex.pixelsWidth
-    const atlasHeight = tex.pixelsHeight
+    const atlasWidth = tex.getPixelsWide()
+    const atlasHeight = tex.getPixelsHigh()
 
     let left, right, top, bottom, tempSwap
     if (node._rectRotated) {
@@ -216,7 +215,7 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
     }
   }
 
-  _setTexture(texture: any) {
+  _setTexture(texture: Texture2D) {
     const node = this._node
     if (node._texture !== texture) {
       node._textureLoaded = texture ? texture._textureLoaded : false
@@ -237,7 +236,7 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
     }
   }
 
-  _checkTextureBoundary(texture: any, rect: any, rotated: boolean) {
+  _checkTextureBoundary(texture: Texture2D, rect: Rect, rotated: boolean) {
     if (texture && texture.url) {
       let _x, _y
       if (rotated) {
@@ -247,16 +246,16 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
         _x = rect.x + rect.width
         _y = rect.y + rect.height
       }
-      if (_x > texture.width) {
+      if (_x > texture._getWidth()) {
         error(_LogInfos.RectWidth, texture.url)
       }
-      if (_y > texture.height) {
+      if (_y > texture._getHeight()) {
         error(_LogInfos.RectHeight, texture.url)
       }
     }
   }
 
-  transform(parentCmd: any, recursive?: boolean) {
+  transform(parentCmd: NodeWebGLRenderCmd, recursive?: boolean) {
     this.originTransform(parentCmd, recursive)
 
     const node = this._node,
@@ -292,7 +291,7 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
     return this._needDraw && !!locTexture
   }
 
-  uploadData(f32buffer: any, ui32buffer: any, vertexDataOffset: number): number {
+  uploadData(f32buffer: Float32Array, ui32buffer: Uint32Array, vertexDataOffset: number): number {
     const node = this._node
     const locTexture = node._texture
     if (!(locTexture && locTexture._textureLoaded && node._rect.width && node._rect.height) || !this._displayedOpacity) return 0
