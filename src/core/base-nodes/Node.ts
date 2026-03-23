@@ -420,7 +420,7 @@ export class Node extends EventHelper {
   getActionManager() {
     return this._actionManager || director.getActionManager()
   }
-  setActionManager(actionManager: any) {
+  setActionManager(actionManager: ActionManager) {
     if (this._actionManager !== actionManager) {
       this.stopAllActions()
       this._actionManager = actionManager
@@ -430,7 +430,7 @@ export class Node extends EventHelper {
   get actionManager() {
     return this.getActionManager()
   }
-  set actionManager(v: any) {
+  set actionManager(v: ActionManager) {
     this.setActionManager(v)
   }
   getScheduler() {
@@ -463,7 +463,7 @@ export class Node extends EventHelper {
     eventManager.removeListeners(this)
   }
 
-  getChildByTag(aTag: any) {
+  getChildByTag(aTag: number) {
     const __children = this._children
     if (__children !== null) {
       for (let i = 0; i < __children.length; i++) {
@@ -474,7 +474,7 @@ export class Node extends EventHelper {
     return null
   }
 
-  getChildByName(name: any) {
+  getChildByName(name: string) {
     if (!name) {
       log('Invalid name')
       return null
@@ -710,7 +710,7 @@ export class Node extends EventHelper {
     return action
   }
   stopAllActions() {
-    this.actionManager && this.actionManager.removeAllActionsFromTarget(this)
+    this.actionManager.removeAllActionsFromTarget(this)
   }
   stopAction(action: ActionInterval) {
     this.actionManager.removeAction(action)
@@ -809,7 +809,7 @@ export class Node extends EventHelper {
   }
   resume() {
     this.scheduler.resumeTarget(this)
-    this.actionManager && this.actionManager.resumeTarget(this)
+    this.actionManager.resumeTarget(this)
     eventManager.resumeTarget(this)
   }
   pauseSchedulerAndActions() {
@@ -818,7 +818,7 @@ export class Node extends EventHelper {
   }
   pause() {
     this.scheduler.pauseTarget(this)
-    this.actionManager && this.actionManager.pauseTarget(this)
+    this.actionManager.pauseTarget(this)
     eventManager.pauseTarget(this)
   }
 

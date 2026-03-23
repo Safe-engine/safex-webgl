@@ -6,7 +6,7 @@ export const ACTION_TAG_INVALID = -1
 
 export class Action {
   declare public originalTarget: Node
-  declare public target: Sprite
+  declare public target: Node
   public tag: number = ACTION_TAG_INVALID
   declare _speedMethod: boolean
   declare _speed: number
@@ -34,7 +34,7 @@ export class Action {
     return true
   }
 
-  startWithTarget(target: Sprite) {
+  startWithTarget(target: Node) {
     this.originalTarget = target
     this.target = target
   }
