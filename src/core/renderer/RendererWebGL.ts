@@ -1,4 +1,4 @@
-import { _renderContext, Node } from '../..'
+import { _renderContext } from '../..'
 import { global } from '../../helper/global'
 import { glBindTexture2DN, glBlendFunc } from '../../shaders/GLStateCache'
 import { Matrix4 } from '../kazmath/mat4'
@@ -47,7 +47,7 @@ export const rendererWebGL = (function () {
 
   // Inspired from @Heishe's gotta-batch-them-all branch
   // https://github.com/Talisca/cocos2d-html5/commit/de731f16414eb9bcaa20480006897ca6576d362c
-  function updateBuffer(numVertex) {
+  function updateBuffer(numVertex: number) {
     const gl = _renderContext
     // Update index buffer size
     if (_indexBuffer) {
@@ -83,7 +83,7 @@ export const rendererWebGL = (function () {
 
   // Inspired from @Heishe's gotta-batch-them-all branch
   // https://github.com/Talisca/cocos2d-html5/commit/de731f16414eb9bcaa20480006897ca6576d362c
-  function initQuadBuffer(numVertex) {
+  function initQuadBuffer(numVertex: number) {
     const gl = _renderContext
     if (_indexBuffer === null) {
       // TODO do user need to release the memory ?
@@ -135,14 +135,13 @@ export const rendererWebGL = (function () {
       return _maxVertexSize
     },
 
-    getRenderCmd: function (renderableObject: Node) {
-      //TODO Add renderCmd pool here
-      return renderableObject._createRenderCmd()
-    },
+    // getRenderCmd: function (renderableObject: Node) {
+    //   //TODO Add renderCmd pool here
+    //   return renderableObject._createRenderCmd()
+    // },
 
-    _turnToCacheMode: function (renderTextureID) {
+    _turnToCacheMode: function (renderTextureID: number | string = 0) {
       this._isCacheToBufferOn = true
-      renderTextureID = renderTextureID || 0
       if (!this._cacheToBufferCmds[renderTextureID]) {
         this._cacheToBufferCmds[renderTextureID] = []
       } else {

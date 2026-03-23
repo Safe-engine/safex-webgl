@@ -13,24 +13,24 @@ import { SpriteLoadManager } from './SpriteLoadManager'
 import { SpriteWebGLRenderCmd } from './SpriteWebGLRenderCmd'
 
 export class Sprite extends Node {
-  declare dirty
-  declare atlasIndex
+  declare dirty: boolean
+  declare atlasIndex: number
   declare textureAtlas: TextureAtlas
   declare _batchNode: SpriteBatchNode
   declare _recursiveDirty: boolean
   declare _hasChildren: boolean
-  _shouldBeHidden = false
+  // _shouldBeHidden = false
   // declare _transformToBatch: any
   declare _texture: Texture2D
   // declare texture: Texture2D
-  declare _rect: Rect
-  _rectRotated = false
+  // declare _rect: Rect
+  // _rectRotated = false
   declare _offsetPosition: Point
-  declare _unflippedOffsetPositionFromCenter: any
-  _opacityModifyRGB = false
-  _flippedX = false
-  _flippedY = false
-  _textureLoaded = false
+  declare _unflippedOffsetPositionFromCenter: Point
+  // _opacityModifyRGB = false
+  // _flippedX = false
+  // _flippedY = false
+  // _textureLoaded = false
   _className = 'Sprite'
   _blendFunc = { src: BLEND_SRC, dst: BLEND_DST }
   declare _loader: SpriteLoadManager
@@ -43,7 +43,7 @@ export class Sprite extends Node {
     super()
     this.setAnchorPoint(0.5, 0.5)
     this._loader = new SpriteLoadManager()
-    this._shouldBeHidden = false
+    // this._shouldBeHidden = false
     this._offsetPosition = p(0, 0)
     this._unflippedOffsetPositionFromCenter = p(0, 0)
     this._rect = Rect(0, 0, 0, 0)

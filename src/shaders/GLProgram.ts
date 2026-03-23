@@ -151,7 +151,8 @@ export class GLProgram {
 
     if (this._fragShader) locGL.attachShader(this._programObj, this._fragShader)
 
-    if (Object.keys(this._hashForUniforms).length > 0) this._hashForUniforms = {}
+    // if (Object.keys(this._hashForUniforms).length > 0)
+    this._hashForUniforms = {}
 
     checkGLErrorDebug()
     return true
