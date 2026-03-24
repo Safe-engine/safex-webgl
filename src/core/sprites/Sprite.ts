@@ -235,13 +235,11 @@ export class Sprite extends Node {
     // super.init()
     this._recursiveDirty = false
     this.dirty = false
-    this._blendFunc.src = BLEND_SRC
-    this._blendFunc.dst = BLEND_DST
+    this._blendFunc = { src: BLEND_SRC, dst: BLEND_DST }
     this.setTexture(null)
     this._flippedX = this._flippedY = false
     this.setAnchorPoint(0.5, 0.5)
-    this._offsetPosition.x = 0
-    this._offsetPosition.y = 0
+    this._offsetPosition = p(0, 0)
     this._hasChildren = false
     this.setTextureRect(Rect(0, 0, 0, 0), false, Size(0, 0))
     return true

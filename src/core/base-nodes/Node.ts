@@ -559,7 +559,7 @@ export class Node extends EventHelper {
           }
           if (cleanup) node._performRecursive(Node._stateCallbackType.cleanup)
           node._parent = null
-          node._renderCmd.detachFromParent()
+          // node._renderCmd.detachFromParent()
         }
       }
       this._children.length = 0
@@ -574,7 +574,7 @@ export class Node extends EventHelper {
     }
     if (doCleanup) child._performRecursive(Node._stateCallbackType.cleanup)
     child.setParent(null)
-    child._renderCmd.detachFromParent()
+    // child._renderCmd.detachFromParent()
     arrayRemoveObject(this._children, child)
   }
 

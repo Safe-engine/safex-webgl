@@ -1,18 +1,17 @@
 import { GLProgram, GLProgramState } from '../../shaders'
-import type { Node } from './Node'
 import { NodeRenderCmd } from './NodeRenderCmd'
 
 export class NodeWebGLRenderCmd extends NodeRenderCmd {
   declare _glProgramState: GLProgramState
   declare _stackMatrix
   // declare _rootCtor: typeof NodeWebGLRenderCmd
-  declare _node: Node
+  // declare _node: Node
 
-  constructor(renderable: Node) {
-    super(renderable)
-    this._glProgramState = null
-    // this._rootCtor = NodeWebGLRenderCmd
-  }
+  // constructor(renderable: Node) {
+  //   super(renderable)
+  // this._glProgramState = null
+  // this._rootCtor = NodeWebGLRenderCmd
+  // }
 
   _updateColor() {}
 

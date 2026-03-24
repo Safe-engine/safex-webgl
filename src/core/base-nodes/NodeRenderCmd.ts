@@ -92,11 +92,11 @@ class NodeRenderCmd {
     return this._needDraw
   }
 
-  getAnchorPointInPoints(): any {
+  getAnchorPointInPoints() {
     return p(this._anchorPointInPoints)
   }
 
-  getDisplayedColor(): any {
+  getDisplayedColor() {
     const tmpColor = this._displayedColor
     return color(tmpColor.r, tmpColor.g, tmpColor.b, tmpColor.a)
   }
@@ -125,7 +125,7 @@ class NodeRenderCmd {
     return this._inverse
   }
 
-  detachFromParent() {}
+  // detachFromParent() {}
 
   _updateAnchorPointInPoint() {
     const locAPP = this._anchorPointInPoints,
@@ -141,7 +141,7 @@ class NodeRenderCmd {
     this._dirtyFlag |= dirtyFlag
   }
 
-  getParentRenderCmd(): any {
+  getParentRenderCmd() {
     if (this._node && this._node._parent && this._node._parent._renderCmd) return this._node._parent._renderCmd
     return null
   }
@@ -493,21 +493,21 @@ class NodeRenderCmd {
     if (locFlag & dirtyFlags.orderDirty) this._dirtyFlag &= ~dirtyFlags.orderDirty
   }
 
-  setShaderProgram(shaderProgram: any) {
-    //do nothing.
-  }
+  // setShaderProgram(shaderProgram: any) {
+  //   //do nothing.
+  // }
 
-  getShaderProgram(): any {
-    return null
-  }
+  // getShaderProgram(): any {
+  //   return null
+  // }
 
-  getGLProgramState(): any {
-    return null
-  }
+  // getGLProgramState(): any {
+  //   return null
+  // }
 
-  setGLProgramState(glProgramState: any) {
-    // do nothing
-  }
+  // setGLProgramState(glProgramState: any) {
+  //   // do nothing
+  // }
   originTransform(parentCmd?: any, recursive?: boolean) {
     this.transform(parentCmd, recursive)
   }
