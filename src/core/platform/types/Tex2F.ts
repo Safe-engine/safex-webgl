@@ -22,22 +22,19 @@ export class Tex2F {
     this._view[1] = v || 0
   }
 
-  _getU() {
+  get u() {
     return this._view[0]
   }
 
-  _setU(xValue: number) {
+  set u(xValue: number) {
     this._view[0] = xValue
   }
 
-  _getV() {
+  get v() {
     return this._view[1]
   }
 
-  _setV(yValue: number) {
+  set v(yValue: number) {
     this._view[1] = yValue
   }
 }
-
-// defineGetterSetter(Tex2F.prototype, 'u', Tex2F.prototype._getU, Tex2F.prototype._setU)
-// defineGetterSetter(Tex2F.prototype, 'v', Tex2F.prototype._getV, Tex2F.prototype._setV)
