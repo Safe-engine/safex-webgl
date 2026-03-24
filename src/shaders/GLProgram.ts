@@ -1,4 +1,5 @@
 import { _renderContext, director, Game, game, Node } from '..'
+import { classManager } from '../core/event-manager/ClassManager'
 import {
   getMat4MultiplyValue,
   KM_GL_MODELVIEW,
@@ -31,7 +32,7 @@ export class GLProgram {
   declare _fragShader: WebGLShader
   declare _uniforms: { [key: string]: WebGLUniformLocation }
   declare _hashForUniforms: { [key: string]: any[] }
-  declare __instanceId: string
+  declare __instanceId: number
   _usesTime = false
   _projectionUpdated = -1
 
@@ -41,6 +42,7 @@ export class GLProgram {
     this._uniforms = {}
     this._hashForUniforms = {}
     this._glContext = glContext || _renderContext
+    this.__instanceId = classManager.getNewInstanceId()
 
     vShaderFileName && fShaderFileName && this.init(vShaderFileName, fShaderFileName)
   }

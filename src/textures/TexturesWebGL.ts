@@ -407,7 +407,7 @@ export class Texture2D extends EventHelper {
    * @param {Size} contentSize
    * @return {Boolean}
    */
-  initWithData(data: any, pixelFormat: any, pixelsWide: number, pixelsHigh: number, contentSize: any) {
+  initWithData(data: any, pixelFormat: any, pixelsWide: number, pixelsHigh: number, contentSize: Size) {
     const gl = _renderContext
     let format: number = gl.RGBA,
       type: number = gl.UNSIGNED_BYTE
