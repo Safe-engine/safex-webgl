@@ -15,8 +15,11 @@ import { _renderType } from '../helper/engine'
 import { defineGetterSetter } from '../helper/getset'
 import { shaderCache } from '../shaders/ShaderCache'
 import { textureCache } from '../textures'
+import type { TMXLayerInfo } from './TMXLayerInfo'
 import { TMXLayerWebGLRenderCmd } from './TMXLayerWebGLRenderCmd'
+import type { TMXMapInfo } from './TMXMapInfo'
 import { TMX_ORIENTATION_HEX, TMX_ORIENTATION_ISO, TMX_ORIENTATION_ORTHO } from './TMXTiledMap'
+import type { TMXTilesetInfo } from './TMXTilesetInfo'
 import {
   TMX_TILE_DIAGONAL_FLAG,
   TMX_TILE_FLIPPED_ALL,
@@ -57,31 +60,31 @@ import {
  * @property {Number}               tileHeight          - Height of a tile
  */
 export class TMXLayer extends SpriteBatchNode {
-  tiles: any[] = null
-  tileset: any = null
-  layerOrientation: number = null
-  properties: any = null
+  declare tiles: any[]
+  declare tileset: TMXTilesetInfo
+  declare layerOrientation: number
+  declare properties: any
   layerName = ''
 
-  _textures: any[] = null
-  _texGrids: any[] = null
-  _spriteTiles: any = null
+  declare _textures: any[]
+  declare _texGrids: any[]
+  declare _spriteTiles: any
 
   //size of the layer in tiles
-  _layerSize: Size = null
-  _mapTileSize: Size = null
+  declare _layerSize: Size
+  declare _mapTileSize: Size
   //TMX Layer supports opacity
   _opacity = 255
-  _minGID: number = null
-  _maxGID: number = null
+  declare _minGID: number
+  declare _maxGID: number
   //Only used when vertexZ is used
-  _vertexZvalue: number = null
-  _useAutomaticVertexZ: boolean = null
+  declare _vertexZvalue: number
+  declare _useAutomaticVertexZ: boolean
   //used for optimization
-  _reusedTile: any = null
-  _atlasIndexArray: any = null
+  declare _reusedTile: any
+  declare _atlasIndexArray: any
   //used for retina display
-  _contentScaleFactor: number = null
+  declare _contentScaleFactor: number
 
   _className = 'TMXLayer'
 
@@ -92,7 +95,7 @@ export class TMXLayer extends SpriteBatchNode {
    * @param {TMXLayerInfo} layerInfo
    * @param {TMXMapInfo} mapInfo
    */
-  constructor(tilesetInfo?: any, layerInfo?: any, mapInfo?: any) {
+  constructor(tilesetInfo?: TMXTilesetInfo, layerInfo?: TMXLayerInfo, mapInfo?: TMXMapInfo) {
     super()
     // this._descendants = []
 

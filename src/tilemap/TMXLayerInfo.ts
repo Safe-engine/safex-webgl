@@ -19,16 +19,16 @@ export class TMXLayerInfo {
   static ATTRIB_GZIP = 1 << 2
   static ATTRIB_ZLIB = 1 << 3
 
-  properties: any
-  name: string
-  _layerSize: unknown
-  _tiles: unknown
-  visible: boolean
-  _opacity: number
-  ownTiles: boolean
-  _minGID: number
-  _maxGID: number
-  offset: Point
+  declare properties: any
+  declare name: string
+  declare _layerSize: unknown
+  declare _tiles: unknown
+  declare visible: boolean
+  declare _opacity: number
+  declare ownTiles: boolean
+  declare _minGID: number
+  declare _maxGID: number
+  declare offset: Point
 
   constructor() {
     this.properties = []
@@ -55,7 +55,7 @@ export class TMXLayerInfo {
    * Set the Properties.
    * @param {object} value
    */
-  setProperties(value: any) {
+  setProperties(value: any[]) {
     this.properties = value
   }
 }
