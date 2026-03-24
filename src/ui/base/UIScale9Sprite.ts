@@ -430,7 +430,7 @@ export class Scale9Sprite extends Node {
 
   _updateCapInsets(rect: Rect, capInsets: Rect) {
     if (!capInsets || !rect || rectEqualToZero(capInsets)) {
-      rect = rect || { x: 0, y: 0, width: this._contentSize.width, height: this._contentSize.height }
+      rect = rect || Rect(0, 0, this._contentSize.width, this._contentSize.height)
       this._capInsetsInternal = Rect(rect.width / 3, rect.height / 3, rect.width / 3, rect.height / 3)
     } else {
       this._capInsetsInternal = capInsets
