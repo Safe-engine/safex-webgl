@@ -27,25 +27,14 @@ export const NODE_TAG_INVALID = -1
 export const ACTION_TAG_INVALID = -1
 
 export class Node extends EventHelper {
-  // declare findNextFocusedWidget: (direction: any, arg1: this) => void
-  // declare zIndex: number
-  // declare width: number
-  // declare height: number
-  // declare _imageRenderer: any
-  // declare _doLayout: (target: any) => void
   declare _doLayoutDirty: boolean
   declare _isFocusPassing: boolean
   declare _rect: Rect
   declare _unflippedOffsetPositionFromCenter: Point
-  // declare _batchNode: any
   declare _protectedChildren
-  // declare textureAtlas: any
-  // declare _texture: any
   declare _rectRotated: boolean
   declare _flippedX: boolean
   declare _flippedY: boolean
-  // declare _blendFunc: any
-  // declare opacityModifyRGB: boolean
   declare _textureLoaded: boolean
   declare _offsetPosition: Point
   declare _opacityModifyRGB: boolean
@@ -79,8 +68,8 @@ export class Node extends EventHelper {
   declare _contentSize: Size
   _running = false
   _parent: Node = null
-  _ignoreAnchorPointForPosition = false
-  tag = NODE_TAG_INVALID
+  declare _ignoreAnchorPointForPosition: boolean
+  declare tag: number
   declare userData: any
   declare userObject: any
   declare grid
@@ -88,17 +77,17 @@ export class Node extends EventHelper {
   arrivalOrder = 0
   declare _actionManager: ActionManager
   declare _scheduler: Scheduler
-  _additionalTransformDirty = false
+  declare _additionalTransformDirty: boolean
   declare _additionalTransform: any
   declare _componentContainer: any
   _isTransitionFinished = false
   _className = 'Node'
   _showNode = false
-  _name = ''
+  declare _name: string
   _realOpacity = 255
   declare _realColor: Color
-  _cascadeColorEnabled = false
-  _cascadeOpacityEnabled = false
+  declare _cascadeColorEnabled: boolean
+  declare _cascadeOpacityEnabled: boolean
   declare _renderCmd: NodeWebGLRenderCmd
 
   constructor() {
@@ -178,8 +167,8 @@ export class Node extends EventHelper {
   getVertexZ() {
     return this._vertexZ
   }
-  setVertexZ(Var: number) {
-    this._customZ = this._vertexZ = Var
+  setVertexZ(vt: number) {
+    this._customZ = this._vertexZ = vt
   }
 
   getRotation() {
@@ -401,8 +390,8 @@ export class Node extends EventHelper {
   getUserData() {
     return this.userData
   }
-  setUserData(Var: any) {
-    this.userData = Var
+  setUserData(data: any) {
+    this.userData = data
   }
   getUserObject() {
     return this.userObject
@@ -413,8 +402,8 @@ export class Node extends EventHelper {
   getOrderOfArrival() {
     return this.arrivalOrder
   }
-  setOrderOfArrival(Var: any) {
-    this.arrivalOrder = Var
+  setOrderOfArrival(order: number) {
+    this.arrivalOrder = order
   }
 
   getActionManager() {

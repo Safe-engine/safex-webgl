@@ -15,22 +15,22 @@ import { TMXTilesetInfo } from './TMXTilesetInfo'
 import { TMX_PROPERTY_NONE } from './TMXXMLParser'
 
 export class TMXMapInfo extends SAXParser {
-  properties: any = null
-  orientation: any = null
-  parentElement: any = null
-  parentGID: any = null
+  declare properties: any
+  declare orientation: any
+  declare parentElement: any
+  declare parentGID: any
   layerAttrs = 0
   storingCharacters = false
-  tmxFileName: any = null
-  currentString: any = null
+  declare tmxFileName: string
+  declare currentString: string
 
-  _objectGroups: any = null
-  _mapSize: any = null
-  _tileSize: any = null
-  _layers: any = null
-  _tilesets: any = null
+  declare _objectGroups: any[]
+  declare _mapSize: Size
+  declare _tileSize: Size
+  declare _layers: TMXLayerInfo[]
+  declare _tilesets: any[]
   // tile properties
-  _tileProperties: any = null
+  declare _tileProperties: any
   _resources = ''
   _currentFirstGID = 0
 
@@ -87,7 +87,7 @@ export class TMXMapInfo extends SAXParser {
    * Map width & height
    * @param {Size} value
    */
-  setMapSize(value: any) {
+  setMapSize(value: Size) {
     this._mapSize.width = value.width
     this._mapSize.height = value.height
   }
@@ -96,7 +96,7 @@ export class TMXMapInfo extends SAXParser {
     return this._mapSize.width
   }
 
-  _setMapWidth(width: any) {
+  _setMapWidth(width: number) {
     this._mapSize.width = width
   }
 
@@ -104,7 +104,7 @@ export class TMXMapInfo extends SAXParser {
     return this._mapSize.height
   }
 
-  _setMapHeight(height: any) {
+  _setMapHeight(height: number) {
     this._mapSize.height = height
   }
 
@@ -120,7 +120,7 @@ export class TMXMapInfo extends SAXParser {
    * Tiles width & height
    * @param {Size} value
    */
-  setTileSize(value: any) {
+  setTileSize(value: Size) {
     this._tileSize.width = value.width
     this._tileSize.height = value.height
   }
@@ -129,7 +129,7 @@ export class TMXMapInfo extends SAXParser {
     return this._tileSize.width
   }
 
-  _setTileWidth(width: any) {
+  _setTileWidth(width: number) {
     this._tileSize.width = width
   }
 
@@ -137,7 +137,7 @@ export class TMXMapInfo extends SAXParser {
     return this._tileSize.height
   }
 
-  _setTileHeight(height: any) {
+  _setTileHeight(height: number) {
     this._tileSize.height = height
   }
 
@@ -153,7 +153,7 @@ export class TMXMapInfo extends SAXParser {
    * Layers
    * @param {TMXLayerInfo} value
    */
-  setLayers(value: any) {
+  setLayers(value: TMXLayerInfo) {
     this._layers.push(value)
   }
 

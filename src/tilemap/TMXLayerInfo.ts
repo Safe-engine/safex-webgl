@@ -1,4 +1,4 @@
-import { p, Point } from '../core'
+import { p, Point, Size } from '../core'
 
 /**
  * <p>TMXLayerInfo contains the information about the layers like: <br />
@@ -21,8 +21,8 @@ export class TMXLayerInfo {
 
   declare properties: any
   declare name: string
-  declare _layerSize: unknown
-  declare _tiles: unknown
+  declare _layerSize: Size
+  declare _tiles: Uint32Array
   declare visible: boolean
   declare _opacity: number
   declare ownTiles: boolean
@@ -32,8 +32,8 @@ export class TMXLayerInfo {
 
   constructor() {
     this.properties = []
-    this.name = ''
-    this._layerSize = null
+    // this.name = ''
+    // this._layerSize = null
     this._tiles = null
     this.visible = true
     this._opacity = 0

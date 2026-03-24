@@ -1,12 +1,12 @@
-import { game, renderer } from '..'
+import { renderer } from '..'
 import { BLEND_DST, BLEND_SRC, BlendFunc, Node, ONE_MINUS_SRC_ALPHA, SRC_ALPHA } from '../core'
 import { isString } from '../helper/checkType'
 import { log } from '../helper/Debugger'
-import { _renderType } from '../helper/engine'
 import { defineGetterSetter } from '../helper/getset'
 import { Texture2D, textureCache } from '../textures'
 import { TextureAtlas } from '../textures/TextureAtlas'
 import { ParticleBatchNodeWebGLRenderCmd } from './ParticleBatchNodeWebGLRenderCmd'
+import type { ParticleSystem } from './ParticleSystem'
 
 export const PARTICLE_DEFAULT_CAPACITY = 500
 
@@ -68,7 +68,7 @@ export class ParticleBatchNode extends Node {
    * var texture = TextureCache.getInstance().addImage("res/grossini_dance.png");
    * var particleBatchNode = new ParticleBatchNode(texture, 30);
    */
-  constructor(fileImage?: any, capacity?: any) {
+  constructor(fileImage?: any, capacity?: number) {
     super()
     this._blendFunc = { src: BLEND_SRC, dst: BLEND_DST }
     if (isString(fileImage)) {
@@ -79,8 +79,7 @@ export class ParticleBatchNode extends Node {
   }
 
   _createRenderCmd() {
-    if (_renderType === game.RENDER_TYPE_CANVAS) return new (ParticleBatchNode as any).CanvasRenderCmd(this)
-    else return new (ParticleBatchNode as any).WebGLRenderCmd(this)
+    return new ParticleBatchNodeWebGLRenderCmd(this)
   }
 
   /**
@@ -89,7 +88,7 @@ export class ParticleBatchNode extends Node {
    * @param {Number} capacity
    * @return {Boolean}
    */
-  initWithTexture(texture: any, capacity?: any) {
+  initWithTexture(texture: Texture2D | HTMLImageElement | HTMLCanvasElement, capacity?: number) {
     this.textureAtlas = new TextureAtlas()
     this.textureAtlas.initWithTexture(texture, capacity)
 
@@ -106,7 +105,7 @@ export class ParticleBatchNode extends Node {
    * @param {Number} capacity
    * @return {Boolean}
    */
-  initWithFile(fileImage: any, capacity?: any) {
+  initWithFile(fileImage: string, capacity?: number) {
     const tex = textureCache.addImage(fileImage)
     return this.initWithTexture(tex, capacity)
   }
@@ -117,7 +116,7 @@ export class ParticleBatchNode extends Node {
    * @param {Number} capacity
    * @return {Boolean}
    */
-  init(fileImage?: any, capacity?: any) {
+  init(fileImage?: string, capacity?: number) {
     const tex = textureCache.addImage(fileImage)
     return this.initWithTexture(tex, capacity)
   }
@@ -143,7 +142,7 @@ export class ParticleBatchNode extends Node {
    * @param {Number} zOrder
    * @param {Number} tag
    */
-  addChild(child: any, zOrder?: any, tag?: any) {
+  addChild(child: any, zOrder?: number, tag?: number) {
     if (!child) throw new Error('ParticleBatchNode.addChild() : child should be non-null')
     if (child.constructor.name !== 'ParticleSystem')
       throw new Error('ParticleBatchNode.addChild() : only supports ParticleSystem as children')
@@ -185,7 +184,7 @@ export class ParticleBatchNode extends Node {
    * @param {ParticleSystem} pSystem
    * @param {Number} index
    */
-  insertChild(pSystem: any, index: any) {
+  insertChild(pSystem: ParticleSystem, index: number) {
     const totalParticles = pSystem.getTotalParticles()
     const locTextureAtlas = this.textureAtlas
     const totalQuads = locTextureAtlas.totalQuads
@@ -208,7 +207,7 @@ export class ParticleBatchNode extends Node {
    * @param {ParticleSystem} child
    * @param {Boolean} cleanup
    */
-  removeChild(child: any, cleanup?: any) {
+  removeChild(child: any, cleanup?: boolean) {
     // explicit nil handling
     if (child == null) return
 
@@ -287,14 +286,14 @@ export class ParticleBatchNode extends Node {
    * @param {Number} index
    * @param {Boolean} doCleanup
    */
-  removeChildAtIndex(index: any, doCleanup?: any) {
+  removeChildAtIndex(index: number, doCleanup?: boolean) {
     this.removeChild(this._children[index], doCleanup)
   }
 
   /**
    * @param {Boolean} [doCleanup=true]
    */
-  removeAllChildren(doCleanup?: any) {
+  removeAllChildren(doCleanup?: boolean) {
     const locChildren = this._children
     for (let i = 0; i < locChildren.length; i++) {
       ;(locChildren[i] as any).setBatchNode(null)

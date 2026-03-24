@@ -18,7 +18,7 @@ export class ParticleFire extends ParticleSystem {
    * @param {Number} numberOfParticles
    * @return {Boolean}
    */
-  initWithTotalParticles(numberOfParticles?: any) {
+  initWithTotalParticles(numberOfParticles?: number) {
     if (super.initWithTotalParticles(numberOfParticles)) {
       // duration
       this.setDuration(ParticleSystem.DURATION_INFINITY)
@@ -95,7 +95,7 @@ export class ParticleFireworks extends ParticleSystem {
    * @param {Number} numberOfParticles
    * @return {Boolean}
    */
-  initWithTotalParticles(numberOfParticles?: any) {
+  initWithTotalParticles(numberOfParticles?: number) {
     if (super.initWithTotalParticles(numberOfParticles)) {
       // duration
       this.setDuration(ParticleSystem.DURATION_INFINITY)
@@ -171,7 +171,7 @@ export class ParticleSun extends ParticleSystem {
    * @param {Number} numberOfParticles
    * @return {Boolean}
    */
-  initWithTotalParticles(numberOfParticles?: any) {
+  initWithTotalParticles(numberOfParticles?: number) {
     if (super.initWithTotalParticles(numberOfParticles)) {
       // additive
       this.setBlendAdditive(true)

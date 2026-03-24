@@ -1,4 +1,4 @@
-import { _renderContext, director, NodeWebGLRenderCmd } from '../..'
+import { _renderContext, director, type NodeWebGLRenderCmd, OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA } from '../..'
 import { isObject, isUndefined } from '../../helper/checkType'
 import { _LogInfos, log } from '../../helper/Debugger'
 import { global } from '../../helper/global'
@@ -419,13 +419,7 @@ export const MIRRORED_REPEAT = 0x8370
  * @name export const BLEND_SRC
  * @type Number
  */
-export const BLEND_SRC = SRC_ALPHA
-// export const game.addEventListener(game.EVENT_RENDERER_INITED, function () {
-//   if (_renderType === game.RENDER_TYPE_WEBGL
-//     && OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA) {
-//     BLEND_SRC = ONE;
-//   }
-// });
+export const BLEND_SRC = OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA ? ONE : SRC_ALPHA
 
 /**
  * default gl blend dst function. Compatible with premultiplied alpha images.
@@ -765,7 +759,7 @@ export const DISABLE_TAG = 8803
  * @return {Boolean}
  * @function
  */
-export const arrayVerifyType = function (arr, type) {
+export const arrayVerifyType = function (arr: any[], type) {
   if (arr && arr.length > 0) {
     for (let i = 0; i < arr.length; i++) {
       if (!(arr[i] instanceof type)) {
@@ -783,7 +777,7 @@ export const arrayVerifyType = function (arr, type) {
  * @param {Array} arr Source Array
  * @param {*} delObj  remove object
  */
-export const arrayRemoveObject = function (arr, delObj) {
+export const arrayRemoveObject = function (arr: any[], delObj) {
   for (let i = 0, l = arr.length; i < l; i++) {
     if (arr[i] === delObj) {
       arr.splice(i, 1)
@@ -798,7 +792,7 @@ export const arrayRemoveObject = function (arr, delObj) {
  * @param {Array} arr Source Array
  * @param {Array} minusArr minus Array
  */
-export const arrayRemoveArray = function (arr, minusArr) {
+export const arrayRemoveArray = function (arr: any[], minusArr: any[]) {
   for (let i = 0, l = minusArr.length; i < l; i++) {
     arrayRemoveObject(arr, minusArr[i])
   }
@@ -812,7 +806,7 @@ export const arrayRemoveArray = function (arr, minusArr) {
  * @param {Number} index
  * @return {Array}
  */
-export const arrayAppendObjectsToIndex = function (arr, addObjs, index) {
+export const arrayAppendObjectsToIndex = function (arr: any[], addObjs: any[], index: number) {
   arr.splice(index, 0, ...addObjs)
   return arr
 }
@@ -822,7 +816,7 @@ export const arrayAppendObjectsToIndex = function (arr, addObjs, index) {
  * @param {Array} arr
  * @return {Array}
  */
-export const copyArray = function (arr) {
+export const copyArray = function (arr: any[]) {
   let i
   const len = arr.length,
     arr_clone = new Array(len)

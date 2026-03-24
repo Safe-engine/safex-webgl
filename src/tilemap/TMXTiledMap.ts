@@ -1,6 +1,7 @@
 import { Node, Size } from '../core'
 import { log } from '../helper/Debugger'
 import { TMXLayer } from './TMXLayer'
+import type { TMXLayerInfo } from './TMXLayerInfo'
 import { TMXMapInfo } from './TMXMapInfo'
 import type { TMXObjectGroup } from './TMXObjectGroup'
 import { TMX_TILE_FLIPPED_MASK } from './TMXXMLParser'
@@ -213,9 +214,8 @@ export class TMXTiledMap extends Node {
     let idx = 0
     const layers = mapInfo.getLayers()
     if (layers) {
-      let layerInfo
       for (let i = 0, len = layers.length; i < len; i++) {
-        layerInfo = layers[i]
+        const layerInfo = layers[i]
         if (layerInfo && layerInfo.visible) {
           const child = this._parseLayer(layerInfo, mapInfo)
           this.addChild(child, idx, idx)
@@ -308,7 +308,7 @@ export class TMXTiledMap extends Node {
     return this._tileProperties[GID]
   }
 
-  _parseLayer(layerInfo: any, mapInfo: any) {
+  _parseLayer(layerInfo: TMXLayerInfo, mapInfo: TMXMapInfo) {
     const tileset = this._tilesetForLayer(layerInfo, mapInfo)
     const layer = new TMXLayer(tileset, layerInfo, mapInfo)
     // tell the layerinfo to release the ownership of the tiles map.
@@ -316,7 +316,7 @@ export class TMXTiledMap extends Node {
     return layer
   }
 
-  _tilesetForLayer(layerInfo: any, mapInfo: any) {
+  _tilesetForLayer(layerInfo: TMXLayerInfo, mapInfo: TMXMapInfo) {
     const size = layerInfo._layerSize
     const tilesets = mapInfo.getTilesets()
     if (tilesets) {
@@ -349,7 +349,7 @@ export class TMXTiledMap extends Node {
   get mapWidth() {
     return this._getMapWidth()
   }
-  set mapWidth(width: any) {
+  set mapWidth(width: number) {
     this._setMapWidth(width)
   }
 
@@ -357,7 +357,7 @@ export class TMXTiledMap extends Node {
   get mapHeight() {
     return this._getMapHeight()
   }
-  set mapHeight(height: any) {
+  set mapHeight(height: number) {
     this._setMapHeight(height)
   }
 
@@ -365,7 +365,7 @@ export class TMXTiledMap extends Node {
   get tileWidth() {
     return this._getTileWidth()
   }
-  set tileWidth(width: any) {
+  set tileWidth(width: number) {
     this._setTileWidth(width)
   }
 
@@ -373,7 +373,7 @@ export class TMXTiledMap extends Node {
   get tileHeight() {
     return this._getTileHeight()
   }
-  set tileHeight(height: any) {
+  set tileHeight(height: number) {
     this._setTileHeight(height)
   }
 }

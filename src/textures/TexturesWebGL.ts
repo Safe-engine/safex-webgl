@@ -1,6 +1,7 @@
 import { _renderContext, game } from '..'
 import { Size } from '../core/cocoa/Geometry'
 import { configuration } from '../core/Configuration'
+import { classManager } from '../core/event-manager/ClassManager'
 import { EventHelper } from '../core/event-manager/EventHelper'
 import { contentScaleFactor, SHADER_POSITION_TEXTURE, VERTEX_ATTRIB_POSITION, VERTEX_ATTRIB_TEX_COORDS } from '../core/platform/Macro'
 import { _LogInfos, assert, log } from '../helper/Debugger'
@@ -194,27 +195,25 @@ export class Texture2D extends EventHelper {
   }
 
   // By default PVR images are treated as if they don't have the alpha channel premultiplied
-  _pVRHaveAlphaPremultiplied: boolean
-  _pixelFormat: any
-  _pixelsWide: number
-  _pixelsHigh: number
-  _name: string
-  _contentSize: Size
-  maxS: number
-  maxT: number
-  _hasPremultipliedAlpha: boolean
-  _hasMipmaps: boolean
-
-  shaderProgram: GLProgram
-
-  // _textureLoaded: boolean
-  _htmlElementObj: any
-  _webTextureObj: WebGLTexture
-
-  url: string
-  _glProgramState: GLProgramState
-  _vertexBuffer: WebGLBuffer
-  _texBuffer: WebGLBuffer
+  declare _pVRHaveAlphaPremultiplied: boolean
+  declare _pixelFormat: any
+  declare _pixelsWide: number
+  declare _pixelsHigh: number
+  declare _name: string
+  declare _contentSize: Size
+  declare maxS: number
+  declare maxT: number
+  declare _hasPremultipliedAlpha: boolean
+  declare _hasMipmaps: boolean
+  declare shaderProgram: GLProgram
+  // declare _textureLoaded: boolean
+  declare _htmlElementObj: HTMLImageElement | HTMLCanvasElement
+  declare _webTextureObj: WebGLTexture
+  declare url: string
+  declare _glProgramState: GLProgramState
+  declare _vertexBuffer: WebGLBuffer
+  declare _texBuffer: WebGLBuffer
+  declare __instanceId: number
 
   // runtime-attached event helper methods (added by EventHelper.apply at runtime)
   // addEventListener?: (type: any, callback: any, target?: any) => void;
@@ -224,30 +223,20 @@ export class Texture2D extends EventHelper {
   constructor() {
     super()
     this._pVRHaveAlphaPremultiplied = true
-    this._pixelFormat = null
     this._pixelsWide = 0
     this._pixelsHigh = 0
-    this._name = ''
-    this._contentSize = null
     this.maxS = 0
     this.maxT = 0
     this._hasPremultipliedAlpha = false
     this._hasMipmaps = false
-
-    this.shaderProgram = null
-
     this._textureLoaded = false
-    this._htmlElementObj = null
-    this._webTextureObj = null
-
-    this.url = null
-
     // ctor behavior
     this._contentSize = Size(0, 0)
     this._pixelFormat = Texture2D.defaultPixelFormat
     const gl = _renderContext
     this._vertexBuffer = gl.createBuffer()
     this._texBuffer = gl.createBuffer()
+    this.__instanceId = classManager.getNewInstanceId()
   }
 
   // release texture
@@ -597,7 +586,7 @@ export class Texture2D extends EventHelper {
    * init with HTML element
    * @param {HTMLImageElement|HTMLCanvasElement} element
    */
-  initWithElement(element: any) {
+  initWithElement(element: HTMLImageElement | HTMLCanvasElement) {
     if (!element) return
     this._webTextureObj = _renderContext.createTexture()
     this._htmlElementObj = element

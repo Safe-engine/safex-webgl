@@ -29,7 +29,8 @@ import { path } from '../helper'
 import { isNumber, isObject, isString } from '../helper/checkType'
 import { log } from '../helper/Debugger'
 import { loader } from '../helper/loader'
-import { unzipBase64AsArray } from '../helper/ZipUtils'
+import { locValueForKey } from '../helper/string'
+import { decodeGzipBase64 } from '../helper/ZipUtils'
 import { Texture2D, textureCache } from '../textures'
 import { Particle } from './Particle'
 import type { ParticleBatchNode } from './ParticleBatchNode'
@@ -127,14 +128,14 @@ import { PNGReader } from './PNGReader'
  *  emitter.startSpin = 0;
  */
 export class ParticleSystemModeA {
-  gravity: any
-  speed: any
-  speedVar: any
-  tangentialAccel: any
-  tangentialAccelVar: any
-  radialAccel: any
-  radialAccelVar: any
-  rotationIsDir: any
+  declare gravity: any
+  declare speed: any
+  declare speedVar: any
+  declare tangentialAccel: any
+  declare tangentialAccelVar: any
+  declare radialAccel: any
+  declare radialAccelVar: any
+  declare rotationIsDir: any
   constructor(
     gravity?: any,
     speed?: any,
@@ -158,12 +159,12 @@ export class ParticleSystemModeA {
 }
 
 export class ParticleSystemModeB {
-  startRadius: any
-  startRadiusVar: any
-  endRadius: any
-  endRadiusVar: any
-  rotatePerSecond: any
-  rotatePerSecondVar: any
+  declare startRadius: any
+  declare startRadiusVar: any
+  declare endRadius: any
+  declare endRadiusVar: any
+  declare rotatePerSecond: any
+  declare rotatePerSecondVar: any
   constructor(
     startRadius?: any,
     startRadiusVar?: any,
@@ -202,10 +203,10 @@ export class ParticleSystem extends Node {
   modeB: ParticleSystemModeB
 
   //private POINTZERO for ParticleSystem
-  _pointZeroForParticle: any = p(0, 0)
+  _pointZeroForParticle = p(0, 0)
 
   //! Array of particles
-  _particles: any[]
+  _particles: Particle[]
 
   // color modulate
   //  BOOL colorModulate;
@@ -225,8 +226,8 @@ export class ParticleSystem extends Node {
   _isActive = false
   particleCount = 0
   duration = 0
-  _sourcePosition: Point
-  _posVar: Point
+  declare _sourcePosition: Point
+  declare _posVar: Point
   life = 0
   lifeVar = 0
   angle = 0
@@ -235,20 +236,20 @@ export class ParticleSystem extends Node {
   startSizeVar = 0
   endSize = 0
   endSizeVar = 0
-  _startColor: Color
-  _startColorVar: Color
-  _endColor: Color
-  _endColorVar: Color
+  declare _startColor: Color
+  declare _startColorVar: Color
+  declare _endColor: Color
+  declare _endColorVar: Color
   startSpin = 0
   startSpinVar = 0
   endSpin = 0
   endSpinVar = 0
   emissionRate = 0
   _totalParticles = 0
-  _texture: Texture2D
-  _blendFunc: BlendFunc
+  declare _texture: Texture2D
+  declare _blendFunc: BlendFunc
   _opacityModifyRGB = false
-  positionType: number
+  declare positionType: number
   autoRemoveOnFinish = false
   emitterMode = 0
 
@@ -316,12 +317,12 @@ export class ParticleSystem extends Node {
 
     if (!plistFile || isNumber(plistFile)) {
       const ton = plistFile || 100
-      this.setDrawMode(ParticleSystem.TEXTURE_MODE)
+      // this.setDrawMode(ParticleSystem.TEXTURE_MODE)
       this.initWithTotalParticles(ton)
     } else if (isString(plistFile)) {
       this.initWithFile(plistFile)
     } else if (isObject(plistFile)) {
-      this.initWithDictionary(plistFile, '')
+      this.initWithDictionary(plistFile)
     }
   }
 
@@ -344,7 +345,7 @@ export class ParticleSystem extends Node {
    * </p>
    * @param {Rect} pointRect
    */
-  initTexCoordsWithRect(pointRect) {
+  initTexCoordsWithRect(pointRect: Rect) {
     this._renderCmd.initTexCoordsWithRect(pointRect)
   }
 
@@ -384,33 +385,33 @@ export class ParticleSystem extends Node {
    * Return DrawMode of ParticleSystem   (Canvas Mode only)
    * @return {Number}
    */
-  getDrawMode() {
-    return this._renderCmd.getDrawMode()
-  }
+  // getDrawMode() {
+  //   return this._renderCmd.getDrawMode()
+  // }
 
-  /**
-   * DrawMode of ParticleSystem setter   (Canvas Mode only)
-   * @param {Number} drawMode
-   */
-  setDrawMode(drawMode) {
-    this._renderCmd.setDrawMode(drawMode)
-  }
+  // /**
+  //  * DrawMode of ParticleSystem setter   (Canvas Mode only)
+  //  * @param {Number} drawMode
+  //  */
+  // setDrawMode(drawMode) {
+  //   this._renderCmd.setDrawMode(drawMode)
+  // }
 
-  /**
-   * Return ShapeType of ParticleSystem  (Canvas Mode only)
-   * @return {Number}
-   */
-  getShapeType() {
-    return this._renderCmd.getShapeType()
-  }
+  // /**
+  //  * Return ShapeType of ParticleSystem  (Canvas Mode only)
+  //  * @return {Number}
+  //  */
+  // getShapeType() {
+  //   return this._renderCmd.getShapeType()
+  // }
 
-  /**
-   * ShapeType of ParticleSystem setter  (Canvas Mode only)
-   * @param {Number} shapeType
-   */
-  setShapeType(shapeType) {
-    this._renderCmd.setShapeType(shapeType)
-  }
+  // /**
+  //  * ShapeType of ParticleSystem setter  (Canvas Mode only)
+  //  * @param {Number} shapeType
+  //  */
+  // setShapeType(shapeType) {
+  //   this._renderCmd.setShapeType(shapeType)
+  // }
 
   /**
    * Return ParticleSystem is active
@@ -1059,7 +1060,7 @@ export class ParticleSystem extends Node {
    * set maximum particles of the system
    * @param {Number} tp totalParticles
    */
-  setTotalParticles(tp) {
+  setTotalParticles(tp: number) {
     this._renderCmd.setTotalParticles(tp)
   }
 
@@ -1107,7 +1108,7 @@ export class ParticleSystem extends Node {
    * @param {Number} src
    * @param {Number} dst
    */
-  setBlendFunc(src, dst) {
+  setBlendFunc(src, dst?: number) {
     if (dst === undefined) {
       if (this._blendFunc !== src) {
         this._blendFunc = src
@@ -1158,7 +1159,7 @@ export class ParticleSystem extends Node {
    * </p>
    * @param {Boolean} isBlendAdditive
    */
-  setBlendAdditive(isBlendAdditive) {
+  setBlendAdditive(isBlendAdditive: boolean) {
     const locBlendFunc = this._blendFunc
     if (isBlendAdditive) {
       locBlendFunc.src = SRC_ALPHA
@@ -1246,9 +1247,8 @@ export class ParticleSystem extends Node {
       log('ParticleSystem.initWithFile(): Particles: file not found')
       return false
     }
-
     // XXX compute path from a path, should define a function somewhere to do it
-    return this.initWithDictionary(dict, '')
+    return this.initWithDictionary(dict)
   }
 
   /**
@@ -1265,11 +1265,9 @@ export class ParticleSystem extends Node {
    * @param {String} dirname
    * @return {Boolean}
    */
-  initWithDictionary(dictionary, dirname) {
+  initWithDictionary(dictionary) {
     let ret = false
     let buffer
-    const locValueForKey = this._valueForKey
-
     const maxParticles = parseInt(locValueForKey('maxParticles', dictionary))
     // self, not super
     if (this.initWithTotalParticles(maxParticles)) {
@@ -1403,7 +1401,7 @@ export class ParticleSystem extends Node {
             if (!tex) return false
             this.setTexture(tex)
           } else {
-            buffer = unzipBase64AsArray(textureData, 1)
+            buffer = decodeGzipBase64(textureData)
             if (!buffer) {
               log('ParticleSystem: error decoding or ungzipping textureImageData')
               return false
@@ -1632,8 +1630,8 @@ export class ParticleSystem extends Node {
   resetSystem() {
     this._isActive = true
     this._elapsed = 0
-    const locParticles = this._particles
-    for (this._particleIdx = 0; this._particleIdx < this.particleCount; ++this._particleIdx) locParticles[this._particleIdx].timeToLive = 0
+    for (this._particleIdx = 0; this._particleIdx < this.particleCount; ++this._particleIdx)
+      this._particles[this._particleIdx].timeToLive = 0
   }
 
   /**
@@ -1823,21 +1821,6 @@ export class ParticleSystem extends Node {
     this.update(0)
   }
 
-  //
-  // return the string found by key in dict.
-  // @param {string} key
-  // @param {object} dict
-  // @return {String} "" if not found; return the string if found.
-  // @private
-  //
-  _valueForKey(key, dict) {
-    if (dict) {
-      const pString = dict[key]
-      return pString != null ? pString : ''
-    }
-    return ''
-  }
-
   _updateBlendFunc() {
     if (this._batchNode) {
       log('Cannot change blending functions when the particle is being batched')
@@ -1984,7 +1967,7 @@ export class ParticleSystem extends Node {
    * @param {Texture2D} texture
    * @param {Rect} rect
    */
-  setTextureWithRect(texture, rect) {
+  setTextureWithRect(texture: Texture2D, rect: Rect) {
     const locTexture = this._texture
     if (locTexture !== texture) {
       this._texture = texture
@@ -2003,7 +1986,7 @@ export class ParticleSystem extends Node {
   get opacityModifyRGB() {
     return this.isOpacityModifyRGB()
   }
-  set opacityModifyRGB(value: any) {
+  set opacityModifyRGB(value: boolean) {
     this.setOpacityModifyRGB(value)
   }
   get batchNode() {
@@ -2012,145 +1995,145 @@ export class ParticleSystem extends Node {
   set batchNode(value: any) {
     this.setBatchNode(value)
   }
-  get drawMode() {
-    return this.getDrawMode()
-  }
-  set drawMode(value: any) {
-    this.setDrawMode(value)
-  }
-  get shapeType() {
-    return this.getShapeType()
-  }
-  set shapeType(value: any) {
-    this.setShapeType(value)
-  }
+  // get drawMode() {
+  //   return this.getDrawMode()
+  // }
+  // set drawMode(value: any) {
+  //   this.setDrawMode(value)
+  // }
+  // get shapeType() {
+  //   return this.getShapeType()
+  // }
+  // set shapeType(value: any) {
+  //   this.setShapeType(value)
+  // }
   get active() {
     return this.isActive()
   }
   get sourcePos() {
     return this.getSourcePosition()
   }
-  set sourcePos(value: any) {
+  set sourcePos(value: Point) {
     this.setSourcePosition(value)
   }
   get posVar() {
     return this.getPosVar()
   }
-  set posVar(value: any) {
+  set posVar(value: Point) {
     this.setPosVar(value)
   }
   get gravity() {
     return this.getGravity()
   }
-  set gravity(value: any) {
+  set gravity(value: Point) {
     this.setGravity(value)
   }
   get speed() {
     return this.getSpeed()
   }
-  set speed(value: any) {
+  set speed(value: number) {
     this.setSpeed(value)
   }
   get speedVar() {
     return this.getSpeedVar()
   }
-  set speedVar(value: any) {
+  set speedVar(value: number) {
     this.setSpeedVar(value)
   }
   get tangentialAccel() {
     return this.getTangentialAccel()
   }
-  set tangentialAccel(value: any) {
+  set tangentialAccel(value: number) {
     this.setTangentialAccel(value)
   }
   get tangentialAccelVar() {
     return this.getTangentialAccelVar()
   }
-  set tangentialAccelVar(value: any) {
+  set tangentialAccelVar(value: number) {
     this.setTangentialAccelVar(value)
   }
   get radialAccel() {
     return this.getRadialAccel()
   }
-  set radialAccel(value: any) {
+  set radialAccel(value: number) {
     this.setRadialAccel(value)
   }
   get radialAccelVar() {
     return this.getRadialAccelVar()
   }
-  set radialAccelVar(value: any) {
+  set radialAccelVar(value: number) {
     this.setRadialAccelVar(value)
   }
   get rotationIsDir() {
     return this.getRotationIsDir()
   }
-  set rotationIsDir(value: any) {
+  set rotationIsDir(value: number) {
     this.setRotationIsDir(value)
   }
   get startRadius() {
     return this.getStartRadius()
   }
-  set startRadius(value: any) {
+  set startRadius(value: number) {
     this.setStartRadius(value)
   }
   get startRadiusVar() {
     return this.getStartRadiusVar()
   }
-  set startRadiusVar(value: any) {
+  set startRadiusVar(value: number) {
     this.setStartRadiusVar(value)
   }
   get endRadius() {
     return this.getEndRadius()
   }
-  set endRadius(value: any) {
+  set endRadius(value: number) {
     this.setEndRadius(value)
   }
   get endRadiusVar() {
     return this.getEndRadiusVar()
   }
-  set endRadiusVar(value: any) {
+  set endRadiusVar(value: number) {
     this.setEndRadiusVar(value)
   }
   get rotatePerS() {
     return this.getRotatePerSecond()
   }
-  set rotatePerS(value: any) {
+  set rotatePerS(value: number) {
     this.setRotatePerSecond(value)
   }
   get rotatePerSVar() {
     return this.getRotatePerSecondVar()
   }
-  set rotatePerSVar(value: any) {
+  set rotatePerSVar(value: number) {
     this.setRotatePerSecondVar(value)
   }
   get startColor() {
     return this.getStartColor()
   }
-  set startColor(value: any) {
+  set startColor(value: Color) {
     this.setStartColor(value)
   }
   get startColorVar() {
     return this.getStartColorVar()
   }
-  set startColorVar(value: any) {
+  set startColorVar(value: Color) {
     this.setStartColorVar(value)
   }
   get endColor() {
     return this.getEndColor()
   }
-  set endColor(value: any) {
+  set endColor(value: Color) {
     this.setEndColor(value)
   }
   get endColorVar() {
     return this.getEndColorVar()
   }
-  set endColorVar(value: any) {
+  set endColorVar(value: Color) {
     this.setEndColorVar(value)
   }
   get totalParticles() {
     return this.getTotalParticles()
   }
-  set totalParticles(value: any) {
+  set totalParticles(value: number) {
     this.setTotalParticles(value)
   }
   get texture() {
@@ -2245,32 +2228,3 @@ export class ParticleSystem extends Node {
    */
   static TYPE_GROUPED = 2
 }
-
-// Extended properties
-
-// Different modes
-/**
- * Mode A:Gravity + Tangential Accel + Radial Accel
- * @Class
- * @Construct
- * @param {Point} [gravity=] Gravity value.
- * @param {Number} [speed=0] speed of each particle.
- * @param {Number} [speedVar=0] speed variance of each particle.
- * @param {Number} [tangentialAccel=0] tangential acceleration of each particle.
- * @param {Number} [tangentialAccelVar=0] tangential acceleration variance of each particle.
- * @param {Number} [radialAccel=0] radial acceleration of each particle.
- * @param {Number} [radialAccelVar=0] radial acceleration variance of each particle.
- * @param {boolean} [rotationIsDir=false]
- */
-
-/**
- * Mode B: circular movement (gravity, radial accel and tangential accel don't are not used in this mode)
- * @Class
- * @Construct
- * @param {Number} [startRadius=0] The starting radius of the particles.
- * @param {Number} [startRadiusVar=0] The starting radius variance of the particles.
- * @param {Number} [endRadius=0] The ending radius of the particles.
- * @param {Number} [endRadiusVar=0] The ending radius variance of the particles.
- * @param {Number} [rotatePerSecond=0] Number of degrees to rotate a particle around the source pos per second.
- * @param {Number} [rotatePerSecondVar=0] Variance in degrees for rotatePerSecond.
- */
