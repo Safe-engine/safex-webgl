@@ -490,7 +490,7 @@ export class DrawNode extends Node {
     this._dirty = true
   }
 
-  drawPoly(verts, fillColor?: Color, borderWidth?: number, borderColor?: Color) {
+  drawPoly(verts, fillColor?: Color, borderWidth?: number, borderColor = Color.WHITE) {
     // Backward compatibility
     if (typeof verts[0] === 'object') {
       _vertices.length = 0
