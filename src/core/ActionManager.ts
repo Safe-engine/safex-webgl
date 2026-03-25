@@ -22,12 +22,12 @@ export class ActionManager {
 
   constructor() {}
 
-  private _searchElementByTarget(arr: HashElement[], target: Node): HashElement | null {
-    for (let k = 0; k < arr.length; k++) {
-      if (target === arr[k].target) return arr[k]
-    }
-    return null
-  }
+  // private _searchElementByTarget(arr: HashElement[], target: Node): HashElement | null {
+  //   for (let k = 0; k < arr.length; k++) {
+  //     if (target === arr[k].target) return arr[k]
+  //   }
+  //   return null
+  // }
 
   private _getElement(target: Node, paused: boolean): HashElement {
     let element = this._elementPool.pop()

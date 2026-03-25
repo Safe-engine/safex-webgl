@@ -1,3 +1,4 @@
+import type { Node } from '.'
 import { _LogInfos, assert, log } from '../helper/Debugger'
 import { REPEAT_FOREVER } from './platform/Macro'
 
@@ -754,19 +755,19 @@ export class Scheduler {
     return false
   }
 
-  scheduleUpdateForTarget(target: any, priority: number, paused: boolean) {
+  scheduleUpdateForTarget(target: Node, priority: number, paused: boolean) {
     this.scheduleUpdate(target, priority, paused)
   }
 
-  unscheduleCallbackForTarget(target: any, callback: (dt: number) => void) {
+  unscheduleCallbackForTarget(target: Node, callback: (dt: number) => void) {
     this.unschedule(callback, target)
   }
 
-  unscheduleUpdateForTarget(target: any) {
+  unscheduleUpdateForTarget(target: Node) {
     this.unscheduleUpdate(target)
   }
 
-  unscheduleAllCallbacksForTarget(target: any) {
+  unscheduleAllCallbacksForTarget(target: Node) {
     this.unschedule(`${target.__instanceId}`, target)
   }
 
@@ -778,6 +779,3 @@ export class Scheduler {
     this.unscheduleAllWithMinPriority(minPriority)
   }
 }
-
-// Attach to cc namespace for compatibility
-Scheduler

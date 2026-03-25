@@ -1,11 +1,8 @@
-import { _renderContext } from '..'
+import { _renderContext, global } from '..'
 import { TEXTURE_ATLAS_USE_TRIANGLE_STRIP } from '../core/platform/Config'
 import { VERTEX_ATTRIB_COLOR, VERTEX_ATTRIB_POSITION, VERTEX_ATTRIB_TEX_COORDS } from '../core/platform/Macro'
 import { V3F_C4B_T2F_Quad } from '../core/platform/Types'
-import { isString } from '../helper/checkType'
-import { _LogInfos, assert, log } from '../helper/Debugger'
-import { defineGetterSetter } from '../helper/getset'
-import { global } from '../helper/global'
+import { _LogInfos, assert, defineGetterSetter, isString, log } from '../helper'
 import { glBindTexture2D } from '../shaders/GLStateCache'
 import { textureCache } from './TextureCache'
 import { Texture2D } from './TexturesWebGL'
@@ -651,11 +648,6 @@ export class TextureAtlas {
   static createWithTexture = TextureAtlas.create
 }
 
-// Assign to global cc
-
-// assert(isFunction(_tmp.PrototypeTextureAtlas), _LogInfos.MissingFile, 'TexturesPropertyDefine.js')
-// _tmp.PrototypeTextureAtlas()
-// delete _tmp.PrototypeTextureAtlas
 const _p = TextureAtlas.prototype
 defineGetterSetter(_p, 'totalQuads', _p.getTotalQuads)
 defineGetterSetter(_p, 'capacity', _p.getCapacity)

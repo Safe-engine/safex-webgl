@@ -4,11 +4,13 @@ import { shaderCache } from '../../shaders/ShaderCache'
 import { NodeWebGLRenderCmd } from '../base-nodes/NodeWebGLRenderCmd'
 import { Matrix4 } from '../kazmath/mat4'
 import { SHADER_POSITION_COLOR, VERTEX_ATTRIB_COLOR, VERTEX_ATTRIB_POSITION } from '../platform'
+import type { Layer } from './Layer'
+import type { LayerColor } from './LayerColor'
 
 export class LayerWebGLRenderCmd extends NodeWebGLRenderCmd {
   _isBaked: boolean
 
-  constructor(renderable: any) {
+  constructor(renderable: Layer) {
     super(renderable)
     this._isBaked = false
   }
@@ -26,17 +28,18 @@ export class LayerWebGLRenderCmd extends NodeWebGLRenderCmd {
 const FLOAT_PER_VERTEX = 4
 
 export class LayerColorWebGLRenderCmd extends LayerWebGLRenderCmd {
-  _matrix: any
-  _data: any
-  _positionView: any
-  _colorView: any
-  _dataDirty: boolean
-  _color: Uint32Array
-  _vertexBuffer: any
-  _bakeRenderCmd: any
-  _bakeSprite: any
+  declare _matrix: Matrix4
+  declare _data: any
+  declare _positionView: any
+  declare _colorView: any
+  declare _dataDirty: boolean
+  declare _color: Uint32Array
+  declare _vertexBuffer: any
+  declare _bakeRenderCmd: any
+  declare _bakeSprite: any
+  declare _node: LayerColor
 
-  constructor(renderable: any) {
+  constructor(renderable: LayerColor) {
     super(renderable)
     this._needDraw = true
 
@@ -57,9 +60,9 @@ export class LayerColorWebGLRenderCmd extends LayerWebGLRenderCmd {
   }
 
   transform(parentCmd: any, recursive: boolean) {
-    ;(this as any).originTransform(parentCmd, recursive)
+    this.originTransform(parentCmd, recursive)
 
-    const node = this._node as any,
+    const node = this._node,
       width = node._contentSize.width,
       height = node._contentSize.height
 
@@ -74,8 +77,8 @@ export class LayerColorWebGLRenderCmd extends LayerWebGLRenderCmd {
   }
 
   _updateColor() {
-    const color = (this as any)._displayedColor
-    this._color[0] = ((this as any)._displayedOpacity << 24) | (color.b << 16) | (color.g << 8) | color.r
+    const color = this._displayedColor
+    this._color[0] = (this._displayedOpacity << 24) | (color.b << 16) | (color.g << 8) | color.r
 
     const colors = this._colorView
     for (let i = 0; i < 4; i++) {
@@ -86,14 +89,14 @@ export class LayerColorWebGLRenderCmd extends LayerWebGLRenderCmd {
 
   rendering(ctx: any) {
     const gl = ctx || _renderContext
-    const node = this._node as any
+    const node = this._node
 
     if (!this._matrix) {
       this._matrix = new Matrix4()
       this._matrix.identity()
     }
 
-    const wt = (this as any)._worldTransform
+    const wt = this._worldTransform
     this._matrix.mat[0] = wt.a
     this._matrix.mat[4] = wt.c
     this._matrix.mat[12] = wt.tx
@@ -123,5 +126,5 @@ export class LayerColorWebGLRenderCmd extends LayerWebGLRenderCmd {
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
   }
 
-  updateBlendFunc(blendFunc: any) {}
+  // updateBlendFunc(blendFunc: any) {}
 }

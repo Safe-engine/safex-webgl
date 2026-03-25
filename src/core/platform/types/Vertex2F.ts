@@ -30,6 +30,3 @@ export class Vertex2F {
     this._view[1] = yValue
   }
 }
-
-// defineGetterSetter(Vertex2F.prototype, 'x', Vertex2F.prototype._getX, Vertex2F.prototype._setX)
-// defineGetterSetter(Vertex2F.prototype, 'y', Vertex2F.prototype._getY, Vertex2F.prototype._setY)

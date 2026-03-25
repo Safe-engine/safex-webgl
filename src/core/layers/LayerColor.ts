@@ -1,10 +1,10 @@
 import { color, director, Node, renderer } from '../..'
-import { BlendFunc } from '../platform'
+import { BlendFunc, Color } from '../platform'
 import { Layer } from './Layer'
 import { LayerColorWebGLRenderCmd } from './LayerWebGLRenderCmd'
 
 export class LayerColor extends Layer {
-  _blendFunc: any = null
+  declare _blendFunc: BlendFunc
   _className = 'LayerColor'
   declare _renderCmd: LayerColorWebGLRenderCmd
 
@@ -43,7 +43,7 @@ export class LayerColor extends Layer {
    * @see Node#setContentSize
    * @param {Number} h height
    */
-  changeHeight(h: any) {
+  changeHeight(h: number) {
     this._setHeight(h)
   }
 
@@ -60,7 +60,7 @@ export class LayerColor extends Layer {
    * @param {Number} [width=]
    * @param {Number} [height=]
    */
-  constructor(c?: any, width?: any, height?: any) {
+  constructor(c?: Color, width?: number, height?: number) {
     super()
     this._blendFunc = BlendFunc._alphaNonPremultiplied()
     this.init(c, width, height)
@@ -73,7 +73,7 @@ export class LayerColor extends Layer {
    * @param {Number} [height=]
    * @return {Boolean}
    */
-  init(c?: any, width?: any, height?: any) {
+  init(c?: Color, width?: number, height?: number) {
     const winSize = director.getWinSize()
     c = c || color(0, 0, 0, 255)
     width = width === undefined ? winSize.width : width
@@ -142,7 +142,7 @@ export class LayerColor extends Layer {
    * @param {Number|BlendFunc} src
    * @param {Number} [dst]
    */
-  setBlendFunc(src: any, dst?: any) {
+  setBlendFunc(src: any, dst?: number) {
     const locBlendFunc = this._blendFunc
     if (dst === undefined) {
       locBlendFunc.src = src.src
@@ -151,7 +151,7 @@ export class LayerColor extends Layer {
       locBlendFunc.src = src
       locBlendFunc.dst = dst
     }
-    this._renderCmd.updateBlendFunc(locBlendFunc)
+    // this._renderCmd.updateBlendFunc(locBlendFunc)
   }
 
   _createRenderCmd() {

@@ -12,6 +12,7 @@ import { eventManager } from './event-manager/EventManager'
 import { KM_GL_MODELVIEW, KM_GL_PROJECTION, kmGLLoadIdentity, kmGLMatrixMode, kmGLMultMatrix } from './kazmath/gl/matrix'
 import { Matrix4 } from './kazmath/mat4'
 import { Vec3 } from './kazmath/vec3'
+import type { EGLView } from './platform/EGLView'
 import { BLEND_DST, BLEND_SRC, checkGLErrorDebug } from './platform/Macro'
 import { Scene } from './scenes/Scene'
 import { Scheduler } from './Scheduler'
@@ -63,7 +64,7 @@ export class Director {
   private _lastUpdate: number = Date.now()
   declare private _nextScene: Scene | null
   declare private _notificationNode: Node | null
-  declare _openGLView: any
+  declare _openGLView: EGLView
   public _scenesStack: Scene[] = []
   declare _projectionDelegate: DirectorDelegate | null
   declare private _runningScene: Scene | null
@@ -540,7 +541,7 @@ export class Director {
     renderer._clearColor = clearColor
   }
 
-  setOpenGLView(openGLView: any) {
+  setOpenGLView(openGLView: EGLView) {
     this._winSizeInPoints.width = game.canvas.width
     this._winSizeInPoints.height = game.canvas.height
     this._openGLView = openGLView || view

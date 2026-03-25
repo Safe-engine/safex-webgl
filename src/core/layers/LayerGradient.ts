@@ -8,7 +8,7 @@ import {
   pointApplyAffineTransform,
   rectApplyAffineTransformIn,
 } from '../cocoa/AffineTransform'
-import { p, Rect } from '../cocoa/Geometry'
+import { p, Point, Rect } from '../cocoa/Geometry'
 import { Matrix4 } from '../kazmath/mat4'
 import { Color, color, radiansToDegrees, VERTEX_ATTRIB_COLOR, VERTEX_ATTRIB_POSITION } from '../platform'
 import { pAngleSigned } from '../support/PointExtension'
@@ -49,10 +49,10 @@ import { LayerColorWebGLRenderCmd } from './LayerWebGLRenderCmd'
  * @property {Number}   compressedInterpolation  - Indicate whether or not the interpolation will be compressed
  */
 export class LayerGradient extends LayerColor {
-  _endColor: any = null
+  declare _endColor: Color
   _startOpacity = 255
   _endOpacity = 255
-  _alongVector: any = null
+  declare _alongVector: Point
   _compressedInterpolation = false
   _className = 'LayerGradient'
   _colorStops: any[] = []
