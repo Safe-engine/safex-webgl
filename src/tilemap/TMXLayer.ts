@@ -1,7 +1,10 @@
 import { game, renderer } from '../boot'
 import {
+  Node,
   p,
+  Point,
   pointPixelsToPoints,
+  Rect,
   rectPixelsToPoints,
   SHADER_SPRITE_POSITION_TEXTURECOLORALPHATEST,
   Size,
@@ -14,7 +17,7 @@ import { log } from '../helper/Debugger'
 import { _renderType } from '../helper/engine'
 import { defineGetterSetter } from '../helper/getset'
 import { shaderCache } from '../shaders/ShaderCache'
-import { textureCache } from '../textures'
+import { Texture2D, textureCache } from '../textures'
 import type { TMXLayerInfo } from './TMXLayerInfo'
 import { TMXLayerWebGLRenderCmd } from './TMXLayerWebGLRenderCmd'
 import type { TMXMapInfo } from './TMXMapInfo'
@@ -60,15 +63,15 @@ import {
  * @property {Number}               tileHeight          - Height of a tile
  */
 export class TMXLayer extends SpriteBatchNode {
-  declare tiles: any[]
+  declare tiles: Uint32Array
   declare tileset: TMXTilesetInfo
   declare layerOrientation: number
   declare properties: any
   layerName = ''
 
-  declare _textures: any[]
-  declare _texGrids: any[]
-  declare _spriteTiles: any
+  declare _textures: Texture2D[]
+  declare _texGrids: (Rect & { texId?: number })[]
+  declare _spriteTiles: { [key: number]: Sprite }
 
   //size of the layer in tiles
   declare _layerSize: Size
@@ -110,7 +113,7 @@ export class TMXLayer extends SpriteBatchNode {
     return new TMXLayerWebGLRenderCmd(this)
   }
 
-  _fillTextureGrids(tileset: any, texId: number) {
+  _fillTextureGrids(tileset: TMXTilesetInfo, texId: number) {
     const tex = this._textures[texId]
     if (!tex.isLoaded()) {
       tex.addEventListener(
@@ -123,8 +126,8 @@ export class TMXLayer extends SpriteBatchNode {
       return
     }
     if (!tileset.imageSize.width || !tileset.imageSize.height) {
-      tileset.imageSize.width = tex.width
-      tileset.imageSize.height = tex.height
+      tileset.imageSize.width = tex._getWidth()
+      tileset.imageSize.height = tex._getHeight()
     }
     const tw = tileset._tileSize.width
     const th = tileset._tileSize.height
@@ -177,9 +180,9 @@ export class TMXLayer extends SpriteBatchNode {
    * @param {TMXMapInfo} mapInfo
    * @return {Boolean}
    */
-  initWithTilesetInfo(tilesetInfo: any, layerInfo: any, mapInfo: any): boolean {
+  initWithTilesetInfo(tilesetInfo: TMXTilesetInfo, layerInfo: TMXLayerInfo, mapInfo: TMXMapInfo): boolean {
     const size = layerInfo._layerSize
-    const totalNumberOfTiles = (size.width * size.height) | 0
+    // const totalNumberOfTiles = (size.width * size.height) | 0
 
     // layerInfo
     this.layerName = layerInfo.name
@@ -238,11 +241,11 @@ export class TMXLayer extends SpriteBatchNode {
 
   /**
    * Set layer size
-   * @param {Size} Var
+   * @param {Size} sz
    */
-  setLayerSize(Var: any) {
-    this._layerSize.width = Var.width
-    this._layerSize.height = Var.height
+  setLayerSize(sz: Size) {
+    this._layerSize.width = sz.width
+    this._layerSize.height = sz.height
   }
 
   _getLayerWidth() {
@@ -298,10 +301,10 @@ export class TMXLayer extends SpriteBatchNode {
 
   /**
    * Pointer to the map of tiles
-   * @param {Array} Var
+   * @param {Array} tiles
    */
-  setTiles(Var: any[]) {
-    this.tiles = Var
+  setTiles(tiles: Uint32Array) {
+    this.tiles = tiles
   }
 
   /**
@@ -314,10 +317,10 @@ export class TMXLayer extends SpriteBatchNode {
 
   /**
    * Tile set information for the layer
-   * @param {TMXTilesetInfo} Var
+   * @param {TMXTilesetInfo} info
    */
-  setTileset(Var: any) {
-    this.tileset = Var
+  setTileset(info: TMXTilesetInfo) {
+    this.tileset = info
   }
 
   /**
@@ -330,10 +333,10 @@ export class TMXLayer extends SpriteBatchNode {
 
   /**
    * Layer orientation, which is the same as the map orientation
-   * @param {Number} Var
+   * @param {Number} orientation
    */
-  setLayerOrientation(Var: number) {
-    this.layerOrientation = Var
+  setLayerOrientation(orientation: number) {
+    this.layerOrientation = orientation
   }
 
   /**
@@ -346,10 +349,10 @@ export class TMXLayer extends SpriteBatchNode {
 
   /**
    * properties from the layer. They can be added using Tiled
-   * @param {Array} Var
+   * @param {Array} properties
    */
-  setProperties(Var: any) {
-    this.properties = Var
+  setProperties(properties: any) {
+    this.properties = properties
   }
 
   /**
@@ -487,7 +490,7 @@ export class TMXLayer extends SpriteBatchNode {
     if (posOrX === undefined) {
       throw new Error('TMXLayer.setTileGID(): pos should be non-null')
     }
-    let pos: any
+    let pos: Point
     if (flags !== undefined) {
       pos = p(posOrX, flagsOrY)
     } else {
@@ -520,7 +523,7 @@ export class TMXLayer extends SpriteBatchNode {
       else {
         // modifying an existing tile with a non-empty tile
         const z = pos.x + pos.y * this._layerSize.width
-        const sprite: any = this.getChildByTag(z)
+        const sprite = this.getChildByTag(z) as Sprite
         if (sprite) {
           let rect = this._texGrids[gid]
           const tex = this._textures[rect.texId]
@@ -537,7 +540,7 @@ export class TMXLayer extends SpriteBatchNode {
     }
   }
 
-  addChild(child: any, localZOrder?: number, tag?: number) {
+  addChild(child: Sprite, localZOrder?: number, tag?: number) {
     super.addChild(child, localZOrder, tag)
     if (tag !== undefined) {
       this._spriteTiles[tag] = child
@@ -546,7 +549,7 @@ export class TMXLayer extends SpriteBatchNode {
     }
   }
 
-  removeChild(child: any, cleanup?: boolean) {
+  removeChild(child: Node, cleanup?: boolean) {
     if (this._spriteTiles[child.tag]) {
       this._spriteTiles[child.tag] = null
       // child._renderCmd._needDraw = true;
@@ -560,7 +563,7 @@ export class TMXLayer extends SpriteBatchNode {
    * @param {Number} [y]
    * @return {Number}
    */
-  getTileFlagsAt(pos: any, y?: number) {
+  getTileFlagsAt(pos: Point, y?: number) {
     if (!pos) throw new Error('TMXLayer.getTileFlagsAt(): pos should be non-null')
     if (y !== undefined) pos = p(pos, y)
     if (pos.x >= this._layerSize.width || pos.y >= this._layerSize.height || pos.x < 0 || pos.y < 0)
@@ -582,7 +585,7 @@ export class TMXLayer extends SpriteBatchNode {
    * @param {Point|Number} pos position or x
    * @param {Number} [y]
    */
-  removeTileAt(pos: any, y?: number) {
+  removeTileAt(pos: Point, y?: number) {
     if (!pos) {
       throw new Error('TMXLayer.removeTileAt(): pos should be non-null')
     }
@@ -634,23 +637,23 @@ export class TMXLayer extends SpriteBatchNode {
     return pointPixelsToPoints(ret)
   }
 
-  _positionForIsoAt(pos: any) {
+  _positionForIsoAt(pos: Point) {
     return p(
       (this._mapTileSize.width / 2) * (this._layerSize.width + pos.x - pos.y - 1),
       (this._mapTileSize.height / 2) * (this._layerSize.height * 2 - pos.x - pos.y - 2),
     )
   }
 
-  _positionForOrthoAt(pos: any) {
+  _positionForOrthoAt(pos: Point) {
     return p(pos.x * this._mapTileSize.width, (this._layerSize.height - pos.y - 1) * this._mapTileSize.height)
   }
 
-  _positionForHexAt(pos: any) {
+  _positionForHexAt(pos: Point) {
     const diffY = pos.x % 2 === 1 ? -this._mapTileSize.height / 2 : 0
     return p((pos.x * this._mapTileSize.width * 3) / 4, (this._layerSize.height - pos.y - 1) * this._mapTileSize.height + diffY)
   }
 
-  _calculateLayerOffset(pos: any) {
+  _calculateLayerOffset(pos: Point) {
     let ret = p(0, 0)
     switch (this.layerOrientation) {
       case TMX_ORIENTATION_ORTHO:
@@ -666,7 +669,7 @@ export class TMXLayer extends SpriteBatchNode {
     return ret
   }
 
-  _updateTileForGID(gid: number, pos: any) {
+  _updateTileForGID(gid: number, pos: Point) {
     if (!this._texGrids[gid]) {
       return
     }
@@ -699,8 +702,8 @@ export class TMXLayer extends SpriteBatchNode {
     }
   }
 
-  _setupTileSprite(sprite: any, pos: any, gid: number) {
-    const z = pos.x + pos.y * this._layerSize.width
+  _setupTileSprite(sprite: Sprite, pos: Point, gid: number) {
+    // const z = pos.x + pos.y * this._layerSize.width
     const posInPixel = this.getPositionAt(pos)
     sprite.setPosition(posInPixel)
     sprite.setVertexZ(this._vertexZForPos(pos))
@@ -714,7 +717,7 @@ export class TMXLayer extends SpriteBatchNode {
     if ((gid & TMX_TILE_DIAGONAL_FLAG) >>> 0) {
       // put the anchor in the middle for ease of rotation.
       sprite.setAnchorPoint(0.5, 0.5)
-      sprite.setPosition(posInPixel.x + sprite.width / 2, posInPixel.y + sprite.height / 2)
+      sprite.setPosition(posInPixel.x + sprite._getWidth() / 2, posInPixel.y + sprite._getHeight() / 2)
 
       const flag = (gid & ((TMX_TILE_HORIZONTAL_FLAG | TMX_TILE_VERTICAL_FLAG) >>> 0)) >>> 0
       // handle the 4 diagonally flipped states.

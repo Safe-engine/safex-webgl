@@ -3,7 +3,7 @@ import { isObject, isUndefined } from '../../helper/checkType'
 import { _LogInfos, log } from '../../helper/Debugger'
 import { global } from '../../helper/global'
 import { sys } from '../../helper/sys'
-import { p, Rect, Size } from '../cocoa/Geometry'
+import { p, Point, Rect, Size } from '../cocoa/Geometry'
 
 /**
  * @constant
@@ -245,12 +245,12 @@ export const pointPointsToPixels = function (points) {
  * @return {export const Point}
  * @function
  */
-export const pointPixelsToPoints = function (pixels) {
+export const pointPixelsToPoints = function (pixels: Point) {
   const scale = contentScaleFactor()
   return p(pixels.x / scale, pixels.y / scale)
 }
 
-export const _pointPixelsToPointsOut = function (pixels, outPoint) {
+export const _pointPixelsToPointsOut = function (pixels: Point, outPoint: Point) {
   const scale = contentScaleFactor()
   outPoint.x = pixels.x / scale
   outPoint.y = pixels.y / scale
@@ -262,7 +262,7 @@ export const _pointPixelsToPointsOut = function (pixels, outPoint) {
  * @return {export const Size}
  * @function
  */
-export const sizePointsToPixels = function (sizeInPoints) {
+export const sizePointsToPixels = function (sizeInPoints: Size) {
   const scale = contentScaleFactor()
   return Size(sizeInPoints.width * scale, sizeInPoints.height * scale)
 }
@@ -273,12 +273,12 @@ export const sizePointsToPixels = function (sizeInPoints) {
  * @return {export const Size}
  * @function
  */
-export const sizePixelsToPoints = function (sizeInPixels) {
+export const sizePixelsToPoints = function (sizeInPixels: Size) {
   const scale = contentScaleFactor()
   return Size(sizeInPixels.width / scale, sizeInPixels.height / scale)
 }
 
-export const _sizePixelsToPointsOut = function (sizeInPixels, outSize) {
+export const _sizePixelsToPointsOut = function (sizeInPixels: Size, outSize: Size) {
   const scale = contentScaleFactor()
   outSize.width = sizeInPixels.width / scale
   outSize.height = sizeInPixels.height / scale
@@ -290,7 +290,7 @@ export const _sizePixelsToPointsOut = function (sizeInPixels, outSize) {
  * @return {export const Rect}
  * @function
  */
-export const rectPixelsToPoints = function (pixel) {
+export const rectPixelsToPoints = function (pixel: Rect) {
   const scale = contentScaleFactor()
   return Rect(pixel.x / scale, pixel.y / scale, pixel.width / scale, pixel.height / scale)
 }
@@ -301,7 +301,7 @@ export const rectPixelsToPoints = function (pixel) {
  * @return {export const Rect}
  * @function
  */
-export const rectPointsToPixels = function (point) {
+export const rectPointsToPixels = function (point: Rect) {
   const scale = contentScaleFactor()
   return Rect(point.x * scale, point.y * scale, point.width * scale, point.height * scale)
 }

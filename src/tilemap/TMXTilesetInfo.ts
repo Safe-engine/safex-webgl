@@ -54,9 +54,9 @@ export class TMXTilesetInfo {
     rect.height = this._tileSize.height
     gid &= TMX_TILE_FLIPPED_MASK
     gid = gid - this.firstGid
-    const max_x = (this.imageSize.width - this.margin * 2 + this.spacing) / (this._tileSize.width + this.spacing)
+    const max_x = Math.floor((this.imageSize.width - this.margin * 2 + this.spacing) / (this._tileSize.width + this.spacing))
     rect.x = (gid % max_x) * (this._tileSize.width + this.spacing) + this.margin
-    rect.y = (gid / max_x) * (this._tileSize.height + this.spacing) + this.margin
+    rect.y = Math.floor(gid / max_x) * (this._tileSize.height + this.spacing) + this.margin
     return rect
   }
 }

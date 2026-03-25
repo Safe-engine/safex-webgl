@@ -20,7 +20,7 @@ import { spriteFrameCache } from './sprites/SpriteFrameCache'
 import { profiler } from './utils/Profiler'
 
 interface DirectorDelegate {
-  updateProjection(): void
+  updateProjection()
 }
 
 export class Director {
@@ -116,7 +116,7 @@ export class Director {
   /**
    * Calculates delta time since last time it was called
    */
-  public calculateDeltaTime(): void {
+  public calculateDeltaTime() {
     const now = Date.now()
 
     if (this._nextDeltaTimeZero) {
@@ -166,7 +166,7 @@ export class Director {
   /**
    * Draw the scene. This method is called every frame. Don't call it manually.
    */
-  public drawScene(): void {
+  public drawScene() {
     this.calculateDeltaTime()
 
     if (!this._paused) {
@@ -208,7 +208,7 @@ export class Director {
   /**
    * End the life of director in the next frame
    */
-  public end(): void {
+  public end() {
     this._purgeDirectorInNextLoop = true
   }
 
@@ -232,14 +232,14 @@ export class Director {
   // public getVisibleOrigin: (() => Point) | null = null;
   // public getZEye: (() => number) | null = null;
 
-  public pause(): void {
+  public pause() {
     if (this._paused) return
     this._oldAnimationInterval = this._animationInterval
     this.setAnimationInterval(1 / 4.0)
     this._paused = true
   }
 
-  public popScene(): void {
+  public popScene() {
     assert(this._runningScene, _LogInfos.Director_popScene)
     this._scenesStack.pop()
     const c = this._scenesStack.length
@@ -251,13 +251,13 @@ export class Director {
     }
   }
 
-  public purgeCachedData(): void {
+  public purgeCachedData() {
     animationCache._clear()
     spriteFrameCache._clear()
     textureCache._clear()
   }
 
-  public purgeDirector(): void {
+  public purgeDirector() {
     this.getScheduler().unscheduleAll()
     if (eventManager) eventManager.setEnabled(false)
 
@@ -275,14 +275,14 @@ export class Director {
     checkGLErrorDebug()
   }
 
-  public pushScene(scene: Scene): void {
+  public pushScene(scene: Scene) {
     assert(scene, _LogInfos.Director_pushScene)
     this._sendCleanupToScene = false
     this._scenesStack.push(scene)
     this._nextScene = scene
   }
 
-  public runScene(scene: Scene): void {
+  public runScene(scene: Scene) {
     assert(scene, _LogInfos.Director_pushScene)
     if (!this._runningScene) {
       this.pushScene(scene)
@@ -301,7 +301,7 @@ export class Director {
     }
   }
 
-  public resume(): void {
+  public resume() {
     if (!this._paused) return
     this.setAnimationInterval(this._oldAnimationInterval)
     this._lastUpdate = Date.now()
@@ -312,7 +312,7 @@ export class Director {
     this._deltaTime = 0
   }
 
-  public setContentScaleFactor(scaleFactor: number): void {
+  public setContentScaleFactor(scaleFactor: number) {
     if (scaleFactor !== this._contentScaleFactor) {
       this._contentScaleFactor = scaleFactor
     }
@@ -321,13 +321,13 @@ export class Director {
   // public setDepthTest: ((on: boolean) => void) | null = null;
   // public setClearColor: ((clearColor: any) => void) | null = null;
 
-  // public setDefaultValues(): void {}
+  // public setDefaultValues() {}
 
-  public setNextDeltaTimeZero(nextDeltaTimeZero: boolean): void {
+  public setNextDeltaTimeZero(nextDeltaTimeZero: boolean) {
     this._nextDeltaTimeZero = nextDeltaTimeZero
   }
 
-  public setNextScene(): void {
+  public setNextScene() {
     const runningIsTransition = false,
       newIsTransition = false
     // if (TransitionScene) {
@@ -353,7 +353,7 @@ export class Director {
     }
   }
 
-  public setNotificationNode(node: Node | null): void {
+  public setNotificationNode(node: Node | null) {
     renderer.childrenOrderDirty = true
     if (this._notificationNode) {
       this._notificationNode._performRecursive(Node._stateCallbackType.onExitTransitionDidStart)
@@ -370,7 +370,7 @@ export class Director {
     return this._projectionDelegate
   }
 
-  public setDelegate(delegate: DirectorDelegate): void {
+  public setDelegate(delegate: DirectorDelegate) {
     this._projectionDelegate = delegate
   }
 
@@ -397,7 +397,7 @@ export class Director {
     return profiler ? profiler.isShowingStats() : false
   }
 
-  public setDisplayStats(displayStats: boolean): void {
+  public setDisplayStats(displayStats: boolean) {
     if (profiler) {
       displayStats ? profiler.showStats() : profiler.hideStats()
     }
@@ -419,11 +419,11 @@ export class Director {
     return this._totalFrames
   }
 
-  public popToRootScene(): void {
+  public popToRootScene() {
     this.popToSceneStackLevel(1)
   }
 
-  public popToSceneStackLevel(level: number): void {
+  public popToSceneStackLevel(level: number) {
     assert(this._runningScene, _LogInfos.Director_popToSceneStackLevel_2)
     const locScenesStack = this._scenesStack
     let c = locScenesStack.length
@@ -449,7 +449,7 @@ export class Director {
     return this._scheduler
   }
 
-  public setScheduler(scheduler: Scheduler): void {
+  public setScheduler(scheduler: Scheduler) {
     if (this._scheduler !== scheduler) {
       this._scheduler = scheduler
     }
@@ -459,7 +459,7 @@ export class Director {
     return this._actionManager
   }
 
-  public setActionManager(actionManager: ActionManager): void {
+  public setActionManager(actionManager: ActionManager) {
     if (this._actionManager !== actionManager) {
       this._actionManager = actionManager
     }
@@ -469,16 +469,16 @@ export class Director {
     return this._deltaTime
   }
 
-  private _calculateMPF(): void {
+  private _calculateMPF() {
     const now = Date.now()
     this._secondsPerFrame = (now - this._lastUpdate) / 1000
   }
 
   // Animation control (to be overridden in DisplayLinkDirector)
-  public startAnimation(): void {}
-  public stopAnimation(): void {}
-  public mainLoop(): void {}
-  public setAnimationInterval(value: number): void {
+  public startAnimation() {}
+  public stopAnimation() {}
+  public mainLoop() {}
+  public setAnimationInterval(value: number) {
     this._animationInterval = value
   }
 
@@ -604,12 +604,12 @@ export class Director {
 export class DisplayLinkDirector extends Director {
   private invalid = false
 
-  public startAnimation(): void {
+  public startAnimation() {
     this.setNextDeltaTimeZero(true)
     this.invalid = false
   }
 
-  public mainLoop(): void {
+  public mainLoop() {
     if (this._purgeDirectorInNextLoop) {
       this._purgeDirectorInNextLoop = false
       this.purgeDirector()
@@ -618,11 +618,11 @@ export class DisplayLinkDirector extends Director {
     }
   }
 
-  public stopAnimation(): void {
+  public stopAnimation() {
     this.invalid = true
   }
 
-  public setAnimationInterval(value: number): void {
+  public setAnimationInterval(value: number) {
     this._animationInterval = value
     if (!this.invalid) {
       this.stopAnimation()

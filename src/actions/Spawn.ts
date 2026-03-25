@@ -1,6 +1,7 @@
 import { log } from '../helper/Debugger'
 import { ActionInterval } from './ActionInterval'
 import { delayTime } from './DelayTime'
+import type { FiniteTimeAction } from './FiniteTimeAction'
 import { Sequence } from './Sequence'
 
 /** Spawn a new action immediately
@@ -8,8 +9,8 @@ import { Sequence } from './Sequence'
  * @extends ActionInterval
  */
 export class Spawn extends ActionInterval {
-  _one: any = null
-  _two: any = null
+  _one: FiniteTimeAction = null
+  _two: FiniteTimeAction = null
 
   /**
    * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
@@ -27,7 +28,7 @@ export class Spawn extends ActionInterval {
       paramArray = tempArray
     }
     const last = paramArray.length - 1
-    if (last >= 0 && paramArray[last] == null) console.log('parameters should not be ending with null in Javascript')
+    if (last >= 0 && paramArray[last] == null) log('parameters should not be ending with null in Javascript')
 
     if (last >= 0) {
       let prev = paramArray[0],
@@ -127,7 +128,7 @@ export class Spawn extends ActionInterval {
    * @return {Spawn}
    * @private
    */
-  static _actionOneTwo(action1: any, action2: any) {
+  static _actionOneTwo(action1: FiniteTimeAction, action2: FiniteTimeAction) {
     const pSpawn = new Spawn()
     pSpawn.initWithTwoActions(action1, action2)
     return pSpawn
@@ -144,13 +145,17 @@ export class Spawn extends ActionInterval {
  * var action = spawn(jumpBy(2, p(300, 0), 50, 4), rotateBy(2, 720));
  * todo:It should be the direct use new
  */
-export const spawn = function (/*Multiple Arguments*/ tempArray) {
-  const paramArray = tempArray instanceof Array ? tempArray : arguments
-  if (paramArray.length > 0 && paramArray[paramArray.length - 1] == null) log('parameters should not be ending with null in Javascript')
-
-  let prev = paramArray[0]
-  for (let i = 1; i < paramArray.length; i++) {
-    if (paramArray[i] != null) prev = Spawn._actionOneTwo(prev, paramArray[i])
+export const spawn = (...args: FiniteTimeAction[]) => {
+  if (args.length === 0) return undefined
+  if (args[args.length - 1] == null) {
+    log('parameters should not be ending with null in Javascript')
+  }
+  let prev = args[0]
+  for (let i = 1; i < args.length; i++) {
+    const current = args[i]
+    if (current != null) {
+      prev = Spawn._actionOneTwo(prev, current)
+    }
   }
   return prev
 }

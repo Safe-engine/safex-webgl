@@ -311,7 +311,7 @@ export class Sprite extends Node {
     return true
   }
 
-  setTextureRect(rectArg: Rect, rotated?: boolean, untrimmedSize?: any, needConvert?: any) {
+  setTextureRect(rectArg: Rect, rotated?: boolean, untrimmedSize?: Size, needConvert?: boolean) {
     this._rectRotated = rotated || false
     this.setContentSize(untrimmedSize || rectArg)
     this.setVertexRect(rectArg)

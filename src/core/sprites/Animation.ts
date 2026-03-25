@@ -1,4 +1,5 @@
 import { textureCache } from '../../textures'
+import type { Rect } from '../cocoa/Geometry'
 import { arrayVerifyType } from '../platform/Macro'
 import { SpriteFrame } from './SpriteFrame'
 
@@ -158,9 +159,7 @@ export class Animation {
    */
   addSpriteFrameWithFile(fileName: string) {
     const texture = textureCache.addImage(fileName)
-    const rect: any = { x: 0, y: 0, width: 0, height: 0 }
-    rect.width = texture.width
-    rect.height = texture.height
+    const rect: any = { x: 0, y: 0, width: texture._getWidth(), height: texture._getHeight() }
     const frame = new SpriteFrame(texture, rect)
     this.addSpriteFrame(frame)
   }
@@ -168,7 +167,7 @@ export class Animation {
   /**
    * Adds a frame with a texture and a rect. Internally it will create a SpriteFrame and it will add it. The frame will be added with one "delay unit".
    */
-  addSpriteFrameWithTexture(texture: any, rect: any) {
+  addSpriteFrameWithTexture(texture: any, rect: Rect) {
     const pFrame = new SpriteFrame(texture, rect)
     this.addSpriteFrame(pFrame)
   }
