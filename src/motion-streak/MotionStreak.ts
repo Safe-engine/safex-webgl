@@ -43,7 +43,7 @@ export class MotionStreak extends Node {
   // anchorY: number
   declare ignoreAnchor: boolean
   declare color: Color
-  constructor(fade?: number, minSeg?: number, stroke?: number, color?: Color, texture?: Texture2D) {
+  constructor(fade?: number, minSeg?: number, stroke?: number, color?: Color, texture?: Texture2D | string) {
     super()
     this._positionR = p(0, 0)
     this._blendFunc = new BlendFunc(SRC_ALPHA, ONE_MINUS_SRC_ALPHA)
@@ -81,7 +81,7 @@ export class MotionStreak extends Node {
     return this.texture
   }
 
-  setTexture(texture: any) {
+  setTexture(texture: Texture2D) {
     if (this.texture !== texture) this.texture = texture
   }
 
