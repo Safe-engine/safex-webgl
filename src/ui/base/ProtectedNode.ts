@@ -162,7 +162,7 @@ export class ProtectedNode extends Node {
 
     const child = this.getProtectedChildByTag(tag)
 
-    if (child == null) log('cocos2d: removeChildByTag(tag = %d): child not found!', tag)
+    if (child == null) log('safex: removeChildByTag(tag = %d): child not found!', tag)
     else this.removeProtectedChild(child, cleanup)
   }
 

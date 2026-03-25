@@ -1474,7 +1474,7 @@ export class Widget extends ProtectedNode {
    */
   removeNodeByTag(tag: number, cleanup?: boolean) {
     const node = this.getChildByTag(tag)
-    if (!node) log('cocos2d: removeNodeByTag(tag = %d): child not found!', tag)
+    if (!node) log('safex: removeNodeByTag(tag = %d): child not found!', tag)
     else this.removeChild(node, cleanup)
   }
 

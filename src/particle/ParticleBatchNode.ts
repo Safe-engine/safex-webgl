@@ -377,7 +377,7 @@ export class ParticleBatchNode extends Node {
   }
 
   _increaseAtlasCapacityTo(quantity: any) {
-    log(`cocos2d: ParticleBatchNode: resizing TextureAtlas capacity from [${this.textureAtlas.getCapacity()}] to [${quantity}].`)
+    log(`safex: ParticleBatchNode: resizing TextureAtlas capacity from [${this.textureAtlas.getCapacity()}] to [${quantity}].`)
 
     if (!this.textureAtlas.resizeCapacity(quantity)) {
       // serious problems

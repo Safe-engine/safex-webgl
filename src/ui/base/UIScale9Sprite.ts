@@ -306,7 +306,7 @@ const scale9QuadGenerator = {
 
 /**
  * <p>
- * A 9-slice sprite for cocos2d UI.                                                                    <br/>
+ * A 9-slice sprite for safex UI.                                                                    <br/>
  *                                                                                                     <br/>
  * 9-slice scaling allows you to specify how scaling is applied                                        <br/>
  * to specific areas of a sprite. With 9-slice scaling (3x3 grid),                                     <br/>

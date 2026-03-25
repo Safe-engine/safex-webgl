@@ -100,9 +100,9 @@ export class GLProgram {
     const status = this._glContext.getShaderParameter(shader, this._glContext.COMPILE_STATUS)
 
     if (!status) {
-      log(`cocos2d: ERROR: Failed to compile shader:\n${this._glContext.getShaderSource(shader)}`)
-      if (type === this._glContext.VERTEX_SHADER) log(`cocos2d: \n${this.vertexShaderLog()}`)
-      else log(`cocos2d: \n${this.fragmentShaderLog()}`)
+      log(`safex: ERROR: Failed to compile shader:\n${this._glContext.getShaderSource(shader)}`)
+      if (type === this._glContext.VERTEX_SHADER) log(`safex: \n${this.vertexShaderLog()}`)
+      else log(`safex: \n${this.fragmentShaderLog()}`)
     }
     return status === true
   }
@@ -136,7 +136,7 @@ export class GLProgram {
     if (vertShaderStr) {
       this._vertShader = locGL.createShader(locGL.VERTEX_SHADER)
       if (!this._compileShader(this._vertShader, locGL.VERTEX_SHADER, vertShaderStr)) {
-        log('cocos2d: ERROR: Failed to compile vertex shader')
+        log('safex: ERROR: Failed to compile vertex shader')
       }
     }
 
@@ -144,7 +144,7 @@ export class GLProgram {
     if (fragShaderStr) {
       this._fragShader = locGL.createShader(locGL.FRAGMENT_SHADER)
       if (!this._compileShader(this._fragShader, locGL.FRAGMENT_SHADER, fragShaderStr)) {
-        log('cocos2d: ERROR: Failed to compile fragment shader')
+        log('safex: ERROR: Failed to compile fragment shader')
       }
     }
 
@@ -224,7 +224,7 @@ export class GLProgram {
     if (game.config[Game.CONFIG_KEY.debugMode]) {
       const status = this._glContext.getProgramParameter(this._programObj, this._glContext.LINK_STATUS)
       if (!status) {
-        log(`cocos2d: ERROR: Failed to link program: ${this._glContext.getProgramInfoLog(this._programObj)}`)
+        log(`safex: ERROR: Failed to link program: ${this._glContext.getProgramInfoLog(this._programObj)}`)
         glDeleteProgram(this._programObj)
         this._programObj = null
         return false

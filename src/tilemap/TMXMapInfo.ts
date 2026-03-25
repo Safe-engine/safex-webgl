@@ -307,12 +307,12 @@ export class TMXMapInfo extends SAXParser {
     const orientationStr = map.getAttribute('orientation')
 
     if (map.nodeName === 'map') {
-      if (version !== '1.0' && version !== null) log(`cocos2d: TMXFormat: Unsupported TMX version:${version}`)
+      if (version !== '1.0' && version !== null) log(`safex: TMXFormat: Unsupported TMX version:${version}`)
 
       if (orientationStr === 'orthogonal') this.orientation = TMX_ORIENTATION_ORTHO
       else if (orientationStr === 'isometric') this.orientation = TMX_ORIENTATION_ISO
       else if (orientationStr === 'hexagonal') this.orientation = TMX_ORIENTATION_HEX
-      else if (orientationStr !== null) log(`cocos2d: TMXFomat: Unsupported orientation:${orientationStr}`)
+      else if (orientationStr !== null) log(`safex: TMXFomat: Unsupported orientation:${orientationStr}`)
 
       let mapSize = Size(0, 0)
       mapSize.width = parseFloat(map.getAttribute('width'))
@@ -528,7 +528,7 @@ export class TMXMapInfo extends SAXParser {
 
             objectProp['x'] = (Number(selObj.getAttribute('x') ?? 0) + objectGroup.getPositionOffset().x) / getContentScaleFactor
             const y = Number(selObj.getAttribute('y') ?? 0) + objectGroup.getPositionOffset().y / getContentScaleFactor
-            // Correct y position. (Tiled uses Flipped, cocos2d uses Standard)
+            // Correct y position. (Tiled uses Flipped, safex uses Standard)
             objectProp['y'] =
               (this.getMapSize().height * this.getTileSize().height - y - objectProp['height']) / director.getContentScaleFactor()
 

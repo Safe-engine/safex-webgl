@@ -251,7 +251,7 @@ export class ParticleSystemWebGLRenderCmd extends NodeWebGLRenderCmd {
       top = bottom + rect.height / high
     }
 
-    // Important. Texture in cocos2d are inverted, so the Y component should be inverted
+    // Important. Texture in safex are inverted, so the Y component should be inverted
     const temp = top
     top = bottom
     bottom = temp
@@ -367,7 +367,7 @@ export class ParticleSystemWebGLRenderCmd extends NodeWebGLRenderCmd {
       locQuads[i] = new V3F_C4B_T2F_Quad(null, null, null, null, locQuadsArrayBuffer, i * quadSize)
     }
     if (!locQuads || !this._indices) {
-      log('cocos2d: Particle system: not enough memory')
+      log('safex: Particle system: not enough memory')
       return false
     }
     this._quadsArrayBuffer = locQuadsArrayBuffer

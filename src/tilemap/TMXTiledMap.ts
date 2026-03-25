@@ -341,7 +341,7 @@ export class TMXTiledMap extends Node {
     }
 
     // If all the tiles are 0, return empty tileset
-    log(`cocos2d: Warning: TMX Layer ${layerInfo.name} has no tiles`)
+    log(`safex: Warning: TMX Layer ${layerInfo.name} has no tiles`)
     return null
   }
 
