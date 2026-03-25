@@ -173,7 +173,7 @@ export const rendererWebGL = (function () {
      * drawing all renderer command to cache canvas' context
      * @param {Number} [renderTextureId]
      */
-    _renderingToBuffer: function (renderTextureId) {
+    _renderingToBuffer: function (renderTextureId: number) {
       renderTextureId = renderTextureId || this._currentID
       const locCmds = this._cacheToBufferCmds[renderTextureId]
       const ctx = _renderContext

@@ -1,5 +1,4 @@
-import { game, view } from '../..'
-import { _renderType } from '../../helper/engine'
+import { view } from '../..'
 import { global } from '../../helper/global'
 import { Texture2D } from '../../textures'
 import { Node } from '../base-nodes/Node'
@@ -412,7 +411,8 @@ export class LabelTTFWebGLRenderCmd extends SpriteWebGLRenderCmd {
 
     this._originSyncStatus(parentCmd)
 
-    if (_renderType === game.RENDER_TYPE_WEBGL || locFlag & flags.transformDirty) this.transform(parentCmd)
+    // if (_renderType === game.RENDER_TYPE_WEBGL || locFlag & flags.transformDirty)
+    this.transform(parentCmd)
   }
 
   drawLabels(context, xOffset, yOffsetArray) {

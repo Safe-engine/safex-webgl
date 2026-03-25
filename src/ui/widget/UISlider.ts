@@ -1,7 +1,5 @@
-import { game } from '../..'
 import { Node, Sprite } from '../../core'
 import { p, Rect, Size } from '../../core/cocoa/Geometry'
-import { _renderType } from '../../helper/engine'
 import { Scale9Sprite } from '../base/UIScale9Sprite'
 import { Widget } from '../base/UIWidget'
 
@@ -606,11 +604,7 @@ export class Slider extends Widget {
     this._slidBallDisabledRenderer.setVisible(false)
 
     this._slidBallNormalRenderer.setScale(this._sliderBallNormalTextureScaleX, this._sliderBallNormalTextureScaleY)
-    if (_renderType === game.RENDER_TYPE_WEBGL) {
-      this._slidBallNormalRenderer._renderCmd._shaderProgram = this._getNormalGLProgram()
-    } else {
-      // TODO: add canvas support
-    }
+    this._slidBallNormalRenderer._renderCmd._shaderProgram = this._getNormalGLProgram()
   }
 
   _onPressStateChangedToPressed(): any {
@@ -624,11 +618,7 @@ export class Slider extends Widget {
       this._slidBallPressedRenderer.setVisible(true)
       this._slidBallDisabledRenderer.setVisible(false)
     }
-    if (_renderType === game.RENDER_TYPE_WEBGL) {
-      this._slidBallNormalRenderer._renderCmd._shaderProgram = this._getNormalGLProgram()
-    } else {
-      // TODO: add canvas support
-    }
+    this._slidBallNormalRenderer._renderCmd._shaderProgram = this._getNormalGLProgram()
   }
 
   _onPressStateChangedToDisabled(): any {

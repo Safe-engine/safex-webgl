@@ -1,6 +1,4 @@
-import { game } from '../..'
 import { _LogInfos, error } from '../../helper/Debugger'
-import { _renderType } from '../../helper/engine'
 import { textureCache } from '../../textures/TextureCache'
 import { Texture2D } from '../../textures/TexturesWebGL'
 import { p, Point, Rect, Size } from '../cocoa/Geometry'
@@ -129,7 +127,7 @@ export class SpriteFrame extends EventHelper {
     return null
   }
 
-  setTexture(texture: any) {
+  setTexture(texture: Texture2D) {
     if (this._texture !== texture) {
       const locLoaded = texture.isLoaded()
       this._textureLoaded = locLoaded
@@ -139,17 +137,6 @@ export class SpriteFrame extends EventHelper {
           'load',
           function (sender: any) {
             this._textureLoaded = true
-            if (this._rotated && _renderType === game.RENDER_TYPE_CANVAS) {
-              const tempElement = sender.getHtmlElementObj()
-              // tempElement = Sprite.CanvasRenderCmd._cutRotateImageToCanvas(tempElement, this.getRect())
-              const tempTexture = new Texture2D()
-              tempTexture.initWithElement(tempElement)
-              tempTexture.handleLoadedTexture()
-              this.setTexture(tempTexture)
-
-              const rectVal = this.getRect()
-              this.setRect(Rect(0, 0, rectVal.width, rectVal.height))
-            }
             const locRect = this._rect
             if (locRect.width === 0 && locRect.height === 0) {
               const w = sender.width,

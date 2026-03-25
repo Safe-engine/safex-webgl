@@ -1,4 +1,4 @@
-import { game, renderer } from '../..'
+import { renderer } from '../..'
 import { SpriteFrame, spriteFrameCache } from '../../core'
 import { Node } from '../../core/base-nodes/Node'
 import { _Rect, p, Rect, rectEqualToZero, Size, sizeEqualToSize } from '../../core/cocoa/Geometry'
@@ -7,7 +7,6 @@ import { FIX_ARTIFACTS_BY_STRECHING_TEXEL } from '../../core/platform/Config'
 import { BLEND_DST, BLEND_SRC, contentScaleFactor, ONE, rectPointsToPixels, SRC_ALPHA } from '../../core/platform/Macro'
 import { SpriteLoadManager } from '../../core/sprites/SpriteLoadManager'
 import { error, log } from '../../helper/Debugger'
-import { _renderType } from '../../helper/engine'
 import { textureCache } from '../../textures'
 import { Scale9SpriteWebGLRenderCmd } from './UIScale9SpriteWebGLRenderCmd'
 
@@ -42,7 +41,6 @@ const dataPool = {
 
 // var FIX_ARTIFACTS_BY_STRECHING_TEXEL = FIX_ARTIFACTS_BY_STRECHING_TEXEL
 const cornerId = []
-let webgl
 
 const simpleQuadGenerator = {
   _rebuildQuads_base: function (sprite, spriteFrame, contentSize, isTrimmedContentSize) {
@@ -78,25 +76,25 @@ const simpleQuadGenerator = {
       sprite._vertices = vertices
     }
     // bl, br, tl, tr
-    if (webgl) {
-      vertices[0] = l * wt.a + b * wt.c + wt.tx
-      vertices[1] = l * wt.b + b * wt.d + wt.ty
-      vertices[2] = r * wt.a + b * wt.c + wt.tx
-      vertices[3] = r * wt.b + b * wt.d + wt.ty
-      vertices[4] = l * wt.a + t * wt.c + wt.tx
-      vertices[5] = l * wt.b + t * wt.d + wt.ty
-      vertices[6] = r * wt.a + t * wt.c + wt.tx
-      vertices[7] = r * wt.b + t * wt.d + wt.ty
-    } else {
-      vertices[0] = l
-      vertices[1] = b
-      vertices[2] = r
-      vertices[3] = b
-      vertices[4] = l
-      vertices[5] = t
-      vertices[6] = r
-      vertices[7] = t
-    }
+    // if (webgl) {
+    vertices[0] = l * wt.a + b * wt.c + wt.tx
+    vertices[1] = l * wt.b + b * wt.d + wt.ty
+    vertices[2] = r * wt.a + b * wt.c + wt.tx
+    vertices[3] = r * wt.b + b * wt.d + wt.ty
+    vertices[4] = l * wt.a + t * wt.c + wt.tx
+    vertices[5] = l * wt.b + t * wt.d + wt.ty
+    vertices[6] = r * wt.a + t * wt.c + wt.tx
+    vertices[7] = r * wt.b + t * wt.d + wt.ty
+    // } else {
+    //   vertices[0] = l
+    //   vertices[1] = b
+    //   vertices[2] = r
+    //   vertices[3] = b
+    //   vertices[4] = l
+    //   vertices[5] = t
+    //   vertices[6] = r
+    //   vertices[7] = t
+    // }
 
     cornerId[0] = 0
     cornerId[1] = 2
@@ -202,23 +200,23 @@ const scale9QuadGenerator = {
     let offset = 0,
       row,
       col
-    if (webgl) {
-      for (row = 0; row < 4; row++) {
-        for (col = 0; col < 4; col++) {
-          vertices[offset] = x[col] * wt.a + y[row] * wt.c + wt.tx
-          vertices[offset + 1] = x[col] * wt.b + y[row] * wt.d + wt.ty
-          offset += 2
-        }
-      }
-    } else {
-      for (row = 0; row < 4; row++) {
-        for (col = 0; col < 4; col++) {
-          vertices[offset] = x[col]
-          vertices[offset + 1] = y[row]
-          offset += 2
-        }
+    // if (webgl) {
+    for (row = 0; row < 4; row++) {
+      for (col = 0; col < 4; col++) {
+        vertices[offset] = x[col] * wt.a + y[row] * wt.c + wt.tx
+        vertices[offset + 1] = x[col] * wt.b + y[row] * wt.d + wt.ty
+        offset += 2
       }
     }
+    // } else {
+    //   for (row = 0; row < 4; row++) {
+    //     for (col = 0; col < 4; col++) {
+    //       vertices[offset] = x[col]
+    //       vertices[offset + 1] = y[row]
+    //       offset += 2
+    //     }
+    //   }
+    // }
 
     cornerId[0] = 0
     cornerId[1] = 6
@@ -393,10 +391,6 @@ export class Scale9Sprite extends Node {
         if (frame) this.initWithSpriteFrame(frame, rectOrCapInsets)
         else this.initWithFile(file, rectOrCapInsets, capInsets)
       }
-    }
-
-    if (webgl === undefined) {
-      webgl = _renderType === game.RENDER_TYPE_WEBGL
     }
   }
 

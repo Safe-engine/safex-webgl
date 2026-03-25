@@ -1,6 +1,5 @@
-import { _renderContext, game } from '..'
+import { _renderContext } from '..'
 import { _LogInfos, assert, log } from '../helper/Debugger'
-import { _renderType } from '../helper/engine'
 import { loader } from '../helper/loader'
 import { ENABLE_GL_STATE_CACHE, ENGINE_VERSION } from './platform/Config'
 import { checkGLErrorDebug } from './platform/Macro'
@@ -201,8 +200,6 @@ export const configuration = /** @lends configuration# */ {
    * gathers OpenGL / GPU information
    */
   gatherGPUInfo: function () {
-    if (_renderType === game.RENDER_TYPE_CANVAS) return
-
     if (!this._inited) this._init()
     const gl = _renderContext
     const locValueDict = this._valueDict

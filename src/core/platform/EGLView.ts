@@ -1,6 +1,5 @@
-import { _renderContext, container, director, game, renderer, view, winSize } from '../..'
+import { _renderContext, container, director, game, view, winSize } from '../..'
 import { log } from '../../helper/Debugger'
-import { _renderType } from '../../helper/engine'
 import { sys } from '../../helper/sys'
 import { Rect, Size, Point as Vec2 } from '../cocoa/Geometry'
 import { eventManager } from '../event-manager/EventManager'
@@ -591,12 +590,8 @@ export class EGLView {
     winSize.width = director._winSizeInPoints.width
     winSize.height = director._winSizeInPoints.height
 
-    if (_renderType === game.RENDER_TYPE_WEBGL) {
-      // reset director's member variables to fit visible Rect
-      director.setGLDefaultValues()
-    } else if (_renderType === game.RENDER_TYPE_CANVAS) {
-      renderer._allNeedDraw = true
-    }
+    // reset director's member variables to fit visible Rect
+    director.setGLDefaultValues()
 
     this._originalScaleX = this._scaleX
     this._originalScaleY = this._scaleY

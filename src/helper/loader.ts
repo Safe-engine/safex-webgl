@@ -1,7 +1,6 @@
 import { CONCURRENCY_HTTP_REQUEST_COUNT, game } from '..'
 import { AsyncPool } from './AsyncPool'
 import { error, log } from './Debugger'
-import { _renderType } from './engine'
 import { path } from './path'
 import { sys } from './sys'
 
@@ -217,7 +216,7 @@ export const loader = (function () {
           delete _queue[url]
         }
 
-        if (window.ENABLE_IMAGE_POOL && _renderType === game.RENDER_TYPE_WEBGL) {
+        if (window.ENABLE_IMAGE_POOL) {
           imagePool.put(img)
         }
       }
@@ -246,9 +245,7 @@ export const loader = (function () {
             delete _queue[url]
           }
 
-          if (_renderType === game.RENDER_TYPE_WEBGL) {
-            imagePool.put(img)
-          }
+          imagePool.put(img)
         }
       }
 

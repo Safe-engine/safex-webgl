@@ -11,7 +11,7 @@ import { $ } from './core/platform/miniFramework'
 import { rendererWebGL } from './core/renderer/RendererWebGL'
 import { isUndefined } from './helper/checkType'
 import { log } from './helper/Debugger'
-import { _engineLoaded, _supportRender, create3DContext, initEngine } from './helper/engine'
+import { _engineLoaded, create3DContext, initEngine } from './helper/engine'
 import { global } from './helper/global'
 import { loader } from './helper/loader'
 import { path } from './helper/path'
@@ -42,10 +42,6 @@ export class Game extends EventHelper {
   EVENT_SHOW = 'game_on_show'
   EVENT_RESIZE = 'game_on_resize'
   static readonly EVENT_RENDERER_INITD = 'renderer_initd'
-
-  RENDER_TYPE_CANVAS = 0
-  RENDER_TYPE_WEBGL = 1
-  RENDER_TYPE_OPENGL = 2
 
   _eventHide: EventCustom | null = null
   _eventShow: EventCustom | null = null
@@ -343,10 +339,6 @@ export class Game extends EventHelper {
   _initRenderer(width: number, height: number) {
     if (this._rendererInitialized) return
 
-    if (!_supportRender) {
-      throw new Error(`The renderer doesnt support the renderMode ${this.config[Game.CONFIG_KEY.renderMode]}`)
-    }
-
     const el = this.config[Game.CONFIG_KEY.id]
     const element = $(el) || $(`#${el}`)
     let localCanvas: HTMLCanvasElement
@@ -490,18 +482,3 @@ eventManager._internalCustomListenerIDs = [game.EVENT_HIDE, game.EVENT_SHOW]
 game.addEventListener(Game.EVENT_RENDERER_INITD, function () {
   WebGLTextureCache()
 })
-
-// game.addEventListener(Game.EVENT_RENDERER_INITD, function () {
-//   if (_renderType === game.RENDER_TYPE_CANVAS) {
-//     var proto = {
-//     }
-//   } else if (_renderType === game.RENDER_TYPE_WEBGL) {
-//     assert(isFunction(_tmp.WebGLTexture2D), _LogInfos.MissingFile, "TexturesWebGL.js");
-//     _tmp.WebGLTexture2D();
-//     delete _tmp.WebGLTexture2D;
-//   }
-//   // EventHelper.prototype.apply(Texture2D.prototype);
-//   assert(isFunction(_tmp.PrototypeTexture2D), _LogInfos.MissingFile, "TexturesPropertyDefine.js");
-//   _tmp.PrototypeTexture2D();
-//   delete _tmp.PrototypeTexture2D;
-// });

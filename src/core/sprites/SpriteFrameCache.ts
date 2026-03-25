@@ -168,24 +168,6 @@ export const spriteFrameCache = {
             spAliases[alias] = key
           }
         }
-
-        // if (_renderType === game.RENDER_TYPE_CANVAS && spriteFrame.isRotated()) {
-        //   //clip to canvas
-        //   const locTexture = spriteFrame.getTexture()
-        //   if (locTexture.isLoaded()) {
-        //     let tempElement = spriteFrame.getTexture().getHtmlElementObj()
-        //     tempElement = Sprite.CanvasRenderCmd._cutRotateImageToCanvas(tempElement, spriteFrame.getRectInPixels())
-        //     const tempTexture = new Texture2D()
-        //     tempTexture.initWithElement(tempElement)
-        //     tempTexture.handleLoadedTexture()
-        //     spriteFrame.setTexture(tempTexture)
-        //     spriteFrame.setRotated(false)
-
-        //     const rect = spriteFrame._rect
-        //     spriteFrame.setRect(rect(0, 0, rect.width, rect.height))
-        //   }
-        // }
-        // console.log('create sprite frames', key, spriteFrame)
         spriteFrames[key] = spriteFrame
       }
     }

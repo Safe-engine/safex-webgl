@@ -6,15 +6,15 @@ import { BlendFunc, Color, ONE_MINUS_SRC_ALPHA, SRC_ALPHA } from '../core/platfo
 import { vertexLineToPolygon } from '../core/support/Vertex'
 import { isString } from '../helper/checkType'
 import { log } from '../helper/Debugger'
-import { textureCache } from '../textures'
+import { Texture2D, textureCache } from '../textures'
 import { MotionStreakWebGLRenderCmd } from './MotionStreakWebGLRenderCmd'
 
 export class MotionStreak extends Node {
-  texture: any = null
+  declare texture: Texture2D
   fastMode = false
   startingPositionInitialized = false
 
-  _blendFunc: BlendFunc = null
+  declare _blendFunc: BlendFunc
 
   _stroke = 0
   _fadeDelta = 0
@@ -25,25 +25,25 @@ export class MotionStreak extends Node {
   _previousNuPoints = 0
 
   /* Pointers */
-  _pointVertexes: any = null
-  _pointState: any = null
+  declare _pointVertexes: Float32Array
+  declare _pointState: Float32Array
 
   // webgl
-  _vertices: any = null
-  _colorPointer: any = null
-  _texCoords: any = null
+  declare _vertices: Float32Array
+  declare _colorPointer: Uint8Array
+  declare _texCoords: Float32Array
 
-  _verticesBuffer: any = null
-  _colorPointerBuffer: any = null
-  _texCoordsBuffer: any = null
+  declare _verticesBuffer: WebGLBuffer
+  declare _colorPointerBuffer: WebGLBuffer
+  declare _texCoordsBuffer: WebGLBuffer
   _className = 'MotionStreak'
-  _positionR: Point
+  declare _positionR: Point
   // inherited property placeholders
   // anchorX: number
   // anchorY: number
-  ignoreAnchor: boolean
-  color: Color
-  constructor(fade?: number, minSeg?: number, stroke?: number, color?: Color, texture?: any) {
+  declare ignoreAnchor: boolean
+  declare color: Color
+  constructor(fade?: number, minSeg?: number, stroke?: number, color?: Color, texture?: Texture2D) {
     super()
     this._positionR = p(0, 0)
     this._blendFunc = new BlendFunc(SRC_ALPHA, ONE_MINUS_SRC_ALPHA)

@@ -3,7 +3,13 @@ import { degreesToRadians } from '../platform'
 import { vertex2 } from '../platform/Types'
 import { pCross, pDot, pMidpoint, pMult, pNormalize, pPerp, pSub } from './PointExtension'
 
-export const vertexLineToPolygon = function (points: number[], stroke: number, vertices: number[], offset: number, nuPoints: number) {
+export const vertexLineToPolygon = function (
+  points: Float32Array,
+  stroke: number,
+  vertices: Float32Array,
+  offset: number,
+  nuPoints: number,
+) {
   nuPoints += offset
   if (nuPoints <= 1) return
 

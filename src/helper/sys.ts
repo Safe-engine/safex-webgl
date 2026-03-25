@@ -1,11 +1,8 @@
-import { game } from '../index'
 import { log } from './Debugger'
 import { create3DContext } from './engine'
 
 const _tmpCanvas1 = document.createElement('canvas')
 const _tmpCanvas2 = document.createElement('canvas')
-
-const _renderType = 0
 
 /**
  * System variables
@@ -406,12 +403,6 @@ const sys = {
     height: 0,
   },
 
-  _checkWebGLRenderMode() {
-    if (_renderType !== game.RENDER_TYPE_WEBGL) {
-      throw new Error('This feature supports WebGL render mode only.')
-    }
-  },
-
   // Whether or not the Canvas BlendModes are supported.
   _supportCanvasNewBlendModes: false,
 
@@ -494,7 +485,7 @@ const sys = {
     str += `os : ${this.os}\r\n`
     str += `osVersion : ${this.osVersion}\r\n`
     str += `platform : ${this.platform}\r\n`
-    str += `Using ${_renderType === game.RENDER_TYPE_WEBGL ? 'WEBGL' : 'CANVAS'} renderer.\r\n`
+    str += `Using ${'WEBGL'} renderer.\r\n`
     log(str)
   },
 

@@ -1,4 +1,4 @@
-import { game, renderer } from '../boot'
+import { renderer } from '../boot'
 import {
   Node,
   p,
@@ -14,7 +14,6 @@ import {
 } from '../core'
 import { SpriteBatchNode } from '../core/sprites/SpriteBatchNode'
 import { log } from '../helper/Debugger'
-import { _renderType } from '../helper/engine'
 import { defineGetterSetter } from '../helper/getset'
 import { shaderCache } from '../shaders/ShaderCache'
 import { Texture2D, textureCache } from '../textures'
@@ -691,13 +690,11 @@ export class TMXLayer extends SpriteBatchNode {
         let alphaFuncValue = 0
         if (alphaFuncVal) alphaFuncValue = parseFloat(alphaFuncVal)
 
-        if (_renderType === game.RENDER_TYPE_WEBGL) {
-          //todo: need move to WebGL render cmd
-          ;(this as any).shaderProgram = shaderCache.programForKey(SHADER_SPRITE_POSITION_TEXTURECOLORALPHATEST)
-          // NOTE: alpha test shader is hard-coded to use the equivalent of a glAlphaFunc(GL_GREATER) comparison
-          ;(this as any).shaderProgram.use()
-          ;(this as any).shaderProgram.setUniformLocationWith1f(UNIFORM_ALPHA_TEST_VALUE_S, alphaFuncValue)
-        }
+        //todo: need move to WebGL render cmd
+        this.setShaderProgram(shaderCache.programForKey(SHADER_SPRITE_POSITION_TEXTURECOLORALPHATEST))
+        // NOTE: alpha test shader is hard-coded to use the equivalent of a glAlphaFunc(GL_GREATER) comparison
+        this.getShaderProgram().use()
+        this.getShaderProgram().setUniformLocationWith1f(UNIFORM_ALPHA_TEST_VALUE_S, alphaFuncValue)
       } else this._vertexZvalue = parseInt(vertexz, 10)
     }
   }

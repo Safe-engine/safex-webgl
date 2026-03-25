@@ -653,14 +653,6 @@ export class TextureAtlas {
 
 // Assign to global cc
 
-// game.addEventListener(Game.EVENT_RENDERER_INITD, function () {
-//   if (_renderType === game.RENDER_TYPE_WEBGL) {
-//     assert(isFunction(_tmp.WebGLTextureAtlas), _LogInfos.MissingFile, 'TexturesWebGL.js')
-//     _tmp.WebGLTextureAtlas()
-//     delete _tmp.WebGLTextureAtlas
-//   }
-// })
-
 // assert(isFunction(_tmp.PrototypeTextureAtlas), _LogInfos.MissingFile, 'TexturesPropertyDefine.js')
 // _tmp.PrototypeTextureAtlas()
 // delete _tmp.PrototypeTextureAtlas
