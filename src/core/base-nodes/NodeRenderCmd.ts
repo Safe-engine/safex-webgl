@@ -307,7 +307,7 @@ class NodeRenderCmd {
     if (parentCmd) this._curLevel = parentCmd._curLevel + 1
 
     if (isNaN(node._customZ)) {
-      node._vertexZ = renderer.assignedZ
+      node.setVertexZ(renderer.assignedZ)
       renderer.assignedZ += renderer.assignedZStep
     }
 

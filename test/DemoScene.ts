@@ -8,6 +8,7 @@ import {
   Sprite,
   Vec2,
   audioEngine,
+  color,
   director,
   loader,
   spriteFrameCache,
@@ -21,8 +22,8 @@ export class DemoScene extends Scene {
   declare streak: MotionStreak
   constructor() {
     super()
-    console.log('BootScene constructor')
-    const motionStreak = new MotionStreak(1, 32, 13, Color.GREEN, 'particle.png')
+    const motionStreak = new MotionStreak(1, 32, 13, color(0, 255, 0, 255), 'particle.png')
+    console.log('BootScene constructor', motionStreak)
     motionStreak.setPosition(300, 400)
     this.addChild(motionStreak)
     this.streak = motionStreak
@@ -94,7 +95,7 @@ export class DemoScene extends Scene {
         const percent = sender.getPercent()
         console.log('Slider value changed', percent, type)
       }, this)
-      console.log('Slider', slider)
+      // console.log('Slider', slider)
     })
   }
 
@@ -102,6 +103,7 @@ export class DemoScene extends Scene {
     // console.log('BootScene update', dt)
     this.streak.setPositionY(this.streak.getPositionY() + dt * 500)
     if (this.streak.getPositionY() > director.getWinSize().height) {
+      this.streak.reset()
       this.streak.setPositionY(0)
     }
   }

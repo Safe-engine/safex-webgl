@@ -11,18 +11,18 @@ import { MotionStreakWebGLRenderCmd } from './MotionStreakWebGLRenderCmd'
 
 export class MotionStreak extends Node {
   declare texture: Texture2D
-  fastMode = false
-  startingPositionInitialized = false
+  declare fastMode: boolean
+  declare startingPositionInitialized: boolean
 
   declare _blendFunc: BlendFunc
 
-  _stroke = 0
-  _fadeDelta = 0
-  _minSeg = 0
+  declare _stroke: number
+  declare _fadeDelta: number
+  declare _minSeg: number
 
-  _maxPoints = 0
-  _nuPoints = 0
-  _previousNuPoints = 0
+  declare _maxPoints: number
+  declare _nuPoints: number
+  declare _previousNuPoints: number
 
   /* Pointers */
   declare _pointVertexes: Float32Array
@@ -41,8 +41,8 @@ export class MotionStreak extends Node {
   // inherited property placeholders
   // anchorX: number
   // anchorY: number
-  declare ignoreAnchor: boolean
-  declare color: Color
+  // declare ignoreAnchor: boolean
+  // declare color: Color
   constructor(fade?: number, minSeg?: number, stroke?: number, color?: Color, texture?: Texture2D | string) {
     super()
     this._positionR = p(0, 0)
@@ -51,15 +51,15 @@ export class MotionStreak extends Node {
     this.fastMode = false
     this.startingPositionInitialized = false
 
-    this.texture = null
+    // this.texture = null
 
-    this._stroke = 0
-    this._fadeDelta = 0
-    this._minSeg = 0
+    // this._stroke = 0
+    // this._fadeDelta = 0
+    // this._minSeg = 0
 
-    this._maxPoints = 0
-    this._nuPoints = 0
-    this._previousNuPoints = 0
+    // this._maxPoints = 0
+    // this._nuPoints = 0
+    // this._previousNuPoints = 0
 
     /** Pointers */
     this._pointVertexes = null
@@ -74,7 +74,7 @@ export class MotionStreak extends Node {
     this._colorPointerBuffer = null
     this._texCoordsBuffer = null
 
-    if (texture !== undefined) this.initWithFade(fade, minSeg, stroke, color, texture)
+    this.initWithFade(fade, minSeg, stroke, color, texture)
   }
 
   getTexture() {
@@ -144,7 +144,7 @@ export class MotionStreak extends Node {
 
     this.setPosition(p(0, 0))
     this.setAnchorPoint(0, 0)
-    this.ignoreAnchor = true
+    this.ignoreAnchorPointForPosition(true)
     this.startingPositionInitialized = false
 
     this.fastMode = true
@@ -173,7 +173,7 @@ export class MotionStreak extends Node {
     this._blendFunc.dst = gl.ONE_MINUS_SRC_ALPHA
 
     this.texture = texture
-    this.color = color
+    this.setColor(color)
     this.scheduleUpdate()
 
     //bind buffer
@@ -188,7 +188,7 @@ export class MotionStreak extends Node {
   }
 
   tintWithColor(color: Color) {
-    this.color = color
+    this.setColor(color)
 
     const locColorPointer = this._colorPointer
     for (let i = 0, len = this._nuPoints * 2; i < len; i++) {

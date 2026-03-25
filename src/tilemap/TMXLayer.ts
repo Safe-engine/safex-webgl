@@ -543,7 +543,7 @@ export class TMXLayer extends SpriteBatchNode {
     super.addChild(child, localZOrder, tag)
     if (tag !== undefined) {
       this._spriteTiles[tag] = child
-      child._vertexZ = this._vertexZ + (renderer.assignedZStep * tag) / this.tiles.length
+      child.setVertexZ(this._vertexZ + (renderer.assignedZStep * tag) / this.tiles.length)
       // child._renderCmd._needDraw = false;
     }
   }

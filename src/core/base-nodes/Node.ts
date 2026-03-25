@@ -49,9 +49,9 @@ export class Node extends EventHelper {
 
   // fields (initialized to sensible defaults)
   _localZOrder = 0
-  _globalZOrder = 0
-  _vertexZ = 0.0
-  _customZ = NaN
+  declare _globalZOrder: number
+  declare _vertexZ: number
+  declare _customZ: number
   _rotationX = 0
   _rotationY = 0.0
   _scaleX = 1.0
@@ -98,6 +98,9 @@ export class Node extends EventHelper {
     this._normalizedPosition = p(0, 0)
     this._children = []
     this._additionalTransform = affineTransformMakeIdentity()
+    this._globalZOrder = 0
+    this._vertexZ = 0.0
+    this._customZ = NaN
     // if (globalThis.ComponentContainer) {
     //   this._componentContainer = new globalThis.ComponentContainer(this);
     // }
