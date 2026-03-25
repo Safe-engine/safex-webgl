@@ -60,12 +60,16 @@ out.json
 
 docs/
 tests/
+test/
 .editorconfig
 package-lock.json
 README.md
 webpack.config.js
 scripts/
 src/
+res/
+safex-webgl/
+index.html
 pnpm-lock.yaml
 output/
 .eslintignore
@@ -73,3 +77,7 @@ output/
 tsconfig.json
 .vscode
 .github/
+eslint.config.ts
+bun.lock
+vite.config.ts
+.prettierrc

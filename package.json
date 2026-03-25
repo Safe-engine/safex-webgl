@@ -1,6 +1,6 @@
 {
   "name": "safex-webgl",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -10,6 +10,16 @@
       "import": "./dist/*/index.js",
       "types": "./dist/*/index.d.ts"
     }
+  },
+  "keywords": [
+    "cocos",
+    "safex",
+    "safe-engine",
+    "game",
+    "2d"
+  ],
+  "repository": {
+    "url": "https://github.com/Safe-engine/safex-webgl"
   },
   "scripts": {
     "dev": "vite",
