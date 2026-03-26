@@ -1,4 +1,4 @@
-import { director, global, renderer, Touch } from '../..'
+import { ACTION_TAG_INVALID, director, global, renderer, Touch } from '../..'
 import type { ActionInterval } from '../../actions'
 import { _LogInfos, assert, log } from '../../helper/Debugger'
 import type { GLProgram, GLProgramState } from '../../shaders'
@@ -24,7 +24,6 @@ import { dirtyFlags } from './NodeRenderCmd'
 import { NodeWebGLRenderCmd } from './NodeWebGLRenderCmd'
 
 export const NODE_TAG_INVALID = -1
-export const ACTION_TAG_INVALID = -1
 
 export class Node extends EventHelper {
   declare _doLayoutDirty: boolean

@@ -1,3 +1,4 @@
+export * from './actions'
 export * from './audio'
 export * from './boot'
 export * from './clipping-nodes/ClippingNode'
