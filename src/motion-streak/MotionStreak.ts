@@ -5,7 +5,6 @@ import { p, Point } from '../core/cocoa/Geometry'
 import { BlendFunc, Color, ONE_MINUS_SRC_ALPHA, SRC_ALPHA } from '../core/platform'
 import { vertexLineToPolygon } from '../core/support/Vertex'
 import { isString } from '../helper/checkType'
-import { log } from '../helper/Debugger'
 import { Texture2D, textureCache } from '../textures'
 import { MotionStreakWebGLRenderCmd } from './MotionStreakWebGLRenderCmd'
 
@@ -97,20 +96,20 @@ export class MotionStreak extends Node {
     }
   }
 
-  getOpacity() {
-    log('MotionStreak.getOpacity has not been supported.')
-    return 0
-  }
+  // getOpacity() {
+  //   log('MotionStreak.getOpacity has not been supported.')
+  //   return 0
+  // }
 
-  setOpacity(opacity: any) {
-    log('MotionStreak.setOpacity has not been supported.')
-  }
+  // setOpacity(opacity: any) {
+  //   log('MotionStreak.setOpacity has not been supported.')
+  // }
 
-  setOpacityModifyRGB(value: any) {}
+  // setOpacityModifyRGB(value: any) {}
 
-  isOpacityModifyRGB() {
-    return false
-  }
+  // isOpacityModifyRGB() {
+  //   return false
+  // }
 
   isFastMode() {
     return this.fastMode
@@ -234,7 +233,7 @@ export class MotionStreak extends Node {
     if (!this.startingPositionInitialized) return
 
     //TODO update the color    (need move to render cmd)
-    this._renderCmd._updateDisplayColor()
+    this.updateDisplayedColor()
 
     delta *= this._fadeDelta
 

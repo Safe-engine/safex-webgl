@@ -1046,7 +1046,7 @@ export class Node extends EventHelper {
     locRealColor.b = col.b
     this._renderCmd.setDirtyFlag(Node._dirtyFlags.colorDirty)
   }
-  updateDisplayedColor(parentColor: Color) {
+  updateDisplayedColor(parentColor?: Color) {
     this._renderCmd._updateDisplayColor(parentColor)
   }
 
@@ -1058,10 +1058,10 @@ export class Node extends EventHelper {
     this._cascadeColorEnabled = cascadeColorEnabled
     this._renderCmd.setCascadeColorEnabledDirty()
   }
-  setOpacityModifyRGB(opacityValue: any) {}
-  isOpacityModifyRGB() {
-    return false
-  }
+  // setOpacityModifyRGB(opacityValue: any) {}
+  // isOpacityModifyRGB() {
+  //   return false
+  // }
 
   _createRenderCmd() {
     return new NodeWebGLRenderCmd(this)

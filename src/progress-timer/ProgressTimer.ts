@@ -127,20 +127,6 @@ export class ProgressTimer extends Node {
   }
 
   /**
-   * only use for jsbinding
-   * @param bValue
-   */
-  setOpacityModifyRGB(bValue: any) {}
-
-  /**
-   * only use for jsbinding
-   * @returns {boolean}
-   */
-  isOpacityModifyRGB() {
-    return false
-  }
-
-  /**
    * return if reverse direction
    * @returns {boolean}
    */

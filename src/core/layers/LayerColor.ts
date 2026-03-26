@@ -46,11 +46,11 @@ export class LayerColor extends Layer {
     this._setHeight(h)
   }
 
-  setOpacityModifyRGB(value: any) {}
+  // setOpacityModifyRGB(value: any) {}
 
-  isOpacityModifyRGB() {
-    return false
-  }
+  // isOpacityModifyRGB() {
+  //   return false
+  // }
 
   /**
    * Constructor of LayerColor

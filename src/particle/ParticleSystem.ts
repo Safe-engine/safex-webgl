@@ -1129,7 +1129,7 @@ export class ParticleSystem extends Node {
    * does the alpha value modify color setter
    * @param newValue
    */
-  setOpacityModifyRGB(newValue) {
+  setOpacityModifyRGB(newValue: boolean) {
     this._opacityModifyRGB = newValue
   }
 
