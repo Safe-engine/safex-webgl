@@ -19,24 +19,11 @@ export class Sprite extends Node {
   declare _batchNode: SpriteBatchNode
   declare _recursiveDirty: boolean
   declare _hasChildren: boolean
-  // _shouldBeHidden = false
-  // declare _transformToBatch: any
   declare _texture: Texture2D
-  // declare texture: Texture2D
-  // declare _rect: Rect
-  // _rectRotated = false
   declare _offsetPosition: Point
   declare _unflippedOffsetPositionFromCenter: Point
-  // _opacityModifyRGB = false
-  // _flippedX = false
-  // _flippedY = false
-  // _textureLoaded = false
-  _className = 'Sprite'
   _blendFunc = { src: BLEND_SRC, dst: BLEND_DST }
   declare _loader: SpriteLoadManager
-  // declare anchorX
-  // declare anchorY
-  declare _setReorderChildDirtyRecursively: () => void
   declare _renderCmd: SpriteWebGLRenderCmd
 
   constructor(fileName?: string | Texture2D | SpriteFrame, rectArg?: Rect, rotated?: boolean) {

@@ -36,7 +36,6 @@ export class MotionStreak extends Node {
   declare _verticesBuffer: WebGLBuffer
   declare _colorPointerBuffer: WebGLBuffer
   declare _texCoordsBuffer: WebGLBuffer
-  _className = 'MotionStreak'
   declare _positionR: Point
   // inherited property placeholders
   // anchorX: number

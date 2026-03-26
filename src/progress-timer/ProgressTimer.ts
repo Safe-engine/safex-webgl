@@ -16,7 +16,6 @@ export class ProgressTimer extends Node {
   declare _midPoint: Point
   declare _barChangeRate: Point
   _reverseDirection = false
-  _className = 'ProgressTimer'
 
   declare midPoint: Point
   declare barChangeRate: Point

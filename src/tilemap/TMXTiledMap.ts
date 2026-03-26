@@ -38,7 +38,6 @@ export class TMXTiledMap extends Node {
   declare _tileSize: Size
   //tile properties
   declare _tileProperties: any
-  _className = 'TMXTiledMap'
 
   /**
    * Creates a TMX Tiled Map with a TMX file  or content string. <br/>

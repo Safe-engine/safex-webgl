@@ -23,11 +23,11 @@ export class Slider extends Widget {
   _percent = 0
   _scale9Enabled = false
   _prevIgnoreSize = true
-  _textureFile = ''
-  _progressBarTextureFile = ''
-  _slidBallNormalTextureFile = ''
-  _slidBallPressedTextureFile = ''
-  _slidBallDisabledTextureFile = ''
+  declare _textureFile
+  declare _progressBarTextureFile
+  declare _slidBallNormalTextureFile
+  declare _slidBallPressedTextureFile
+  declare _slidBallDisabledTextureFile
   declare _capInsetsBarRenderer
   declare _capInsetsProgressBarRenderer
   declare _sliderEventListener
@@ -38,7 +38,6 @@ export class Slider extends Widget {
   _ballPTexType = Widget.LOCAL_TEXTURE
   _ballDTexType = Widget.LOCAL_TEXTURE
   _isTextureLoaded = false
-  _className = 'Slider'
   _barRendererAdaptDirty = true
   _progressBarRendererDirty = true
   _unifySize = false

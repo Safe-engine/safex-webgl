@@ -67,7 +67,6 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
 
       //put it in descendants array of batch node
       node._batchNode.appendChild(child)
-      if (!node._reorderChildDirty) node._setReorderChildDirtyRecursively()
     }
     return true
   }

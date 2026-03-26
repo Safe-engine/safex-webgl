@@ -29,10 +29,10 @@ export class Widget extends ProtectedNode {
   declare _touchEventListener
   declare _touchEventSelector
 
-  _name = 'default'
-  _widgetType = null
+  // _name = 'default'
+  declare _widgetType
   _actionTag = 0
-  _customSize = null
+  declare _customSize
   declare _layoutParameterDictionary
   _layoutParameterType = 0
 
@@ -42,14 +42,13 @@ export class Widget extends ProtectedNode {
   _ignoreSize = false
   _affectByClipping = false
 
-  _sizeType = null
-  _sizePercent = null
-  _positionType = null
-  _positionPercent = null
+  declare _sizeType
+  declare _sizePercent
+  declare _positionType
+  declare _positionPercent
   _hit = false
-  _nodes = null
-  _touchListener = null
-  _className = 'Widget'
+  declare _nodes
+  declare _touchListener
   _flippedX = false
   _flippedY = false
   _opacity = 255

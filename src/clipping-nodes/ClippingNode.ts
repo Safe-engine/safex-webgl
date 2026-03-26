@@ -20,8 +20,6 @@ import { ClippingNodeWebGLRenderCmd } from './ClippingNodeWebGLRenderCmd'
 export class ClippingNode extends Node {
   inverted = false
   _alphaThreshold = 0
-  _className = 'ClippingNode'
-  // _dirtyFlag: number
   declare _stencil: Node
   declare _originStencilProgram: GLProgram
   declare stencil: Node | null

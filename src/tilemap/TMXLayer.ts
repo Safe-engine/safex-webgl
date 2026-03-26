@@ -83,12 +83,10 @@ export class TMXLayer extends SpriteBatchNode {
   declare _vertexZvalue: number
   declare _useAutomaticVertexZ: boolean
   //used for optimization
-  declare _reusedTile: any
-  declare _atlasIndexArray: any
+  // declare _reusedTile: any
+  // declare _atlasIndexArray: any
   //used for retina display
-  declare _contentScaleFactor: number
-
-  _className = 'TMXLayer'
+  // declare _contentScaleFactor: number
 
   /**
    * Creates a TMXLayer with an tile set info, a layer info and a map info   <br/>

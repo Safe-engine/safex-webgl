@@ -81,7 +81,6 @@ export class Node extends EventHelper {
   declare _additionalTransform: any
   declare _componentContainer: any
   _isTransitionFinished = false
-  _className = 'Node'
   _showNode = false
   declare _name: string
   _realOpacity = 255

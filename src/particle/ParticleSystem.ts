@@ -189,7 +189,6 @@ export class ParticleSystemModeB {
 }
 
 export class ParticleSystem extends Node {
-  _className = 'ParticleSystem'
   //***********variables*************
   _plistFile = ''
   //! time elapsed since the start of the system (in seconds)
@@ -207,10 +206,6 @@ export class ParticleSystem extends Node {
 
   //! Array of particles
   _particles: Particle[]
-
-  // color modulate
-  //  BOOL colorModulate;
-
   //! How many particles can be emitted per second
   _emitCounter = 0
   //!  particle idx

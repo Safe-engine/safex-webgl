@@ -5,7 +5,6 @@ import { LayerColorWebGLRenderCmd } from './LayerWebGLRenderCmd'
 
 export class LayerColor extends Layer {
   declare _blendFunc: BlendFunc
-  _className = 'LayerColor'
   declare _renderCmd: LayerColorWebGLRenderCmd
 
   /**

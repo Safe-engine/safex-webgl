@@ -2,7 +2,6 @@ import { director } from '../..'
 import { Node } from '../base-nodes/Node'
 
 export class Scene extends Node {
-  _className = 'Scene'
   constructor() {
     super()
     this._ignoreAnchorPointForPosition = true

@@ -47,10 +47,9 @@ export const PARTICLE_DEFAULT_CAPACITY = 500
  * var particleBatchNode = new ParticleBatchNode(texture, 30);
  */
 export class ParticleBatchNode extends Node {
-  textureAtlas: TextureAtlas = null
+  declare textureAtlas: TextureAtlas
   //the blend function used for drawing the quads
-  _blendFunc: BlendFunc = null
-  _className = 'ParticleBatchNode'
+  declare _blendFunc: BlendFunc
   declare _renderCmd: ParticleBatchNodeWebGLRenderCmd
 
   /**

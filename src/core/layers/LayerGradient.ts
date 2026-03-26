@@ -54,7 +54,6 @@ export class LayerGradient extends LayerColor {
   _endOpacity = 255
   declare _alongVector: Point
   _compressedInterpolation = false
-  _className = 'LayerGradient'
   _colorStops: any[] = []
 
   /**

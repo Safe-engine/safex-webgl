@@ -195,7 +195,7 @@ export class Texture2D extends EventHelper {
   }
 
   // By default PVR images are treated as if they don't have the alpha channel premultiplied
-  declare _pVRHaveAlphaPremultiplied: boolean
+  // declare _pVRHaveAlphaPremultiplied: boolean
   declare _pixelFormat: any
   declare _pixelsWide: number
   declare _pixelsHigh: number
@@ -222,7 +222,7 @@ export class Texture2D extends EventHelper {
 
   constructor() {
     super()
-    this._pVRHaveAlphaPremultiplied = true
+    // this._pVRHaveAlphaPremultiplied = true
     this._pixelsWide = 0
     this._pixelsHigh = 0
     this.maxS = 0

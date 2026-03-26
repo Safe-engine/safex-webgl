@@ -69,7 +69,6 @@ export class ScrollView extends Layout {
 
   declare _scrollViewEventListener
   declare _scrollViewEventSelector
-  _className = 'ScrollView'
   declare _ccEventCallback
   declare _renderCmd: ScrollViewWebGLRenderCmd
 

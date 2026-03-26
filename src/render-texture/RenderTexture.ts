@@ -39,24 +39,13 @@ export const NextPOT = function (x) {
  */
 export class RenderTexture extends Node {
   declare sprite: Sprite
-  //
-  // <p>Code for "auto" update<br/>
-  // Valid flags: GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_STENCIL_BUFFER_BIT.<br/>
-  // They can be OR'ed. Valid when "autoDraw is YES.</p>
-  // @public
-  //
   clearFlags = 0
-
   clearDepthVal = 0
   autoDraw = false
-
   declare _texture: Texture2D
   _pixelFormat = 0
-
   clearStencilVal = 0
   declare _clearColor: Color
-
-  _className = 'RenderTexture'
   declare _renderCmd: RenderTextureWebGLRenderCmd
 
   /**

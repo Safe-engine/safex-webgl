@@ -325,7 +325,7 @@ const scale9QuadGenerator = {
 
 export class Scale9Sprite extends Node {
   //resource data, could be async loaded.
-  _spriteFrame: SpriteFrame = null
+  declare _spriteFrame: SpriteFrame
 
   //scale 9 data
   _insetLeft = 0
@@ -333,15 +333,12 @@ export class Scale9Sprite extends Node {
   _insetTop = 0
   _insetBottom = 0
   //blend function
-  _blendFunc: BlendFunc = null
+  declare _blendFunc: BlendFunc
   //sliced or simple
   _renderingType = 1
   //bright or not
   _brightState = 0
   _opacityModifyRGB = false
-  //rendering quads shared by canvas and webgl
-  // _rawVerts: any = null
-  // _rawUvs: any = null
   declare _vertices: Float32Array
   declare _uvs: Float32Array
   _vertCount = 0
@@ -354,7 +351,6 @@ export class Scale9Sprite extends Node {
   //v3.3
   _flippedX = false
   _flippedY = false
-  _className = 'Scale9Sprite'
 
   _loader: SpriteLoadManager
   _capInsetsInternal: Rect
@@ -528,7 +524,7 @@ export class Scale9Sprite extends Node {
   }
 
   loaded() {
-    if (this._spriteFrame === null) {
+    if (!this._spriteFrame) {
       return false
     } else {
       return this._spriteFrame.textureLoaded()

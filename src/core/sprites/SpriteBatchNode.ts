@@ -8,10 +8,8 @@ import { Sprite } from './Sprite'
 
 export class SpriteBatchNode extends Node {
   declare _blendFunc: BlendFunc
-  // all descendants: chlidren, gran children, etc...
   declare _texture: Texture2D
   declare _children: Sprite[]
-  _className = 'SpriteBatchNode'
 
   constructor(fileImage?: any) {
     super()

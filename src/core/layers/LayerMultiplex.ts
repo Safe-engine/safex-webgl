@@ -15,8 +15,7 @@ import { Layer } from './Layer'
  */
 export class LayerMultiplex extends Layer {
   _enabledLayer = 0
-  _layers: any[] | null = null
-  _className = 'LayerMultiplex'
+  declare _layers: any[]
 
   /**
    * Constructor of LayerMultiplex

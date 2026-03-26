@@ -33,7 +33,6 @@ export class Layout extends Widget {
   _scissorRectDirty = false
   declare _clippingRect: Rect
   declare _clippingParent
-  _className = 'Layout'
   declare _backGroundImageColor: Color
   _finalPositionX = 0
   _finalPositionY = 0

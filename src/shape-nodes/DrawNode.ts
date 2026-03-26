@@ -44,27 +44,24 @@ export class DrawNode extends Node {
   static TYPE_DOT = 0
   static TYPE_SEGMENT = 1
   static TYPE_POLY = 2
+
   declare _buffer
   declare _blendFunc: BlendFunc
   _lineWidth = 1
   declare _drawColor: Color
-  // declare _localBB: Rect
   declare _renderCmd: DrawNodeWebGLRenderCmd
 
-  // setLocalBB(rectorX, y, width, height) {
-  //   const localBB = this._localBB
-  //   if (y === undefined) {
-  //     localBB.x = rectorX.x
-  //     localBB.y = rectorX.y
-  //     localBB.width = rectorX.width
-  //     localBB.height = rectorX.height
-  //   } else {
-  //     localBB.x = rectorX
-  //     localBB.y = y
-  //     localBB.width = width
-  //     localBB.height = height
-  //   }
-  // }
+  _bufferCapacity = 0
+  _vertexCount = 0
+
+  _offset = 0
+  _occupiedSize = 0
+  declare _f32Buffer: Float32Array
+  declare _ui32Buffer: Uint32Array
+
+  _dirty = false
+  manualRelease = false
+
   /**
    * Gets the blend func
    * @returns {Object}
@@ -107,19 +104,6 @@ export class DrawNode extends Node {
   getDrawColor() {
     return color(this._drawColor.r, this._drawColor.g, this._drawColor.b, this._drawColor.a)
   }
-
-  _bufferCapacity = 0
-  _vertexCount = 0
-
-  _offset = 0
-  _occupiedSize = 0
-  declare _f32Buffer: Float32Array
-  declare _ui32Buffer: Uint32Array
-
-  _dirty = false
-  _className = 'DrawNodeWebGL'
-
-  manualRelease = false
 
   constructor(capacity?: number, manualRelease?: boolean) {
     super()
