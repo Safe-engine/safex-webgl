@@ -1,4 +1,5 @@
 import { CONCURRENCY_HTTP_REQUEST_COUNT, game } from '..'
+import { _fontLoader, _imgLoader, _jsonLoader, _plistLoader, _serverImgLoader, _txtLoader } from '../core/platform/Loaders'
 import { AsyncPool } from './AsyncPool'
 import { error, log } from './Debugger'
 import { path } from './path'
@@ -450,3 +451,10 @@ export const loader = (function () {
     },
   }
 })()
+
+loader.register(['txt', 'xml', 'vsh', 'fsh', 'atlas'], _txtLoader);
+loader.register(['json', 'ExportJson'], _jsonLoader);
+loader.register(['png', 'jpg', 'bmp', 'jpeg', 'gif', 'ico', 'tiff', 'webp'], _imgLoader);
+loader.register(['serverImg'], _serverImgLoader);
+loader.register(['plist'], _plistLoader);
+loader.register(['font', 'eot', 'ttf', 'woff', 'svg', 'ttc'], _fontLoader);
