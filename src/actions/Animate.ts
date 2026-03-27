@@ -189,6 +189,6 @@ export class Animate extends ActionInterval {
  * // create the animation with animation
  * var anim = animate(dance_grey);
  */
-export const animate = function (animation) {
+export const animate = function (animation: Animation) {
   return new Animate(animation)
 }

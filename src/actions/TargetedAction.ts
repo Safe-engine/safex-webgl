@@ -1,4 +1,6 @@
+import type { Node } from '../core'
 import { ActionInterval } from './ActionInterval'
+import type { FiniteTimeAction } from './FiniteTimeAction'
 
 /**
  * <p>
@@ -102,6 +104,6 @@ export class TargetedAction extends ActionInterval {
  * @param {FiniteTimeAction} action
  * @return {TargetedAction}
  */
-export const targetedAction = function (target, action) {
+export const targetedAction = function (target: Node, action: FiniteTimeAction) {
   return new TargetedAction(target, action)
 }

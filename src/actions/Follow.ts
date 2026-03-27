@@ -1,4 +1,4 @@
-import { director } from '..'
+import { director, Node } from '..'
 import { p, Rect, rectEqualToZero } from '../core/cocoa/Geometry'
 import { clampf, pMult } from '../core/support/PointExtension'
 import { Action } from './Action'
@@ -109,6 +109,6 @@ export class Follow extends Action {
   }
 }
 
-export function follow(followedNode: any, rectArg?: any) {
+export function follow(followedNode: Node, rectArg?: Rect) {
   return new Follow(followedNode, rectArg)
 }

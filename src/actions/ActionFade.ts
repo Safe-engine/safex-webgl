@@ -78,7 +78,7 @@ export class FadeTo extends ActionInterval {
  * // example
  * var action = fadeTo(1.0, 0);
  */
-export const fadeTo = function (duration, opacity) {
+export const fadeTo = function (duration: number, opacity: number) {
   return new FadeTo(duration, opacity)
 }
 
@@ -143,7 +143,7 @@ export class FadeIn extends FadeTo {
  * //example
  * var action = fadeIn(1.0);
  */
-export const fadeIn = function (duration) {
+export const fadeIn = function (duration: number) {
   return new FadeIn(duration)
 }
 
@@ -198,6 +198,6 @@ export class FadeOut extends FadeTo {
  * // example
  * var action = fadeOut(1.0);
  */
-export const fadeOut = function (d) {
+export const fadeOut = function (d: number) {
   return new FadeOut(d)
 }

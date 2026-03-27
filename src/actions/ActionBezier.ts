@@ -1,4 +1,4 @@
-import { p } from '../core/cocoa/Geometry'
+import { p, Point } from '../core/cocoa/Geometry'
 import { ENABLE_STACKABLE_ACTIONS } from '../core/platform/Config'
 import { pAdd, pNeg, pSub } from '../core/support/PointExtension'
 import { ActionInterval } from './ActionInterval'
@@ -155,7 +155,7 @@ export class BezierBy extends ActionInterval {
  * var bezier = [p(0, windowSize.height / 2), p(300, -windowSize.height / 2), p(300, 100)];
  * var bezierForward = bezierBy(3, bezier);
  */
-export const bezierBy = function (t, c) {
+export const bezierBy = function (t: number, c: Point[]) {
   return new BezierBy(t, c)
 }
 
@@ -234,6 +234,6 @@ export class BezierTo extends BezierBy {
  * var bezier = [p(0, windowSize.height / 2), p(300, -windowSize.height / 2), p(300, 100)];
  * var bezierTo = bezierTo(2, bezier);
  */
-export const bezierTo = function (t, c) {
+export const bezierTo = function (t: number, c: Point[]) {
   return new BezierTo(t, c)
 }

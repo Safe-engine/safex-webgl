@@ -118,11 +118,11 @@ export const reverseControlPointsInline = function (controlPoints) {
  */
 export class CardinalSplineTo extends ActionInterval {
   /** Array of control points */
-  _points = null
+  declare _points: Point[]
   _deltaT = 0
   _tension = 0
-  _previousPosition = null
-  _accumulatedDiff = null
+  declare _previousPosition
+  declare _accumulatedDiff
 
   /**
    * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
@@ -430,7 +430,7 @@ export class CatmullRomTo extends CardinalSplineTo {
  * @example
  * var action1 = catmullRomTo(3, array);
  */
-export const catmullRomTo = function (dt, points) {
+export const catmullRomTo = function (dt: number, points: Point[]) {
   return new CatmullRomTo(dt, points)
 }
 
@@ -476,6 +476,6 @@ export class CatmullRomBy extends CardinalSplineBy {
  * @example
  * var action1 = catmullRomBy(3, array);
  */
-export const catmullRomBy = function (dt, points) {
+export const catmullRomBy = function (dt: number, points: Point[]) {
   return new CatmullRomBy(dt, points)
 }

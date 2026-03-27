@@ -119,7 +119,7 @@ export class RotateTo extends ActionInterval {
  * // example
  * var rotateTo = rotateTo(2, 61.0);
  */
-export const rotateTo = function (duration, deltaAngleX, deltaAngleY) {
+export const rotateTo = function (duration: number, deltaAngleX: number, deltaAngleY?: number) {
   return new RotateTo(duration, deltaAngleX, deltaAngleY)
 }
 
@@ -225,6 +225,6 @@ export class RotateBy extends ActionInterval {
  * // example
  * var actionBy = rotateBy(2, 360);
  */
-export const rotateBy = function (duration, deltaAngleX, deltaAngleY) {
+export const rotateBy = function (duration: number, deltaAngleX: number, deltaAngleY?: number) {
   return new RotateBy(duration, deltaAngleX, deltaAngleY)
 }
