@@ -117,12 +117,13 @@ export class _Rect {
  * var rect4 = rect({x: 100, y: 100, width: 100, height: 100});
  */
 export type Rect = _Rect
-export function Rect(x?: number | Rect, y?: number, w?: number, h?: number): Rect {
+type RectInput = { x: number; y: number; width: number; height: number }
+export function Rect(x?: number | RectInput, y?: number, w?: number, h?: number): Rect {
   if (x === undefined) {
     return new _Rect()
   }
   if (y === undefined) {
-    const r = x as Rect
+    const r = x as RectInput
     return new _Rect(r.x, r.y, r.width, r.height)
   }
   return new _Rect(x as number, y as number, w as number, h as number)

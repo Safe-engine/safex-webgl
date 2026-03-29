@@ -25,33 +25,96 @@ export interface SpriteFrameConfig {
  * @class
  * @name spriteFrameCache
  */
-export const spriteFrameCache = {
-  _CCNS_REG1: /^\s*\{\s*([-]?\d+[.]?\d*)\s*,\s*([-]?\d+[.]?\d*)\s*\}\s*$/,
-  _CCNS_REG2: /^\s*\{\s*\{\s*([-]?\d+[.]?\d*)\s*,\s*([-]?\d+[.]?\d*)\s*\}\s*,\s*\{\s*([-]?\d+[.]?\d*)\s*,\s*([-]?\d+[.]?\d*)\s*\}\s*\}\s*$/,
+const _CCNS_REG1 = /^\s*\{\s*([-]?\d+[.]?\d*)\s*,\s*([-]?\d+[.]?\d*)\s*\}\s*$/
+const _CCNS_REG2 =
+  /^\s*\{\s*\{\s*([-]?\d+[.]?\d*)\s*,\s*([-]?\d+[.]?\d*)\s*\}\s*,\s*\{\s*([-]?\d+[.]?\d*)\s*,\s*([-]?\d+[.]?\d*)\s*\}\s*\}\s*$/
 
+function _rectFromString(content: string) {
+  const result = _CCNS_REG2.exec(content)
+  if (!result) return Rect(0, 0, 0, 0)
+  return Rect(parseFloat(result[1]), parseFloat(result[2]), parseFloat(result[3]), parseFloat(result[4]))
+}
+
+function _pointFromString(content: string) {
+  const result = _CCNS_REG1.exec(content)
+  if (!result) return p(0, 0)
+  return p(parseFloat(result[1]), parseFloat(result[2]))
+}
+
+function _sizeFromString(content: string) {
+  const result = _CCNS_REG1.exec(content)
+  if (!result) return Size(0, 0)
+  return Size(parseFloat(result[1]), parseFloat(result[2]))
+}
+
+function _parseFrameConfig(dict) {
+  const tempFrames: any = dict['frames'],
+    tempMeta = dict['metadata'] || dict['meta']
+  const frames = {},
+    meta: any = {}
+  let format = 0
+  if (tempMeta) {
+    //init meta
+    const tmpFormat = tempMeta['format']
+    format = tmpFormat.length <= 1 ? parseInt(tmpFormat) : tmpFormat
+    meta.image = tempMeta['textureFileName'] || tempMeta['textureFileName'] || tempMeta['image']
+  }
+  for (let key in tempFrames) {
+    const frameDict = tempFrames[key]
+    if (!frameDict) continue
+    const tempFrame: any = {}
+
+    if (format == 0) {
+      tempFrame.rect = Rect(frameDict['x'], frameDict['y'], frameDict['width'], frameDict['height'])
+      tempFrame.rotated = false
+      tempFrame.offset = p(frameDict['offsetX'], frameDict['offsetY'])
+      let ow = frameDict['originalWidth']
+      let oh = frameDict['originalHeight']
+      // check ow/oh
+      if (!ow || !oh) {
+        log(_LogInfos.spriteFrameCache__getFrameConfig)
+      }
+      // Math.abs ow/oh
+      ow = Math.abs(ow)
+      oh = Math.abs(oh)
+      tempFrame.size = Size(ow, oh)
+    } else if (format == 1 || format == 2) {
+      tempFrame.rect = _rectFromString(frameDict['frame'])
+      tempFrame.rotated = frameDict['rotated'] || false
+      tempFrame.offset = _pointFromString(frameDict['offset'])
+      tempFrame.size = _sizeFromString(frameDict['sourceSize'])
+    } else if (format == 3) {
+      // get values
+      const spriteSize = _sizeFromString(frameDict['spriteSize'])
+      let textureRect = _rectFromString(frameDict['textureRect'])
+      if (spriteSize) {
+        textureRect = Rect(textureRect.x, textureRect.y, spriteSize.width, spriteSize.height)
+      }
+      tempFrame.rect = textureRect
+      tempFrame.rotated = frameDict['textureRotated'] || false // == "true";
+      tempFrame.offset = _pointFromString(frameDict['spriteOffset'])
+      tempFrame.size = _sizeFromString(frameDict['spriteSourceSize'])
+      tempFrame.aliases = frameDict['aliases']
+    } else {
+      const tmpFrame = frameDict['frame'],
+        tmpSourceSize = frameDict['sourceSize']
+      key = frameDict['filename'] || key
+      tempFrame.rect = Rect(tmpFrame['x'], tmpFrame['y'], tmpFrame['w'], tmpFrame['h'])
+      tempFrame.rotated = frameDict['rotated'] || false
+      tempFrame.offset = p(0, 0)
+      tempFrame.size = Size(tmpSourceSize['w'], tmpSourceSize['h'])
+    }
+    frames[key] = tempFrame
+  }
+  return { _inited: true, frames: frames, meta: meta }
+}
+
+export const spriteFrameCache = {
   _spriteFrames: {},
   _spriteFramesAliases: {},
   _frameConfigCache: {},
 
-  _rectFromString: function (content) {
-    const result = this._CCNS_REG2.exec(content)
-    if (!result) return Rect(0, 0, 0, 0)
-    return Rect(parseFloat(result[1]), parseFloat(result[2]), parseFloat(result[3]), parseFloat(result[4]))
-  },
-
-  _pointFromString: function (content) {
-    const result = this._CCNS_REG1.exec(content)
-    if (!result) return p(0, 0)
-    return p(parseFloat(result[1]), parseFloat(result[2]))
-  },
-
-  _sizeFromString: function (content) {
-    const result = this._CCNS_REG1.exec(content)
-    if (!result) return Size(0, 0)
-    return Size(parseFloat(result[1]), parseFloat(result[2]))
-  },
-
-  _getFrameConfig: function (url) {
+  _getFrameConfig: function (url: string) {
     const dict = loader.getRes(url)
 
     assert(dict, _LogInfos.spriteFrameCache__getFrameConfig_2, url)
@@ -61,80 +124,18 @@ export const spriteFrameCache = {
       this._frameConfigCache[url] = dict
       return dict
     }
-    this._frameConfigCache[url] = this._parseFrameConfig(dict)
+    this._frameConfigCache[url] = _parseFrameConfig(dict)
     return this._frameConfigCache[url]
   },
 
-  _getFrameConfigByJsonObject: function (url, jsonObject) {
+  _getFrameConfigByJsonObject: function (url: string, jsonObject: any) {
     assert(jsonObject, _LogInfos.spriteFrameCache__getFrameConfig_2, url)
-    this._frameConfigCache[url] = this._parseFrameConfig(jsonObject)
+    this._frameConfigCache[url] = _parseFrameConfig(jsonObject)
     return this._frameConfigCache[url]
-  },
-
-  _parseFrameConfig: function (dict) {
-    const tempFrames: any = dict['frames'],
-      tempMeta = dict['metadata'] || dict['meta']
-    const frames = {},
-      meta: any = {}
-    let format = 0
-    if (tempMeta) {
-      //init meta
-      const tmpFormat = tempMeta['format']
-      format = tmpFormat.length <= 1 ? parseInt(tmpFormat) : tmpFormat
-      meta.image = tempMeta['textureFileName'] || tempMeta['textureFileName'] || tempMeta['image']
-    }
-    for (let key in tempFrames) {
-      const frameDict = tempFrames[key]
-      if (!frameDict) continue
-      const tempFrame: any = {}
-
-      if (format == 0) {
-        tempFrame.rect = Rect(frameDict['x'], frameDict['y'], frameDict['width'], frameDict['height'])
-        tempFrame.rotated = false
-        tempFrame.offset = p(frameDict['offsetX'], frameDict['offsetY'])
-        let ow = frameDict['originalWidth']
-        let oh = frameDict['originalHeight']
-        // check ow/oh
-        if (!ow || !oh) {
-          log(_LogInfos.spriteFrameCache__getFrameConfig)
-        }
-        // Math.abs ow/oh
-        ow = Math.abs(ow)
-        oh = Math.abs(oh)
-        tempFrame.size = Size(ow, oh)
-      } else if (format == 1 || format == 2) {
-        tempFrame.rect = this._rectFromString(frameDict['frame'])
-        tempFrame.rotated = frameDict['rotated'] || false
-        tempFrame.offset = this._pointFromString(frameDict['offset'])
-        tempFrame.size = this._sizeFromString(frameDict['sourceSize'])
-      } else if (format == 3) {
-        // get values
-        const spriteSize = this._sizeFromString(frameDict['spriteSize'])
-        let textureRect = this._rectFromString(frameDict['textureRect'])
-        if (spriteSize) {
-          textureRect = Rect(textureRect.x, textureRect.y, spriteSize.width, spriteSize.height)
-        }
-        tempFrame.rect = textureRect
-        tempFrame.rotated = frameDict['textureRotated'] || false // == "true";
-        tempFrame.offset = this._pointFromString(frameDict['spriteOffset'])
-        tempFrame.size = this._sizeFromString(frameDict['spriteSourceSize'])
-        tempFrame.aliases = frameDict['aliases']
-      } else {
-        const tmpFrame = frameDict['frame'],
-          tmpSourceSize = frameDict['sourceSize']
-        key = frameDict['filename'] || key
-        tempFrame.rect = Rect(tmpFrame['x'], tmpFrame['y'], tmpFrame['w'], tmpFrame['h'])
-        tempFrame.rotated = frameDict['rotated'] || false
-        tempFrame.offset = p(0, 0)
-        tempFrame.size = Size(tmpSourceSize['w'], tmpSourceSize['h'])
-      }
-      frames[key] = tempFrame
-    }
-    return { _inited: true, frames: frames, meta: meta }
   },
 
   // Adds multiple Sprite Frames from a json object. it uses for local web view app.
-  _addSpriteFramesByObject: function (url, jsonObject, texture) {
+  _addSpriteFramesByObject: function (url: string, jsonObject: any, texture: any) {
     assert(url, _LogInfos.spriteFrameCache_addSpriteFrames_2)
     if (!jsonObject || !jsonObject['frames']) return
 

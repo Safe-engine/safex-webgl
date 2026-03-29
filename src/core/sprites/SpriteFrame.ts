@@ -71,7 +71,7 @@ export class SpriteFrame extends EventHelper {
     return this._rotated
   }
 
-  setRotated(bRotated: any) {
+  setRotated(bRotated: boolean) {
     this._rotated = bRotated
   }
 
