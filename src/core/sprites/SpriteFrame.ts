@@ -20,9 +20,9 @@ export class SpriteFrame extends EventHelper {
   declare _rectInPixels: Rect
   declare _rotated: boolean
   declare _rect: Rect
-  declare _offsetInPixels: any
-  declare _originalSizeInPixels: any
-  declare _texture: any
+  declare _offsetInPixels: Point
+  declare _originalSizeInPixels: Size
+  declare _texture?: Texture2D
   declare _textureFilename: string
   declare _textureLoaded: boolean
 
@@ -33,8 +33,8 @@ export class SpriteFrame extends EventHelper {
     this._originalSize = Size(0, 0)
     this._rotated = false
     this._originalSizeInPixels = Size(0, 0)
-    this._textureFilename = ''
-    this._texture = null
+    // this._textureFilename = ''
+    // this._texture = null
     this._textureLoaded = false
 
     if (filename !== undefined && rectArg !== undefined) {
@@ -60,7 +60,7 @@ export class SpriteFrame extends EventHelper {
     return Rect(loc.x, loc.y, loc.width, loc.height)
   }
 
-  setRectInPixels(rectInPixels: any) {
+  setRectInPixels(rectInPixels: Rect) {
     if (!this._rectInPixels) this._rectInPixels = Rect(0, 0, 0, 0)
     this._rectInPixels.x = rectInPixels.x
     this._rectInPixels.y = rectInPixels.y
@@ -82,7 +82,7 @@ export class SpriteFrame extends EventHelper {
     return Rect(r.x, r.y, r.width, r.height)
   }
 
-  setRect(r: any) {
+  setRect(r: Rect) {
     if (!this._rect) this._rect = Rect(0, 0, 0, 0)
     this._rect.x = r.x
     this._rect.y = r.y
@@ -95,7 +95,7 @@ export class SpriteFrame extends EventHelper {
     return p(this._offsetInPixels)
   }
 
-  setOffsetInPixels(offsetInPixels: any) {
+  setOffsetInPixels(offsetInPixels: Point) {
     this._offsetInPixels.x = offsetInPixels.x
     this._offsetInPixels.y = offsetInPixels.y
     _pointPixelsToPointsOut(this._offsetInPixels, this._offset)
@@ -105,7 +105,7 @@ export class SpriteFrame extends EventHelper {
     return Size(this._originalSizeInPixels)
   }
 
-  setOriginalSizeInPixels(sizeInPixels: any) {
+  setOriginalSizeInPixels(sizeInPixels: Size) {
     this._originalSizeInPixels.width = sizeInPixels.width
     this._originalSizeInPixels.height = sizeInPixels.height
   }
@@ -114,14 +114,14 @@ export class SpriteFrame extends EventHelper {
     return Size(this._originalSize)
   }
 
-  setOriginalSize(sizeInPixels: any) {
+  setOriginalSize(sizeInPixels: Size) {
     this._originalSize.width = sizeInPixels.width
     this._originalSize.height = sizeInPixels.height
   }
 
   getTexture(): Texture2D {
     if (this._texture) return this._texture
-    if (this._textureFilename !== '') {
+    if (!this._textureFilename) {
       const locTexture = textureCache.addImage(this._textureFilename)
       if (locTexture) this._textureLoaded = locTexture.isLoaded()
       return locTexture
@@ -175,7 +175,7 @@ export class SpriteFrame extends EventHelper {
     return p(this._offset)
   }
 
-  setOffset(offsets: any) {
+  setOffset(offsets: Point) {
     this._offset.x = offsets.x
     this._offset.y = offsets.y
   }
@@ -245,7 +245,7 @@ export class SpriteFrame extends EventHelper {
     return true
   }
 
-  static _frameWithTextureForCanvas(texture: any, rectArg: any, rotated: any, offset: any, originalSize: any) {
+  static _frameWithTextureForCanvas(texture: any, rectArg: Rect, rotated: boolean, offset: Point, originalSize: Size) {
     const spriteFrame = new SpriteFrame()
     spriteFrame._texture = texture
     spriteFrame._rectInPixels = rectArg

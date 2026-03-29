@@ -7,6 +7,13 @@ import { Texture2D } from '../../textures/TexturesWebGL'
 import { p, Rect, Size } from '../cocoa/Geometry'
 import { SpriteFrame } from './SpriteFrame'
 
+export interface SpriteFrameConfig {
+  rect: { x: number; y: number; width: number; height: number }
+  rotated: boolean
+  offset: { x: number; y: number }
+  size: { width: number; height: number }
+  aliases?: string[]
+}
 /**
  * <p>
  * spriteFrameCache is a singleton that handles the loading of the sprite frames. It saves in a cache the sprite frames.<br/>
@@ -136,9 +143,8 @@ export const spriteFrameCache = {
     this._createSpriteFrames(url, frameConfig, texture)
   },
 
-  _createSpriteFrames: function (url, frameConfig, texture) {
-    const frames = frameConfig.frames,
-      meta = frameConfig.meta
+  _createSpriteFrames: function (url: string, frameConfig, texture?: Texture2D | string) {
+    const { frames, meta } = frameConfig
     if (!texture) {
       const texturePath = path.changeBasename(url, meta.image || '.png')
       texture = textureCache.addImage(texturePath)
@@ -153,10 +159,10 @@ export const spriteFrameCache = {
 
     //create sprite frames
     const spAliases = this._spriteFramesAliases,
-      spriteFrames = this._spriteFrames
+      spriteFrames: SpriteFrame[] = this._spriteFrames
     for (const key in frames) {
-      const frame = frames[key]
-      let spriteFrame = spriteFrames[key]
+      const frame: SpriteFrameConfig = frames[key]
+      let spriteFrame: SpriteFrame = spriteFrames[key]
       if (!spriteFrame) {
         spriteFrame = new SpriteFrame(texture, Rect(frame.rect), frame.rotated, frame.offset, frame.size)
         const aliases = frame.aliases
@@ -168,23 +174,6 @@ export const spriteFrameCache = {
             spAliases[alias] = key
           }
         }
-
-        // if (_renderType === game.RENDER_TYPE_CANVAS && spriteFrame.isRotated()) {
-        //   //clip to canvas
-        //   const locTexture = spriteFrame.getTexture()
-        //   if (locTexture.isLoaded()) {
-        //     let tempElement = spriteFrame.getTexture().getHtmlElementObj()
-        //     tempElement = Sprite.CanvasRenderCmd._cutRotateImageToCanvas(tempElement, spriteFrame.getRectInPixels())
-        //     const tempTexture = new Texture2D()
-        //     tempTexture.initWithElement(tempElement)
-        //     tempTexture.handleLoadedTexture()
-        //     spriteFrame.setTexture(tempTexture)
-        //     spriteFrame.setRotated(false)
-
-        //     const rect = spriteFrame._rect
-        //     spriteFrame.setRect(rect(0, 0, rect.width, rect.height))
-        //   }
-        // }
         // console.log('create sprite frames', key, spriteFrame)
         spriteFrames[key] = spriteFrame
       }
@@ -204,7 +193,7 @@ export const spriteFrameCache = {
    * spriteFrameCache.addSpriteFrames(s_grossiniPlist);
    * spriteFrameCache.addSpriteFrames(s_grossiniJson);
    */
-  addSpriteFrames: function (url, texture?) {
+  addSpriteFrames: function (url: string, texture?: HTMLImageElement | Texture2D | string) {
     assert(url, _LogInfos.spriteFrameCache_addSpriteFrames_2)
 
     //Is it a SpriteFrame plist?
@@ -235,7 +224,7 @@ export const spriteFrameCache = {
    * @param {SpriteFrame} frame
    * @param {String} frameName
    */
-  addSpriteFrame: function (frame, frameName) {
+  addSpriteFrame: function (frame: SpriteFrame, frameName: string) {
     this._spriteFrames[frameName] = frame
   },
 
@@ -257,7 +246,7 @@ export const spriteFrameCache = {
    * Deletes an sprite frame from the sprite frame cache.
    * @param {String} name
    */
-  removeSpriteFrameByName: function (name) {
+  removeSpriteFrameByName: function (name: string) {
     // explicit nil handling
     if (!name) {
       return
@@ -281,7 +270,7 @@ export const spriteFrameCache = {
    * </p>
    * @param {String} url Plist filename
    */
-  removeSpriteFramesFromFile: function (url) {
+  removeSpriteFramesFromFile: function (url: string) {
     const spriteFrames = this._spriteFrames,
       aliases = this._spriteFramesAliases,
       cfg = this._frameConfigCache[url]
@@ -305,7 +294,7 @@ export const spriteFrameCache = {
    * </p>
    * @param {HTMLImageElement|HTMLCanvasElement|Texture2D} texture
    */
-  removeSpriteFramesFromTexture: function (texture) {
+  removeSpriteFramesFromTexture: function (texture: HTMLImageElement | HTMLCanvasElement | Texture2D) {
     const spriteFrames = this._spriteFrames,
       aliases = this._spriteFramesAliases
     for (const key in spriteFrames) {
@@ -332,7 +321,7 @@ export const spriteFrameCache = {
    * //get a SpriteFrame by name
    * var frame = spriteFrameCache.getSpriteFrame("grossini_dance_01.png");
    */
-  getSpriteFrame: function (name) {
+  getSpriteFrame: function (name: string) {
     let frame = this._spriteFrames[name]
     if (!frame) {
       // try alias dictionary

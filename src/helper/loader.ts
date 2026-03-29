@@ -74,7 +74,7 @@ export const loader = (function () {
      */
     cache: {},
 
-    isLoading: function (url) {
+    isLoading: function (url: string) {
       return _queue[url] !== undefined
     },
     /**
@@ -82,7 +82,7 @@ export const loader = (function () {
      * @param {string} url
      * @param {function} [cb] arguments are : err, txt
      */
-    loadTxt: function (url, cb) {
+    loadTxt: function (url: string, cb) {
       if (!_isNodeJs) {
         const xhr = getXMLHttpRequest(),
           errInfo = `load ${url} failed!`
@@ -151,7 +151,7 @@ export const loader = (function () {
      * @param {string} url
      * @param {function} [cb] arguments are : err, json
      */
-    loadJson: function (url, cb) {
+    loadJson: function (url: string, cb) {
       this.loadTxt(url, function (err, txt) {
         if (err) {
           cb(err)
@@ -322,7 +322,7 @@ export const loader = (function () {
      * @param {string} [url]
      * @returns {*}
      */
-    getUrl: function (basePath, url) {
+    getUrl: function (basePath: string, url: string) {
       if (basePath !== undefined && url === undefined) {
         url = basePath
         let type = path.extname(url)
@@ -387,7 +387,7 @@ export const loader = (function () {
       this.load(resList, cb)
     },
 
-    loadAliases: function (url, callback) {
+    loadAliases: function (url: string, callback) {
       const dict = this.getRes(url)
       if (!dict) {
         this.load(url, function (err, results) {
@@ -414,7 +414,7 @@ export const loader = (function () {
      * @param url
      * @returns {*}
      */
-    getRes: function (url) {
+    getRes: function (url: string) {
       return this.cache[url] || this.cache[_aliases[url]]
     },
 
@@ -423,7 +423,7 @@ export const loader = (function () {
      * @param url
      * @returns {*}
      */
-    _getAliase: function (url) {
+    _getAliase: function (url: string) {
       return _aliases[url]
     },
 
