@@ -23,8 +23,6 @@ export class ScrollViewBar extends ProtectedNode {
   autoHideTime = 0
   _autoHideRemainingTime = 0
 
-  _className = 'ScrollViewBar'
-
   // static constants (declared here for TypeScript)
   static DEFAULT_COLOR: any
   static DEFAULT_MARGIN: number

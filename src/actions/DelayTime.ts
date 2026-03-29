@@ -1,4 +1,5 @@
 import { ActionInterval } from './ActionInterval'
+import type { FiniteTimeAction } from './FiniteTimeAction'
 
 /** Delays the action a certain amount of seconds
  * @class
@@ -14,7 +15,7 @@ export class DelayTime extends ActionInterval {
    * Will be overwrite.
    * @param {Number} dt time in seconds
    */
-  update(dt: number) {}
+  update(dt: number) { }
 
   /**
    * Returns a reversed action.
@@ -48,7 +49,7 @@ export class DelayTime extends ActionInterval {
  * // example
  * var delay = delayTime(1);
  */
-export const delayTime = function (d) {
+export const delayTime = function (d: number) {
   return new DelayTime(d)
 }
 
@@ -151,6 +152,6 @@ export class ReverseTime extends ActionInterval {
  * // example
  *  var reverse = reverseTime(this);
  */
-export const reverseTime = function (action) {
+export const reverseTime = function (action: FiniteTimeAction) {
   return new ReverseTime(action)
 }

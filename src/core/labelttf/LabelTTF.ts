@@ -90,7 +90,6 @@ export class LabelTTF extends Sprite {
   _needUpdateTexture = false
 
   _lineWidths = null
-  _className = 'LabelTTF'
 
   //for web
   _fontStyle = 'normal'

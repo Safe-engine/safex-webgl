@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" width="12" height="12" tilewidth="101" tileheight="81">
- <tileset firstgid="1" source="orthogonal-test1.tsx"/>
- <layer name="Layer 0" width="12" height="12">
-  <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA9XMzQpAQBhG4cnfwsK/sJVBuf/7c9Sn3o0aWXnrSTNz4ty/N4iQTSJkBUpUdp4futa+m4gRIUGKTNq7X7Fbr2usud48Frv3osaBER166/OX/Zf/n+tha6FAAgAA
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="12" height="12" tilewidth="101" tileheight="81" infinite="0" nextlayerid="2" nextobjectid="1">
+ <tileset firstgid="1" name="Untitled" tilewidth="101" tileheight="171" spacing="2" margin="2" tilecount="45" columns="9">
+  <image source="ortho-test1.png" width="1024" height="1024"/>
+ </tileset>
+ <layer id="1" name="map" width="12" height="12">
+  <data encoding="base64" compression="zlib">
+   eAHVj7kKgDAUBINXYeEtaite4P//n7OQBzZCxMqFIZtkEhLn/p2B5xshP5mQjBC/QCqh8vL8cKj16zujEdMjSCCFDBS55m/0A3TmnoaJHO2tsICibtT0E0booAf5Obzxv9x/AartBo4=
   </data>
  </layer>
 </map>

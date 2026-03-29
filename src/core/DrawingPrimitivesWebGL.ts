@@ -325,6 +325,6 @@ export class DrawingPrimitiveWebGL {
   }
 
   setLineWidth(width: number) {
-    if ((this._renderContext as any).lineWidth) (this._renderContext as any).lineWidth(width)
+    if (this._renderContext.lineWidth) this._renderContext.lineWidth(width)
   }
 }

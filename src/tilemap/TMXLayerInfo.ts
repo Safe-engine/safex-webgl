@@ -1,4 +1,4 @@
-import { p, Point } from '../core'
+import { p, Point, Size } from '../core'
 
 /**
  * <p>TMXLayerInfo contains the information about the layers like: <br />
@@ -19,21 +19,21 @@ export class TMXLayerInfo {
   static ATTRIB_GZIP = 1 << 2
   static ATTRIB_ZLIB = 1 << 3
 
-  properties: any
-  name: string
-  _layerSize: unknown
-  _tiles: unknown
-  visible: boolean
-  _opacity: number
-  ownTiles: boolean
-  _minGID: number
-  _maxGID: number
-  offset: Point
+  declare properties: any
+  declare name: string
+  declare _layerSize: Size
+  declare _tiles: Uint32Array
+  declare visible: boolean
+  declare _opacity: number
+  declare ownTiles: boolean
+  declare _minGID: number
+  declare _maxGID: number
+  declare offset: Point
 
   constructor() {
     this.properties = []
-    this.name = ''
-    this._layerSize = null
+    // this.name = ''
+    // this._layerSize = null
     this._tiles = null
     this.visible = true
     this._opacity = 0
@@ -55,7 +55,7 @@ export class TMXLayerInfo {
    * Set the Properties.
    * @param {object} value
    */
-  setProperties(value: any) {
+  setProperties(value: any[]) {
     this.properties = value
   }
 }

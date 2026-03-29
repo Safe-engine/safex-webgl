@@ -16,7 +16,6 @@ export class ProgressTimer extends Node {
   declare _midPoint: Point
   declare _barChangeRate: Point
   _reverseDirection = false
-  _className = 'ProgressTimer'
 
   declare midPoint: Point
   declare barChangeRate: Point
@@ -125,20 +124,6 @@ export class ProgressTimer extends Node {
       this._percentage = clampf(percentage, 0, 100)
       this._renderCmd._updateProgress()
     }
-  }
-
-  /**
-   * only use for jsbinding
-   * @param bValue
-   */
-  setOpacityModifyRGB(bValue: any) {}
-
-  /**
-   * only use for jsbinding
-   * @returns {boolean}
-   */
-  isOpacityModifyRGB() {
-    return false
   }
 
   /**

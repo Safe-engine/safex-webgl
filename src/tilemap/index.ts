@@ -1,4 +1,7 @@
+export * from './TMXLayer'
 export * from './TMXLayerInfo'
 export * from './TMXMapInfo'
+export * from './TMXObjectGroup'
 export * from './TMXTiledMap'
+export * from './TMXTilesetInfo'
 

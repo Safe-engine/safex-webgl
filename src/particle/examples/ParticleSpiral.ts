@@ -1,6 +1,5 @@
-import { director, game } from '../..'
+import { director } from '../..'
 import { color, p } from '../../core'
-import { _renderType } from '../../helper/engine'
 import { ParticleSystem } from '../ParticleSystem'
 
 /**
@@ -18,7 +17,7 @@ export class ParticleSpiral extends ParticleSystem {
    * Override it to extend its behavior, remember to call "this._super()" in the extended "ctor" function.</p>
    */
   constructor() {
-    super(_renderType === game.RENDER_TYPE_WEBGL ? 500 : 100)
+    super(500)
   }
 
   /**
@@ -91,7 +90,7 @@ export class ParticleExplosion extends ParticleSystem {
    * Override it to extend its behavior, remember to call "this._super()" in the extended "ctor" function.</p>
    */
   constructor() {
-    super(_renderType === game.RENDER_TYPE_WEBGL ? 700 : 300)
+    super(700)
   }
 
   /**

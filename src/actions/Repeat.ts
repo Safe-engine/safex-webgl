@@ -1,5 +1,6 @@
 import { ActionInstant } from './ActionInstant'
 import { ActionInterval } from './ActionInterval'
+import type { FiniteTimeAction } from './FiniteTimeAction'
 
 /**
  * Repeats an action a number of times.
@@ -295,6 +296,6 @@ export class RepeatForever extends ActionInterval {
  * // example
  * var repeat = repeatForever(rotateBy(1.0, 360));
  */
-export const repeatForever = function (action) {
+export const repeatForever = function (action: FiniteTimeAction) {
   return new RepeatForever(action)
 }

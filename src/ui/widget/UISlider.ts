@@ -1,7 +1,5 @@
-import { game } from '../..'
 import { Node, Sprite } from '../../core'
 import { p, Rect, Size } from '../../core/cocoa/Geometry'
-import { _renderType } from '../../helper/engine'
 import { Scale9Sprite } from '../base/UIScale9Sprite'
 import { Widget } from '../base/UIWidget'
 
@@ -25,11 +23,11 @@ export class Slider extends Widget {
   _percent = 0
   _scale9Enabled = false
   _prevIgnoreSize = true
-  _textureFile = ''
-  _progressBarTextureFile = ''
-  _slidBallNormalTextureFile = ''
-  _slidBallPressedTextureFile = ''
-  _slidBallDisabledTextureFile = ''
+  declare _textureFile
+  declare _progressBarTextureFile
+  declare _slidBallNormalTextureFile
+  declare _slidBallPressedTextureFile
+  declare _slidBallDisabledTextureFile
   declare _capInsetsBarRenderer
   declare _capInsetsProgressBarRenderer
   declare _sliderEventListener
@@ -40,7 +38,6 @@ export class Slider extends Widget {
   _ballPTexType = Widget.LOCAL_TEXTURE
   _ballDTexType = Widget.LOCAL_TEXTURE
   _isTextureLoaded = false
-  _className = 'Slider'
   _barRendererAdaptDirty = true
   _progressBarRendererDirty = true
   _unifySize = false
@@ -606,11 +603,7 @@ export class Slider extends Widget {
     this._slidBallDisabledRenderer.setVisible(false)
 
     this._slidBallNormalRenderer.setScale(this._sliderBallNormalTextureScaleX, this._sliderBallNormalTextureScaleY)
-    if (_renderType === game.RENDER_TYPE_WEBGL) {
-      this._slidBallNormalRenderer._renderCmd._shaderProgram = this._getNormalGLProgram()
-    } else {
-      // TODO: add canvas support
-    }
+    this._slidBallNormalRenderer._renderCmd._shaderProgram = this._getNormalGLProgram()
   }
 
   _onPressStateChangedToPressed(): any {
@@ -624,11 +617,7 @@ export class Slider extends Widget {
       this._slidBallPressedRenderer.setVisible(true)
       this._slidBallDisabledRenderer.setVisible(false)
     }
-    if (_renderType === game.RENDER_TYPE_WEBGL) {
-      this._slidBallNormalRenderer._renderCmd._shaderProgram = this._getNormalGLProgram()
-    } else {
-      // TODO: add canvas support
-    }
+    this._slidBallNormalRenderer._renderCmd._shaderProgram = this._getNormalGLProgram()
   }
 
   _onPressStateChangedToDisabled(): any {

@@ -32,7 +32,7 @@ export const PrototypeCCNode = function () {
   defineGetterSetter(_p, 'shaderProgram', _p.getShaderProgram, _p.setShaderProgram)
 
   defineGetterSetter(_p, 'opacity', _p.getOpacity, _p.setOpacity)
-  defineGetterSetter(_p, 'opacityModifyRGB', _p.isOpacityModifyRGB)
+  // defineGetterSetter(_p, 'opacityModifyRGB', _p.isOpacityModifyRGB)
   defineGetterSetter(_p, 'cascadeOpacity', _p.isCascadeOpacityEnabled, _p.setCascadeOpacityEnabled)
   defineGetterSetter(_p, 'color', _p.getColor, _p.setColor)
   defineGetterSetter(_p, 'cascadeColor', _p.isCascadeColorEnabled, _p.setCascadeColorEnabled)

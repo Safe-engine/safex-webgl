@@ -1,5 +1,5 @@
-import { _renderContext, director, Game, game, renderer, view } from '..'
-import { _LogInfos, log } from '../helper/Debugger'
+import { _renderContext, Color, director, Game, game, renderer, view } from '..'
+import { _LogInfos, assert, log } from '../helper/Debugger'
 import { global } from '../helper/global'
 import { glBlendFunc, setProjectionMatrixDirty } from '../shaders/GLStateCache'
 import { textureCache } from '../textures/TextureCache'
@@ -12,6 +12,7 @@ import { eventManager } from './event-manager/EventManager'
 import { KM_GL_MODELVIEW, KM_GL_PROJECTION, kmGLLoadIdentity, kmGLMatrixMode, kmGLMultMatrix } from './kazmath/gl/matrix'
 import { Matrix4 } from './kazmath/mat4'
 import { Vec3 } from './kazmath/vec3'
+import type { EGLView } from './platform/EGLView'
 import { BLEND_DST, BLEND_SRC, checkGLErrorDebug } from './platform/Macro'
 import { Scene } from './scenes/Scene'
 import { Scheduler } from './Scheduler'
@@ -20,7 +21,7 @@ import { spriteFrameCache } from './sprites/SpriteFrameCache'
 import { profiler } from './utils/Profiler'
 
 interface DirectorDelegate {
-  updateProjection(): void
+  updateProjection()
 }
 
 export class Director {
@@ -63,7 +64,7 @@ export class Director {
   private _lastUpdate: number = Date.now()
   declare private _nextScene: Scene | null
   declare private _notificationNode: Node | null
-  declare _openGLView: any
+  declare _openGLView: EGLView
   public _scenesStack: Scene[] = []
   declare _projectionDelegate: DirectorDelegate | null
   declare private _runningScene: Scene | null
@@ -83,20 +84,6 @@ export class Director {
     eventManager.addCustomListener(game.EVENT_SHOW, () => {
       this._lastUpdate = Date.now()
     })
-
-    this._scheduler = new Scheduler()
-    if (ActionManager) {
-      this._actionManager = new ActionManager()
-      this._scheduler.scheduleUpdate(this._actionManager, Scheduler.PRIORITY_SYSTEM, false)
-    }
-    this._eventAfterUpdate = new EventCustom(Director.EVENT_AFTER_UPDATE)
-    this._eventAfterUpdate.setUserData(this)
-    this._eventAfterVisit = new EventCustom(Director.EVENT_AFTER_VISIT)
-    this._eventAfterVisit.setUserData(this)
-    this._eventAfterDraw = new EventCustom(Director.EVENT_AFTER_DRAW)
-    this._eventAfterDraw.setUserData(this)
-    this._eventProjectionChanged = new EventCustom(Director.EVENT_PROJECTION_CHANGED)
-    this._eventProjectionChanged.setUserData(this)
   }
 
   public init(): boolean {
@@ -108,17 +95,13 @@ export class Director {
     this._lastUpdate = Date.now()
     this._paused = false
     this._purgeDirectorInNextLoop = false
-    this._winSizeInPoints = { width: 0, height: 0 }
+    this._winSizeInPoints = Size(0, 0)
     this._openGLView = null
     this._contentScaleFactor = 1.0
 
     this._scheduler = new Scheduler()
-    if (ActionManager) {
-      this._actionManager = new ActionManager()
-      this._scheduler.scheduleUpdate(this._actionManager, Scheduler.PRIORITY_SYSTEM, false)
-    } else {
-      this._actionManager = null
-    }
+    this._actionManager = new ActionManager()
+    this._scheduler.scheduleUpdate(this._actionManager, Scheduler.PRIORITY_SYSTEM, false)
 
     this._eventAfterUpdate = new EventCustom(Director.EVENT_AFTER_UPDATE)
     this._eventAfterUpdate.setUserData(this)
@@ -128,14 +111,13 @@ export class Director {
     this._eventAfterDraw.setUserData(this)
     this._eventProjectionChanged = new EventCustom(Director.EVENT_PROJECTION_CHANGED)
     this._eventProjectionChanged.setUserData(this)
-
     return true
   }
 
   /**
    * Calculates delta time since last time it was called
    */
-  public calculateDeltaTime(): void {
+  public calculateDeltaTime() {
     const now = Date.now()
 
     if (this._nextDeltaTimeZero) {
@@ -185,7 +167,7 @@ export class Director {
   /**
    * Draw the scene. This method is called every frame. Don't call it manually.
    */
-  public drawScene(): void {
+  public drawScene() {
     this.calculateDeltaTime()
 
     if (!this._paused) {
@@ -227,7 +209,7 @@ export class Director {
   /**
    * End the life of director in the next frame
    */
-  public end(): void {
+  public end() {
     this._purgeDirectorInNextLoop = true
   }
 
@@ -240,29 +222,26 @@ export class Director {
   }
 
   public getWinSize(): Size {
-    return { ...this._winSizeInPoints }
+    return Size(this._winSizeInPoints)
   }
 
   public getWinSizeInPixels(): Size {
-    return {
-      width: this._winSizeInPoints.width * this._contentScaleFactor,
-      height: this._winSizeInPoints.height * this._contentScaleFactor,
-    }
+    return Size(this._winSizeInPoints.width * this._contentScaleFactor, this._winSizeInPoints.height * this._contentScaleFactor)
   }
 
   // public getVisibleSize: (() => Size) | null = null;
   // public getVisibleOrigin: (() => Point) | null = null;
   // public getZEye: (() => number) | null = null;
 
-  public pause(): void {
+  public pause() {
     if (this._paused) return
     this._oldAnimationInterval = this._animationInterval
     this.setAnimationInterval(1 / 4.0)
     this._paused = true
   }
 
-  public popScene(): void {
-    if (!this._runningScene) throw new Error('No running scene to pop.')
+  public popScene() {
+    assert(this._runningScene, _LogInfos.Director_popScene)
     this._scenesStack.pop()
     const c = this._scenesStack.length
     if (c === 0) {
@@ -273,13 +252,13 @@ export class Director {
     }
   }
 
-  public purgeCachedData(): void {
+  public purgeCachedData() {
     animationCache._clear()
     spriteFrameCache._clear()
     textureCache._clear()
   }
 
-  public purgeDirector(): void {
+  public purgeDirector() {
     this.getScheduler().unscheduleAll()
     if (eventManager) eventManager.setEnabled(false)
 
@@ -297,15 +276,15 @@ export class Director {
     checkGLErrorDebug()
   }
 
-  public pushScene(scene: Scene): void {
-    if (!scene) throw new Error('Scene must not be null.')
+  public pushScene(scene: Scene) {
+    assert(scene, _LogInfos.Director_pushScene)
     this._sendCleanupToScene = false
     this._scenesStack.push(scene)
     this._nextScene = scene
   }
 
-  public runScene(scene: Scene): void {
-    if (!scene) throw new Error('Scene must not be null.')
+  public runScene(scene: Scene) {
+    assert(scene, _LogInfos.Director_pushScene)
     if (!this._runningScene) {
       this.pushScene(scene)
       this.startAnimation()
@@ -323,15 +302,18 @@ export class Director {
     }
   }
 
-  public resume(): void {
+  public resume() {
     if (!this._paused) return
     this.setAnimationInterval(this._oldAnimationInterval)
     this._lastUpdate = Date.now()
+    if (!this._lastUpdate) {
+      log(_LogInfos.Director_resume)
+    }
     this._paused = false
     this._deltaTime = 0
   }
 
-  public setContentScaleFactor(scaleFactor: number): void {
+  public setContentScaleFactor(scaleFactor: number) {
     if (scaleFactor !== this._contentScaleFactor) {
       this._contentScaleFactor = scaleFactor
     }
@@ -340,13 +322,13 @@ export class Director {
   // public setDepthTest: ((on: boolean) => void) | null = null;
   // public setClearColor: ((clearColor: any) => void) | null = null;
 
-  public setDefaultValues(): void {}
+  // public setDefaultValues() {}
 
-  public setNextDeltaTimeZero(nextDeltaTimeZero: boolean): void {
+  public setNextDeltaTimeZero(nextDeltaTimeZero: boolean) {
     this._nextDeltaTimeZero = nextDeltaTimeZero
   }
 
-  public setNextScene(): void {
+  public setNextScene() {
     const runningIsTransition = false,
       newIsTransition = false
     // if (TransitionScene) {
@@ -372,7 +354,7 @@ export class Director {
     }
   }
 
-  public setNotificationNode(node: Node | null): void {
+  public setNotificationNode(node: Node | null) {
     renderer.childrenOrderDirty = true
     if (this._notificationNode) {
       this._notificationNode._performRecursive(Node._stateCallbackType.onExitTransitionDidStart)
@@ -389,7 +371,7 @@ export class Director {
     return this._projectionDelegate
   }
 
-  public setDelegate(delegate: DirectorDelegate): void {
+  public setDelegate(delegate: DirectorDelegate) {
     this._projectionDelegate = delegate
   }
 
@@ -416,7 +398,7 @@ export class Director {
     return profiler ? profiler.isShowingStats() : false
   }
 
-  public setDisplayStats(displayStats: boolean): void {
+  public setDisplayStats(displayStats: boolean) {
     if (profiler) {
       displayStats ? profiler.showStats() : profiler.hideStats()
     }
@@ -438,12 +420,12 @@ export class Director {
     return this._totalFrames
   }
 
-  public popToRootScene(): void {
+  public popToRootScene() {
     this.popToSceneStackLevel(1)
   }
 
-  public popToSceneStackLevel(level: number): void {
-    if (!this._runningScene) throw new Error('No running scene.')
+  public popToSceneStackLevel(level: number) {
+    assert(this._runningScene, _LogInfos.Director_popToSceneStackLevel_2)
     const locScenesStack = this._scenesStack
     let c = locScenesStack.length
     if (level === 0) {
@@ -468,7 +450,7 @@ export class Director {
     return this._scheduler
   }
 
-  public setScheduler(scheduler: Scheduler): void {
+  public setScheduler(scheduler: Scheduler) {
     if (this._scheduler !== scheduler) {
       this._scheduler = scheduler
     }
@@ -478,7 +460,7 @@ export class Director {
     return this._actionManager
   }
 
-  public setActionManager(actionManager: ActionManager): void {
+  public setActionManager(actionManager: ActionManager) {
     if (this._actionManager !== actionManager) {
       this._actionManager = actionManager
     }
@@ -488,26 +470,25 @@ export class Director {
     return this._deltaTime
   }
 
-  private _calculateMPF(): void {
+  private _calculateMPF() {
     const now = Date.now()
     this._secondsPerFrame = (now - this._lastUpdate) / 1000
   }
 
   // Animation control (to be overridden in DisplayLinkDirector)
-  public startAnimation(): void {}
-  public stopAnimation(): void {}
-  public mainLoop(): void {}
-  public setAnimationInterval(value: number): void {
+  public startAnimation() {}
+  public stopAnimation() {}
+  public mainLoop() {}
+  public setAnimationInterval(value: number) {
     this._animationInterval = value
   }
 
   setProjection(projection: number) {
-    const _t = this as Director
-    const size = _t._winSizeInPoints
+    const size = this._winSizeInPoints
 
-    _t.setViewport()
+    this.setViewport()
 
-    const view = _t._openGLView
+    const view = this._openGLView
     const ox = view._viewPortRect.x / view._scaleX
     const oy = view._viewPortRect.y / view._scaleY
 
@@ -522,7 +503,7 @@ export class Director {
         break
       }
       case Director.PROJECTION_3D: {
-        const zeye = _t.getZEye()
+        const zeye = this.getZEye()
         const matrixPerspective = Matrix4.createPerspectiveProjection(60, size.width / size.height, 0.1, zeye * 2)
         kmGLMatrixMode(KM_GL_PROJECTION)
         kmGLLoadIdentity()
@@ -540,14 +521,14 @@ export class Director {
         break
       }
       case Director.PROJECTION_CUSTOM:
-        if (_t._projectionDelegate) _t._projectionDelegate.updateProjection()
+        if (this._projectionDelegate) this._projectionDelegate.updateProjection()
         break
       default:
         log(_LogInfos.Director_setProjection)
         break
     }
-    _t._projection = projection
-    eventManager.dispatchEvent(_t._eventProjectionChanged)
+    this._projection = projection
+    eventManager.dispatchEvent(this._eventProjectionChanged)
     setProjectionMatrixDirty()
     renderer.childrenOrderDirty = true
   }
@@ -556,22 +537,21 @@ export class Director {
     renderer.setDepthTest(on)
   }
 
-  setClearColor(clearColor: any) {
+  setClearColor(clearColor: Color) {
     renderer._clearColor = clearColor
   }
 
-  setOpenGLView(openGLView: any) {
-    const _t = this as Director
-    _t._winSizeInPoints.width = game.canvas.width
-    _t._winSizeInPoints.height = game.canvas.height
-    _t._openGLView = openGLView || view
+  setOpenGLView(openGLView: EGLView) {
+    this._winSizeInPoints.width = game.canvas.width
+    this._winSizeInPoints.height = game.canvas.height
+    this._openGLView = openGLView || view
 
     // Configuration. Gather GPU info
     const conf = configuration
     conf.gatherGPUInfo()
     conf.dumpInfo()
 
-    _t.setGLDefaultValues()
+    this.setGLDefaultValues()
 
     if (eventManager) eventManager.setEnabled(true)
   }
@@ -625,12 +605,12 @@ export class Director {
 export class DisplayLinkDirector extends Director {
   private invalid = false
 
-  public startAnimation(): void {
+  public startAnimation() {
     this.setNextDeltaTimeZero(true)
     this.invalid = false
   }
 
-  public mainLoop(): void {
+  public mainLoop() {
     if (this._purgeDirectorInNextLoop) {
       this._purgeDirectorInNextLoop = false
       this.purgeDirector()
@@ -639,11 +619,11 @@ export class DisplayLinkDirector extends Director {
     }
   }
 
-  public stopAnimation(): void {
+  public stopAnimation() {
     this.invalid = true
   }
 
-  public setAnimationInterval(value: number): void {
+  public setAnimationInterval(value: number) {
     this._animationInterval = value
     if (!this.invalid) {
       this.stopAnimation()

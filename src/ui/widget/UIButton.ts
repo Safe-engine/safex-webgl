@@ -17,9 +17,9 @@ export class Button extends Widget {
   _buttonDisableSpriteFrame: SpriteFrame
   _titleRenderer: LabelTTF
 
-  _normalFileName = ''
-  _clickedFileName = ''
-  _disabledFileName = ''
+  declare _normalFileName
+  declare _clickedFileName
+  declare _disabledFileName
 
   _prevIgnoreSize = true
   _scale9Enabled = false
@@ -41,7 +41,6 @@ export class Button extends Widget {
   _pressedTextureLoaded = false
   _disabledTextureLoaded = false
 
-  _className = 'Button'
   _normalTextureAdaptDirty = true
 
   _fontName = 'Thonburi'

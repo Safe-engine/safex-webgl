@@ -1,6 +1,5 @@
-import { director, game } from '../..'
+import { director } from '../..'
 import { color, p } from '../../core'
-import { _renderType } from '../../helper/engine'
 import { ParticleSystem } from '../ParticleSystem'
 
 export class ParticleFire extends ParticleSystem {
@@ -18,7 +17,7 @@ export class ParticleFire extends ParticleSystem {
    * @param {Number} numberOfParticles
    * @return {Boolean}
    */
-  initWithTotalParticles(numberOfParticles?: any) {
+  initWithTotalParticles(numberOfParticles?: number) {
     if (super.initWithTotalParticles(numberOfParticles)) {
       // duration
       this.setDuration(ParticleSystem.DURATION_INFINITY)
@@ -87,7 +86,7 @@ export class ParticleFireworks extends ParticleSystem {
    * Override it to extend its behavior, remember to call "super()" in the extended "constructor" function.</p>
    */
   constructor() {
-    super(_renderType === game.RENDER_TYPE_WEBGL ? 1500 : 150)
+    super(1500)
   }
 
   /**
@@ -95,7 +94,7 @@ export class ParticleFireworks extends ParticleSystem {
    * @param {Number} numberOfParticles
    * @return {Boolean}
    */
-  initWithTotalParticles(numberOfParticles?: any) {
+  initWithTotalParticles(numberOfParticles?: number) {
     if (super.initWithTotalParticles(numberOfParticles)) {
       // duration
       this.setDuration(ParticleSystem.DURATION_INFINITY)
@@ -163,7 +162,7 @@ export class ParticleSun extends ParticleSystem {
    * Override it to extend its behavior, remember to call "super()" in the extended "constructor" function.</p>
    */
   constructor() {
-    super(_renderType === game.RENDER_TYPE_WEBGL ? 350 : 150)
+    super(350)
   }
 
   /**
@@ -171,7 +170,7 @@ export class ParticleSun extends ParticleSystem {
    * @param {Number} numberOfParticles
    * @return {Boolean}
    */
-  initWithTotalParticles(numberOfParticles?: any) {
+  initWithTotalParticles(numberOfParticles?: number) {
     if (super.initWithTotalParticles(numberOfParticles)) {
       // additive
       this.setBlendAdditive(true)

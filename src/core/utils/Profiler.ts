@@ -1,5 +1,4 @@
-import { container, director, game } from '../..'
-import { _renderType } from '../../helper/engine'
+import { container, director } from '../..'
 import { global } from '../../helper/global'
 import { Director } from '../Director'
 import { eventManager } from '../event-manager/EventManager'
@@ -101,7 +100,7 @@ export const profiler = (function () {
       }
 
       if (_showFPS) {
-        const mode = _renderType === game.RENDER_TYPE_CANVAS ? '\n canvas' : '\n webgl'
+        const mode = '\n webgl'
         _SPFLabel.innerHTML = _lastSPF.toFixed(3)
         _FPSLabel.innerHTML = _frameRate.toFixed(1).toString() + mode
         _drawsLabel.innerHTML = (0 | global.g_NumberOfDraws).toString()

@@ -4,7 +4,7 @@ import type { Widget } from './UIWidget'
 
 export class WidgetWebGLRenderCmd extends ProtectedNodeWebGLRenderCmd {
   declare _node: Widget
-  constructor(renderable) {
+  constructor(renderable: Widget) {
     super(renderable)
     this._needDraw = false
   }
@@ -16,7 +16,7 @@ export class WidgetWebGLRenderCmd extends ProtectedNodeWebGLRenderCmd {
     if (parentCmd) this._curLevel = parentCmd._curLevel + 1
 
     if (isNaN(node._customZ)) {
-      node._vertexZ = renderer.assignedZ
+      node.setVertexZ(renderer.assignedZ)
       renderer.assignedZ += renderer.assignedZStep
     }
 

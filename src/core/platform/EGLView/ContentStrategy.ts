@@ -28,13 +28,6 @@ export class ContentStrategy {
     }
 
     const viewport = Rect(Math.round((containerW - contentW) / 2), Math.round((containerH - contentH) / 2), contentW, contentH)
-
-    // Translate the content
-    if (game.RENDER_TYPE_CANVAS) {
-      //TODO: modify something for setTransform
-      //(game._renderContext as any).translate(viewport.x, viewport.y + contentH);
-    }
-
     this._result.scale = [scaleX, scaleY]
     this._result.viewport = viewport
     return this._result

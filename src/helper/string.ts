@@ -24,3 +24,17 @@ export const formatStr = function (...args: any[]): string {
   }
   return str
 }
+//
+// return the string found by key in dict.
+// @param {string} key
+// @param {object} dict
+// @return {String} "" if not found; return the string if found.
+// @private
+//
+export function locValueForKey(key, dict) {
+  if (dict) {
+    const pString = dict[key]
+    return pString != null ? pString : ''
+  }
+  return ''
+}

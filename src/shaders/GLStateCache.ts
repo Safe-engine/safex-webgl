@@ -51,13 +51,13 @@ export const glInvalidateStateCache = function () {
  * @param {WebGLProgram} program
  */
 export const glUseProgram = ENABLE_GL_STATE_CACHE
-  ? function (program) {
+  ? function (program: WebGLProgram) {
       if (program !== _currentShaderProgram) {
         _currentShaderProgram = program
         _renderContext.useProgram(program)
       }
     }
-  : function (program) {
+  : function (program: WebGLProgram) {
       _renderContext.useProgram(program)
     }
 
@@ -80,7 +80,7 @@ export const glDeleteProgram = function (program) {
  * @param {Number} sfactor
  * @param {Number} dfactor
  */
-export const setBlending = function (sfactor, dfactor) {
+export const setBlending = function (sfactor: number, dfactor: number) {
   const ctx = _renderContext
   if (sfactor === ctx.ONE && dfactor === ctx.ZERO) {
     ctx.disable(ctx.BLEND)

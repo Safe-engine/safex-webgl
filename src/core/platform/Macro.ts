@@ -1,9 +1,9 @@
-import { _renderContext, director } from '../..'
+import { _renderContext, director, type NodeWebGLRenderCmd, OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA } from '../..'
 import { isObject, isUndefined } from '../../helper/checkType'
 import { _LogInfos, log } from '../../helper/Debugger'
 import { global } from '../../helper/global'
 import { sys } from '../../helper/sys'
-import { p, Rect, Size } from '../cocoa/Geometry'
+import { p, Point, Rect, Size } from '../cocoa/Geometry'
 
 /**
  * @constant
@@ -151,7 +151,7 @@ export const REPEAT_FOREVER = Number.MAX_VALUE - 1
  * @param {export const Node} node setup node
  * @function
  */
-export const nodeDrawSetup = function (node) {
+export const nodeDrawSetup = function (node: NodeWebGLRenderCmd) {
   //export const glEnable(node._glServerState);
   if (node._shaderProgram) {
     //export const _renderContext.useProgram(node._shaderProgram._programObj);
@@ -245,12 +245,12 @@ export const pointPointsToPixels = function (points) {
  * @return {export const Point}
  * @function
  */
-export const pointPixelsToPoints = function (pixels) {
+export const pointPixelsToPoints = function (pixels: Point) {
   const scale = contentScaleFactor()
   return p(pixels.x / scale, pixels.y / scale)
 }
 
-export const _pointPixelsToPointsOut = function (pixels, outPoint) {
+export const _pointPixelsToPointsOut = function (pixels: Point, outPoint: Point) {
   const scale = contentScaleFactor()
   outPoint.x = pixels.x / scale
   outPoint.y = pixels.y / scale
@@ -262,7 +262,7 @@ export const _pointPixelsToPointsOut = function (pixels, outPoint) {
  * @return {export const Size}
  * @function
  */
-export const sizePointsToPixels = function (sizeInPoints) {
+export const sizePointsToPixels = function (sizeInPoints: Size) {
   const scale = contentScaleFactor()
   return Size(sizeInPoints.width * scale, sizeInPoints.height * scale)
 }
@@ -273,12 +273,12 @@ export const sizePointsToPixels = function (sizeInPoints) {
  * @return {export const Size}
  * @function
  */
-export const sizePixelsToPoints = function (sizeInPixels) {
+export const sizePixelsToPoints = function (sizeInPixels: Size) {
   const scale = contentScaleFactor()
   return Size(sizeInPixels.width / scale, sizeInPixels.height / scale)
 }
 
-export const _sizePixelsToPointsOut = function (sizeInPixels, outSize) {
+export const _sizePixelsToPointsOut = function (sizeInPixels: Size, outSize: Size) {
   const scale = contentScaleFactor()
   outSize.width = sizeInPixels.width / scale
   outSize.height = sizeInPixels.height / scale
@@ -290,7 +290,7 @@ export const _sizePixelsToPointsOut = function (sizeInPixels, outSize) {
  * @return {export const Rect}
  * @function
  */
-export const rectPixelsToPoints = function (pixel) {
+export const rectPixelsToPoints = function (pixel: Rect) {
   const scale = contentScaleFactor()
   return Rect(pixel.x / scale, pixel.y / scale, pixel.width / scale, pixel.height / scale)
 }
@@ -301,7 +301,7 @@ export const rectPixelsToPoints = function (pixel) {
  * @return {export const Rect}
  * @function
  */
-export const rectPointsToPixels = function (point) {
+export const rectPointsToPixels = function (point: Rect) {
   const scale = contentScaleFactor()
   return Rect(point.x * scale, point.y * scale, point.width * scale, point.height * scale)
 }
@@ -419,13 +419,7 @@ export const MIRRORED_REPEAT = 0x8370
  * @name export const BLEND_SRC
  * @type Number
  */
-export const BLEND_SRC = SRC_ALPHA
-// export const game.addEventListener(game.EVENT_RENDERER_INITED, function () {
-//   if (_renderType === game.RENDER_TYPE_WEBGL
-//     && OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA) {
-//     BLEND_SRC = ONE;
-//   }
-// });
+export const BLEND_SRC = OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA ? ONE : SRC_ALPHA
 
 /**
  * default gl blend dst function. Compatible with premultiplied alpha images.
@@ -765,7 +759,7 @@ export const DISABLE_TAG = 8803
  * @return {Boolean}
  * @function
  */
-export const arrayVerifyType = function (arr, type) {
+export const arrayVerifyType = function (arr: any[], type) {
   if (arr && arr.length > 0) {
     for (let i = 0; i < arr.length; i++) {
       if (!(arr[i] instanceof type)) {
@@ -783,7 +777,7 @@ export const arrayVerifyType = function (arr, type) {
  * @param {Array} arr Source Array
  * @param {*} delObj  remove object
  */
-export const arrayRemoveObject = function (arr, delObj) {
+export const arrayRemoveObject = function (arr: any[], delObj) {
   for (let i = 0, l = arr.length; i < l; i++) {
     if (arr[i] === delObj) {
       arr.splice(i, 1)
@@ -798,7 +792,7 @@ export const arrayRemoveObject = function (arr, delObj) {
  * @param {Array} arr Source Array
  * @param {Array} minusArr minus Array
  */
-export const arrayRemoveArray = function (arr, minusArr) {
+export const arrayRemoveArray = function (arr: any[], minusArr: any[]) {
   for (let i = 0, l = minusArr.length; i < l; i++) {
     arrayRemoveObject(arr, minusArr[i])
   }
@@ -812,7 +806,7 @@ export const arrayRemoveArray = function (arr, minusArr) {
  * @param {Number} index
  * @return {Array}
  */
-export const arrayAppendObjectsToIndex = function (arr, addObjs, index) {
+export const arrayAppendObjectsToIndex = function (arr: any[], addObjs: any[], index: number) {
   arr.splice(index, 0, ...addObjs)
   return arr
 }
@@ -822,7 +816,7 @@ export const arrayAppendObjectsToIndex = function (arr, addObjs, index) {
  * @param {Array} arr
  * @return {Array}
  */
-export const copyArray = function (arr) {
+export const copyArray = function (arr: any[]) {
   let i
   const len = arr.length,
     arr_clone = new Array(len)

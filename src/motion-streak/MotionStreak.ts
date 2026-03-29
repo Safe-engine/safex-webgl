@@ -5,45 +5,43 @@ import { p, Point } from '../core/cocoa/Geometry'
 import { BlendFunc, Color, ONE_MINUS_SRC_ALPHA, SRC_ALPHA } from '../core/platform'
 import { vertexLineToPolygon } from '../core/support/Vertex'
 import { isString } from '../helper/checkType'
-import { log } from '../helper/Debugger'
-import { textureCache } from '../textures'
+import { Texture2D, textureCache } from '../textures'
 import { MotionStreakWebGLRenderCmd } from './MotionStreakWebGLRenderCmd'
 
 export class MotionStreak extends Node {
-  texture: any = null
-  fastMode = false
-  startingPositionInitialized = false
+  declare texture: Texture2D
+  declare fastMode: boolean
+  declare startingPositionInitialized: boolean
 
-  _blendFunc: BlendFunc = null
+  declare _blendFunc: BlendFunc
 
-  _stroke = 0
-  _fadeDelta = 0
-  _minSeg = 0
+  declare _stroke: number
+  declare _fadeDelta: number
+  declare _minSeg: number
 
-  _maxPoints = 0
-  _nuPoints = 0
-  _previousNuPoints = 0
+  declare _maxPoints: number
+  declare _nuPoints: number
+  declare _previousNuPoints: number
 
   /* Pointers */
-  _pointVertexes: any = null
-  _pointState: any = null
+  declare _pointVertexes: Float32Array
+  declare _pointState: Float32Array
 
   // webgl
-  _vertices: any = null
-  _colorPointer: any = null
-  _texCoords: any = null
+  declare _vertices: Float32Array
+  declare _colorPointer: Uint8Array
+  declare _texCoords: Float32Array
 
-  _verticesBuffer: any = null
-  _colorPointerBuffer: any = null
-  _texCoordsBuffer: any = null
-  _className = 'MotionStreak'
-  _positionR: Point
+  declare _verticesBuffer: WebGLBuffer
+  declare _colorPointerBuffer: WebGLBuffer
+  declare _texCoordsBuffer: WebGLBuffer
+  declare _positionR: Point
   // inherited property placeholders
-  anchorX: number
-  anchorY: number
-  ignoreAnchor: boolean
-  color: Color
-  constructor(fade?: number, minSeg?: number, stroke?: number, color?: Color, texture?: any) {
+  // anchorX: number
+  // anchorY: number
+  // declare ignoreAnchor: boolean
+  // declare color: Color
+  constructor(fade?: number, minSeg?: number, stroke?: number, color?: Color, texture?: Texture2D | string) {
     super()
     this._positionR = p(0, 0)
     this._blendFunc = new BlendFunc(SRC_ALPHA, ONE_MINUS_SRC_ALPHA)
@@ -51,15 +49,15 @@ export class MotionStreak extends Node {
     this.fastMode = false
     this.startingPositionInitialized = false
 
-    this.texture = null
+    // this.texture = null
 
-    this._stroke = 0
-    this._fadeDelta = 0
-    this._minSeg = 0
+    // this._stroke = 0
+    // this._fadeDelta = 0
+    // this._minSeg = 0
 
-    this._maxPoints = 0
-    this._nuPoints = 0
-    this._previousNuPoints = 0
+    // this._maxPoints = 0
+    // this._nuPoints = 0
+    // this._previousNuPoints = 0
 
     /** Pointers */
     this._pointVertexes = null
@@ -74,14 +72,14 @@ export class MotionStreak extends Node {
     this._colorPointerBuffer = null
     this._texCoordsBuffer = null
 
-    if (texture !== undefined) this.initWithFade(fade, minSeg, stroke, color, texture)
+    this.initWithFade(fade, minSeg, stroke, color, texture)
   }
 
   getTexture() {
     return this.texture
   }
 
-  setTexture(texture: any) {
+  setTexture(texture: Texture2D) {
     if (this.texture !== texture) this.texture = texture
   }
 
@@ -98,20 +96,20 @@ export class MotionStreak extends Node {
     }
   }
 
-  getOpacity() {
-    log('MotionStreak.getOpacity has not been supported.')
-    return 0
-  }
+  // getOpacity() {
+  //   log('MotionStreak.getOpacity has not been supported.')
+  //   return 0
+  // }
 
-  setOpacity(opacity: any) {
-    log('MotionStreak.setOpacity has not been supported.')
-  }
+  // setOpacity(opacity: any) {
+  //   log('MotionStreak.setOpacity has not been supported.')
+  // }
 
-  setOpacityModifyRGB(value: any) {}
+  // setOpacityModifyRGB(value: any) {}
 
-  isOpacityModifyRGB() {
-    return false
-  }
+  // isOpacityModifyRGB() {
+  //   return false
+  // }
 
   isFastMode() {
     return this.fastMode
@@ -143,9 +141,8 @@ export class MotionStreak extends Node {
     if (isString(texture)) texture = textureCache.addImage(texture)
 
     this.setPosition(p(0, 0))
-    this.anchorX = 0
-    this.anchorY = 0
-    this.ignoreAnchor = true
+    this.setAnchorPoint(0, 0)
+    this.ignoreAnchorPointForPosition(true)
     this.startingPositionInitialized = false
 
     this.fastMode = true
@@ -174,7 +171,7 @@ export class MotionStreak extends Node {
     this._blendFunc.dst = gl.ONE_MINUS_SRC_ALPHA
 
     this.texture = texture
-    this.color = color
+    this.setColor(color)
     this.scheduleUpdate()
 
     //bind buffer
@@ -189,7 +186,7 @@ export class MotionStreak extends Node {
   }
 
   tintWithColor(color: Color) {
-    this.color = color
+    this.setColor(color)
 
     const locColorPointer = this._colorPointer
     for (let i = 0, len = this._nuPoints * 2; i < len; i++) {
@@ -236,7 +233,7 @@ export class MotionStreak extends Node {
     if (!this.startingPositionInitialized) return
 
     //TODO update the color    (need move to render cmd)
-    this._renderCmd._updateDisplayColor()
+    this.updateDisplayedColor()
 
     delta *= this._fadeDelta
 

@@ -98,6 +98,6 @@ export class Blink extends ActionInterval {
  * // example
  * var action = blink(2, 10);
  */
-export const blink = function (duration, blinks) {
+export const blink = function (duration: number, blinks: number) {
   return new Blink(duration, blinks)
 }

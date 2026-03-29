@@ -97,6 +97,9 @@ export class _Rect {
     this.width = width
     this.height = height
   }
+  contains(point: Point) {
+    return this.x <= point.x && this.x + this.width >= point.x && this.y <= point.y && this.y + this.height >= point.y
+  }
 }
 
 /**

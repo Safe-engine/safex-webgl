@@ -1,9 +1,14 @@
-import { p } from '../cocoa/Geometry'
+import { p, Point } from '../cocoa/Geometry'
 import { degreesToRadians } from '../platform'
-import { vertex2 } from '../platform/Types'
 import { pCross, pDot, pMidpoint, pMult, pNormalize, pPerp, pSub } from './PointExtension'
 
-export const vertexLineToPolygon = function (points, stroke, vertices, offset, nuPoints) {
+export const vertexLineToPolygon = function (
+  points: Float32Array,
+  stroke: number,
+  vertices: Float32Array,
+  offset: number,
+  nuPoints: number,
+) {
   nuPoints += offset
   if (nuPoints <= 1) return
 
@@ -40,27 +45,26 @@ export const vertexLineToPolygon = function (points, stroke, vertices, offset, n
   }
 
   // Validate vertexes
-  offset = offset === 0 ? 0 : offset - 1
-  for (i = offset; i < nuPointsMinus; i++) {
-    idx = i * 2
-    const idx1 = idx + 2
+  // offset = offset === 0 ? 0 : offset - 1
+  // for (i = offset; i < nuPointsMinus; i++) {
+  //   idx = i * 2
+  //   const idx1 = idx + 2
 
-    const v1 = vertex2(vertices[idx * 2], vertices[idx * 2 + 1])
-    const v2 = vertex2(vertices[(idx + 1) * 2], vertices[(idx + 1) * 2 + 1])
-    const v3 = vertex2(vertices[idx1 * 2], vertices[idx1 * 2])
-    const v4 = vertex2(vertices[(idx1 + 1) * 2], vertices[(idx1 + 1) * 2 + 1])
+  //   const v1 = vertex2(vertices[idx * 2], vertices[idx * 2 + 1])
+  //   const v2 = vertex2(vertices[(idx + 1) * 2], vertices[(idx + 1) * 2 + 1])
+  //   const v3 = vertex2(vertices[idx1 * 2], vertices[idx1 * 2])
+  //   const v4 = vertex2(vertices[(idx1 + 1) * 2], vertices[(idx1 + 1) * 2 + 1])
 
-    //BOOL fixVertex = !ccpLineIntersect(ccp(p1.x, p1.y), ccp(p4.x, p4.y), ccp(p2.x, p2.y), ccp(p3.x, p3.y), &s, &t);
-    const fixVertexResult = vertexLineIntersect(v1.x, v1.y, v4.x, v4.y, v2.x, v2.y, v3.x, v3.y)
-    if (!fixVertexResult.isSuccess) if (fixVertexResult.value < 0.0 || fixVertexResult.value > 1.0) fixVertexResult.isSuccess = true
+  //   const fixVertexResult = vertexLineIntersect(v1.x, v1.y, v4.x, v4.y, v2.x, v2.y, v3.x, v3.y)
+  //   if (!fixVertexResult.isSuccess) if (fixVertexResult.value < 0.0 || fixVertexResult.value > 1.0) fixVertexResult.isSuccess = true
 
-    if (fixVertexResult.isSuccess) {
-      vertices[idx1 * 2] = v4.x
-      vertices[idx1 * 2 + 1] = v4.y
-      vertices[(idx1 + 1) * 2] = v3.x
-      vertices[(idx1 + 1) * 2 + 1] = v3.y
-    }
-  }
+  //   if (fixVertexResult.isSuccess) {
+  //     vertices[idx1 * 2] = v4.x
+  //     vertices[idx1 * 2 + 1] = v4.y
+  //     vertices[(idx1 + 1) * 2] = v3.x
+  //     vertices[(idx1 + 1) * 2 + 1] = v3.y
+  //   }
+  // }
 }
 
 /**
@@ -75,7 +79,16 @@ export const vertexLineToPolygon = function (points, stroke, vertices, offset, n
  * @param {Number} Dy
  * @return {Object}
  */
-export const vertexLineIntersect = function (Ax, Ay, Bx, By, Cx, Cy, Dx, Dy) {
+export const vertexLineIntersect = function (
+  Ax: number,
+  Ay: number,
+  Bx: number,
+  By: number,
+  Cx: number,
+  Cy: number,
+  Dx: number,
+  Dy: number,
+) {
   let newX
   // FAIL: Line undefined
   if ((Ax === Bx && Ay === By) || (Cx === Dx && Cy === Dy)) return { isSuccess: false, value: 0 }
@@ -116,7 +129,7 @@ export const vertexLineIntersect = function (Ax, Ay, Bx, By, Cx, Cy, Dx, Dy) {
  * @param {Array} verts
  * @return {Boolean}
  */
-export const vertexListIsClockwise = function (verts) {
+export const vertexListIsClockwise = function (verts: Point[]) {
   for (let i = 0, len = verts.length; i < len; i++) {
     const a = verts[i]
     const b = verts[(i + 1) % len]

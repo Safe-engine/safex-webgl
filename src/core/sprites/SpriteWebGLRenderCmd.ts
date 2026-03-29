@@ -1,6 +1,6 @@
-import { renderer } from '../..'
+import { Node, renderer, SpriteFrame, Texture2D } from '../..'
 import { _LogInfos, error, log } from '../../helper/Debugger'
-import { shaderCache } from '../../shaders/ShaderCache'
+import { shaderCache } from '../../shaders'
 import { NodeWebGLRenderCmd } from '../base-nodes/NodeWebGLRenderCmd'
 import { pointEqualToPoint, Rect, rectEqualToRect, rectEqualToZero } from '../cocoa/Geometry'
 import { FIX_ARTIFACTS_BY_STRECHING_TEXEL } from '../platform/Config'
@@ -12,9 +12,9 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
   declare _color: Uint32Array
   declare _dirty: boolean
   declare _recursiveDirty: boolean
-  declare _textureLoaded: any
+  declare _textureLoaded: boolean
   declare _rect: Rect
-  declare texture: any
+  declare texture: Texture2D
   declare _node: Sprite
 
   constructor(renderable: Sprite) {
@@ -38,12 +38,12 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
     //
   }
 
-  setDirtyFlag(dirtyFlag: any): void {
+  setDirtyFlag(dirtyFlag: number) {
     super.setDirtyFlag(dirtyFlag)
     this._dirty = true
   }
 
-  setDirtyRecursively(value: boolean): void {
+  setDirtyRecursively(value: boolean) {
     this._recursiveDirty = value
     this._dirty = value
     // recursively set dirty
@@ -52,11 +52,11 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
     const l = locChildren ? locChildren.length : 0
     for (let i = 0; i < l; i++) {
       child = locChildren[i]
-      child instanceof Sprite && child._renderCmd.setDirtyRecursively(value)
+      if (child instanceof Sprite) child._renderCmd.setDirtyRecursively(value)
     }
   }
 
-  _setBatchNodeForAddChild(child: any): boolean {
+  _setBatchNodeForAddChild(child: Node): boolean {
     const node = this._node
     if (node._batchNode) {
       if (!(child instanceof Sprite)) {
@@ -67,16 +67,15 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
 
       //put it in descendants array of batch node
       node._batchNode.appendChild(child)
-      if (!node._reorderChildDirty) node._setReorderChildDirtyRecursively()
     }
     return true
   }
 
-  _handleTextureForRotatedTexture(texture: any): any {
+  _handleTextureForRotatedTexture(texture: Texture2D) {
     return texture
   }
 
-  isFrameDisplayed(frame: any): boolean {
+  isFrameDisplayed(frame: SpriteFrame): boolean {
     const node = this._node
     return (
       rectEqualToRect(frame.getRect(), node._rect) &&
@@ -85,43 +84,32 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
     )
   }
 
-  _textureLoadedCallback(sender: any): void {
+  _textureLoadedCallback(sender: Texture2D) {
     if (this._textureLoaded) return
 
     this._textureLoaded = true
     let locRect = this._rect
     if (!locRect) {
-      locRect = Rect(0, 0, sender.width, sender.height)
+      locRect = Rect(0, 0, sender._getWidth(), sender._getHeight())
     } else if (rectEqualToZero(locRect)) {
-      locRect.width = sender.width
-      locRect.height = sender.height
+      locRect.width = sender._getWidth()
+      locRect.height = sender._getHeight()
     }
 
     this.texture = sender
-    this.setTextureRect(locRect, this._rectRotated)
+    const node = this._node
+    node.setTextureRect(locRect, node._rectRotated)
 
     // by default use "Self Render".
     // if the sprite is added to a batchnode, then it will automatically switch to "batchnode Render"
-    this.setBatchNode(this._batchNode)
-    this.dispatchEvent('load')
+    node.setBatchNode(node._batchNode)
+    node.dispatchEvent('load')
 
     // Force refresh the render command list
     renderer.childrenOrderDirty = true
   }
-  setTextureRect(locRect: any, _rectRotated: any) {
-    throw new Error('Method not implemented.')
-  }
-  _rectRotated: boolean
-  setBatchNode(_batchNode: any) {
-    throw new Error('Method not implemented.')
-  }
-  _batchNode: any
-  dispatchEvent(arg0: string) {
-    throw new Error('Method not implemented.')
-  }
 
-  _setTextureCoords(rect: any, needConvert?: boolean): void {
-    if (needConvert === undefined) needConvert = true
+  _setTextureCoords(rect: Rect, needConvert = true) {
     if (needConvert) rect = rectPointsToPixels(rect)
     const node = this._node
 
@@ -129,8 +117,8 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
     const uvs = this._vertices
     if (!tex) return
 
-    const atlasWidth = tex.pixelsWidth
-    const atlasHeight = tex.pixelsHeight
+    const atlasWidth = tex.getPixelsWide()
+    const atlasHeight = tex.getPixelsHigh()
 
     let left, right, top, bottom, tempSwap
     if (node._rectRotated) {
@@ -202,10 +190,10 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
     }
   }
 
-  _setColorDirty(): void { }
+  _setColorDirty() {}
 
-  _updateBlendFunc(): void {
-    if (this._batchNode) {
+  _updateBlendFunc() {
+    if (this._node._batchNode) {
       log(_LogInfos.Sprite__updateBlendFunc)
       return
     }
@@ -226,7 +214,7 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
     }
   }
 
-  _setTexture(texture: any): void {
+  _setTexture(texture: Texture2D) {
     const node = this._node
     if (node._texture !== texture) {
       node._textureLoaded = texture ? texture._textureLoaded : false
@@ -247,7 +235,7 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
     }
   }
 
-  _checkTextureBoundary(texture: any, rect: any, rotated: boolean): void {
+  _checkTextureBoundary(texture: Texture2D, rect: Rect, rotated: boolean) {
     if (texture && texture.url) {
       let _x, _y
       if (rotated) {
@@ -257,16 +245,16 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
         _x = rect.x + rect.width
         _y = rect.y + rect.height
       }
-      if (_x > texture.width) {
+      if (_x > texture._getWidth()) {
         error(_LogInfos.RectWidth, texture.url)
       }
-      if (_y > texture.height) {
+      if (_y > texture._getHeight()) {
         error(_LogInfos.RectHeight, texture.url)
       }
     }
   }
 
-  transform(parentCmd: any, recursive?: boolean): void {
+  transform(parentCmd: NodeWebGLRenderCmd, recursive?: boolean) {
     this.originTransform(parentCmd, recursive)
 
     const node = this._node,
@@ -302,7 +290,7 @@ export class SpriteWebGLRenderCmd extends NodeWebGLRenderCmd {
     return this._needDraw && !!locTexture
   }
 
-  uploadData(f32buffer: any, ui32buffer: any, vertexDataOffset: number): number {
+  uploadData(f32buffer: Float32Array, ui32buffer: Uint32Array, vertexDataOffset: number): number {
     const node = this._node
     const locTexture = node._texture
     if (!(locTexture && locTexture._textureLoaded && node._rect.width && node._rect.height) || !this._displayedOpacity) return 0

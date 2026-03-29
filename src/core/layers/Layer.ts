@@ -2,7 +2,6 @@ import { Node, renderer, winSize } from '../..'
 import { LayerWebGLRenderCmd } from './LayerWebGLRenderCmd'
 
 export class Layer extends Node {
-  _className = 'Layer'
   declare _renderCmd: LayerWebGLRenderCmd
 
   /**

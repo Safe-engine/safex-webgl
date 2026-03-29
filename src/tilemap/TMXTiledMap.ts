@@ -1,7 +1,9 @@
 import { Node, Size } from '../core'
 import { log } from '../helper/Debugger'
 import { TMXLayer } from './TMXLayer'
+import type { TMXLayerInfo } from './TMXLayerInfo'
 import { TMXMapInfo } from './TMXMapInfo'
+import type { TMXObjectGroup } from './TMXObjectGroup'
 import { TMX_TILE_FLIPPED_MASK } from './TMXXMLParser'
 
 /**
@@ -27,16 +29,15 @@ export const TMX_ORIENTATION_HEX = 1
 export const TMX_ORIENTATION_ISO = 2
 
 export class TMXTiledMap extends Node {
-  properties: any = null
-  mapOrientation: any = null
-  objectGroups: any = null
+  declare properties: any
+  declare mapOrientation: any
+  declare objectGroups: TMXObjectGroup[]
 
   //the map's size property measured in tiles
-  _mapSize: any = null
-  _tileSize: any = null
+  declare _mapSize: Size
+  declare _tileSize: Size
   //tile properties
-  _tileProperties: any = null
-  _className = 'TMXTiledMap'
+  declare _tileProperties: any
 
   /**
    * Creates a TMX Tiled Map with a TMX file  or content string. <br/>
@@ -44,7 +45,7 @@ export class TMXTiledMap extends Node {
    * @param {String} tmxFile tmxFile fileName or content string
    * @param {String} resourcePath   If tmxFile is a file name ,it is not required.If tmxFile is content string ,it is must required.
    */
-  constructor(tmxFile?: any, resourcePath?: any) {
+  constructor(tmxFile?: string, resourcePath?: string) {
     super()
     this._mapSize = Size(0, 0)
     this._tileSize = Size(0, 0)
@@ -66,23 +67,23 @@ export class TMXTiledMap extends Node {
 
   /**
    * Set the map size.
-   * @param {Size} Var
+   * @param {Size} sz
    */
-  setMapSize(Var: any) {
-    this._mapSize.width = Var.width
-    this._mapSize.height = Var.height
+  setMapSize(sz: Size) {
+    this._mapSize.width = sz.width
+    this._mapSize.height = sz.height
   }
 
   _getMapWidth() {
     return this._mapSize.width
   }
-  _setMapWidth(width: any) {
+  _setMapWidth(width: number) {
     this._mapSize.width = width
   }
   _getMapHeight() {
     return this._mapSize.height
   }
-  _setMapHeight(height: any) {
+  _setMapHeight(height: number) {
     this._mapSize.height = height
   }
 
@@ -98,21 +99,21 @@ export class TMXTiledMap extends Node {
    * Set the tile size
    * @param {Size} Var
    */
-  setTileSize(Var: any) {
-    this._tileSize.width = Var.width
-    this._tileSize.height = Var.height
+  setTileSize(sz: Size) {
+    this._tileSize.width = sz.width
+    this._tileSize.height = sz.height
   }
 
   _getTileWidth() {
     return this._tileSize.width
   }
-  _setTileWidth(width: any) {
+  _setTileWidth(width: number) {
     this._tileSize.width = width
   }
   _getTileHeight() {
     return this._tileSize.height
   }
-  _setTileHeight(height: any) {
+  _setTileHeight(height: number) {
     this._tileSize.height = height
   }
 
@@ -126,10 +127,10 @@ export class TMXTiledMap extends Node {
 
   /**
    * map orientation
-   * @param {Number} Var
+   * @param {Number} orient
    */
-  setMapOrientation(Var: any) {
-    this.mapOrientation = Var
+  setMapOrientation(orient: number) {
+    this.mapOrientation = orient
   }
 
   /**
@@ -144,8 +145,8 @@ export class TMXTiledMap extends Node {
    * object groups
    * @param {Array} Var
    */
-  setObjectGroups(Var: any) {
-    this.objectGroups = Var
+  setObjectGroups(grps: TMXObjectGroup[]) {
+    this.objectGroups = grps
   }
 
   /**
@@ -160,8 +161,8 @@ export class TMXTiledMap extends Node {
    * Set the properties
    * @param {object} Var
    */
-  setProperties(Var: any) {
-    this.properties = Var
+  setProperties(ps: any[]) {
+    this.properties = ps
   }
 
   /**
@@ -173,7 +174,7 @@ export class TMXTiledMap extends Node {
    * var map = new TMXTiledMap()
    * map.initWithTMXFile("hello.tmx");
    */
-  initWithTMXFile(tmxFile: any) {
+  initWithTMXFile(tmxFile: string) {
     if (!tmxFile || tmxFile.length === 0) throw new Error('TMXTiledMap.initWithTMXFile(): tmxFile should be non-null or non-empty string.')
     this.setContentSize(0, 0)
     const mapInfo = new TMXMapInfo(tmxFile)
@@ -191,7 +192,7 @@ export class TMXTiledMap extends Node {
    * @param {String} resourcePath
    * @return {Boolean} Whether the initialization was successful.
    */
-  initWithXML(tmxString: any, resourcePath: any) {
+  initWithXML(tmxString: string, resourcePath: string) {
     this.setContentSize(0, 0)
 
     const mapInfo = new TMXMapInfo(tmxString, resourcePath)
@@ -201,7 +202,7 @@ export class TMXTiledMap extends Node {
     return true
   }
 
-  _buildWithMapInfo(mapInfo: any) {
+  _buildWithMapInfo(mapInfo: TMXMapInfo) {
     this._mapSize = mapInfo.getMapSize()
     this._tileSize = mapInfo.getTileSize()
     this.mapOrientation = mapInfo.orientation
@@ -212,9 +213,8 @@ export class TMXTiledMap extends Node {
     let idx = 0
     const layers = mapInfo.getLayers()
     if (layers) {
-      let layerInfo
       for (let i = 0, len = layers.length; i < len; i++) {
-        layerInfo = layers[i]
+        const layerInfo = layers[i]
         if (layerInfo && layerInfo.visible) {
           const child = this._parseLayer(layerInfo, mapInfo)
           this.addChild(child, idx, idx)
@@ -247,12 +247,12 @@ export class TMXTiledMap extends Node {
    * @param {String} layerName
    * @return {TMXLayer}
    */
-  getLayer(layerName: any) {
+  getLayer(layerName: string) {
     if (!layerName || layerName.length === 0) throw new Error('TMXTiledMap.getLayer(): layerName should be non-null or non-empty string.')
-    const locChildren = this._children
+    const locChildren = this._children as TMXLayer[]
     for (let i = 0; i < locChildren.length; i++) {
       const layer = locChildren[i]
-      if (layer && (layer as any).layerName === layerName) return layer
+      if (layer && layer.layerName === layerName) return layer
     }
     // layer not found
     return null
@@ -263,7 +263,7 @@ export class TMXTiledMap extends Node {
    * @param {String} groupName
    * @return {TMXObjectGroup}
    */
-  getObjectGroup(groupName: any) {
+  getObjectGroup(groupName: string) {
     if (!groupName || groupName.length === 0)
       throw new Error('TMXTiledMap.getObjectGroup(): groupName should be non-null or non-empty string.')
     if (this.objectGroups) {
@@ -307,7 +307,7 @@ export class TMXTiledMap extends Node {
     return this._tileProperties[GID]
   }
 
-  _parseLayer(layerInfo: any, mapInfo: any) {
+  _parseLayer(layerInfo: TMXLayerInfo, mapInfo: TMXMapInfo) {
     const tileset = this._tilesetForLayer(layerInfo, mapInfo)
     const layer = new TMXLayer(tileset, layerInfo, mapInfo)
     // tell the layerinfo to release the ownership of the tiles map.
@@ -315,7 +315,7 @@ export class TMXTiledMap extends Node {
     return layer
   }
 
-  _tilesetForLayer(layerInfo: any, mapInfo: any) {
+  _tilesetForLayer(layerInfo: TMXLayerInfo, mapInfo: TMXMapInfo) {
     const size = layerInfo._layerSize
     const tilesets = mapInfo.getTilesets()
     if (tilesets) {
@@ -340,7 +340,7 @@ export class TMXTiledMap extends Node {
     }
 
     // If all the tiles are 0, return empty tileset
-    log(`cocos2d: Warning: TMX Layer ${layerInfo.name} has no tiles`)
+    log(`safex: Warning: TMX Layer ${layerInfo.name} has no tiles`)
     return null
   }
 
@@ -348,7 +348,7 @@ export class TMXTiledMap extends Node {
   get mapWidth() {
     return this._getMapWidth()
   }
-  set mapWidth(width: any) {
+  set mapWidth(width: number) {
     this._setMapWidth(width)
   }
 
@@ -356,7 +356,7 @@ export class TMXTiledMap extends Node {
   get mapHeight() {
     return this._getMapHeight()
   }
-  set mapHeight(height: any) {
+  set mapHeight(height: number) {
     this._setMapHeight(height)
   }
 
@@ -364,7 +364,7 @@ export class TMXTiledMap extends Node {
   get tileWidth() {
     return this._getTileWidth()
   }
-  set tileWidth(width: any) {
+  set tileWidth(width: number) {
     this._setTileWidth(width)
   }
 
@@ -372,7 +372,7 @@ export class TMXTiledMap extends Node {
   get tileHeight() {
     return this._getTileHeight()
   }
-  set tileHeight(height: any) {
+  set tileHeight(height: number) {
     this._setTileHeight(height)
   }
 }

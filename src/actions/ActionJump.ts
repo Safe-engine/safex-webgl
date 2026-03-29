@@ -152,7 +152,7 @@ export class JumpBy extends ActionInterval {
  * var actionBy = jumpBy(2, p(300, 0), 50, 4);
  * var actionBy = jumpBy(2, 300, 0, 50, 4);
  */
-export const jumpBy = function (duration, position, y, height, jumps) {
+export const jumpBy = function (duration: number, position: number, y: number, height: number, jumps: number) {
   return new JumpBy(duration, position, y, height, jumps)
 }
 
@@ -250,6 +250,6 @@ export class JumpTo extends JumpBy {
  * var actionTo = jumpTo(2, p(300, 300), 50, 4);
  * var actionTo = jumpTo(2, 300, 300, 50, 4);
  */
-export const jumpTo = function (duration, position, y, height, jumps) {
+export const jumpTo = function (duration: number, position: number, y: number, height: number, jumps: number) {
   return new JumpTo(duration, position, y, height, jumps)
 }

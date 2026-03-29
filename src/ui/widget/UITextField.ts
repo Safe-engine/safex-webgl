@@ -593,14 +593,3 @@ export class TextField extends Widget {
     this._adaptRenderers()
   }
 }
-
-// const _p = TextField.prototype
-
-// defineGetterSetter(_p, 'string', _p.getString, _p.setString)
-// defineGetterSetter(_p, 'placeHolder', _p.getPlaceHolder, _p.setPlaceHolder)
-// defineGetterSetter(_p, 'font', _p._getFont, _p._setFont)
-// defineGetterSetter(_p, 'fontSize', _p.getFontSize, _p.setFontSize)
-// defineGetterSetter(_p, 'fontName', _p.getFontName, _p.setFontName)
-// defineGetterSetter(_p, 'maxLengthEnabled', _p.isMaxLengthEnabled, _p.setMaxLengthEnabled)
-// defineGetterSetter(_p, 'maxLength', _p.getMaxLength, _p.setMaxLength)
-// defineGetterSetter(_p, 'passwordEnabled', _p.isPasswordEnabled, _p.setPasswordEnabled)

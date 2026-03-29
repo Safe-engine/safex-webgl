@@ -11,16 +11,17 @@ import { $ } from './core/platform/miniFramework'
 import { rendererWebGL } from './core/renderer/RendererWebGL'
 import { isUndefined } from './helper/checkType'
 import { log } from './helper/Debugger'
-import { _engineLoaded, _renderType, _supportRender, create3DContext, initEngine } from './helper/engine'
-import { _tmp, global } from './helper/global'
+import { _engineLoaded, create3DContext, initEngine } from './helper/engine'
+import { global } from './helper/global'
 import { loader } from './helper/loader'
 import { path } from './helper/path'
 import { textureCache } from './textures/TextureCache'
 import { PrototypeTexture2D } from './textures/TexturesPropertyDefine'
+import { WebGLTextureCache } from './textures/WebGLTextureCache'
 
 export let director: Director
 export let renderer: typeof rendererWebGL
-export let _drawingUtil: any
+export let _drawingUtil: DrawingPrimitiveWebGL
 export let _renderContext: WebGLRenderingContext = null
 let glExt: any = {}
 export let view: EGLView
@@ -41,10 +42,6 @@ export class Game extends EventHelper {
   EVENT_SHOW = 'game_on_show'
   EVENT_RESIZE = 'game_on_resize'
   static readonly EVENT_RENDERER_INITD = 'renderer_initd'
-
-  RENDER_TYPE_CANVAS = 0
-  RENDER_TYPE_WEBGL = 1
-  RENDER_TYPE_OPENGL = 2
 
   _eventHide: EventCustom | null = null
   _eventShow: EventCustom | null = null
@@ -70,7 +67,7 @@ export class Game extends EventHelper {
   _prepared = false
   _rendererInitialized = false
 
-  _renderContext: WebGLRenderingContext = null
+  // _renderContext: WebGLRenderingContext = null
 
   _intervalId: number | null = null
 
@@ -342,10 +339,6 @@ export class Game extends EventHelper {
   _initRenderer(width: number, height: number) {
     if (this._rendererInitialized) return
 
-    if (!_supportRender) {
-      throw new Error(`The renderer doesnt support the renderMode ${this.config[Game.CONFIG_KEY.renderMode]}`)
-    }
-
     const el = this.config[Game.CONFIG_KEY.id]
     const element = $(el) || $(`#${el}`)
     let localCanvas: HTMLCanvasElement
@@ -379,37 +372,26 @@ export class Game extends EventHelper {
     localCanvas.setAttribute('height', (height || 320).toString())
     localCanvas.setAttribute('tabindex', '99')
 
-    if (_renderType === this.RENDER_TYPE_WEBGL) {
-      this._renderContext = _renderContext = create3DContext(localCanvas, {
-        stencil: true,
-        alpha: false,
-      })
-    }
+    _renderContext = create3DContext(localCanvas, {
+      stencil: true,
+      alpha: false,
+    })
 
-    if (this._renderContext) {
-      renderer = rendererWebGL
-      window.gl = this._renderContext
-      renderer.init()
-      _drawingUtil = new DrawingPrimitiveWebGL(this._renderContext)
-      textureCache._initializingRenderer()
-      glExt = {}
-      glExt.instanced_arrays = window.gl.getExtension('ANGLE_instanced_arrays')
-      glExt.element_uint = window.gl.getExtension('OES_element_index_uint')
-    } else {
-      // _renderType = this.RENDER_TYPE_CANVAS;
-      // renderer = rendererCanvas;
-      // this._renderContext = _renderContext = new CanvasContextWrapper(localCanvas.getContext("2d"));
-      // _drawingUtil = DrawingPrimitiveCanvas ? new DrawingPrimitiveCanvas(this._renderContext) : null;
-    }
+    renderer = rendererWebGL
+    // window.gl = _renderContext
+    renderer.init()
+    _drawingUtil = new DrawingPrimitiveWebGL(_renderContext)
+    textureCache._initializingRenderer()
+    glExt = {}
+    glExt.instanced_arrays = _renderContext.getExtension('ANGLE_instanced_arrays')
+    glExt.element_uint = _renderContext.getExtension('OES_element_index_uint')
 
     // _gameDiv = localContainer;
-    if (this.canvas) {
-      this.canvas.oncontextmenu = () => {
-        if (!global._isContextMenuEnable) return false
-      }
+    this.canvas.oncontextmenu = () => {
+      if (!global._isContextMenuEnable) return false
     }
 
-    eventManager.dispatchEvent(new EventCustom(Game.EVENT_RENDERER_INITD))
+    this.dispatchEvent(Game.EVENT_RENDERER_INITD, true)
 
     this._rendererInitialized = true
   }
@@ -492,31 +474,11 @@ export class Game extends EventHelper {
       this.resume()
     })
   }
-
-  dispatchEvent(event: EventCustom) {
-    eventManager.dispatchEvent(event)
-  }
 }
 
 export const game = new Game()
 eventManager._internalCustomListenerIDs = [game.EVENT_HIDE, game.EVENT_SHOW]
 
 game.addEventListener(Game.EVENT_RENDERER_INITD, function () {
-  _tmp.WebGLTextureCache()
-  delete _tmp.WebGLTextureCache
+  WebGLTextureCache()
 })
-
-// game.addEventListener(Game.EVENT_RENDERER_INITD, function () {
-//   if (_renderType === game.RENDER_TYPE_CANVAS) {
-//     var proto = {
-//     }
-//   } else if (_renderType === game.RENDER_TYPE_WEBGL) {
-//     assert(isFunction(_tmp.WebGLTexture2D), _LogInfos.MissingFile, "TexturesWebGL.js");
-//     _tmp.WebGLTexture2D();
-//     delete _tmp.WebGLTexture2D;
-//   }
-//   // EventHelper.prototype.apply(Texture2D.prototype);
-//   assert(isFunction(_tmp.PrototypeTexture2D), _LogInfos.MissingFile, "TexturesPropertyDefine.js");
-//   _tmp.PrototypeTexture2D();
-//   delete _tmp.PrototypeTexture2D;
-// });

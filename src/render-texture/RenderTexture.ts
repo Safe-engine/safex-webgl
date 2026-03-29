@@ -37,43 +37,15 @@ export const NextPOT = function (x) {
  * @property {Number}       clearStencilVal - Clear stencil value.
  * @property {Color}     clearColorVal   - Clear color value, valid only when "autoDraw" is true.
  */
-/**
- * RenderTexture is a generic rendering target. To render things into it,<br/>
- * simply construct a render target, call begin on it, call visit on any cocos<br/>
- * scenes or objects to render them, and call end. For convenience, render texture<br/>
- * adds a sprite as it's display child with the results, so you can simply add<br/>
- * the render texture to your scene and treat it like any other CocosNode.<br/>
- * There are also functions for saving the render texture to disk in PNG or JPG format.
- * @class
- * @extends Node
- *
- * @property {Sprite}    sprite          - The sprite.
- * @property {Sprite}    clearFlags      - Code for "auto" update.
- * @property {Number}       clearDepthVal   - Clear depth value.
- * @property {Boolean}      autoDraw        - Indicate auto draw mode activate or not.
- * @property {Number}       clearStencilVal - Clear stencil value.
- * @property {Color}     clearColorVal   - Clear color value, valid only when "autoDraw" is true.
- */
 export class RenderTexture extends Node {
   declare sprite: Sprite
-  //
-  // <p>Code for "auto" update<br/>
-  // Valid flags: GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_STENCIL_BUFFER_BIT.<br/>
-  // They can be OR'ed. Valid when "autoDraw is YES.</p>
-  // @public
-  //
   clearFlags = 0
-
   clearDepthVal = 0
   autoDraw = false
-
   declare _texture: Texture2D
   _pixelFormat = 0
-
   clearStencilVal = 0
   declare _clearColor: Color
-
-  _className = 'RenderTexture'
   declare _renderCmd: RenderTextureWebGLRenderCmd
 
   /**
@@ -349,7 +321,7 @@ export class RenderTexture extends Node {
    * @return {*}
    */
   newCCImage(_flipImage: any) {
-    log('saveToFile isnt supported on cocos2d-html5')
+    log('saveToFile isnt supported on safex-html5')
     return null
   }
 

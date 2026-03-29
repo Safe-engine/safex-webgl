@@ -1,5 +1,5 @@
 import { renderer } from '../..'
-import { affineTransformConcatIn, affineTransformInvertOut } from '../cocoa/AffineTransform'
+import { AffineTransform, affineTransformConcatIn, affineTransformInvertOut } from '../cocoa/AffineTransform'
 import { p, Point } from '../cocoa/Geometry'
 import { color, Color } from '../platform/Color'
 import { Node } from './Node'
@@ -20,9 +20,9 @@ export const dirtyFlags = {
   all: (1 << 10) - 1,
 }
 
-function transformChildTree(root) {
+function transformChildTree(root: Node) {
   let index = 1
-  let children, child, curr, parentCmd, i, len
+  let children: Node[], child: Node, curr: Node, parentCmd, i, len
   let stack = Node._performStacks[Node._performing]
   if (!stack) {
     stack = []
@@ -74,9 +74,9 @@ class NodeRenderCmd {
   _cascadeColorEnabledDirty = false
   _cascadeOpacityEnabledDirty = false
 
-  declare _transform: any
-  declare _worldTransform: any
-  declare _inverse: any
+  declare _transform: AffineTransform
+  declare _worldTransform: AffineTransform
+  declare _inverse: AffineTransform
 
   declare _updateCurrentRegions?: () => void
   // _notifyRegionStatus?: (status: any) => void
@@ -92,11 +92,11 @@ class NodeRenderCmd {
     return this._needDraw
   }
 
-  getAnchorPointInPoints(): any {
+  getAnchorPointInPoints() {
     return p(this._anchorPointInPoints)
   }
 
-  getDisplayedColor(): any {
+  getDisplayedColor() {
     const tmpColor = this._displayedColor
     return color(tmpColor.r, tmpColor.g, tmpColor.b, tmpColor.a)
   }
@@ -105,17 +105,17 @@ class NodeRenderCmd {
     return this._displayedOpacity
   }
 
-  setCascadeColorEnabledDirty(): void {
+  setCascadeColorEnabledDirty() {
     this._cascadeColorEnabledDirty = true
     this.setDirtyFlag(Node._dirtyFlags.colorDirty)
   }
 
-  setCascadeOpacityEnabledDirty(): void {
+  setCascadeOpacityEnabledDirty() {
     this._cascadeOpacityEnabledDirty = true
     this.setDirtyFlag(Node._dirtyFlags.opacityDirty)
   }
 
-  getParentToNodeTransform(): any {
+  getParentToNodeTransform() {
     if (!this._inverse) {
       this._inverse = { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 }
     }
@@ -125,9 +125,9 @@ class NodeRenderCmd {
     return this._inverse
   }
 
-  detachFromParent(): void {}
+  // detachFromParent() {}
 
-  _updateAnchorPointInPoint(): void {
+  _updateAnchorPointInPoint() {
     const locAPP = this._anchorPointInPoints,
       locSize = this._node._contentSize,
       locAnchorPoint = this._node._anchorPoint
@@ -136,17 +136,17 @@ class NodeRenderCmd {
     this.setDirtyFlag(Node._dirtyFlags.transformDirty)
   }
 
-  setDirtyFlag(dirtyFlag: number): void {
+  setDirtyFlag(dirtyFlag: number) {
     if (this._dirtyFlag === 0 && dirtyFlag !== 0) renderer.pushDirtyNode(this)
     this._dirtyFlag |= dirtyFlag
   }
 
-  getParentRenderCmd(): any {
+  getParentRenderCmd() {
     if (this._node && this._node._parent && this._node._parent._renderCmd) return this._node._parent._renderCmd
     return null
   }
 
-  transform(parentCmd?: any, recursive?: boolean): void {
+  transform(parentCmd?: any, recursive?: boolean) {
     if (!this._transform) {
       this._transform = { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 }
       this._worldTransform = { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 }
@@ -281,10 +281,10 @@ class NodeRenderCmd {
       }
     }
 
-    if (this._updateCurrentRegions) {
-      this._updateCurrentRegions()
-      // this._notifyRegionStatus && this._notifyRegionStatus(Node.CanvasRenderCmd.RegionStatus.DirtyDouble)
-    }
+    // if (this._updateCurrentRegions) {
+    //   this._updateCurrentRegions()
+    // this._notifyRegionStatus && this._notifyRegionStatus(Node.CanvasRenderCmd.RegionStatus.DirtyDouble)
+    // }
 
     if (recursive) {
       transformChildTree(node)
@@ -293,21 +293,21 @@ class NodeRenderCmd {
     this._cacheDirty = true
   }
 
-  getNodeToParentTransform(): any {
+  getNodeToParentTransform() {
     if (!this._transform || this._dirtyFlag & Node._dirtyFlags.transformDirty) {
       this.transform()
     }
     return this._transform
   }
 
-  visit(parentCmd: any): void {
+  visit(parentCmd: any) {
     const node = this._node
 
     parentCmd = parentCmd || this.getParentRenderCmd()
     if (parentCmd) this._curLevel = parentCmd._curLevel + 1
 
     if (isNaN(node._customZ)) {
-      node._vertexZ = renderer.assignedZ
+      node.setVertexZ(renderer.assignedZ)
       renderer.assignedZ += renderer.assignedZStep
     }
 
@@ -354,7 +354,7 @@ class NodeRenderCmd {
     this._dirtyFlag &= ~dirtyFlags.colorDirty
   }
 
-  _updateDisplayOpacity(parentOpacity?: number): void {
+  _updateDisplayOpacity(parentOpacity?: number) {
     const node = this._node
     let i, len, selChildren, item
     // this._notifyRegionStatus && this._notifyRegionStatus(Node.CanvasRenderCmd.RegionStatus.Dirty)
@@ -387,7 +387,7 @@ class NodeRenderCmd {
     this._dirtyFlag &= ~dirtyFlags.opacityDirty
   }
 
-  _syncDisplayColor(parentColor?: any): void {
+  _syncDisplayColor(parentColor?: any) {
     const node = this._node,
       locDispColor = this._displayedColor,
       locRealColor = node._realColor
@@ -401,7 +401,7 @@ class NodeRenderCmd {
     locDispColor.b = 0 | ((locRealColor.b * parentColor.b) / 255.0)
   }
 
-  _syncDisplayOpacity(parentOpacity?: number): void {
+  _syncDisplayOpacity(parentOpacity?: number) {
     const node = this._node
     if (parentOpacity === undefined) {
       const locParent = node._parent
@@ -411,9 +411,9 @@ class NodeRenderCmd {
     this._displayedOpacity = (node._realOpacity * parentOpacity) / 255.0
   }
 
-  _updateColor(): void {}
+  _updateColor() {}
 
-  _propagateFlagsDown(parentCmd: any): void {
+  _propagateFlagsDown(parentCmd: NodeRenderCmd) {
     let locFlag = this._dirtyFlag
     const parentNode = parentCmd ? parentCmd._node : null
 
@@ -427,7 +427,7 @@ class NodeRenderCmd {
     this._dirtyFlag = locFlag
   }
 
-  updateStatus(): void {
+  updateStatus() {
     const locFlag = this._dirtyFlag
     const colorDirty = locFlag & dirtyFlags.colorDirty,
       opacityDirty = locFlag & dirtyFlags.opacityDirty
@@ -452,7 +452,7 @@ class NodeRenderCmd {
     if (locFlag & dirtyFlags.orderDirty) this._dirtyFlag &= ~dirtyFlags.orderDirty
   }
 
-  _syncStatus(parentCmd: any): void {
+  _syncStatus(parentCmd: any) {
     //  In the visit logic does not restore the _dirtyFlag
     //  Because child elements need parent's _dirtyFlag to change himself
     let locFlag = this._dirtyFlag
@@ -493,30 +493,30 @@ class NodeRenderCmd {
     if (locFlag & dirtyFlags.orderDirty) this._dirtyFlag &= ~dirtyFlags.orderDirty
   }
 
-  setShaderProgram(shaderProgram: any): void {
-    //do nothing.
-  }
+  // setShaderProgram(shaderProgram: any) {
+  //   //do nothing.
+  // }
 
-  getShaderProgram(): any {
-    return null
-  }
+  // getShaderProgram(): any {
+  //   return null
+  // }
 
-  getGLProgramState(): any {
-    return null
-  }
+  // getGLProgramState(): any {
+  //   return null
+  // }
 
-  setGLProgramState(glProgramState: any): void {
-    // do nothing
-  }
-  originTransform(parentCmd?: any, recursive?: boolean): void {
+  // setGLProgramState(glProgramState: any) {
+  //   // do nothing
+  // }
+  originTransform(parentCmd?: any, recursive?: boolean) {
     this.transform(parentCmd, recursive)
   }
 
-  originUpdateStatus(): void {
+  originUpdateStatus() {
     this.updateStatus()
   }
 
-  _originSyncStatus(parentCmd: any): void {
+  _originSyncStatus(parentCmd: any) {
     this._syncStatus(parentCmd)
   }
 }

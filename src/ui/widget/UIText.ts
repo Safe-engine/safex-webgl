@@ -11,11 +11,10 @@ export class Text extends Widget {
   _fontSize = 16
   _onSelectedScaleOffset = 0.5
   declare _labelRenderer: LabelTTF
-  _textAreaSize: any = null
+  declare _textAreaSize: Size
   _textVerticalAlignment = 0
   _textHorizontalAlignment = 0
-  _className = 'Text'
-  _type: any = null
+  declare _type: number
   _labelRendererAdaptDirty = true
 
   constructor(textContent?: string, fontName?: string, fontSize?: number) {

@@ -1,13 +1,11 @@
-import { decompressSync } from 'fflate'
 import { director } from '../boot'
 import { p, Size } from '../core'
 import { _txtLoader } from '../core/platform/Loaders'
 import { SAXParser } from '../core/platform/SAXParser'
 import { path } from '../helper'
-import { decodeAsArray, uint8ArrayToUint32Array } from '../helper/Base64'
 import { log } from '../helper/Debugger'
 import { loader } from '../helper/loader'
-import { unzipBase64AsArray } from '../helper/ZipUtils'
+import { decodeAsArray, uint8ArrayToUint32Array, unzipBase64AsArray, zlibDecompressBase64 } from '../helper/ZipUtils'
 import { TMXLayerInfo } from './TMXLayerInfo'
 import { TMXObjectGroup } from './TMXObjectGroup'
 import { TMX_ORIENTATION_HEX, TMX_ORIENTATION_ISO, TMX_ORIENTATION_ORTHO } from './TMXTiledMap'
@@ -15,22 +13,22 @@ import { TMXTilesetInfo } from './TMXTilesetInfo'
 import { TMX_PROPERTY_NONE } from './TMXXMLParser'
 
 export class TMXMapInfo extends SAXParser {
-  properties: any = null
-  orientation: any = null
-  parentElement: any = null
-  parentGID: any = null
+  declare properties: any
+  declare orientation: number
+  declare parentElement: any
+  declare parentGID: number
   layerAttrs = 0
   storingCharacters = false
-  tmxFileName: any = null
-  currentString: any = null
+  declare tmxFileName: string
+  declare currentString: string
 
-  _objectGroups: any = null
-  _mapSize: any = null
-  _tileSize: any = null
-  _layers: any = null
-  _tilesets: any = null
+  declare _objectGroups: any[]
+  declare _mapSize: Size
+  declare _tileSize: Size
+  declare _layers: TMXLayerInfo[]
+  declare _tilesets: TMXTilesetInfo[]
   // tile properties
-  _tileProperties: any = null
+  declare _tileProperties: any
   _resources = ''
   _currentFirstGID = 0
 
@@ -87,7 +85,7 @@ export class TMXMapInfo extends SAXParser {
    * Map width & height
    * @param {Size} value
    */
-  setMapSize(value: any) {
+  setMapSize(value: Size) {
     this._mapSize.width = value.width
     this._mapSize.height = value.height
   }
@@ -96,7 +94,7 @@ export class TMXMapInfo extends SAXParser {
     return this._mapSize.width
   }
 
-  _setMapWidth(width: any) {
+  _setMapWidth(width: number) {
     this._mapSize.width = width
   }
 
@@ -104,7 +102,7 @@ export class TMXMapInfo extends SAXParser {
     return this._mapSize.height
   }
 
-  _setMapHeight(height: any) {
+  _setMapHeight(height: number) {
     this._mapSize.height = height
   }
 
@@ -120,7 +118,7 @@ export class TMXMapInfo extends SAXParser {
    * Tiles width & height
    * @param {Size} value
    */
-  setTileSize(value: any) {
+  setTileSize(value: Size) {
     this._tileSize.width = value.width
     this._tileSize.height = value.height
   }
@@ -129,7 +127,7 @@ export class TMXMapInfo extends SAXParser {
     return this._tileSize.width
   }
 
-  _setTileWidth(width: any) {
+  _setTileWidth(width: number) {
     this._tileSize.width = width
   }
 
@@ -137,7 +135,7 @@ export class TMXMapInfo extends SAXParser {
     return this._tileSize.height
   }
 
-  _setTileHeight(height: any) {
+  _setTileHeight(height: number) {
     this._tileSize.height = height
   }
 
@@ -153,7 +151,7 @@ export class TMXMapInfo extends SAXParser {
    * Layers
    * @param {TMXLayerInfo} value
    */
-  setLayers(value: any) {
+  setLayers(value: TMXLayerInfo) {
     this._layers.push(value)
   }
 
@@ -169,7 +167,7 @@ export class TMXMapInfo extends SAXParser {
    * tilesets
    * @param {TMXTilesetInfo} value
    */
-  setTilesets(value: any) {
+  setTilesets(value: TMXTilesetInfo) {
     this._tilesets.push(value)
   }
 
@@ -185,7 +183,7 @@ export class TMXMapInfo extends SAXParser {
    * ObjectGroups
    * @param {TMXObjectGroup} value
    */
-  setObjectGroups(value: any) {
+  setObjectGroups(value: TMXObjectGroup) {
     this._objectGroups.push(value)
   }
 
@@ -217,7 +215,7 @@ export class TMXMapInfo extends SAXParser {
    * parent GID
    * @param {Number} value
    */
-  setParentGID(value: any) {
+  setParentGID(value: number) {
     this.parentGID = value
   }
 
@@ -249,7 +247,7 @@ export class TMXMapInfo extends SAXParser {
    * Is reading storing characters stream
    * @param {Boolean} value
    */
-  setStoringCharacters(value: any) {
+  setStoringCharacters(value: boolean) {
     this.storingCharacters = value
   }
 
@@ -274,7 +272,7 @@ export class TMXMapInfo extends SAXParser {
    * @param {String} tmxFile
    * @return {Element}
    */
-  initWithTMXFile(tmxFile: any) {
+  initWithTMXFile(tmxFile: string) {
     this._internalInit(tmxFile, null)
     return this.parseXMLFile(tmxFile)
   }
@@ -285,7 +283,7 @@ export class TMXMapInfo extends SAXParser {
    * @param {String} resourcePath
    * @return {Boolean}
    */
-  initWithXML(tmxString: any, resourcePath: any) {
+  initWithXML(tmxString: string, resourcePath: string) {
     this._internalInit(null, resourcePath)
     return this.parseXMLString(tmxString)
   }
@@ -295,8 +293,7 @@ export class TMXMapInfo extends SAXParser {
    * @param {boolean} [isXmlString=false]
    * @return {Element}
    */
-  parseXMLFile(tmxFile: any, isXmlString?: any) {
-    isXmlString = isXmlString || false
+  parseXMLFile(tmxFile: string, isXmlString = false) {
     const xmlStr = isXmlString ? tmxFile : loader.getRes(tmxFile)
     if (!xmlStr) throw new Error(`Please load the resource first : ${tmxFile}`)
 
@@ -310,12 +307,12 @@ export class TMXMapInfo extends SAXParser {
     const orientationStr = map.getAttribute('orientation')
 
     if (map.nodeName === 'map') {
-      if (version !== '1.0' && version !== null) log(`cocos2d: TMXFormat: Unsupported TMX version:${version}`)
+      if (version !== '1.0' && version !== null) log(`safex: TMXFormat: Unsupported TMX version:${version}`)
 
       if (orientationStr === 'orthogonal') this.orientation = TMX_ORIENTATION_ORTHO
       else if (orientationStr === 'isometric') this.orientation = TMX_ORIENTATION_ISO
       else if (orientationStr === 'hexagonal') this.orientation = TMX_ORIENTATION_HEX
-      else if (orientationStr !== null) log(`cocos2d: TMXFomat: Unsupported orientation:${orientationStr}`)
+      else if (orientationStr !== null) log(`safex: TMXFomat: Unsupported orientation:${orientationStr}`)
 
       let mapSize = Size(0, 0)
       mapSize.width = parseFloat(map.getAttribute('width'))
@@ -367,9 +364,9 @@ export class TMXMapInfo extends SAXParser {
         tileset.spacing = parseInt(selTileset.getAttribute('spacing')) || 0
         tileset.margin = parseInt(selTileset.getAttribute('margin')) || 0
 
-        const tilesetSize = Size(0, 0)
-        tilesetSize.width = parseFloat(selTileset.getAttribute('tilewidth'))
-        tilesetSize.height = parseFloat(selTileset.getAttribute('tileheight'))
+        const tilewidth = parseFloat(selTileset.getAttribute('tilewidth'))
+        const tileheight = parseFloat(selTileset.getAttribute('tileheight'))
+        const tilesetSize = Size(tilewidth, tileheight)
         tileset._tileSize = tilesetSize
 
         const image = selTileset.getElementsByTagName('image')[0]
@@ -422,9 +419,9 @@ export class TMXMapInfo extends SAXParser {
         const visible = selLayer.getAttribute('visible')
         layer.visible = !(visible == '0')
 
-        const opacity = selLayer.getAttribute('opacity') || '1'
+        const opacity = parseFloat(selLayer.getAttribute('opacity')) || 1
 
-        if (opacity) layer._opacity = 255 * parseFloat(opacity)
+        if (opacity) layer._opacity = 255 * opacity
         else layer._opacity = 255
         layer.offset = p(parseFloat(selLayer.getAttribute('x')) || 0, parseFloat(selLayer.getAttribute('y')) || 0)
 
@@ -447,14 +444,13 @@ export class TMXMapInfo extends SAXParser {
             tiles = unzipBase64AsArray(nodeValue, 4)
             break
           case 'zlib': {
-            const inflator: any = decodeAsArray(nodeValue, 1)
-            tiles = uint8ArrayToUint32Array(decompressSync(inflator))
+            tiles = zlibDecompressBase64(nodeValue)
             break
           }
           case null:
           case '':
             // Uncompressed
-            if (encoding === 'base64') tiles = decodeAsArray(nodeValue, 4)
+            if (encoding === 'base64') tiles = uint8ArrayToUint32Array(decodeAsArray(nodeValue))
             else if (encoding === 'csv') {
               tiles = []
               const csvTiles = nodeValue.split(',')
@@ -532,10 +528,9 @@ export class TMXMapInfo extends SAXParser {
 
             objectProp['x'] = (Number(selObj.getAttribute('x') ?? 0) + objectGroup.getPositionOffset().x) / getContentScaleFactor
             const y = Number(selObj.getAttribute('y') ?? 0) + objectGroup.getPositionOffset().y / getContentScaleFactor
-            // Correct y position. (Tiled uses Flipped, cocos2d uses Standard)
+            // Correct y position. (Tiled uses Flipped, safex uses Standard)
             objectProp['y'] =
-              (parseInt((this.getMapSize().height * this.getTileSize().height) as any) - y - objectProp['height']) /
-              director.getContentScaleFactor()
+              (this.getMapSize().height * this.getTileSize().height - y - objectProp['height']) / director.getContentScaleFactor()
 
             objectProp['rotation'] = parseInt(selObj.getAttribute('rotation')) || 0
 
@@ -570,7 +565,7 @@ export class TMXMapInfo extends SAXParser {
     return map
   }
 
-  _parsePointsString(pointsString: any) {
+  _parsePointsString(pointsString: string) {
     if (!pointsString) return null
 
     const points = []
@@ -587,7 +582,7 @@ export class TMXMapInfo extends SAXParser {
    * @param {String} xmlString
    * @return {Boolean}
    */
-  parseXMLString(xmlString: any) {
+  parseXMLString(xmlString: string) {
     return this.parseXMLFile(xmlString, true)
   }
 
@@ -619,7 +614,7 @@ export class TMXMapInfo extends SAXParser {
    * Set the currentString
    * @param {String} currentString
    */
-  setCurrentString(currentString: any) {
+  setCurrentString(currentString: string) {
     this.currentString = currentString
   }
 
@@ -635,11 +630,11 @@ export class TMXMapInfo extends SAXParser {
    * Set the tmxFileName
    * @param {String} fileName
    */
-  setTMXFileName(fileName: any) {
+  setTMXFileName(fileName: string) {
     this.tmxFileName = fileName
   }
 
-  _internalInit(tmxFileName: any, resourcePath: any) {
+  _internalInit(tmxFileName: string, resourcePath: string) {
     this._tilesets.length = 0
     this._layers.length = 0
 
@@ -662,7 +657,7 @@ export class TMXMapInfo extends SAXParser {
     return this._getMapWidth()
   }
 
-  set mapWidth(width: any) {
+  set mapWidth(width: number) {
     this._setMapWidth(width)
   }
 
@@ -670,7 +665,7 @@ export class TMXMapInfo extends SAXParser {
     return this._getMapHeight()
   }
 
-  set mapHeight(height: any) {
+  set mapHeight(height: number) {
     this._setMapHeight(height)
   }
 
@@ -678,7 +673,7 @@ export class TMXMapInfo extends SAXParser {
     return this._getTileWidth()
   }
 
-  set tileWidth(width: any) {
+  set tileWidth(width: number) {
     this._setTileWidth(width)
   }
 
@@ -686,7 +681,7 @@ export class TMXMapInfo extends SAXParser {
     return this._getTileHeight()
   }
 
-  set tileHeight(height: any) {
+  set tileHeight(height: number) {
     this._setTileHeight(height)
   }
 }

@@ -1,11 +1,8 @@
-import { _renderContext } from '..'
+import { _renderContext, global } from '..'
 import { TEXTURE_ATLAS_USE_TRIANGLE_STRIP } from '../core/platform/Config'
 import { VERTEX_ATTRIB_COLOR, VERTEX_ATTRIB_POSITION, VERTEX_ATTRIB_TEX_COORDS } from '../core/platform/Macro'
 import { V3F_C4B_T2F_Quad } from '../core/platform/Types'
-import { isString } from '../helper/checkType'
-import { _LogInfos, assert, log } from '../helper/Debugger'
-import { defineGetterSetter } from '../helper/getset'
-import { global } from '../helper/global'
+import { _LogInfos, assert, defineGetterSetter, isString, log } from '../helper'
 import { glBindTexture2D } from '../shaders/GLStateCache'
 import { textureCache } from './TextureCache'
 import { Texture2D } from './TexturesWebGL'
@@ -13,7 +10,7 @@ import { Texture2D } from './TexturesWebGL'
 export class TextureAtlas {
   // WebGL only
   dirty = false
-  declare texture: any
+  declare texture: Texture2D
 
   declare _indices: Uint16Array | null
   // 0: vertex  1: indices
@@ -73,14 +70,14 @@ export class TextureAtlas {
    * Texture of the texture atlas
    * @return {Image}
    */
-  getTexture(): any {
+  getTexture() {
     return this.texture
   }
 
   /**
    * @param {Image} texture
    */
-  setTexture(texture: any): void {
+  setTexture(texture: Texture2D) {
     this.texture = texture
   }
 
@@ -88,7 +85,7 @@ export class TextureAtlas {
    * specify if the array buffer of the VBO needs to be updated
    * @param {Boolean} dirty
    */
-  setDirty(dirty: boolean): void {
+  setDirty(dirty: boolean) {
     this.dirty = dirty
   }
 
@@ -111,17 +108,17 @@ export class TextureAtlas {
   /**
    * @param {Array} quads
    */
-  setQuads(quads: any[]): void {
+  setQuads(quads: any[]) {
     this._quads = quads
   }
 
-  _copyQuadsToTextureAtlas(quads: any[], index: number): void {
+  _copyQuadsToTextureAtlas(quads: any[], index: number) {
     if (!quads) return
 
     for (let i = 0; i < quads.length; i++) this._setQuadToArray(quads[i], index + i)
   }
 
-  _setQuadToArray(quad: any, index: number): void {
+  _setQuadToArray(quad: any, index: number) {
     const locQuads = this._quads!
     if (!locQuads[index]) {
       locQuads[index] = new V3F_C4B_T2F_Quad(
@@ -148,7 +145,7 @@ export class TextureAtlas {
     return `<TextureAtlas | totalQuads =${this._totalQuads}>`
   }
 
-  _setupIndices(): void {
+  _setupIndices() {
     if (this._capacity === 0) return
     const locIndices = this._indices!,
       locCapacity = this._capacity
@@ -172,26 +169,6 @@ export class TextureAtlas {
       }
     }
   }
-
-  // _setupVBO(): void {
-  //   const gl = _renderContext
-  //   //create WebGLBuffer
-  //   this._buffersVBO![0] = gl.createBuffer()
-  //   this._buffersVBO![1] = gl.createBuffer()
-
-  //   this._quadsWebBuffer = gl.createBuffer()
-  //   this._mapBuffers()
-  // }
-
-  // _mapBuffers(): void {
-  //   const gl = _renderContext
-
-  //   gl.bindBuffer(gl.ARRAY_BUFFER, this._quadsWebBuffer)
-  //   gl.bufferData(gl.ARRAY_BUFFER, this._quadsArrayBuffer, gl.DYNAMIC_DRAW)
-
-  //   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._buffersVBO![1])
-  //   gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this._indices, gl.STATIC_DRAW)
-  // }
 
   /**
    * <p>Initializes a TextureAtlas with a filename and with a certain capacity for Quads.<br />
@@ -263,7 +240,7 @@ export class TextureAtlas {
    * @param {V3F_C4B_T2F_Quad} quad
    * @param {Number} index
    */
-  updateQuad(quad: any, index: number): void {
+  updateQuad(quad: any, index: number) {
     assert(quad, _LogInfos.TextureAtlas_updateQuad)
     assert(index >= 0 && index < this._capacity, _LogInfos.TextureAtlas_updateQuad_2)
 
@@ -278,7 +255,7 @@ export class TextureAtlas {
    * @param {V3F_C4B_T2F_Quad} quad
    * @param {Number} index
    */
-  insertQuad(quad: any, index: number): void {
+  insertQuad(quad: any, index: number) {
     assert(index < this._capacity, _LogInfos.TextureAtlas_insertQuad_2)
 
     this._totalQuads++
@@ -315,7 +292,7 @@ export class TextureAtlas {
    * @param {Number} index
    * @param {Number} amount
    */
-  insertQuads(quads: any[], index: number, amount?: number): void {
+  insertQuads(quads: any[], index: number, amount?: number) {
     amount = amount || quads.length
 
     assert(index + amount <= this._capacity, _LogInfos.TextureAtlas_insertQuads)
@@ -348,7 +325,7 @@ export class TextureAtlas {
    * @param {Number} fromIndex
    * @param {Number} newIndex
    */
-  insertQuadFromIndex(fromIndex: number, newIndex: number): void {
+  insertQuadFromIndex(fromIndex: number, newIndex: number) {
     if (fromIndex === newIndex) return
 
     assert(newIndex >= 0 || newIndex < this._totalQuads, _LogInfos.TextureAtlas_insertQuadFromIndex)
@@ -378,7 +355,7 @@ export class TextureAtlas {
    * The capacity remains the same, but the total number of quads to be drawn is reduced in 1 </p>
    * @param {Number} index
    */
-  removeQuadAtIndex(index: number): void {
+  removeQuadAtIndex(index: number) {
     assert(index < this._totalQuads, _LogInfos.TextureAtlas_removeQuadAtIndex)
 
     const quadSize = V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT
@@ -398,7 +375,7 @@ export class TextureAtlas {
    * @param {Number} index
    * @param {Number} amount
    */
-  removeQuadsAtIndex(index: number, amount: number): void {
+  removeQuadsAtIndex(index: number, amount: number) {
     assert(index + amount <= this._totalQuads, _LogInfos.TextureAtlas_removeQuadsAtIndex)
 
     this._totalQuads -= amount
@@ -419,12 +396,12 @@ export class TextureAtlas {
    * The TextureAtlas capacity remains untouched. No memory is freed.<br />
    * The total number of quads to be drawn will be 0</p>
    */
-  removeAllQuads(): void {
+  removeAllQuads() {
     this._quads!.length = 0
     this._totalQuads = 0
   }
 
-  _setDirty(dirty: boolean): void {
+  _setDirty(dirty: boolean) {
     this.dirty = dirty
   }
 
@@ -505,7 +482,7 @@ export class TextureAtlas {
    * don't use this unless you know what you're doing
    * @param {Number} amount
    */
-  increaseTotalQuadsWith(amount: number): void {
+  increaseTotalQuadsWith(amount: number) {
     this._totalQuads += amount
   }
 
@@ -515,7 +492,7 @@ export class TextureAtlas {
    * @param {Number} amount
    * @param {Number} newIndex
    */
-  moveQuadsFromIndex(oldIndex: number, amount: number, newIndex?: number): void {
+  moveQuadsFromIndex(oldIndex: number, amount: number, newIndex?: number) {
     if (newIndex === undefined) {
       newIndex = amount
       amount = this._totalQuads - oldIndex
@@ -556,7 +533,7 @@ export class TextureAtlas {
    * @param {Number} index
    * @param {Number} amount
    */
-  fillWithEmptyQuadsFromIndex(index: number, amount: number): void {
+  fillWithEmptyQuadsFromIndex(index: number, amount: number) {
     const count = amount * V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT
     const clearReader = new Uint8Array(this._quadsArrayBuffer!, index * V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT, count)
     for (let i = 0; i < count; i++) clearReader[i] = 0
@@ -567,11 +544,11 @@ export class TextureAtlas {
   /**
    * Draws all the Atlas's Quads
    */
-  drawQuads(): void {
+  drawQuads() {
     this.drawNumberOfQuads(this._totalQuads, 0)
   }
 
-  _releaseBuffer(): void {
+  _releaseBuffer() {
     const gl = _renderContext
     if (this._buffersVBO) {
       if (this._buffersVBO[0]) gl.deleteBuffer(this._buffersVBO[0])
@@ -596,6 +573,7 @@ export class TextureAtlas {
   set quads(quads: any[]) {
     this.setQuads(quads)
   }
+
   _setupVBO() {
     const gl = _renderContext
     //create WebGLBuffer
@@ -670,19 +648,6 @@ export class TextureAtlas {
   static createWithTexture = TextureAtlas.create
 }
 
-// Assign to global cc
-
-// game.addEventListener(Game.EVENT_RENDERER_INITD, function () {
-//   if (_renderType === game.RENDER_TYPE_WEBGL) {
-//     assert(isFunction(_tmp.WebGLTextureAtlas), _LogInfos.MissingFile, 'TexturesWebGL.js')
-//     _tmp.WebGLTextureAtlas()
-//     delete _tmp.WebGLTextureAtlas
-//   }
-// })
-
-// assert(isFunction(_tmp.PrototypeTextureAtlas), _LogInfos.MissingFile, 'TexturesPropertyDefine.js')
-// _tmp.PrototypeTextureAtlas()
-// delete _tmp.PrototypeTextureAtlas
 const _p = TextureAtlas.prototype
 defineGetterSetter(_p, 'totalQuads', _p.getTotalQuads)
 defineGetterSetter(_p, 'capacity', _p.getCapacity)

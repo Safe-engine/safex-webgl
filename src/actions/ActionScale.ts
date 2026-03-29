@@ -102,7 +102,7 @@ export class ScaleTo extends ActionInterval {
  * // It scales to 0.5 in x and 2 in Y
  * var actionTo = scaleTo(2, 0.5, 2);
  */
-export const scaleTo = function (duration, sx, sy) {
+export const scaleTo = function (duration: number, sx: number, sy?: number) {
   //function overload
   return new ScaleTo(duration, sx, sy)
 }
@@ -160,6 +160,6 @@ export class ScaleBy extends ScaleTo {
  * //example with sy, it scales by 0.25 in X and 4.5 in Y
  * var actionBy2 = scaleBy(2, 0.25, 4.5);
  */
-export const scaleBy = function (duration, sx, sy) {
+export const scaleBy = function (duration: number, sx: number, sy?: number) {
   return new ScaleBy(duration, sx, sy)
 }

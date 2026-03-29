@@ -29,10 +29,10 @@ export class Widget extends ProtectedNode {
   declare _touchEventListener
   declare _touchEventSelector
 
-  _name = 'default'
-  _widgetType = null
+  // _name = 'default'
+  declare _widgetType
   _actionTag = 0
-  _customSize = null
+  declare _customSize
   declare _layoutParameterDictionary
   _layoutParameterType = 0
 
@@ -42,14 +42,13 @@ export class Widget extends ProtectedNode {
   _ignoreSize = false
   _affectByClipping = false
 
-  _sizeType = null
-  _sizePercent = null
-  _positionType = null
-  _positionPercent = null
+  declare _sizeType
+  declare _sizePercent
+  declare _positionType
+  declare _positionPercent
   _hit = false
-  _nodes = null
-  _touchListener = null
-  _className = 'Widget'
+  declare _nodes
+  declare _touchListener
   _flippedX = false
   _flippedY = false
   _opacity = 255
@@ -1412,7 +1411,7 @@ export class Widget extends ProtectedNode {
    * @param {Number} tag
    * @deprecated since v3.0, please use addChild instead.
    */
-  addNode(node, zOrder, tag) {
+  addNode(node: Node, zOrder: number, tag: number) {
     if (node instanceof Widget) {
       log('Please use addChild to add a Widget.')
       return
@@ -1427,7 +1426,7 @@ export class Widget extends ProtectedNode {
    * @param {Number} tag
    * @returns {Node}
    */
-  getNodeByTag(tag) {
+  getNodeByTag(tag: number) {
     const _nodes = this._nodes
     for (let i = 0; i < _nodes.length; i++) {
       const node = _nodes[i]
@@ -1453,7 +1452,7 @@ export class Widget extends ProtectedNode {
    * @param {Node} node
    * @param {Boolean} cleanup
    */
-  removeNode(node, cleanup) {
+  removeNode(node, cleanup?: boolean) {
     Node.prototype.removeChild.call(this, node, cleanup)
     arrayRemoveObject(this._nodes, node)
   }
@@ -1472,9 +1471,9 @@ export class Widget extends ProtectedNode {
    * @param {Number} tag
    * @param {Boolean} [cleanup]
    */
-  removeNodeByTag(tag, cleanup) {
+  removeNodeByTag(tag: number, cleanup?: boolean) {
     const node = this.getChildByTag(tag)
-    if (!node) log('cocos2d: removeNodeByTag(tag = %d): child not found!', tag)
+    if (!node) log('safex: removeNodeByTag(tag = %d): child not found!', tag)
     else this.removeChild(node, cleanup)
   }
 

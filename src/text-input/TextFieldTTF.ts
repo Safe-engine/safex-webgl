@@ -79,13 +79,11 @@ export class TextFieldDelegate {
 export class TextFieldTTF extends LabelTTF {
   declare delegate
   declare colorSpaceHolder
-
   declare _colorText
   declare _lens
   _inputText = ''
   _placeHolder = ''
   _charCount = 0
-  _className = 'TextFieldTTF'
 
   /**
    * Constructor function.

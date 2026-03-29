@@ -1,4 +1,4 @@
-import { rectGetMaxX, rectGetMaxY, rectGetMinX, rectGetMinY } from './Geometry'
+import { Point, Rect, rectGetMaxX, rectGetMaxY, rectGetMinX, rectGetMinY } from './Geometry'
 
 /**
  * <p>AffineTransform class represent an affine transform matrix. It's composed basically by translation, rotation, scale transformations.<br/>
@@ -13,13 +13,15 @@ import { rectGetMaxX, rectGetMaxY, rectGetMinX, rectGetMinY } from './Geometry'
  * @param {Number} ty
  * @see affineTransformMake
  */
-export const AffineTransform = function (a, b, c, d, tx, ty) {
-  this.a = a
-  this.b = b
-  this.c = c
-  this.d = d
-  this.tx = tx
-  this.ty = ty
+export class AffineTransform {
+  constructor(
+    public a: number,
+    public b: number,
+    public c: number,
+    public d: number,
+    public tx: number,
+    public ty: number,
+  ) {}
 }
 
 /**
@@ -34,7 +36,7 @@ export const AffineTransform = function (a, b, c, d, tx, ty) {
  * @param {Number} ty
  * @return {AffineTransform}
  */
-export const affineTransformMake = function (a, b, c, d, tx, ty) {
+export const affineTransformMake = function (a, b, c, d, tx, ty): AffineTransform {
   return { a: a, b: b, c: c, d: d, tx: tx, ty: ty }
 }
 
@@ -47,7 +49,7 @@ export const affineTransformMake = function (a, b, c, d, tx, ty) {
  * @param {AffineTransform} t transform matrix or y
  * @return {Point}
  */
-export const pointApplyAffineTransform = function (point, transOrY, t?) {
+export const pointApplyAffineTransform = function (point, transOrY, t?: AffineTransform): Point {
   let x, y
   if (t === undefined) {
     t = transOrY
@@ -106,7 +108,7 @@ export const affineTransformIdentity = function () {
  * @param {AffineTransform} anAffineTransform
  * @return {Rect}
  */
-export const rectApplyAffineTransform = function (rect, anAffineTransform) {
+export const rectApplyAffineTransform = function (rect: Rect, anAffineTransform: AffineTransform) {
   const top = rectGetMinY(rect)
   const left = rectGetMinX(rect)
   const right = rectGetMaxX(rect)
@@ -122,10 +124,10 @@ export const rectApplyAffineTransform = function (rect, anAffineTransform) {
   const minY = Math.min(topLeft.y, topRight.y, bottomLeft.y, bottomRight.y)
   const maxY = Math.max(topLeft.y, topRight.y, bottomLeft.y, bottomRight.y)
 
-  return rect(minX, minY, maxX - minX, maxY - minY)
+  return Rect(minX, minY, maxX - minX, maxY - minY)
 }
 
-export const rectApplyAffineTransformIn = function (rect, anAffineTransform) {
+export const rectApplyAffineTransformIn = function (rect: Rect, anAffineTransform: AffineTransform) {
   const top = rectGetMinY(rect)
   const left = rectGetMinX(rect)
   const right = rectGetMaxX(rect)
@@ -157,7 +159,7 @@ export const rectApplyAffineTransformIn = function (rect, anAffineTransform) {
  * @param {Number} ty The translation on y axis
  * @return {AffineTransform}
  */
-export const affineTransformTranslate = function (t, tx, ty) {
+export const affineTransformTranslate = function (t: AffineTransform, tx: number, ty: number): AffineTransform {
   return {
     a: t.a,
     b: t.b,
@@ -176,7 +178,7 @@ export const affineTransformTranslate = function (t, tx, ty) {
  * @param {Number} sy The scale on y axis
  * @return {AffineTransform}
  */
-export const affineTransformScale = function (t, sx, sy) {
+export const affineTransformScale = function (t: AffineTransform, sx: number, sy: number): AffineTransform {
   return { a: t.a * sx, b: t.b * sx, c: t.c * sy, d: t.d * sy, tx: t.tx, ty: t.ty }
 }
 
@@ -187,7 +189,7 @@ export const affineTransformScale = function (t, sx, sy) {
  * @param {Number} anAngle  The angle to rotate
  * @return {AffineTransform}
  */
-export const affineTransformRotate = function (aTransform, anAngle) {
+export const affineTransformRotate = function (aTransform: AffineTransform, anAngle: number): AffineTransform {
   const fSin = Math.sin(anAngle)
   const fCos = Math.cos(anAngle)
 
@@ -209,7 +211,7 @@ export const affineTransformRotate = function (aTransform, anAngle) {
  * @param {AffineTransform} t2 The transform object to concatenate
  * @return {AffineTransform} The result of concatenation
  */
-export const affineTransformConcat = function (t1, t2) {
+export const affineTransformConcat = function (t1: AffineTransform, t2: AffineTransform): AffineTransform {
   return {
     a: t1.a * t2.a + t1.b * t2.c, //a
     b: t1.a * t2.b + t1.b * t2.d, //b
@@ -229,7 +231,7 @@ export const affineTransformConcat = function (t1, t2) {
  * @param {AffineTransform} t2 The transform object to concatenate
  * @return {AffineTransform} The result of concatenation
  */
-export const affineTransformConcatIn = function (t1, t2) {
+export const affineTransformConcatIn = function (t1: AffineTransform, t2: AffineTransform): AffineTransform {
   const a = t1.a,
     b = t1.b,
     c = t1.c,
@@ -252,7 +254,7 @@ export const affineTransformConcatIn = function (t1, t2) {
  * @param {AffineTransform} t2
  * @return {Boolean}
  */
-export const affineTransformEqualToTransform = function (t1, t2) {
+export const affineTransformEqualToTransform = function (t1: AffineTransform, t2: AffineTransform) {
   return t1.a === t2.a && t1.b === t2.b && t1.c === t2.c && t1.d === t2.d && t1.tx === t2.tx && t1.ty === t2.ty
 }
 
@@ -262,7 +264,7 @@ export const affineTransformEqualToTransform = function (t1, t2) {
  * @param {AffineTransform} t
  * @return {AffineTransform} The inverted transform object
  */
-export const affineTransformInvert = function (t) {
+export const affineTransformInvert = function (t: AffineTransform): AffineTransform {
   const determinant = 1 / (t.a * t.d - t.b * t.c)
   return {
     a: determinant * t.d,
@@ -274,7 +276,7 @@ export const affineTransformInvert = function (t) {
   }
 }
 
-export const affineTransformInvertOut = function (t, out) {
+export const affineTransformInvertOut = function (t: AffineTransform, out: AffineTransform) {
   const a = t.a,
     b = t.b,
     c = t.c,

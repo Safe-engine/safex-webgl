@@ -32,7 +32,7 @@ export class ContainerStrategy {
     // Setup canvas
     locCanvas.width = w * devicePixelRatio
     locCanvas.height = h * devicePixelRatio
-    ;(game._renderContext as any).resetCache && (game._renderContext as any).resetCache()
+    // _renderContext.resetCache && _renderContext.resetCache()
   }
 
   protected _fixContainer() {

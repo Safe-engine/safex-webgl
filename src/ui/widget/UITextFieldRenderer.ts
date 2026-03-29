@@ -9,7 +9,6 @@ export class TextFieldRenderer extends TextFieldTTF {
   _detachWithIME = false
   _insertText = false
   _deleteBackward = false
-  _className = 'TextFieldRenderer'
 
   // constructor() {
   //   super()

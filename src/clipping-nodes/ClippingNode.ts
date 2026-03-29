@@ -1,4 +1,5 @@
 import { Node } from '../core/base-nodes/Node'
+import type { GLProgram } from '../shaders'
 import { ClippingNodeWebGLRenderCmd } from './ClippingNodeWebGLRenderCmd'
 
 /**
@@ -19,9 +20,8 @@ import { ClippingNodeWebGLRenderCmd } from './ClippingNodeWebGLRenderCmd'
 export class ClippingNode extends Node {
   inverted = false
   _alphaThreshold = 0
-  // _dirtyFlag: number
   declare _stencil: Node
-  declare _originStencilProgram: any
+  declare _originStencilProgram: GLProgram
   declare stencil: Node | null
   declare alphaThreshold: number
   declare _renderCmd: ClippingNodeWebGLRenderCmd
@@ -183,11 +183,3 @@ export class ClippingNode extends Node {
     return new ClippingNodeWebGLRenderCmd(this)
   }
 }
-
-// Set _className on prototype for compatibility
-ClippingNode.prototype._className = 'ClippingNode'
-
-// Extended properties
-// const _p = ClippingNode.prototype
-// defineGetterSetter(_p, 'stencil', _p.getStencil, _p.setStencil)
-// defineGetterSetter(_p, 'alphaThreshold', _p.getAlphaThreshold, _p.setAlphaThreshold)

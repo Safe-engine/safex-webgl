@@ -171,7 +171,7 @@ export class GLProgramState {
     if (v) {
       v.setInt(value)
     } else {
-      log(`cocos2d: warning: Uniform not found: ${uniform}`)
+      log(`safex: warning: Uniform not found: ${uniform}`)
     }
   }
 
@@ -180,7 +180,7 @@ export class GLProgramState {
     if (v) {
       v.setFloat(value)
     } else {
-      log(`cocos2d: warning: Uniform not found: ${uniform}`)
+      log(`safex: warning: Uniform not found: ${uniform}`)
     }
   }
 
@@ -189,7 +189,7 @@ export class GLProgramState {
     if (v) {
       v.setVec2(v1, v2)
     } else {
-      log(`cocos2d: warning: Uniform not found: ${uniform}`)
+      log(`safex: warning: Uniform not found: ${uniform}`)
     }
   }
 
@@ -198,7 +198,7 @@ export class GLProgramState {
     if (v) {
       v.setVec2v(value)
     } else {
-      log(`cocos2d: warning: Uniform not found: ${uniform}`)
+      log(`safex: warning: Uniform not found: ${uniform}`)
     }
   }
 
@@ -207,7 +207,7 @@ export class GLProgramState {
     if (v) {
       v.setVec3(v1, v2, v3)
     } else {
-      log(`cocos2d: warning: Uniform not found: ${uniform}`)
+      log(`safex: warning: Uniform not found: ${uniform}`)
     }
   }
 
@@ -216,7 +216,7 @@ export class GLProgramState {
     if (v) {
       v.setVec3v(value)
     } else {
-      log(`cocos2d: warning: Uniform not found: ${uniform}`)
+      log(`safex: warning: Uniform not found: ${uniform}`)
     }
   }
 
@@ -225,7 +225,7 @@ export class GLProgramState {
     if (v) {
       v.setVec4(v1, v2, v3, v4)
     } else {
-      log(`cocos2d: warning: Uniform not found: ${uniform}`)
+      log(`safex: warning: Uniform not found: ${uniform}`)
     }
   }
 
@@ -234,7 +234,7 @@ export class GLProgramState {
     if (v) {
       v.setVec4v(value)
     } else {
-      log(`cocos2d: warning: Uniform not found: ${uniform}`)
+      log(`safex: warning: Uniform not found: ${uniform}`)
     }
   }
 
@@ -243,7 +243,7 @@ export class GLProgramState {
     if (v) {
       v.setMat4(value)
     } else {
-      log(`cocos2d: warning: Uniform not found: ${uniform}`)
+      log(`safex: warning: Uniform not found: ${uniform}`)
     }
   }
 
@@ -252,7 +252,7 @@ export class GLProgramState {
     if (v) {
       v.setCallback(callback)
     } else {
-      log(`cocos2d: warning: Uniform not found: ${uniform}`)
+      log(`safex: warning: Uniform not found: ${uniform}`)
     }
   }
 

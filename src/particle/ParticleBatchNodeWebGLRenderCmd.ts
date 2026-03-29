@@ -3,9 +3,11 @@ import { NodeWebGLRenderCmd } from '../core/base-nodes/NodeWebGLRenderCmd'
 import { Matrix4 } from '../core/kazmath/mat4'
 import { glBlendFuncForParticle } from '../shaders/GLStateCache'
 import { shaderCache } from '../shaders/ShaderCache'
+import type { ParticleBatchNode } from './ParticleBatchNode'
 
 export class ParticleBatchNodeWebGLRenderCmd extends NodeWebGLRenderCmd {
-  _matrix: any = null
+  _matrix: Matrix4
+  declare _node: ParticleBatchNode
 
   constructor(renderable: any) {
     super(renderable)
@@ -14,8 +16,8 @@ export class ParticleBatchNodeWebGLRenderCmd extends NodeWebGLRenderCmd {
     this._matrix.identity()
   }
 
-  rendering(ctx: any): void {
-    const _t: any = this._node
+  rendering(ctx: any) {
+    const _t = this._node
     if (_t.textureAtlas.totalQuads === 0) return
 
     const wt = this._worldTransform
@@ -31,7 +33,7 @@ export class ParticleBatchNodeWebGLRenderCmd extends NodeWebGLRenderCmd {
     _t.textureAtlas.drawQuads()
   }
 
-  _initWithTexture(): void {
+  _initWithTexture() {
     this._shaderProgram = shaderCache.programForKey(SHADER_POSITION_TEXTURECOLOR)
   }
 }

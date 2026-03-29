@@ -1,70 +1,36 @@
 import { _LogInfos, assert, log } from '../../helper/Debugger'
+import type { TextureAtlas } from '../../textures/TextureAtlas'
 import { textureCache } from '../../textures/TextureCache'
 import { Texture2D } from '../../textures/TexturesWebGL'
 import { Node } from '../base-nodes/Node'
-import { p, Rect, Size } from '../cocoa/Geometry'
+import { p, Point, Rect, Size } from '../cocoa/Geometry'
 import { BLEND_DST, BLEND_SRC, pointPointsToPixels, rectPointsToPixels, sizePointsToPixels } from '../platform/Macro'
 import { animationCache } from './AnimationCache'
+import type { SpriteBatchNode } from './SpriteBatchNode'
 import { SpriteFrame } from './SpriteFrame'
 import { spriteFrameCache } from './SpriteFrameCache'
 import { SpriteLoadManager } from './SpriteLoadManager'
 import { SpriteWebGLRenderCmd } from './SpriteWebGLRenderCmd'
 
 export class Sprite extends Node {
-  getLineHeight() {
-    throw new Error('Method not implemented.')
-  }
-  _getFontStyle() {
-    throw new Error('Method not implemented.')
-  }
-  declare dirty
-  declare atlasIndex
-  declare textureAtlas: any
-  declare _batchNode: any
-  declare _recursiveDirty: any
-  declare _hasChildren: any
-  _shouldBeHidden = false
-  declare _transformToBatch: any
+  declare dirty: boolean
+  declare atlasIndex: number
+  declare textureAtlas: TextureAtlas
+  declare _batchNode: SpriteBatchNode
+  declare _recursiveDirty: boolean
+  declare _hasChildren: boolean
   declare _texture: Texture2D
-  // declare texture: Texture2D
-  declare _rect: Rect
-  _rectRotated = false
-  declare _offsetPosition: any
-  declare _unflippedOffsetPositionFromCenter: any
-  _opacityModifyRGB = false
-  _flippedX = false
-  _flippedY = false
-  _textureLoaded = false
-  _className = 'Sprite'
+  declare _offsetPosition: Point
+  declare _unflippedOffsetPositionFromCenter: Point
   _blendFunc = { src: BLEND_SRC, dst: BLEND_DST }
-  _loader: SpriteLoadManager = null
-  anchorX = 0.5
-  anchorY = 0.5
-  declare _setReorderChildDirtyRecursively: () => void
+  declare _loader: SpriteLoadManager
   declare _renderCmd: SpriteWebGLRenderCmd
-  _needUpdateTexture: boolean
-  _string: any
-  _shadowColor: any
-  _strokeColor: any
-  declare _textFillColor: any
-  _shadowOpacity: any
-  _dimensions: any
-  _strokeEnabled: any
-  _strokeSize: number
-  _shadowEnabled: any
-  _shadowOffset: any
-  _fontSize: number
-  _strokeShadowOffsetX: number
-  _strokeShadowOffsetY: number
-  _vAlignment: any
-  _hAlignment: any
-  _shadowBlur: any
 
-  constructor(fileName?: any, rectArg?: any, rotated?: any) {
+  constructor(fileName?: string | Texture2D | SpriteFrame, rectArg?: Rect, rotated?: boolean) {
     super()
     this.setAnchorPoint(0.5, 0.5)
     this._loader = new SpriteLoadManager()
-    this._shouldBeHidden = false
+    // this._shouldBeHidden = false
     this._offsetPosition = p(0, 0)
     this._unflippedOffsetPositionFromCenter = p(0, 0)
     this._rect = Rect(0, 0, 0, 0)
@@ -107,7 +73,7 @@ export class Sprite extends Node {
     return this.textureAtlas
   }
 
-  setTextureAtlas(textureAtlas: any) {
+  setTextureAtlas(textureAtlas: TextureAtlas) {
     this.textureAtlas = textureAtlas
   }
 
@@ -143,7 +109,7 @@ export class Sprite extends Node {
     // legacy no-op placeholder
   }
 
-  setVertexRect(r: any) {
+  setVertexRect(r: Rect) {
     const locRect = this._rect
     locRect.x = r.x
     locRect.y = r.y
@@ -253,16 +219,14 @@ export class Sprite extends Node {
 
   init(fileName?: string, rectArg?: Rect) {
     if (arguments.length > 0) return this.initWithFile(fileName, rectArg)
-    super.init()
-    this.dirty = this._recursiveDirty = false
-    this._blendFunc.src = BLEND_SRC
-    this._blendFunc.dst = BLEND_DST
-    // this.texture = null
+    // super.init()
+    this._recursiveDirty = false
+    this.dirty = false
+    this._blendFunc = { src: BLEND_SRC, dst: BLEND_DST }
+    this.setTexture(null)
     this._flippedX = this._flippedY = false
-    this.anchorX = 0.5
-    this.anchorY = 0.5
-    this._offsetPosition.x = 0
-    this._offsetPosition.y = 0
+    this.setAnchorPoint(0.5, 0.5)
+    this._offsetPosition = p(0, 0)
     this._hasChildren = false
     this.setTextureRect(Rect(0, 0, 0, 0), false, Size(0, 0))
     return true
@@ -326,7 +290,7 @@ export class Sprite extends Node {
       this._rect.width = rectArg.width
       this._rect.height = rectArg.height
     }
-    if (!rectArg) rectArg = Rect(0, 0, textureIns.width, textureIns.height)
+    if (!rectArg) rectArg = Rect(0, 0, textureIns._getWidth(), textureIns._getHeight())
     this._renderCmd._checkTextureBoundary(textureIns, rectArg, rotated)
     this.setTexture(textureIns)
     this.setTextureRect(rectArg, rotated)
@@ -334,7 +298,7 @@ export class Sprite extends Node {
     return true
   }
 
-  setTextureRect(rectArg: any, rotated?: boolean, untrimmedSize?: any, needConvert?: any) {
+  setTextureRect(rectArg: Rect, rotated?: boolean, untrimmedSize?: Size, needConvert?: boolean) {
     this._rectRotated = rotated || false
     this.setContentSize(untrimmedSize || rectArg)
     this.setVertexRect(rectArg)
@@ -348,7 +312,7 @@ export class Sprite extends Node {
     this._offsetPosition.y = relativeOffsetY + (this._contentSize.height - locRect.height) / 2
   }
 
-  addChild(child: any, localZOrder?: number, tag?: number) {
+  addChild(child: Node, localZOrder?: number, tag?: number) {
     assert(child, _LogInfos.CCSpriteBatchNode_addChild_2)
     if (localZOrder == null) localZOrder = child._localZOrder
     if (tag == null) tag = child.tag
@@ -358,7 +322,7 @@ export class Sprite extends Node {
     }
   }
 
-  setSpriteFrame(newFrame: any) {
+  setSpriteFrame(newFrame: SpriteFrame) {
     if (typeof newFrame === 'string') {
       newFrame = spriteFrameCache.getSpriteFrame(newFrame)
       assert(newFrame, _LogInfos.Sprite_setSpriteFrame)
@@ -438,7 +402,7 @@ export class Sprite extends Node {
     this._textureLoaded = true
   }
 
-  _changeRectWithTexture(texture: any) {
+  _changeRectWithTexture(texture: Texture2D) {
     const contentSize = texture._contentSize
     const r = Rect(0, 0, contentSize.width, contentSize.height)
     this.setTextureRect(r)
@@ -450,5 +414,3 @@ export class Sprite extends Node {
 
   static readonly INDEX_NOT_INITIALIZED = -1
 }
-
-// PrototypeSprite()

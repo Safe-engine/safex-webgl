@@ -1,4 +1,4 @@
-import { p } from '../core/cocoa/Geometry'
+import { p, Point } from '../core/cocoa/Geometry'
 import { ENABLE_STACKABLE_ACTIONS } from '../core/platform/Config'
 import { pSub } from '../core/support/PointExtension'
 import { ActionInterval } from './ActionInterval'
@@ -82,7 +82,7 @@ export const copyControlPoints = cloneControlPoints
  * @param {Number} pos
  * @return {Array}
  */
-export const getControlPointAt = function (controlPoints, pos) {
+export const getControlPointAt = function (controlPoints: Point[], pos: number) {
   const p = Math.min(controlPoints.length - 1, Math.max(pos, 0))
   return controlPoints[p]
 }
@@ -118,11 +118,11 @@ export const reverseControlPointsInline = function (controlPoints) {
  */
 export class CardinalSplineTo extends ActionInterval {
   /** Array of control points */
-  _points = null
+  declare _points: Point[]
   _deltaT = 0
   _tension = 0
-  _previousPosition = null
-  _accumulatedDiff = null
+  declare _previousPosition
+  declare _accumulatedDiff
 
   /**
    * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
@@ -430,7 +430,7 @@ export class CatmullRomTo extends CardinalSplineTo {
  * @example
  * var action1 = catmullRomTo(3, array);
  */
-export const catmullRomTo = function (dt, points) {
+export const catmullRomTo = function (dt: number, points: Point[]) {
   return new CatmullRomTo(dt, points)
 }
 
@@ -476,6 +476,6 @@ export class CatmullRomBy extends CardinalSplineBy {
  * @example
  * var action1 = catmullRomBy(3, array);
  */
-export const catmullRomBy = function (dt, points) {
+export const catmullRomBy = function (dt: number, points: Point[]) {
   return new CatmullRomBy(dt, points)
 }

@@ -35,11 +35,11 @@ export const Acceleration = function (x, y, z, timestamp) {
 export class V3F_C4B_T2F {
   static BYTES_PER_ELEMENT = 24
 
-  _arrayBuffer: ArrayBuffer
-  _offset: number
-  _vertices: any
-  _colors: any
-  _texCoords: any
+  declare _arrayBuffer: ArrayBuffer
+  declare _offset: number
+  declare _vertices: any
+  declare _colors: any
+  declare _texCoords: any
 
   constructor(
     vertices?: any | null,
@@ -177,20 +177,10 @@ _p._getArrayBuffer = function () {
   return this._arrayBuffer
 }
 
-/** @expose */
-_p.tl
 defineGetterSetter(_p, 'tl', _p._getTL, _p._setTL)
-/** @expose */
-_p.tr
 defineGetterSetter(_p, 'tr', _p._getTR, _p._setTR)
-/** @expose */
-_p.bl
 defineGetterSetter(_p, 'bl', _p._getBL, _p._setBL)
-/** @expose */
-_p.br
 defineGetterSetter(_p, 'br', _p._getBR, _p._setBR)
-/** @expose */
-_p.arrayBuffer
 defineGetterSetter(_p, 'arrayBuffer', _p._getArrayBuffer, null)
 
 /**
@@ -312,14 +302,8 @@ _p._setTexCoords = function (texValue) {
   this._texCoords._view[1] = texValue.v
 }
 
-/** @expose */
-_p.vertices
 defineGetterSetter(_p, 'vertices', _p._getVertices, _p._setVertices)
-/** @expose */
-_p.colors
 defineGetterSetter(_p, 'colors', _p._getColor, _p._setColor)
-/** @expose */
-_p.texCoords
 defineGetterSetter(_p, 'texCoords', _p._getTexCoords, _p._setTexCoords)
 
 //redefine V2F_C4B_T2F_Triangle

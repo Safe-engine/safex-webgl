@@ -9,14 +9,12 @@ export const _txtLoader = {
     loader.loadTxt(realUrl, cb)
   },
 }
-loader.register(['txt', 'xml', 'vsh', 'fsh', 'atlas'], _txtLoader)
 
-const _jsonLoader = {
+export const _jsonLoader = {
   load: function (realUrl, url, res, cb) {
     loader.loadJson(realUrl, cb)
   },
 }
-loader.register(['json', 'ExportJson'], _jsonLoader)
 
 // const _jsLoader = {
 //   load: function (realUrl, url, res, cb) {
@@ -25,7 +23,7 @@ loader.register(['json', 'ExportJson'], _jsonLoader)
 // }
 // loader.register(['js'], _jsLoader)
 
-const _imgLoader = {
+export const _imgLoader = {
   load: function (realUrl, url, res, cb) {
     let callback
     if (loader.isLoading(realUrl)) {
@@ -44,15 +42,13 @@ const _imgLoader = {
     loader.loadImg(realUrl, callback)
   },
 }
-loader.register(['png', 'jpg', 'bmp', 'jpeg', 'gif', 'ico', 'tiff', 'webp'], _imgLoader)
-const _serverImgLoader = {
+export const _serverImgLoader = {
   load: function (realUrl, url, res, cb) {
     _imgLoader.load(res.src, url, res, cb)
   },
 }
-loader.register(['serverImg'], _serverImgLoader)
 
-const _plistLoader = {
+export const _plistLoader = {
   load: function (realUrl, url, res, cb) {
     loader.loadTxt(realUrl, function (err, txt) {
       if (err) return cb(err)
@@ -60,9 +56,8 @@ const _plistLoader = {
     })
   },
 }
-loader.register(['plist'], _plistLoader)
 
-const _fontLoader = {
+export const _fontLoader = {
   TYPE: {
     '.eot': 'embedded-opentype',
     '.ttf': 'truetype',
@@ -128,7 +123,6 @@ const _fontLoader = {
     }
   },
 }
-loader.register(['font', 'eot', 'ttf', 'woff', 'svg', 'ttc'], _fontLoader)
 
 // const _binaryLoader = {
 //   load: function (realUrl, url, res, cb) {

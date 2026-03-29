@@ -1,6 +1,5 @@
-import { director, game } from '../..'
+import { director } from '../..'
 import { color, p } from '../../core'
-import { _renderType } from '../../helper/engine'
 import { ParticleSystem } from '../ParticleSystem'
 
 export class ParticleSmoke extends ParticleSystem {
@@ -10,7 +9,7 @@ export class ParticleSmoke extends ParticleSystem {
    * Override it to extend its behavior, remember to call "this._super()" in the extended "ctor" function.</p>
    */
   constructor() {
-    super(_renderType === game.RENDER_TYPE_WEBGL ? 200 : 100)
+    super(200)
   }
 
   /**
@@ -87,7 +86,7 @@ export class ParticleSnow extends ParticleSystem {
    * Override it to extend its behavior, remember to call "this._super()" in the extended "ctor" function.</p>
    */
   constructor() {
-    super(_renderType === game.RENDER_TYPE_WEBGL ? 700 : 250)
+    super(700)
   }
 
   /**
@@ -169,7 +168,7 @@ export class ParticleRain extends ParticleSystem {
    * Override it to extend its behavior, remember to call "this._super()" in the extended "ctor" function.</p>
    */
   constructor() {
-    super(_renderType === game.RENDER_TYPE_WEBGL ? 1000 : 300)
+    super(1000)
   }
 
   /**

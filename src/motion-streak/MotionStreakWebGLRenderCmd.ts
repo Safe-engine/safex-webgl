@@ -7,10 +7,10 @@ import { shaderCache } from '../shaders/ShaderCache'
 import { MotionStreak } from './MotionStreak'
 
 export class MotionStreakWebGLRenderCmd extends NodeWebGLRenderCmd {
-  declare _matrix: any
+  declare _matrix: Matrix4
   declare _node: MotionStreak
 
-  constructor(renderableObject: any) {
+  constructor(renderableObject: MotionStreak) {
     super(renderableObject)
     this._needDraw = true
     this._matrix = new Matrix4()
@@ -18,12 +18,12 @@ export class MotionStreakWebGLRenderCmd extends NodeWebGLRenderCmd {
     this._shaderProgram = shaderCache.programForKey(SHADER_POSITION_TEXTURECOLOR)
   }
 
-  rendering(ctx?: any) {
+  rendering() {
     const node = this._node
     if (node._nuPoints <= 1) return
 
     if (node.texture && node.texture.isLoaded()) {
-      ctx = ctx || _renderContext
+      const ctx = _renderContext
 
       const wt = this._worldTransform
       this._matrix.mat[0] = wt.a

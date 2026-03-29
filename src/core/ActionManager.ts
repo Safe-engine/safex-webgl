@@ -1,4 +1,4 @@
-import { director, Sprite } from '..'
+import { director } from '..'
 import { Action, ACTION_TAG_INVALID } from '../actions/Action'
 import { _LogInfos, assert, log } from '../helper/Debugger'
 import { Node } from './base-nodes/Node'
@@ -22,12 +22,12 @@ export class ActionManager {
 
   constructor() {}
 
-  private _searchElementByTarget(arr: HashElement[], target: Node): HashElement | null {
-    for (let k = 0; k < arr.length; k++) {
-      if (target === arr[k].target) return arr[k]
-    }
-    return null
-  }
+  // private _searchElementByTarget(arr: HashElement[], target: Node): HashElement | null {
+  //   for (let k = 0; k < arr.length; k++) {
+  //     if (target === arr[k].target) return arr[k]
+  //   }
+  //   return null
+  // }
 
   private _getElement(target: Node, paused: boolean): HashElement {
     let element = this._elementPool.pop()
@@ -50,7 +50,7 @@ export class ActionManager {
   }
 
   /** Adds an action with a target. */
-  addAction(action: Action, target: Sprite, paused: boolean) {
+  addAction(action: Action, target: Node, paused: boolean) {
     if (!action) throw new Error('ActionManager.addAction(): action must be non-null')
     if (!target) throw new Error('ActionManager.addAction(): target must be non-null')
 

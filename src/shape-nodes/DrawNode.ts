@@ -1,7 +1,7 @@
 import { _renderContext } from '..'
 import { cardinalSplineAt, getControlPointAt } from '../actions/ActionCatmullRom'
 import { Node, pNormalizeIn } from '../core'
-import { p, Point, Rect } from '../core/cocoa/Geometry'
+import { p, Point } from '../core/cocoa/Geometry'
 import {
   BlendFunc,
   checkGLErrorDebug,
@@ -9,7 +9,6 @@ import {
   color,
   incrementGLDraws,
   ONE_MINUS_SRC_ALPHA,
-  SHADER_POSITION_LENGTHTEXTURECOLOR,
   SRC_ALPHA,
   VERTEX_ATTRIB_COLOR,
   VERTEX_ATTRIB_POSITION,
@@ -18,14 +17,13 @@ import {
 import { DRAWNODE_TOTAL_VERTICES } from '../core/platform/Config'
 import { GlobalVertexBuffer } from '../core/renderer/GlobalVertexBuffer'
 import { warn } from '../helper/Debugger'
-import { shaderCache } from '../shaders/ShaderCache'
 import { DrawNodeWebGLRenderCmd } from './DrawNodeWebGLRenderCmd'
 
 // 9600 vertices by default configurable in Config
 // 20 is 2 float for position, 4 int for color and 2 float for uv
 let _sharedBuffer: GlobalVertexBuffer
-const FLOAT_PER_VERTEX = 2 + 1 + 2
-const VERTEX_BYTE = FLOAT_PER_VERTEX * 4
+const FLOAT_PER_VERTEX = 5 //2 + 1 + 2
+const VERTEX_BYTE = 20 //FLOAT_PER_VERTEX * 4
 // let FLOAT_PER_TRIANGLE = 3 * FLOAT_PER_VERTEX
 // let TRIANGLE_BYTES = FLOAT_PER_TRIANGLE * 4
 const MAX_INCREMENT = 200
@@ -46,27 +44,24 @@ export class DrawNode extends Node {
   static TYPE_DOT = 0
   static TYPE_SEGMENT = 1
   static TYPE_POLY = 2
+
   declare _buffer
   declare _blendFunc: BlendFunc
   _lineWidth = 1
   declare _drawColor: Color
-  declare _localBB: Rect
   declare _renderCmd: DrawNodeWebGLRenderCmd
 
-  setLocalBB(rectorX, y, width, height) {
-    const localBB = this._localBB
-    if (y === undefined) {
-      localBB.x = rectorX.x
-      localBB.y = rectorX.y
-      localBB.width = rectorX.width
-      localBB.height = rectorX.height
-    } else {
-      localBB.x = rectorX
-      localBB.y = y
-      localBB.width = width
-      localBB.height = height
-    }
-  }
+  _bufferCapacity = 0
+  _vertexCount = 0
+
+  _offset = 0
+  _occupiedSize = 0
+  declare _f32Buffer: Float32Array
+  declare _ui32Buffer: Uint32Array
+
+  _dirty = false
+  manualRelease = false
+
   /**
    * Gets the blend func
    * @returns {Object}
@@ -110,19 +105,6 @@ export class DrawNode extends Node {
     return color(this._drawColor.r, this._drawColor.g, this._drawColor.b, this._drawColor.a)
   }
 
-  _bufferCapacity = 0
-  _vertexCount = 0
-
-  _offset = 0
-  _occupiedSize = 0
-  _f32Buffer = null
-  _ui32Buffer = null
-
-  _dirty = false
-  _className = 'DrawNodeWebGL'
-
-  manualRelease = false
-
   constructor(capacity?: number, manualRelease?: boolean) {
     super()
 
@@ -130,7 +112,6 @@ export class DrawNode extends Node {
       _sharedBuffer = new GlobalVertexBuffer(_renderContext, DRAWNODE_TOTAL_VERTICES * VERTEX_BYTE)
     }
 
-    this._renderCmd._shaderProgram = shaderCache.programForKey(SHADER_POSITION_LENGTHTEXTURECOLOR)
     this._blendFunc = new BlendFunc(SRC_ALPHA, ONE_MINUS_SRC_ALPHA)
     this._drawColor = color(255, 255, 255, 255)
 
@@ -138,7 +119,7 @@ export class DrawNode extends Node {
     this.manualRelease = manualRelease
 
     this._dirty = true
-    this._localBB = Rect()
+    // this._localBB = Rect()
   }
 
   onEnter() {
@@ -283,11 +264,11 @@ export class DrawNode extends Node {
     _vertices.length = 0
   }
 
-  drawCatmullRom(points, segments, lineWidth, color) {
+  drawCatmullRom(points: Point[], segments: number, lineWidth: number, color: Color) {
     this.drawCardinalSpline(points, 0.5, segments, lineWidth, color)
   }
 
-  drawCardinalSpline(config, tension, segments, lineWidth, color) {
+  drawCardinalSpline(config: Point[], tension, segments: number, lineWidth: number, color: Color) {
     lineWidth = lineWidth || this._lineWidth
     color = color || this._drawColor
     let p
@@ -493,7 +474,7 @@ export class DrawNode extends Node {
     this._dirty = true
   }
 
-  drawPoly(verts, fillColor?: Color, borderWidth?: number, borderColor?: Color) {
+  drawPoly(verts, fillColor?: Color, borderWidth?: number, borderColor = Color.WHITE) {
     // Backward compatibility
     if (typeof verts[0] === 'object') {
       _vertices.length = 0

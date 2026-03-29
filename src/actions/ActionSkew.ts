@@ -101,7 +101,7 @@ export class SkewTo extends ActionInterval {
  * // example
  * var actionTo = skewTo(2, 37.2, -37.2);
  */
-export const skewTo = function (t, sx, sy) {
+export const skewTo = function (t: number, sx: number, sy?: number) {
   return new SkewTo(t, sx, sy)
 }
 
@@ -190,6 +190,6 @@ export class SkewBy extends SkewTo {
  * // example
  * var actionBy = skewBy(2, 0, -90);
  */
-export const skewBy = function (t, sx, sy) {
+export const skewBy = function (t: number, sx: number, sy?: number) {
   return new SkewBy(t, sx, sy)
 }

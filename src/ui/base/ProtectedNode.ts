@@ -1,14 +1,11 @@
-import { renderer } from '../..'
-import { Node, NODE_TAG_INVALID, s_globalOrderOfArrival, s_globalOrderOfArrivalPP } from '../../core/base-nodes/Node'
+import { global, renderer } from '../..'
+import { Node, NODE_TAG_INVALID } from '../../core/base-nodes/Node'
 import { assert, log } from '../../helper/Debugger'
 import { ProtectedNodeWebGLRenderCmd } from './ProtectedNodeWebGLRenderCmd'
 
 export class ProtectedNode extends Node {
-  // static setContentSize(_customSize: any) {
-  //   throw new Error('Method not implemented.')
-  // }
-  _protectedChildren: any
-  _reorderProtectedChildDirty: boolean
+  declare _protectedChildren: ProtectedNode[]
+  declare _reorderProtectedChildDirty: boolean
   declare _renderCmd: ProtectedNodeWebGLRenderCmd
 
   constructor() {
@@ -103,7 +100,7 @@ export class ProtectedNode extends Node {
 
     this._insertProtectedChild(child, localZOrder)
     child.setParent(this)
-    child.setOrderOfArrival(s_globalOrderOfArrival)
+    child.setOrderOfArrival(global.s_globalOrderOfArrival)
 
     if (this._running) {
       child._performRecursive(Node._stateCallbackType.onEnter)
@@ -122,7 +119,7 @@ export class ProtectedNode extends Node {
   getProtectedChildByTag(tag) {
     assert(tag !== NODE_TAG_INVALID, 'Invalid tag')
     const locChildren = this._protectedChildren
-    for (let i = 0, len = locChildren.length; i < len; i++) if (locChildren.getTag() === tag) return locChildren[i]
+    for (let i = 0, len = locChildren.length; i < len; i++) if (locChildren[i].getTag() === tag) return locChildren[i]
     return null
   }
 
@@ -165,7 +162,7 @@ export class ProtectedNode extends Node {
 
     const child = this.getProtectedChildByTag(tag)
 
-    if (child == null) log('cocos2d: removeChildByTag(tag = %d): child not found!', tag)
+    if (child == null) log('safex: removeChildByTag(tag = %d): child not found!', tag)
     else this.removeProtectedChild(child, cleanup)
   }
 
@@ -210,7 +207,7 @@ export class ProtectedNode extends Node {
   reorderProtectedChild(child, localZOrder) {
     assert(child != null, 'Child must be non-nil')
     this._reorderProtectedChildDirty = true
-    child.setOrderOfArrival(s_globalOrderOfArrivalPP())
+    child.setOrderOfArrival(global.s_globalOrderOfArrival++)
     child._setLocalZOrder(localZOrder)
   }
 

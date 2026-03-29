@@ -1,7 +1,7 @@
 import { CONCURRENCY_HTTP_REQUEST_COUNT, game } from '..'
+import { _fontLoader, _imgLoader, _jsonLoader, _plistLoader, _serverImgLoader, _txtLoader } from '../core/platform/Loaders'
 import { AsyncPool } from './AsyncPool'
 import { error, log } from './Debugger'
-import { _renderType } from './engine'
 import { path } from './path'
 import { sys } from './sys'
 
@@ -217,7 +217,7 @@ export const loader = (function () {
           delete _queue[url]
         }
 
-        if (window.ENABLE_IMAGE_POOL && _renderType === game.RENDER_TYPE_WEBGL) {
+        if (window.ENABLE_IMAGE_POOL) {
           imagePool.put(img)
         }
       }
@@ -246,9 +246,7 @@ export const loader = (function () {
             delete _queue[url]
           }
 
-          if (_renderType === game.RENDER_TYPE_WEBGL) {
-            imagePool.put(img)
-          }
+          imagePool.put(img)
         }
       }
 
@@ -453,3 +451,10 @@ export const loader = (function () {
     },
   }
 })()
+
+loader.register(['txt', 'xml', 'vsh', 'fsh', 'atlas'], _txtLoader);
+loader.register(['json', 'ExportJson'], _jsonLoader);
+loader.register(['png', 'jpg', 'bmp', 'jpeg', 'gif', 'ico', 'tiff', 'webp'], _imgLoader);
+loader.register(['serverImg'], _serverImgLoader);
+loader.register(['plist'], _plistLoader);
+loader.register(['font', 'eot', 'ttf', 'woff', 'svg', 'ttc'], _fontLoader);

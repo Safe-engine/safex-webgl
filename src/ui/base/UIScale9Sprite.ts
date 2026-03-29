@@ -1,4 +1,4 @@
-import { game, renderer } from '../..'
+import { renderer } from '../..'
 import { SpriteFrame, spriteFrameCache } from '../../core'
 import { Node } from '../../core/base-nodes/Node'
 import { _Rect, p, Rect, rectEqualToZero, Size, sizeEqualToSize } from '../../core/cocoa/Geometry'
@@ -7,7 +7,6 @@ import { FIX_ARTIFACTS_BY_STRECHING_TEXEL } from '../../core/platform/Config'
 import { BLEND_DST, BLEND_SRC, contentScaleFactor, ONE, rectPointsToPixels, SRC_ALPHA } from '../../core/platform/Macro'
 import { SpriteLoadManager } from '../../core/sprites/SpriteLoadManager'
 import { error, log } from '../../helper/Debugger'
-import { _renderType } from '../../helper/engine'
 import { textureCache } from '../../textures'
 import { Scale9SpriteWebGLRenderCmd } from './UIScale9SpriteWebGLRenderCmd'
 
@@ -42,7 +41,6 @@ const dataPool = {
 
 // var FIX_ARTIFACTS_BY_STRECHING_TEXEL = FIX_ARTIFACTS_BY_STRECHING_TEXEL
 const cornerId = []
-let webgl
 
 const simpleQuadGenerator = {
   _rebuildQuads_base: function (sprite, spriteFrame, contentSize, isTrimmedContentSize) {
@@ -78,25 +76,25 @@ const simpleQuadGenerator = {
       sprite._vertices = vertices
     }
     // bl, br, tl, tr
-    if (webgl) {
-      vertices[0] = l * wt.a + b * wt.c + wt.tx
-      vertices[1] = l * wt.b + b * wt.d + wt.ty
-      vertices[2] = r * wt.a + b * wt.c + wt.tx
-      vertices[3] = r * wt.b + b * wt.d + wt.ty
-      vertices[4] = l * wt.a + t * wt.c + wt.tx
-      vertices[5] = l * wt.b + t * wt.d + wt.ty
-      vertices[6] = r * wt.a + t * wt.c + wt.tx
-      vertices[7] = r * wt.b + t * wt.d + wt.ty
-    } else {
-      vertices[0] = l
-      vertices[1] = b
-      vertices[2] = r
-      vertices[3] = b
-      vertices[4] = l
-      vertices[5] = t
-      vertices[6] = r
-      vertices[7] = t
-    }
+    // if (webgl) {
+    vertices[0] = l * wt.a + b * wt.c + wt.tx
+    vertices[1] = l * wt.b + b * wt.d + wt.ty
+    vertices[2] = r * wt.a + b * wt.c + wt.tx
+    vertices[3] = r * wt.b + b * wt.d + wt.ty
+    vertices[4] = l * wt.a + t * wt.c + wt.tx
+    vertices[5] = l * wt.b + t * wt.d + wt.ty
+    vertices[6] = r * wt.a + t * wt.c + wt.tx
+    vertices[7] = r * wt.b + t * wt.d + wt.ty
+    // } else {
+    //   vertices[0] = l
+    //   vertices[1] = b
+    //   vertices[2] = r
+    //   vertices[3] = b
+    //   vertices[4] = l
+    //   vertices[5] = t
+    //   vertices[6] = r
+    //   vertices[7] = t
+    // }
 
     cornerId[0] = 0
     cornerId[1] = 2
@@ -202,23 +200,23 @@ const scale9QuadGenerator = {
     let offset = 0,
       row,
       col
-    if (webgl) {
-      for (row = 0; row < 4; row++) {
-        for (col = 0; col < 4; col++) {
-          vertices[offset] = x[col] * wt.a + y[row] * wt.c + wt.tx
-          vertices[offset + 1] = x[col] * wt.b + y[row] * wt.d + wt.ty
-          offset += 2
-        }
-      }
-    } else {
-      for (row = 0; row < 4; row++) {
-        for (col = 0; col < 4; col++) {
-          vertices[offset] = x[col]
-          vertices[offset + 1] = y[row]
-          offset += 2
-        }
+    // if (webgl) {
+    for (row = 0; row < 4; row++) {
+      for (col = 0; col < 4; col++) {
+        vertices[offset] = x[col] * wt.a + y[row] * wt.c + wt.tx
+        vertices[offset + 1] = x[col] * wt.b + y[row] * wt.d + wt.ty
+        offset += 2
       }
     }
+    // } else {
+    //   for (row = 0; row < 4; row++) {
+    //     for (col = 0; col < 4; col++) {
+    //       vertices[offset] = x[col]
+    //       vertices[offset + 1] = y[row]
+    //       offset += 2
+    //     }
+    //   }
+    // }
 
     cornerId[0] = 0
     cornerId[1] = 6
@@ -306,7 +304,7 @@ const scale9QuadGenerator = {
 
 /**
  * <p>
- * A 9-slice sprite for cocos2d UI.                                                                    <br/>
+ * A 9-slice sprite for safex UI.                                                                    <br/>
  *                                                                                                     <br/>
  * 9-slice scaling allows you to specify how scaling is applied                                        <br/>
  * to specific areas of a sprite. With 9-slice scaling (3x3 grid),                                     <br/>
@@ -327,7 +325,7 @@ const scale9QuadGenerator = {
 
 export class Scale9Sprite extends Node {
   //resource data, could be async loaded.
-  _spriteFrame: SpriteFrame = null
+  declare _spriteFrame: SpriteFrame
 
   //scale 9 data
   _insetLeft = 0
@@ -335,15 +333,12 @@ export class Scale9Sprite extends Node {
   _insetTop = 0
   _insetBottom = 0
   //blend function
-  _blendFunc: BlendFunc = null
+  declare _blendFunc: BlendFunc
   //sliced or simple
   _renderingType = 1
   //bright or not
   _brightState = 0
   _opacityModifyRGB = false
-  //rendering quads shared by canvas and webgl
-  _rawVerts: any = null
-  _rawUvs: any = null
   declare _vertices: Float32Array
   declare _uvs: Float32Array
   _vertCount = 0
@@ -356,7 +351,6 @@ export class Scale9Sprite extends Node {
   //v3.3
   _flippedX = false
   _flippedY = false
-  _className = 'Scale9Sprite'
 
   _loader: SpriteLoadManager
   _capInsetsInternal: Rect
@@ -371,7 +365,7 @@ export class Scale9Sprite extends Node {
    * @param {Rect} capInsets
    * @returns {Scale9Sprite}
    */
-  constructor(file?: any, rectOrCapInsets?: any, capInsets?: any) {
+  constructor(file?: any, rectOrCapInsets?: Rect, capInsets?: Rect) {
     super()
 
     //for async texture load
@@ -381,8 +375,8 @@ export class Scale9Sprite extends Node {
     this._blendFunc = BlendFunc._alphaPremultiplied()
     this.setAnchorPoint(p(0.5, 0.5))
     // Init vertex data for simple
-    this._rawVerts = null
-    this._rawUvs = null
+    // this._rawVerts = null
+    // this._rawUvs = null
     this._vertices = dataPool.get(8) || new Float32Array(8)
     this._uvs = dataPool.get(8) || new Float32Array(8)
 
@@ -393,10 +387,6 @@ export class Scale9Sprite extends Node {
         if (frame) this.initWithSpriteFrame(frame, rectOrCapInsets)
         else this.initWithFile(file, rectOrCapInsets, capInsets)
       }
-    }
-
-    if (webgl === undefined) {
-      webgl = _renderType === game.RENDER_TYPE_WEBGL
     }
   }
 
@@ -428,9 +418,9 @@ export class Scale9Sprite extends Node {
     this._updateCapInsets(this._spriteFrame._rect, this._capInsetsInternal)
   }
 
-  _updateCapInsets(rect, capInsets) {
+  _updateCapInsets(rect: Rect, capInsets: Rect) {
     if (!capInsets || !rect || rectEqualToZero(capInsets)) {
-      rect = rect || { x: 0, y: 0, width: this._contentSize.width, height: this._contentSize.height }
+      rect = rect || Rect(0, 0, this._contentSize.width, this._contentSize.height)
       this._capInsetsInternal = Rect(rect.width / 3, rect.height / 3, rect.width / 3, rect.height / 3)
     } else {
       this._capInsetsInternal = capInsets
@@ -516,11 +506,8 @@ export class Scale9Sprite extends Node {
    * Initializes a 9-slice sprite with an sprite frame
    * @param spriteFrameOrSFName The sprite frame object.
    */
-  initWithSpriteFrame(spriteFrame, capInsets) {
+  initWithSpriteFrame(spriteFrame: SpriteFrame, capInsets = Rect(0, 0, 0, 0)) {
     this.setSpriteFrame(spriteFrame)
-
-    capInsets = capInsets || Rect(0, 0, 0, 0)
-
     this._updateCapInsets(spriteFrame._rect, capInsets)
   }
 
@@ -537,7 +524,7 @@ export class Scale9Sprite extends Node {
   }
 
   loaded() {
-    if (this._spriteFrame === null) {
+    if (!this._spriteFrame) {
       return false
     } else {
       return this._spriteFrame.textureLoaded()

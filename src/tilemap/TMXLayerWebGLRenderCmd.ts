@@ -7,15 +7,15 @@ import { TMX_ORIENTATION_HEX, TMX_ORIENTATION_ISO, TMX_ORIENTATION_ORTHO } from 
 import { TMX_TILE_DIAGONAL_FLAG, TMX_TILE_FLIPPED_MASK, TMX_TILE_HORIZONTAL_FLAG, TMX_TILE_VERTICAL_FLAG } from './TMXXMLParser'
 
 export class TMXLayerWebGLRenderCmd extends NodeWebGLRenderCmd {
-  _sin90: number
-  _cos90: number
-  _sin270: number
-  _cos270: number
-  _vertices: { x: number; y: number }[]
-  _color: Uint32Array
+  declare _sin90: number
+  declare _cos90: number
+  declare _sin270: number
+  declare _cos270: number
+  declare _vertices: { x: number; y: number }[]
+  declare _color: Uint32Array
   declare _node: TMXLayer
 
-  constructor(renderableObject: any) {
+  constructor(renderableObject: TMXLayer) {
     super(renderableObject)
     this._needDraw = true
     this._vertices = [

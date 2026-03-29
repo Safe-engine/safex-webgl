@@ -316,7 +316,7 @@ export const textureCache = /** @lends textureCache# */ {
    * //example
    * textureCache.addImage("hello.png");
    */
-  addImage: function (url, cb?, target?) {
+  addImage: function (url: string, cb?, target?): Texture2D {
     assert(url, _LogInfos.Texture2D_addImage_2)
 
     let locTexs = this._textures

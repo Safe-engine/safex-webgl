@@ -1,10 +1,11 @@
-import { _renderContext } from '..'
+import { _renderContext, Texture2D } from '..'
 import {
   BLEND_DST,
   BLEND_SRC,
   contentScaleFactor,
   degreesToRadians,
   ONE_MINUS_SRC_ALPHA,
+  Point,
   Rect,
   SHADER_POSITION_TEXTURECOLOR,
   SRC_ALPHA,
@@ -21,26 +22,29 @@ import { log } from '../helper/Debugger'
 import { glBindTexture2D, glBlendFuncForParticle } from '../shaders/GLStateCache'
 import { shaderCache } from '../shaders/ShaderCache'
 import { Particle } from './Particle'
+import type { ParticleBatchNode } from './ParticleBatchNode'
+import type { ParticleSystem } from './ParticleSystem'
 
 export class ParticleSystemWebGLRenderCmd extends NodeWebGLRenderCmd {
-  _matrix: any = null
+  declare _matrix: Matrix4
   _buffersVBO: any[] = [0, 0]
   _quads: any[] = []
   _indices: any = []
   _quadsArrayBuffer: ArrayBuffer | null = null
+  declare _node: ParticleSystem
 
-  constructor(renderable: any) {
+  constructor(renderable: ParticleSystem) {
     super(renderable)
     this._needDraw = true
   }
 
-  getDrawMode(): void {}
-  setDrawMode(_drawMode: any): void {}
-  getShapeType(): void {}
-  setShapeType(_shapeType: any): void {}
+  // getDrawMode() {}
+  // setDrawMode(_drawMode: any) {}
+  // getShapeType() {}
+  // setShapeType(_shapeType: any) {}
 
-  setBatchNode(batchNode: any): void {
-    const node: any = this._node
+  setBatchNode(batchNode: ParticleBatchNode) {
+    const node = this._node
     if (node._batchNode !== batchNode) {
       const oldBatch = node._batchNode
       node._batchNode = batchNode //weak reference
@@ -67,7 +71,7 @@ export class ParticleSystemWebGLRenderCmd extends NodeWebGLRenderCmd {
     }
   }
 
-  initIndices(totalParticles: number): void {
+  initIndices(totalParticles: number) {
     const locIndices = this._indices
     for (let i = 0, len = totalParticles; i < len; ++i) {
       const i6 = i * 6
@@ -82,20 +86,20 @@ export class ParticleSystemWebGLRenderCmd extends NodeWebGLRenderCmd {
     }
   }
 
-  isDifferentTexture(texture1: any, texture2: any): boolean {
+  isDifferentTexture(texture1: Texture2D, texture2: Texture2D): boolean {
     return texture1 === texture2
   }
 
-  updateParticlePosition(particle: any, position: any): void {
+  updateParticlePosition(particle: Particle, position: Point) {
     // IMPORTANT: newPos may not be used as a reference here! (as it is just the temporary tpa point)
     // the implementation of updateQuadWithParticle must use
     // the x and y values directly
     this.updateQuadWithParticle(particle, position)
   }
 
-  updateQuadWithParticle(particle: any, newPosition: any): void {
+  updateQuadWithParticle(particle: Particle, newPosition: Point) {
     let quad
-    const node: any = this._node
+    const node = this._node
     if (node._batchNode) {
       const batchQuads = node._batchNode.textureAtlas.quads
       quad = batchQuads[node.atlasIndex + particle.atlasIndex]
@@ -180,8 +184,8 @@ export class ParticleSystemWebGLRenderCmd extends NodeWebGLRenderCmd {
     }
   }
 
-  rendering(ctx: any): void {
-    const node: any = this._node
+  rendering(ctx: any) {
+    const node = this._node
     if (!node._texture) return
 
     const gl = ctx || _renderContext
@@ -219,8 +223,8 @@ export class ParticleSystemWebGLRenderCmd extends NodeWebGLRenderCmd {
     gl.drawElements(gl.TRIANGLES, node._particleIdx * 6, gl.UNSIGNED_SHORT, 0)
   }
 
-  initTexCoordsWithRect(pointRect: any): void {
-    const node: any = this._node
+  initTexCoordsWithRect(pointRect: Rect) {
+    const node = this._node
     const texture = node.texture
     const scaleFactor = contentScaleFactor()
     // convert to pixels coords
@@ -230,8 +234,8 @@ export class ParticleSystemWebGLRenderCmd extends NodeWebGLRenderCmd {
     let high = pointRect.height
 
     if (texture) {
-      wide = texture.pixelsWidth
-      high = texture.pixelsHeight
+      wide = texture._pixelsWide
+      high = texture._pixelsHigh
     }
 
     let left, bottom, right, top
@@ -247,7 +251,7 @@ export class ParticleSystemWebGLRenderCmd extends NodeWebGLRenderCmd {
       top = bottom + rect.height / high
     }
 
-    // Important. Texture in cocos2d are inverted, so the Y component should be inverted
+    // Important. Texture in safex are inverted, so the Y component should be inverted
     const temp = top
     top = bottom
     bottom = temp
@@ -284,8 +288,8 @@ export class ParticleSystemWebGLRenderCmd extends NodeWebGLRenderCmd {
     }
   }
 
-  setTotalParticles(tp: number): void {
-    const node: any = this._node
+  setTotalParticles(tp: number) {
+    const node = this._node
     // If we are setting the total numer of particles to a number higher
     // than what is allocated, we need to allocate new arrays
     if (tp > node._allocatedParticles) {
@@ -317,19 +321,19 @@ export class ParticleSystemWebGLRenderCmd extends NodeWebGLRenderCmd {
 
       //set the texture coord
       if (node._texture) {
-        this.initTexCoordsWithRect(Rect(0, 0, node._texture.width, node._texture.height))
+        this.initTexCoordsWithRect(Rect(0, 0, node._texture._getWidth(), node._texture._getHeight()))
       }
     } else node._totalParticles = tp
     node.resetSystem()
   }
 
-  addParticle(): any {
-    const node: any = this._node,
+  addParticle() {
+    const node = this._node,
       particles = node._particles
     return particles[node.particleCount]
   }
 
-  _setupVBO(): void {
+  _setupVBO() {
     const gl = _renderContext
 
     //gl.deleteBuffer(this._buffersVBO[0]);
@@ -345,7 +349,7 @@ export class ParticleSystemWebGLRenderCmd extends NodeWebGLRenderCmd {
   }
 
   _allocMemory(): boolean {
-    const node: any = this._node
+    const node = this._node
     //assert((!this._quads && !this._indices), "Memory already allocated");
     if (node._batchNode) {
       log('ParticleSystem._allocMemory(): Memory should not be allocated when not using batchNode')
@@ -363,21 +367,21 @@ export class ParticleSystemWebGLRenderCmd extends NodeWebGLRenderCmd {
       locQuads[i] = new V3F_C4B_T2F_Quad(null, null, null, null, locQuadsArrayBuffer, i * quadSize)
     }
     if (!locQuads || !this._indices) {
-      log('cocos2d: Particle system: not enough memory')
+      log('safex: Particle system: not enough memory')
       return false
     }
     this._quadsArrayBuffer = locQuadsArrayBuffer
     return true
   }
 
-  postStep(): void {
+  postStep() {
     const gl = _renderContext
     gl.bindBuffer(gl.ARRAY_BUFFER, this._buffersVBO[0])
     gl.bufferSubData(gl.ARRAY_BUFFER, 0, this._quadsArrayBuffer)
   }
 
-  _setBlendAdditive(): void {
-    const node: any = this._node
+  _setBlendAdditive() {
+    const node = this._node
     const locBlendFunc = node._blendFunc
     const texture = node._texture
     if (texture && !texture.hasPremultipliedAlpha()) {
@@ -400,7 +404,7 @@ export class ParticleSystemWebGLRenderCmd extends NodeWebGLRenderCmd {
     return true
   }
 
-  _updateDeltaColor(selParticle: any, dt: number): void {
+  _updateDeltaColor(selParticle: Particle, dt: number) {
     selParticle.color.r += selParticle.deltaColor.r * dt
     selParticle.color.g += selParticle.deltaColor.g * dt
     selParticle.color.b += selParticle.deltaColor.b * dt

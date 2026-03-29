@@ -1,3 +1,4 @@
+import type { Sprite } from '../core'
 import { arrayVerifyType } from '../core/platform/Macro'
 import { Animation, AnimationFrame } from '../core/sprites/Animation'
 import { ActionInterval } from './ActionInterval'
@@ -17,6 +18,7 @@ export class Animate extends ActionInterval {
   _executedLoops = 0
   _splitTimes: any[] = []
   _currFrameIndex = 0
+  declare target: Sprite
 
   /**
    * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
@@ -100,7 +102,7 @@ export class Animate extends ActionInterval {
    * Start the action with target.
    * @param {Sprite} target
    */
-  startWithTarget(target: any) {
+  startWithTarget(target: Sprite) {
     super.startWithTarget(target)
     if (this._animation.getRestoreOriginalFrame()) this._origFrame = target.getSpriteFrame()
     this._nextFrame = 0
@@ -187,6 +189,6 @@ export class Animate extends ActionInterval {
  * // create the animation with animation
  * var anim = animate(dance_grey);
  */
-export const animate = function (animation) {
+export const animate = function (animation: Animation) {
   return new Animate(animation)
 }

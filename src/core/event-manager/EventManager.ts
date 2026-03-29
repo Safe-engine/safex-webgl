@@ -62,7 +62,7 @@ export const eventManager = /** @lends eventManager# */ {
 
   _internalCustomListenerIDs: [],
 
-  _setDirtyForNode: function (node) {
+  _setDirtyForNode: function (node: Node) {
     // Mark the node dirty only when there is an event listener associated with it.
     if (this._nodeListenersMap[node.__instanceId] != null) this._dirtyNodes.push(node)
     const _children = node.getChildren()

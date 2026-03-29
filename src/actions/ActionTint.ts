@@ -97,7 +97,7 @@ export class TintTo extends ActionInterval {
  * // example
  * var action = tintTo(2, 255, 0, 255);
  */
-export const tintTo = function (duration, red, green, blue) {
+export const tintTo = function (duration: number, red: number, green: number, blue: number) {
   return new TintTo(duration, red, green, blue)
 }
 
@@ -210,6 +210,6 @@ export class TintBy extends ActionInterval {
  * // example
  * var action = tintBy(2, -127, -255, -127);
  */
-export const tintBy = function (duration, deltaRed, deltaGreen, deltaBlue) {
+export const tintBy = function (duration: number, deltaRed: number, deltaGreen: number, deltaBlue: number) {
   return new TintBy(duration, deltaRed, deltaGreen, deltaBlue)
 }
