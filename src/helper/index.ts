@@ -6,4 +6,5 @@ export * from './loader'
 export * from './path'
 export * from './string'
 export * from './sys'
+export * from './ZipUtils'
 
