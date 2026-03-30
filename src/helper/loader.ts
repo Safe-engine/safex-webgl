@@ -5,7 +5,6 @@ import { error, log } from './Debugger'
 import { path } from './path'
 import { sys } from './sys'
 
-const _isNodeJs = false
 window.ENABLE_IMAGE_POOL = true
 export function getXMLHttpRequest() {
   const xhr = new XMLHttpRequest() as SafexXMLHttpRequest
@@ -83,75 +82,68 @@ export const loader = (function () {
      * @param {function} [cb] arguments are : err, txt
      */
     loadTxt: function (url: string, cb) {
-      if (!_isNodeJs) {
-        const xhr = getXMLHttpRequest(),
-          errInfo = `load ${url} failed!`
-        xhr.open('GET', url, true)
-        if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
-          // IE-specific logic here
-          xhr.setRequestHeader('Accept-Charset', 'utf-8')
-          xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4)
-              xhr.status === 200 || xhr.status === 0 ? cb(null, xhr.responseText) : cb({ status: xhr.status, errorMessage: errInfo }, null)
-          }
-        } else {
-          if (xhr.overrideMimeType) xhr.overrideMimeType('text/plain; charset=utf-8')
-          const loadCallback = function () {
-            xhr.removeEventListener('load', loadCallback)
-            xhr.removeEventListener('error', errorCallback)
-            if (xhr._timeoutId >= 0) {
-              clearTimeout(xhr._timeoutId)
-            } else {
-              xhr.removeEventListener('timeout', timeoutCallback)
-            }
-            if (xhr.readyState === 4) {
-              xhr.status === 200 || xhr.status === 0 ? cb(null, xhr.responseText) : cb({ status: xhr.status, errorMessage: errInfo }, null)
-            }
-          }
-          const errorCallback = function () {
-            xhr.removeEventListener('load', loadCallback)
-            xhr.removeEventListener('error', errorCallback)
-            if (xhr._timeoutId >= 0) {
-              clearTimeout(xhr._timeoutId)
-            } else {
-              xhr.removeEventListener('timeout', timeoutCallback)
-            }
-            cb({ status: xhr.status, errorMessage: errInfo }, null)
-          }
-          const timeoutCallback = function () {
-            xhr.removeEventListener('load', loadCallback)
-            xhr.removeEventListener('error', errorCallback)
-            if (xhr._timeoutId >= 0) {
-              clearTimeout(xhr._timeoutId)
-            } else {
-              xhr.removeEventListener('timeout', timeoutCallback)
-            }
-            cb({ status: xhr.status, errorMessage: `Request timeout: ${errInfo}` }, null)
-          }
-          xhr.addEventListener('load', loadCallback)
-          xhr.addEventListener('error', errorCallback)
-          if (xhr.ontimeout === undefined) {
-            xhr._timeoutId = setTimeout(function () {
-              timeoutCallback()
-            }, xhr.timeout)
+      const xhr = getXMLHttpRequest(),
+        errInfo = `load ${url} failed!`
+      xhr.open('GET', url, true)
+      if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
+        // IE-specific logic here
+        xhr.setRequestHeader('Accept-Charset', 'utf-8')
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4)
+            xhr.status === 200 || xhr.status === 0 ? cb(null, xhr.responseText) : cb({ status: xhr.status, errorMessage: errInfo }, null)
+        }
+      } else {
+        if (xhr.overrideMimeType) xhr.overrideMimeType('text/plain; charset=utf-8')
+        const loadCallback = function () {
+          xhr.removeEventListener('load', loadCallback)
+          xhr.removeEventListener('error', errorCallback)
+          if (xhr._timeoutId >= 0) {
+            clearTimeout(xhr._timeoutId)
           } else {
-            xhr.addEventListener('timeout', timeoutCallback)
+            xhr.removeEventListener('timeout', timeoutCallback)
+          }
+          if (xhr.readyState === 4) {
+            xhr.status === 200 || xhr.status === 0 ? cb(null, xhr.responseText) : cb({ status: xhr.status, errorMessage: errInfo }, null)
           }
         }
-        xhr.send(null)
-        // } else {
-        //   var fs = require("fs");
-        //   fs.readFile(url, function (err, data) {
-        //     err ? cb(err) : cb(null, data.toString());
-        //   });
+        const errorCallback = function () {
+          xhr.removeEventListener('load', loadCallback)
+          xhr.removeEventListener('error', errorCallback)
+          if (xhr._timeoutId >= 0) {
+            clearTimeout(xhr._timeoutId)
+          } else {
+            xhr.removeEventListener('timeout', timeoutCallback)
+          }
+          cb({ status: xhr.status, errorMessage: errInfo }, null)
+        }
+        const timeoutCallback = function () {
+          xhr.removeEventListener('load', loadCallback)
+          xhr.removeEventListener('error', errorCallback)
+          if (xhr._timeoutId >= 0) {
+            clearTimeout(xhr._timeoutId)
+          } else {
+            xhr.removeEventListener('timeout', timeoutCallback)
+          }
+          cb({ status: xhr.status, errorMessage: `Request timeout: ${errInfo}` }, null)
+        }
+        xhr.addEventListener('load', loadCallback)
+        xhr.addEventListener('error', errorCallback)
+        if (xhr.ontimeout === undefined) {
+          xhr._timeoutId = setTimeout(function () {
+            timeoutCallback()
+          }, xhr.timeout)
+        } else {
+          xhr.addEventListener('timeout', timeoutCallback)
+        }
       }
+      xhr.send(null)
     },
     /**
      * Load a single resource as json.
      * @param {string} url
      * @param {function} [cb] arguments are : err, json
      */
-    loadJson: function (url: string, cb) {
+    loadJson: function (url: string, cb: (error: string | null, buffer?) => void) {
       this.loadTxt(url, function (err, txt) {
         if (err) {
           cb(err)

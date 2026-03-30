@@ -98,7 +98,7 @@ export const _fontLoader = {
     _divStyle.top = '-100px'
     doc.body.appendChild(preloadDiv)
   },
-  load: function (realUrl, url, res, cb) {
+  load: function (realUrl: string, url: string, res, cb: (error: string | null, buffer?) => void) {
     // let type = res.type
     let name = res.name
     const srcs = res.srcs

@@ -9,18 +9,16 @@ const SWB = polyfill.ONLY_ONE
 
 const support = []
 
-;(function () {
-  const audio = document.createElement('audio')
-  if (audio.canPlayType) {
-    if (audio.canPlayType('audio/ogg; codecs="vorbis"')) {
-      support.push('.ogg')
-    }
-    if (audio.canPlayType('audio/mpeg')) support.push('.mp3')
-    if (audio.canPlayType('audio/wav; codecs="1"')) support.push('.wav')
-    if (audio.canPlayType('audio/mp4')) support.push('.mp4')
-    if (audio.canPlayType('audio/x-m4a')) support.push('.m4a')
+const audio = document.createElement('audio')
+if (audio.canPlayType) {
+  if (audio.canPlayType('audio/ogg; codecs="vorbis"')) {
+    support.push('.ogg')
   }
-})()
+  if (audio.canPlayType('audio/mpeg')) support.push('.mp3')
+  if (audio.canPlayType('audio/wav; codecs="1"')) support.push('.wav')
+  if (audio.canPlayType('audio/mp4')) support.push('.mp4')
+  if (audio.canPlayType('audio/x-m4a')) support.push('.m4a')
+}
 let context = new (window.AudioContext || window.webkitAudioContext || window.mozAudioContext)()
 try {
   if (SWA) {
@@ -45,7 +43,7 @@ const audioLoader = {
 
   useWebAudio: true,
 
-  loadBuffer: function (url, cb) {
+  loadBuffer: function (url: string, cb: (error: string | null, buffer?) => void) {
     if (!SWA) return // WebAudio Buffer
 
     const request = getXMLHttpRequest()
@@ -86,7 +84,7 @@ const audioLoader = {
     request.send()
   },
 
-  load: function (realUrl, url, res, cb) {
+  load: function (realUrl: string, url: string, res, cb: (error: string | null, buffer?) => void) {
     if (support.length === 0) return cb('can not support audio!')
 
     let audio = loader.getRes(url)
@@ -109,7 +107,7 @@ const audioLoader = {
     return audio
   },
 
-  loadAudioFromExtList: function (realUrl, typeList, audio, cb) {
+  loadAudioFromExtList: function (realUrl: string, typeList, audio, cb) {
     if (typeList.length === 0) {
       let ERRSTR = 'can not found the resource of audio! Last match url is : '
       ERRSTR += realUrl.replace(/\.(.*)?$/, '(')
