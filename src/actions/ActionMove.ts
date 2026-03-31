@@ -1,6 +1,5 @@
-import { p } from '../core/cocoa/Geometry'
+import { p, Point } from '../core/cocoa/Geometry'
 import { ENABLE_STACKABLE_ACTIONS } from '../core/platform/Config'
-import type { Vec2 } from '../polyfills'
 import { ActionInterval } from './ActionInterval'
 
 /**
@@ -109,7 +108,7 @@ export class MoveBy extends ActionInterval {
  * // example
  * var actionBy = moveBy(2, p(windowSize.width - 40, windowSize.height - 40));
  */
-export function moveBy(duration: number, deltaPos: Vec2, deltaY?: number) {
+export function moveBy(duration: number, deltaPos: Point | number, deltaY?: number) {
   return new MoveBy(duration, deltaPos, deltaY)
 }
 
@@ -177,6 +176,6 @@ export class MoveTo extends MoveBy {
  * // example
  * var actionTo = moveTo(2, p(80, 80));
  */
-export function moveTo(duration: number, position: Vec2, y?: number) {
+export function moveTo(duration: number, position: Point | number, y?: number) {
   return new MoveTo(duration, position, y)
 }

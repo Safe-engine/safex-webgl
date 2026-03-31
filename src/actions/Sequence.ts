@@ -1,6 +1,7 @@
 import { log } from '../helper/Debugger'
 import type { ActionInstant } from './ActionInstant'
 import { ActionInterval } from './ActionInterval'
+import type { FiniteTimeAction } from './FiniteTimeAction'
 
 /**
  * Runs actions sequentially, one after another.
@@ -183,7 +184,7 @@ export class Sequence extends ActionInterval {
  * var seq = sequence(actArray);
  * todo: It should be use new
  */
-export const sequence = function (/*Multiple Arguments*/ ...tempArray: ActionInstant[]) {
+export const sequence = function (/*Multiple Arguments*/ ...tempArray: (FiniteTimeAction | ActionInstant)[]) {
   const paramArray = tempArray[0] instanceof Array ? tempArray[0] : tempArray
   if (paramArray.length > 0 && paramArray[paramArray.length - 1] == null) log('parameters should not be ending with null in Javascript')
 
