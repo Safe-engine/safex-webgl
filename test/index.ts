@@ -1,6 +1,6 @@
 import { director, game, global, sys, view } from '../src'
 import { ResolutionPolicy } from '../src/core'
-import { DemoScene } from './DemoScene'
+import { CameraTestScene } from './CameraTestScene'
 
 global._isContextMenuEnable = true
 game.run(
@@ -23,6 +23,6 @@ game.run(
     view.setDesignResolutionSize(width, height, policy)
     // The game will be resized when browser size change
     view.resizeWithBrowserSize(true)
-    director.runScene(new DemoScene())
+    director.runScene(new CameraTestScene())
   },
 )
