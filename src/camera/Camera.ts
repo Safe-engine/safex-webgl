@@ -1,4 +1,4 @@
-import { _renderContext, director, winSize } from '..'
+import { director, winSize } from '..'
 import { Director, p, Point } from '../core'
 import {
   KM_GL_MODELVIEW,
@@ -6,6 +6,7 @@ import {
   kmGLLoadIdentity,
   kmGLMatrixMode,
   kmGLMultMatrix,
+  kmMat4Multiply,
   kmMat4OrthographicProjection,
   kmMat4Translation,
   Matrix4,
@@ -28,63 +29,68 @@ export class Camera2D {
     this._dirty = true
   }
 
-  setPosition(x, y) {
+  setPosition(x: number, y: number) {
     this.position.x = x
     this.position.y = y
     this._dirty = true
+    this.apply() // apply immediately so changes are visible without waiting for update loop
   }
 
-  setZoom(z) {
+  setZoom(z: number) {
     this.zoom = z
     this._dirty = true
+    this.apply()
   }
 
   updateMatrix() {
     if (!this._dirty) return
 
-    // 🎯 Projection (orthographic)
-    this.projectionMatrix.identity()
-    kmMat4OrthographicProjection(
-      this.projectionMatrix,
-      -winSize.width / 2,
-      winSize.width / 2,
-      -winSize.height / 2,
-      winSize.height / 2,
-      -1,
-      1,
-    )
+    // Base orthographic projection
+    const baseProjection = new Matrix4()
+    kmMat4OrthographicProjection(baseProjection, 0, winSize.width, 0, winSize.height, -1, 1)
 
-    // 🎯 View matrix (camera transform)
-    this.viewMatrix.identity()
+    // View (camera) transform: translate(-x,-y) then scale
+    const viewTranslation = new Matrix4()
+    kmMat4Translation(viewTranslation, -this.position.x, -this.position.y, 0)
 
-    // translate (camera)
-    const tx = -this.position.x
-    const ty = -this.position.y
+    const viewScale = Matrix4.createByScale(this.zoom, this.zoom, 1, new Matrix4())
 
-    kmMat4Translation(this.viewMatrix, tx, ty, 0)
+    const viewMat = new Matrix4()
+    kmMat4Multiply(viewMat, viewScale, viewTranslation)
 
-    // zoom
-    Matrix4.createByScale(this.zoom, this.zoom, 1, this.viewMatrix)
+    // Store the viewMatrix for any shaders that use CC_MVMatrix as well
+    this.viewMatrix = viewMat
+
+    // Combine projection and camera view into final projection matrix for this engine
+    const combined = new Matrix4()
+    kmMat4Multiply(combined, baseProjection, viewMat)
+    this.projectionMatrix = combined
 
     this._dirty = false
+  }
+
+  updateProjection() {
+    this.updateMatrix()
+
+    // set effective projection matrix (projection * camera view)
+    kmGLMatrixMode(KM_GL_PROJECTION)
+    kmGLLoadIdentity()
+    kmGLMultMatrix(this.projectionMatrix)
+
+    // keep modelview identity; sprite shader uses CC_PMatrix only
+    kmGLMatrixMode(KM_GL_MODELVIEW)
+    kmGLLoadIdentity()
   }
 
   apply() {
     this.updateMatrix()
 
-    const gl = _renderContext
+    // register ourselves as custom projection delegate
+    director.setDelegate(this)
 
-    // set projection
+    // enable custom projection path (director will call updateProjection if re-set)
     director.setProjection(Director.PROJECTION_CUSTOM)
 
-    const stack = kmGLMatrixMode(KM_GL_PROJECTION)
-    kmGLMatrixMode(KM_GL_PROJECTION)
-    kmGLLoadIdentity()
-    kmGLMultMatrix(this.projectionMatrix)
-
-    // set view
-    kmGLMatrixMode(KM_GL_MODELVIEW)
-    kmGLLoadIdentity()
-    kmGLMultMatrix(this.viewMatrix)
+    this.updateProjection()
   }
 }
