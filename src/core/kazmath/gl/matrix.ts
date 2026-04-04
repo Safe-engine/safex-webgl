@@ -1,4 +1,3 @@
-import { director } from '../../..'
 import { degreesToRadians } from '../../platform/Macro'
 import { Matrix4 } from '../mat4'
 import { Vec3 } from '../vec3'
@@ -53,18 +52,21 @@ export const kmGLFreeAll = function () {
 
 export const kmGLPushMatrix = function () {
   current_stack.push(current_stack.top)
+  current_stack.lastUpdated++
 }
 
 export const kmGLPushMatrixWitMat4 = function (saveMat) {
   current_stack.stack.push(current_stack.top)
   saveMat.assignFrom(current_stack.top)
   current_stack.top = saveMat
+  current_stack.lastUpdated++
 }
 
 export const kmGLPopMatrix = function () {
   //No need to lazy initialize, you shouldn't be popping first anyway!
   //km_mat4_stack_pop(current_stack, null);
   current_stack.top = current_stack.stack.pop()
+  current_stack.lastUpdated++
 }
 
 export const kmGLMatrixMode = function (mode) {
@@ -81,24 +83,25 @@ export const kmGLMatrixMode = function (mode) {
       break
     default:
       throw new Error('Invalid matrix mode specified') //TODO: Proper error handling
-      break
   }
-  current_stack.lastUpdated = director.getTotalFrames()
 }
 
 export const kmGLLoadIdentity = function () {
   //lazyInitialize();
   current_stack.top.identity() //Replace the top matrix with the identity matrix
+  current_stack.lastUpdated++
 }
 
 export const kmGLLoadMatrix = function (pIn) {
   //lazyInitialize();
   current_stack.top.assignFrom(pIn)
+  current_stack.lastUpdated++
 }
 
 export const kmGLMultMatrix = function (pIn) {
   //lazyInitialize();
   current_stack.top.multiply(pIn)
+  current_stack.lastUpdated++
 }
 
 const tempMatrix = new Matrix4() //an internal matrix
@@ -108,6 +111,7 @@ export const kmGLTranslatef = function (x, y, z) {
 
   //Multiply the rotation matrix by the current matrix
   current_stack.top.multiply(translation)
+  current_stack.lastUpdated++
 }
 
 const tempVector3 = new Vec3()
@@ -118,11 +122,13 @@ export const kmGLRotatef = function (angle, x, y, z) {
 
   //Multiply the rotation matrix by the current matrix
   current_stack.top.multiply(rotation)
+  current_stack.lastUpdated++
 }
 
 export const kmGLScalef = function (x, y, z) {
   const scaling = Matrix4.createByScale(x, y, z, tempMatrix)
   current_stack.top.multiply(scaling)
+  current_stack.lastUpdated++
 }
 
 export const kmGLGetMatrix = function (mode, pOut) {
