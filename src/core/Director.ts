@@ -191,10 +191,10 @@ export class Director {
         renderer.setCameraFlag(camera.flag)
         renderer.clearRenderCommands()
         camera.updateProjection()
+        this._runningScene.visit()
+        renderer.rendering(_renderContext)
+        renderer.resetFlag()
       })
-      this._runningScene.visit()
-      renderer.rendering(_renderContext)
-      renderer.resetFlag()
     }
 
     if (this._notificationNode) this._notificationNode.visit()
