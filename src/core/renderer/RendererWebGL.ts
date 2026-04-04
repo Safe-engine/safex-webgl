@@ -256,7 +256,7 @@ export const rendererWebGL = (function () {
       if (!cmd.rendering && !cmd.uploadData) return
 
       const nodeCameraMask = cmd._node ? cmd._node._cameraMask : CameraFlag.DEFAULT
-      if ((nodeCameraMask & this.currentCameraFlag) !== 0) {
+      if ((nodeCameraMask & this.currentCameraFlag) === 0) {
         return
       }
 

@@ -89,7 +89,7 @@ export class Node extends EventHelper {
   declare _cascadeColorEnabled: boolean
   declare _cascadeOpacityEnabled: boolean
   declare _renderCmd: NodeWebGLRenderCmd
-  _cameraMask: CameraFlag = CameraFlagEnum.USER1 | CameraFlagEnum.USER2
+  _cameraMask: CameraFlag = CameraFlagEnum.DEFAULT
 
   constructor() {
     super()
