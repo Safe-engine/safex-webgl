@@ -1,5 +1,5 @@
-import { director, winSize } from '..'
-import { Director, Node, p, Point } from '../core'
+import { winSize } from '..'
+import { Node } from '../core'
 import {
   KM_GL_MODELVIEW,
   KM_GL_PROJECTION,
@@ -14,7 +14,6 @@ import {
 import { CameraFlag } from './CameraFlag'
 
 export class Camera extends Node {
-  position: Point
   zoom: number
   viewMatrix: Matrix4
   projectionMatrix: Matrix4
@@ -23,7 +22,6 @@ export class Camera extends Node {
 
   constructor(flag: CameraFlag = CameraFlag.DEFAULT) {
     super()
-    this.position = p(0, 0)
     this.zoom = 1
 
     this.viewMatrix = new Matrix4()
@@ -33,9 +31,8 @@ export class Camera extends Node {
     this.flag = flag
   }
 
-  setPosition(x: number, y: number) {
-    this.position.x = x
-    this.position.y = y
+  setPosition(x: any, y?: number) {
+    super.setPosition(x, y)
     this._dirty = true
   }
 
@@ -53,7 +50,7 @@ export class Camera extends Node {
 
     // View (camera) transform: translate(-x,-y) then scale
     const viewTranslation = new Matrix4()
-    kmMat4Translation(viewTranslation, -this.position.x, -this.position.y, 0)
+    kmMat4Translation(viewTranslation, -this.getPositionX(), -this.getPositionY(), 0)
 
     const viewScale = Matrix4.createByScale(this.zoom, this.zoom, 1, new Matrix4())
 
@@ -82,19 +79,5 @@ export class Camera extends Node {
     // keep modelview identity; sprite shader uses CC_PMatrix only
     kmGLMatrixMode(KM_GL_MODELVIEW)
     kmGLLoadIdentity()
-  }
-
-  applyToGL() {
-    this.updateProjection()
-  }
-
-  apply() {
-    this.updateMatrix()
-
-    // register ourselves as custom projection delegate for legacy path
-    director.setDelegate(this)
-    director.setProjection(Director.PROJECTION_CUSTOM)
-
-    this.updateProjection()
   }
 }

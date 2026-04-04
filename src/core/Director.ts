@@ -185,18 +185,16 @@ export class Director {
       }
 
       renderer.clear()
-
       const scene = this._runningScene
       const cameras = scene._cameras
       cameras.forEach((camera) => {
         renderer.setCameraFlag(camera.flag)
         renderer.clearRenderCommands()
-        _renderContext.clear(_renderContext.DEPTH_BUFFER_BIT)
-        camera.applyToGL()
-        this._runningScene.visit()
-        renderer.rendering(_renderContext)
-        renderer.resetFlag()
+        camera.updateProjection()
       })
+      this._runningScene.visit()
+      renderer.rendering(_renderContext)
+      renderer.resetFlag()
     }
 
     if (this._notificationNode) this._notificationNode.visit()
