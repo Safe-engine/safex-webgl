@@ -42,8 +42,8 @@ export class ProtectedNode extends Node {
 
     cmd.visit(parentCmd)
 
-    const locGrid = this.grid
-    if (locGrid && locGrid._active) locGrid.beforeDraw()
+    // const locGrid = this.grid
+    // if (locGrid && locGrid._active) locGrid.beforeDraw()
 
     if (this._reorderChildDirty) this.sortAllChildren()
     if (this._reorderProtectedChildDirty) this.sortAllProtectedChildren()
@@ -77,7 +77,7 @@ export class ProtectedNode extends Node {
       pChild.visit(this)
     }
 
-    if (locGrid && locGrid._active) locGrid.afterDraw(this)
+    // if (locGrid && locGrid._active) locGrid.afterDraw(this)
 
     cmd._dirtyFlag = 0
   }

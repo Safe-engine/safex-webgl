@@ -1,5 +1,7 @@
 import { ACTION_TAG_INVALID, director, global, renderer, Touch } from '../..'
 import type { ActionInterval } from '../../actions'
+import type { CameraFlag } from '../../camera/CameraFlag'
+import { CameraFlag as CameraFlagEnum } from '../../camera/CameraFlag'
 import { _LogInfos, assert, log } from '../../helper/Debugger'
 import type { GLProgram, GLProgramState } from '../../shaders'
 import { ActionManager } from '../ActionManager'
@@ -71,7 +73,7 @@ export class Node extends EventHelper {
   declare tag: number
   declare userData: any
   declare userObject: any
-  declare grid
+  // declare grid
   _reorderChildDirty = false
   arrivalOrder = 0
   declare _actionManager: ActionManager
@@ -87,6 +89,7 @@ export class Node extends EventHelper {
   declare _cascadeColorEnabled: boolean
   declare _cascadeOpacityEnabled: boolean
   declare _renderCmd: NodeWebGLRenderCmd
+  _cameraMask: CameraFlag = CameraFlagEnum.USER1 | CameraFlagEnum.USER2
 
   constructor() {
     super()
@@ -946,15 +949,27 @@ export class Node extends EventHelper {
   getNodeToParentAffineTransform(ancestor?: Node) {
     return this.getNodeToParentTransform(ancestor)
   }
-  getCamera() {
-    return null
+
+  setCameraMask(type: CameraFlag, applyChildren = true) {
+    this._cameraMask = type
+    this._renderCmd.setDirtyFlag(Node._dirtyFlags.transformDirty)
+    if (applyChildren) {
+      for (const child of this._children) {
+        child.setCameraMask(type, applyChildren)
+      }
+    }
   }
-  getGrid() {
-    return this.grid
+
+  getCameraMask() {
+    return this._cameraMask
   }
-  setGrid(grid: any) {
-    this.grid = grid
-  }
+
+  // getGrid() {
+  //   return this.grid
+  // }
+  // setGrid(grid: any) {
+  //   this.grid = grid
+  // }
   getShaderProgram() {
     return this._renderCmd.getShaderProgram()
   }

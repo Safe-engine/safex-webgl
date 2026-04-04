@@ -1,5 +1,5 @@
 import { director, winSize } from '..'
-import { Director, p, Point } from '../core'
+import { Director, Node, p, Point } from '../core'
 import {
   KM_GL_MODELVIEW,
   KM_GL_PROJECTION,
@@ -11,15 +11,18 @@ import {
   kmMat4Translation,
   Matrix4,
 } from '../core/kazmath'
+import { CameraFlag } from './CameraFlag'
 
-export class Camera2D {
+export class Camera extends Node {
   position: Point
   zoom: number
   viewMatrix: Matrix4
   projectionMatrix: Matrix4
   _dirty: boolean
+  flag: CameraFlag
 
-  constructor() {
+  constructor(flag: CameraFlag = CameraFlag.DEFAULT) {
+    super()
     this.position = p(0, 0)
     this.zoom = 1
 
@@ -27,19 +30,18 @@ export class Camera2D {
     this.projectionMatrix = new Matrix4()
 
     this._dirty = true
+    this.flag = flag
   }
 
   setPosition(x: number, y: number) {
     this.position.x = x
     this.position.y = y
     this._dirty = true
-    this.apply() // apply immediately so changes are visible without waiting for update loop
   }
 
   setZoom(z: number) {
     this.zoom = z
     this._dirty = true
-    this.apply()
   }
 
   updateMatrix() {
@@ -82,13 +84,15 @@ export class Camera2D {
     kmGLLoadIdentity()
   }
 
+  applyToGL() {
+    this.updateProjection()
+  }
+
   apply() {
     this.updateMatrix()
 
-    // register ourselves as custom projection delegate
+    // register ourselves as custom projection delegate for legacy path
     director.setDelegate(this)
-
-    // enable custom projection path (director will call updateProjection if re-set)
     director.setProjection(Director.PROJECTION_CUSTOM)
 
     this.updateProjection()

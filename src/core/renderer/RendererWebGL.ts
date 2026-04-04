@@ -1,4 +1,5 @@
 import { _renderContext } from '../..'
+import { CameraFlag } from '../../camera'
 import { global } from '../../helper/global'
 import { glBindTexture2DN, glBlendFunc } from '../../shaders/GLStateCache'
 import { Matrix4 } from '../kazmath/mat4'
@@ -106,8 +107,17 @@ export const rendererWebGL = (function () {
     childrenOrderDirty: true,
     assignedZ: 0,
     assignedZStep: 1 / 100,
+    currentCameraFlag: CameraFlag.DEFAULT,
 
     VertexType: VertexType,
+
+    setCameraFlag: function (flag: CameraFlag) {
+      this.currentCameraFlag = flag
+    },
+
+    getCameraFlag: function () {
+      return this.currentCameraFlag
+    },
 
     _transformNodePool: [], //save nodes transform dirty
     _renderCmds: [], //save renderer commands
@@ -242,8 +252,14 @@ export const rendererWebGL = (function () {
       }
     },
 
-    pushRenderCommand: function (cmd) {
+    pushRenderCommand: function (cmd: any) {
       if (!cmd.rendering && !cmd.uploadData) return
+
+      const nodeCameraMask = cmd._node ? cmd._node._cameraMask : CameraFlag.DEFAULT
+      if ((nodeCameraMask & this.currentCameraFlag) !== 0) {
+        return
+      }
+
       if (this._isCacheToBufferOn) {
         const currentId = this._currentID,
           locCmdBuffer = this._cacheToBufferCmds

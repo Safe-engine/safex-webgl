@@ -16,9 +16,9 @@ export class LayoutWebGLRenderCmd extends ProtectedNodeWebGLRenderCmd {
 
   _mask_layer_le = 0
 
-  declare _beforeVisitCmdStencil
-  declare _afterDrawStencilCmd
-  declare _afterVisitCmdStencil
+  declare _beforeVisitCmdStencil: CustomRenderCmd
+  declare _afterDrawStencilCmd: CustomRenderCmd
+  declare _afterVisitCmdStencil: CustomRenderCmd
   declare _beforeVisitCmdScissor: CustomRenderCmd
   declare _afterVisitCmdScissor: CustomRenderCmd
   declare _node: Layout

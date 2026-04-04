@@ -7,13 +7,13 @@ import {
   Scene,
   Sprite,
   Vec2,
-  audioEngine,
   color,
   director,
   loader,
   spriteFrameCache,
   view,
 } from '../src'
+import { audioEngine } from '../src/audio'
 import { MotionStreak } from '../src/motion-streak'
 import { ProgressTimer } from '../src/progress-timer'
 import { Button, RichElementText, RichText, Scale9Sprite, Slider, Text } from '../src/ui'
