@@ -4,26 +4,30 @@ import { Scene, Sprite } from '../src/core'
 
 export class CameraTestScene extends Scene {
   uiCamera: Camera
-  worldCamera: Camera
+  player: Sprite
 
   constructor() {
     super()
     this.uiCamera = new Camera(CameraFlag.USER2)
-    this.worldCamera = new Camera(CameraFlag.USER1)
+    const worldCamera = new Camera(CameraFlag.USER1)
     this.addCamera(this.uiCamera)
-    this.addCamera(this.worldCamera)
+    const player = new Sprite('particle.png')
+    player.setPosition(222, 333)
+    player.setCameraMask(CameraFlag.USER1)
+    this.player = player
+    player.addChild(worldCamera)
     console.log('CameraTestScene created with worldCamera and uiCamera', this.getCameras())
+    this.addChild(player)
   }
 
   onEnter() {
     super.onEnter()
     this.scheduleUpdate()
 
-    const sprite = new Sprite('button_plus.png')
+    const sprite = new Sprite('sliderThumb.png')
     sprite.setPosition(view.getDesignResolutionSize().width / 2, view.getDesignResolutionSize().height)
     sprite.setCameraMask(CameraFlag.USER1)
     this.addChild(sprite)
-
     // UI layer node (always fixed to UI camera)
     const uiSprite = new Sprite('button_plus.png')
     uiSprite.setPosition(100, 500)
@@ -36,8 +40,8 @@ export class CameraTestScene extends Scene {
   }
 
   update() {
-    const pos = this.worldCamera.getPosition()
-    this.worldCamera.setPosition(pos.x, pos.y + 1)
+    const pos = this.player.getPosition()
+    this.player.setPosition(pos.x, pos.y + 1)
     // console.log('Camera position updated to', this.uiCamera.getPositionY())
   }
 }
