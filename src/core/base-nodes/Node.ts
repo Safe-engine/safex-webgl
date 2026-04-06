@@ -290,7 +290,7 @@ export class Node extends EventHelper {
   }
 
   getAnchorPoint() {
-    return p(this._anchorPoint)
+    return this._anchorPoint
   }
   setAnchorPoint(point: any, y?: number) {
     const locAnchorPoint = this._anchorPoint

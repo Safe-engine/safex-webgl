@@ -44,8 +44,8 @@ export class CameraTestScene extends Scene {
   }
 
   update() {
-    const pos = this.worldCamera.getPosition()
-    this.worldCamera.setPosition(pos.x, pos.y + 1)
-    console.log('Camera position updated to', this.worldCamera.getPosition())
+    const pos = this.player.getPosition()
+    this.player.setPosition(pos.x, pos.y + 1)
+    console.log('Camera position updated to', this.player.getPosition())
   }
 }
