@@ -19,6 +19,7 @@ export class Camera extends Node {
   projectionMatrix: Matrix4
   _dirty: boolean
   flag: CameraFlag
+  private _lastWorldPos = { x: 0, y: 0 }
 
   constructor(flag: CameraFlag = CameraFlag.DEFAULT) {
     super()
@@ -42,15 +43,22 @@ export class Camera extends Node {
   }
 
   updateMatrix() {
-    if (!this._dirty) return
+    const worldPos = this.convertToWorldSpace()
+
+    if (!this._dirty && this._lastWorldPos.x === worldPos.x && this._lastWorldPos.y === worldPos.y) {
+      return
+    }
+
+    this._lastWorldPos.x = worldPos.x
+    this._lastWorldPos.y = worldPos.y
 
     // Base orthographic projection
     const baseProjection = new Matrix4()
     kmMat4OrthographicProjection(baseProjection, 0, winSize.width, 0, winSize.height, -1, 1)
 
-    // View (camera) transform: translate(-x,-y) then scale
+    // View (camera) transform: translate(-worldPos.x, -worldPos.y) then scale
     const viewTranslation = new Matrix4()
-    kmMat4Translation(viewTranslation, -this.getPositionX(), -this.getPositionY(), 0)
+    kmMat4Translation(viewTranslation, -worldPos.x, -worldPos.y, 0)
 
     const viewScale = Matrix4.createByScale(this.zoom, this.zoom, 1, new Matrix4())
 

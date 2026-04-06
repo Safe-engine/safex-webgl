@@ -33,4 +33,3 @@ export * from './easing/Exponential'
 export * from './easing/InOut'
 export * from './easing/Quartic'
 export * from './easing/Quintic'
-

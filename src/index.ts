@@ -7,4 +7,3 @@ export * from './polyfills'
 export * from './progress-timer'
 export * from './shape-nodes/DrawNode'
 export * from './textures'
-

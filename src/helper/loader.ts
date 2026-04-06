@@ -444,9 +444,9 @@ export const loader = (function () {
   }
 })()
 
-loader.register(['txt', 'xml', 'vsh', 'fsh', 'atlas'], _txtLoader);
-loader.register(['json', 'ExportJson'], _jsonLoader);
-loader.register(['png', 'jpg', 'bmp', 'jpeg', 'gif', 'ico', 'tiff', 'webp'], _imgLoader);
-loader.register(['serverImg'], _serverImgLoader);
-loader.register(['plist'], _plistLoader);
-loader.register(['font', 'eot', 'ttf', 'woff', 'svg', 'ttc'], _fontLoader);
+loader.register(['txt', 'xml', 'vsh', 'fsh', 'atlas'], _txtLoader)
+loader.register(['json', 'ExportJson'], _jsonLoader)
+loader.register(['png', 'jpg', 'bmp', 'jpeg', 'gif', 'ico', 'tiff', 'webp'], _imgLoader)
+loader.register(['serverImg'], _serverImgLoader)
+loader.register(['plist'], _plistLoader)
+loader.register(['font', 'eot', 'ttf', 'woff', 'svg', 'ttc'], _fontLoader)

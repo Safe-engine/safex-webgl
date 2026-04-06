@@ -4,4 +4,3 @@ export * from './TMXMapInfo'
 export * from './TMXObjectGroup'
 export * from './TMXTiledMap'
 export * from './TMXTilesetInfo'
-

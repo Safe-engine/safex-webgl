@@ -15,7 +15,7 @@ export class DelayTime extends ActionInterval {
    * Will be overwrite.
    * @param {Number} dt time in seconds
    */
-  update(dt: number) { }
+  update(dt: number) {}
 
   /**
    * Returns a reversed action.

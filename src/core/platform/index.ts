@@ -4,4 +4,3 @@ export * from './Config'
 export * from './FontDefinition'
 export * from './Macro'
 export * from './Types'
-

@@ -4,19 +4,23 @@ import { Scene, Sprite } from '../src/core'
 
 export class CameraTestScene extends Scene {
   uiCamera: Camera
+  worldCamera: Camera
   player: Sprite
 
   constructor() {
     super()
     this.uiCamera = new Camera(CameraFlag.USER2)
     const worldCamera = new Camera(CameraFlag.USER1)
-    this.addCamera(this.uiCamera)
+    this.worldCamera = worldCamera
+    // uiCamera will be auto-registered when added as child
+    this.addChild(this.uiCamera)
     const player = new Sprite('particle.png')
     player.setPosition(222, 333)
     player.setCameraMask(CameraFlag.USER1)
     this.player = player
-    player.addChild(worldCamera)
+    // worldCamera will be auto-registered when player is added (and it will follow player)
     console.log('CameraTestScene created with worldCamera and uiCamera', this.getCameras())
+    player.addChild(worldCamera)
     this.addChild(player)
   }
 
@@ -40,8 +44,8 @@ export class CameraTestScene extends Scene {
   }
 
   update() {
-    const pos = this.player.getPosition()
-    this.player.setPosition(pos.x, pos.y + 1)
-    // console.log('Camera position updated to', this.uiCamera.getPositionY())
+    const pos = this.worldCamera.getPosition()
+    this.worldCamera.setPosition(pos.x, pos.y + 1)
+    console.log('Camera position updated to', this.worldCamera.getPosition())
   }
 }

@@ -1,2 +1,1 @@
-export * from './MotionStreak';
-
+export * from './MotionStreak'

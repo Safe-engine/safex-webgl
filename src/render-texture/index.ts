@@ -1,2 +1,1 @@
-export * from './RenderTexture';
-
+export * from './RenderTexture'
