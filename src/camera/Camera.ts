@@ -18,6 +18,7 @@ export class Camera extends Node {
   viewMatrix: Matrix4
   projectionMatrix: Matrix4
   _dirty: boolean
+  isCenterDraw: boolean
   flag: CameraFlag
   private _lastWorldPos = { x: 0, y: 0 }
 
@@ -58,8 +59,8 @@ export class Camera extends Node {
 
     // View (camera) transform: translate(-worldPos.x, -worldPos.y) then scale
     const viewTranslation = new Matrix4()
-    kmMat4Translation(viewTranslation, -worldPos.x, -worldPos.y, 0)
-
+    if (this.isCenterDraw) kmMat4Translation(viewTranslation, winSize.width / 2 - worldPos.x, winSize.height / 2 - worldPos.y, 0)
+    else kmMat4Translation(viewTranslation, -worldPos.x, -worldPos.y, 0)
     const viewScale = Matrix4.createByScale(this.zoom, this.zoom, 1, new Matrix4())
 
     const viewMat = new Matrix4()
