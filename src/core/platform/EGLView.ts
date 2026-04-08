@@ -16,9 +16,9 @@ export const DENSITYDPI_HIGH = 'high-dpi'
 export const DENSITYDPI_MEDIUM = 'medium-dpi'
 export const DENSITYDPI_LOW = 'low-dpi'
 
-export const ORIENTATION_LANDSCAPE = 0
 export const ORIENTATION_PORTRAIT = 1
-export const ORIENTATION_AUTO = 2
+export const ORIENTATION_LANDSCAPE = 2
+export const ORIENTATION_AUTO = 3
 
 const __BrowserGetter = {
   html: null as HTMLElement | null,

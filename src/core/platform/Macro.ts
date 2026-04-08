@@ -439,28 +439,6 @@ export const checkGLErrorDebug = function () {
   }
 }
 
-//Possible device orientations
-/**
- * Device oriented vertically, home button on the bottom (UIDeviceOrientationPortrait)
- * @constant
- * @type Number
- */
-export const ORIENTATION_PORTRAIT = 1
-
-/**
- * Device oriented horizontally, home button on the right (UIDeviceOrientationLandscapeLeft)
- * @constant
- * @type Number
- */
-export const ORIENTATION_LANDSCAPE = 2
-
-/**
- * Device oriented vertically, home button on the top (UIDeviceOrientationPortraitUpsideDown)
- * @constant
- * @type Number
- */
-export const ORIENTATION_AUTO = 3
-
 /**
  * The limit count for concurrency http request, useful in some mobile browsers
  * Adjust its value with the test results based on your game, the preset value is just a placeholder
