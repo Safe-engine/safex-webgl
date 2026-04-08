@@ -957,6 +957,12 @@ export class Node extends EventHelper {
       for (const child of this._children) {
         child.setCameraMask(type, applyChildren)
       }
+      // Also propagate to protected children (used by Widget/Button for internal renderers)
+      if ((this as any)._protectedChildren) {
+        for (const child of (this as any)._protectedChildren) {
+          child.setCameraMask(type, applyChildren)
+        }
+      }
     }
   }
 

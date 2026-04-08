@@ -1,6 +1,7 @@
 import { view } from '../src'
 import { Camera, CameraFlag } from '../src/camera'
 import { Scene, Sprite } from '../src/core'
+import { Button } from '../src/ui'
 
 export class CameraTestScene extends Scene {
   uiCamera: Camera
@@ -29,11 +30,11 @@ export class CameraTestScene extends Scene {
     this.addChild(sprite)
     // UI layer node (always fixed to UI camera)
     const uiSprite = new Sprite('button_plus.png')
-    uiSprite.setPosition(100, 500)
+    uiSprite.setPosition(100, 100)
     uiSprite.setCameraMask(CameraFlag.USER2)
     this.addChild(uiSprite)
-    const uiSprite2 = new Sprite('button_plus.png')
-    uiSprite2.setPosition(200, 500)
+    const uiSprite2 = new Button('button_plus.png')
+    uiSprite2.setPosition(200, 100)
     uiSprite2.setCameraMask(CameraFlag.USER2)
     this.addChild(uiSprite2)
   }
