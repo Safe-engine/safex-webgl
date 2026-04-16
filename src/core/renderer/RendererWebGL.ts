@@ -272,8 +272,7 @@ export const rendererWebGL = (function () {
       }
     },
 
-    _increaseBatchingSize: function (increment, vertexType?, indices?) {
-      vertexType = vertexType || VertexType.QUAD
+    _increaseBatchingSize: function (increment, vertexType = VertexType.QUAD, indices = []) {
       let i, curr
       switch (vertexType) {
         case VertexType.QUAD:
@@ -439,7 +438,7 @@ export const rendererWebGL = (function () {
         cmd = locCmds[i]
         if (!cmd.needDraw()) continue
 
-        // console.log('cmd', cmd)
+        console.log('cmd', cmd)
         if (cmd.uploadData) {
           this._uploadBufferData(cmd)
         } else {

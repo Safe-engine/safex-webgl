@@ -6,7 +6,7 @@ import { shaderCache } from '../shaders/ShaderCache'
 import type { ParticleBatchNode } from './ParticleBatchNode'
 
 export class ParticleBatchNodeWebGLRenderCmd extends NodeWebGLRenderCmd {
-  _matrix: Matrix4
+  declare _matrix: Matrix4
   declare _node: ParticleBatchNode
 
   constructor(renderable: any) {
