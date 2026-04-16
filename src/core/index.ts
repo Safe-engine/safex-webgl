@@ -10,6 +10,7 @@ export * from './scenes/Scene'
 export * from './sprites/Sprite'
 export * from './sprites/SpriteFrame'
 export * from './sprites/SpriteFrameCache'
+export * from './sprites/SpriteWebGLRenderCmd'
 export * from './support/PointExtension'
 export * from './utils/BinaryLoader'
 
