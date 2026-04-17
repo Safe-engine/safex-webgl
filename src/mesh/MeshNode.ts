@@ -52,7 +52,7 @@ export class MeshNode extends Node {
 
             void main() {
                 gl_Position = CC_PMatrix * CC_MVMatrix * vec4(a_position, 0.0, 1.0);
-                v_texCoord = vec2(a_texCoord.x, 1.0 - a_texCoord.y);
+                v_texCoord = a_texCoord;
             }
         `
 
