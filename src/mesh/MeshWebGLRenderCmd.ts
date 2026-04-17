@@ -78,8 +78,9 @@ export class MeshWebGLRenderCmd extends NodeWebGLRenderCmd {
     gl.vertexAttribPointer(uvLoc, 2, gl.FLOAT, false, 0, 0)
 
     // draw
-    const count = node.vertices.length / 2
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, count)
+    // Bind index buffer and draw
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, node.indexBuffer)
+    gl.drawElements(gl.TRIANGLES, node.indices.length, gl.UNSIGNED_SHORT, 0)
 
     incrementGLDraws(1)
   }

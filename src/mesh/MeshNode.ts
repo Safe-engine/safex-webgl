@@ -6,21 +6,25 @@ import { MeshWebGLRenderCmd } from './MeshWebGLRenderCmd'
 export class MeshNode extends Node {
   declare vertices: Float32Array
   declare uvs: Float32Array
+  declare indices: Uint16Array
 
   declare texture: Texture2D
 
   declare vertexBuffer: WebGLBuffer
   declare uvBuffer: WebGLBuffer
+  declare indexBuffer: WebGLBuffer
 
   declare shaderProgram: GLProgram
 
-  initMesh(texturePath: string, vertices: Float32Array, uvs: Float32Array) {
+  initMesh(texturePath: string, vertices: Float32Array, uvs: Float32Array, indices: Uint16Array) {
+    // console.log('init Mesh', texturePath, vertices.length, uvs.length, indices.length)
     if (vertices.length !== uvs.length) {
-      throw new Error('vertices và uvs phải cùng length')
+      throw new Error('vertices and uvs must have the same length')
     }
 
     this.vertices = vertices
     this.uvs = uvs
+    this.indices = indices
 
     this.initTexture(texturePath)
     this.initGL()
@@ -36,6 +40,7 @@ export class MeshNode extends Node {
     // buffers
     this.vertexBuffer = gl.createBuffer()
     this.uvBuffer = gl.createBuffer()
+    this.indexBuffer = gl.createBuffer()
 
     this.updateBuffers()
 
@@ -75,6 +80,9 @@ export class MeshNode extends Node {
 
     gl.bindBuffer(gl.ARRAY_BUFFER, this.uvBuffer)
     gl.bufferData(gl.ARRAY_BUFFER, this.uvs, gl.DYNAMIC_DRAW)
+
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer)
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this.indices, gl.STATIC_DRAW)
   }
 
   public updateVertices(vertices: Float32Array) {
@@ -84,5 +92,14 @@ export class MeshNode extends Node {
 
   _createRenderCmd() {
     return new MeshWebGLRenderCmd(this)
+  }
+  onExit() {
+    const gl: WebGLRenderingContext = _renderContext
+    if (gl) {
+      if (this.vertexBuffer) gl.deleteBuffer(this.vertexBuffer)
+      if (this.uvBuffer) gl.deleteBuffer(this.uvBuffer)
+      if (this.indexBuffer) gl.deleteBuffer(this.indexBuffer)
+    }
+    super.onExit()
   }
 }
