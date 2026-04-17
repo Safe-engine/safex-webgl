@@ -1,10 +1,11 @@
-import { CONCURRENCY_HTTP_REQUEST_COUNT, game } from '..'
+import { game } from '..'
 import { _fontLoader, _imgLoader, _jsonLoader, _plistLoader, _serverImgLoader, _txtLoader } from '../core/platform/Loaders'
 import { AsyncPool } from './AsyncPool'
 import { error, log } from './Debugger'
 import { path } from './path'
 import { sys } from './sys'
 
+export const CONCURRENCY_HTTP_REQUEST_COUNT = sys.isMobile ? 20 : 0
 window.ENABLE_IMAGE_POOL = true
 export function getXMLHttpRequest() {
   const xhr = new XMLHttpRequest() as SafexXMLHttpRequest

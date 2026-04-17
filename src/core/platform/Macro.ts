@@ -2,7 +2,6 @@ import { _renderContext, director, type NodeWebGLRenderCmd, OPTIMIZE_BLEND_FUNC_
 import { isObject, isUndefined } from '../../helper/checkType'
 import { _LogInfos, log } from '../../helper/Debugger'
 import { global } from '../../helper/global'
-import { sys } from '../../helper/sys'
 import { p, Point, Rect, Size } from '../cocoa/Geometry'
 
 /**
@@ -438,14 +437,6 @@ export const checkGLErrorDebug = function () {
     log(_LogInfos.checkGLErrorDebug, _error)
   }
 }
-
-/**
- * The limit count for concurrency http request, useful in some mobile browsers
- * Adjust its value with the test results based on your game, the preset value is just a placeholder
- * @constant
- * @type Number
- */
-export const CONCURRENCY_HTTP_REQUEST_COUNT = sys.isMobile ? 20 : 0
 
 /**
  * The maximum vertex count for a single batched draw call.
