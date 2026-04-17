@@ -140,8 +140,8 @@ export const _easeBounceInObj = {
  * // example
  * action.easing(easeBounceIn());
  */
-export const easeBounceIn = function () {
-  return _easeBounceInObj
+export const easeBounceIn = function (action: ActionInterval) {
+  return new EaseBounceIn(action)
 }
 
 /**
@@ -214,8 +214,8 @@ export const _easeBounceOutObj = {
  * // example
  * action.easing(easeBounceOut());
  */
-export const easeBounceOut = function () {
-  return _easeBounceOutObj
+export const easeBounceOut = function (action: ActionInterval) {
+  return new EaseBounceOut(action)
 }
 
 /**
@@ -301,6 +301,6 @@ export const _easeBounceInOutObj = {
  * // example
  * action.easing(easeBounceInOut());
  */
-export const easeBounceInOut = function () {
-  return _easeBounceInOutObj
+export const easeBounceInOut = function (action: ActionInterval) {
+  return new EaseBounceInOut(action)
 }

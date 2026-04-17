@@ -1,5 +1,5 @@
-import { ActionEase } from './ActionEase'
 import { ActionInterval } from '../ActionInterval'
+import { ActionEase } from './ActionEase'
 
 /**
  * EaseBackIn action. <br />
@@ -8,13 +8,8 @@ import { ActionInterval } from '../ActionInterval'
  * @class
  * @extends ActionEase
  *
- * @deprecated since v3.0 please use action.easing(easeBackIn())
- *
  * @example
- * //The old usage
- * EaseBackIn.create(action);
- * //The new usage
- * action.easing(easeBackIn());
+ * easeBackIn(action);
  */
 export class EaseBackIn extends ActionEase {
   constructor(action?: ActionInterval) {
@@ -64,17 +59,8 @@ export const _easeBackInObj = {
   },
 }
 
-/**
- * Creates the action easing object. <br />
- * In the opposite direction to move slowly, and then accelerated to the right direction.
- * @function
- * @return {Object}
- * @example
- * // example
- * action.easing(easeBackIn());
- */
-export const easeBackIn = function () {
-  return _easeBackInObj
+export const easeBackIn = function (action: ActionInterval) {
+  return new EaseBackIn(action)
 }
 
 /**
@@ -84,13 +70,8 @@ export const easeBackIn = function () {
  * @class
  * @extends ActionEase
  *
- * @deprecated since v3.0 please use action.easing(easeBackOut());
- *
  * @example
- * //The old usage
- * EaseBackOut.create(action);
- * //The new usage
- * action.easing(easeBackOut());
+ * easeBackOut(action);
  */
 export class EaseBackOut extends ActionEase {
   constructor(action?: ActionInterval) {
@@ -141,17 +122,8 @@ export const _easeBackOutObj = {
   },
 }
 
-/**
- * Creates the action easing object. <br />
- * Fast moving more than the finish, and then slowly back to the finish.
- * @function
- * @return {Object}
- * @example
- * // example
- * action.easing(easeBackOut());
- */
-export const easeBackOut = function () {
-  return _easeBackOutObj
+export const easeBackOut = function (action: ActionInterval) {
+  return new EaseBackOut(action)
 }
 
 /**
@@ -161,13 +133,8 @@ export const easeBackOut = function () {
  * @class
  * @extends ActionEase
  *
- * @deprecated since v3.0 <br /> Please use action.easing(easeBackInOut())
- *
  * @example
- * //The old usage
- * EaseBackInOut.create(action);
- * //The new usage
- * action.easing(easeBackInOut());
+ * easeBackInOut(action);
  */
 export class EaseBackInOut extends ActionEase {
   constructor(action?: ActionInterval) {
@@ -228,15 +195,6 @@ export const _easeBackInOutObj = {
   },
 }
 
-/**
- * Creates the action easing object. <br />
- * Beginning of EaseBackIn. Ending of EaseBackOut.
- * @function
- * @return {Object}
- * @example
- * // example
- * action.easing(easeBackInOut());
- */
-export const easeBackInOut = function () {
-  return _easeBackInOutObj
+export const easeBackInOut = function (action: ActionInterval) {
+  return new EaseBackInOut(action)
 }
