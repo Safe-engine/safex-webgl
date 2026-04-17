@@ -1,22 +1,20 @@
 import { _renderContext, Node } from '..'
 import { GLProgram } from '../shaders'
-import { textureCache } from '../textures'
+import { Texture2D, textureCache } from '../textures'
 import { MeshWebGLRenderCmd } from './MeshWebGLRenderCmd'
 
 export class MeshNode extends Node {
-  public vertices: Float32Array
-  public uvs: Float32Array
+  declare vertices: Float32Array
+  declare uvs: Float32Array
 
-  public texture: any = null
+  declare texture: Texture2D
 
-  public vertexBuffer: WebGLBuffer | null = null
-  public uvBuffer: WebGLBuffer | null = null
+  declare vertexBuffer: WebGLBuffer
+  declare uvBuffer: WebGLBuffer
 
-  public shaderProgram: any = null
+  declare shaderProgram: GLProgram
 
-  constructor(texturePath: string, vertices: Float32Array, uvs: Float32Array) {
-    super()
-
+  initMesh(texturePath: string, vertices: Float32Array, uvs: Float32Array) {
     if (vertices.length !== uvs.length) {
       throw new Error('vertices và uvs phải cùng length')
     }
@@ -49,7 +47,7 @@ export class MeshNode extends Node {
 
             void main() {
                 gl_Position = CC_PMatrix * CC_MVMatrix * vec4(a_position, 0.0, 1.0);
-                v_texCoord = a_texCoord;
+                v_texCoord = vec2(a_texCoord.x, 1.0 - a_texCoord.y);
             }
         `
 

@@ -521,7 +521,7 @@ export class GLProgram {
       }
     } else {
       this._glContext.uniform4f(location, f1, f2, f3, f4)
-      log('uniform4f', f1, f2, f3, f4)
+      // log('uniform4f', f1, f2, f3, f4)
     }
   }
 
@@ -822,7 +822,7 @@ export class GLProgram {
    * get WebGLProgram object
    * @return {WebGLProgram}
    */
-  getProgram(): any {
+  getProgram(): WebGLProgram {
     return this._programObj
   }
 

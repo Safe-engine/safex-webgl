@@ -438,7 +438,7 @@ export const rendererWebGL = (function () {
         cmd = locCmds[i]
         if (!cmd.needDraw()) continue
 
-        console.log('cmd', cmd)
+        // console.log('cmd', cmd)
         if (cmd.uploadData) {
           this._uploadBufferData(cmd)
         } else {
