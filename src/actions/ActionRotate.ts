@@ -70,7 +70,7 @@ export class RotateTo extends ActionInterval {
     super.startWithTarget(target)
 
     // Calculate X
-    const locStartAngleX = target.rotationX % 360.0
+    const locStartAngleX = target.getRotationX() % 360.0
     let locDiffAngleX = this._dstAngleX - locStartAngleX
     if (locDiffAngleX > 180) locDiffAngleX -= 360
     if (locDiffAngleX < -180) locDiffAngleX += 360
@@ -78,7 +78,7 @@ export class RotateTo extends ActionInterval {
     this._diffAngleX = locDiffAngleX
 
     // Calculate Y  It's duplicated from calculating X since the rotation wrap should be the same
-    this._startAngleY = target.rotationY % 360.0
+    this._startAngleY = target.getRotationY() % 360.0
     let locDiffAngleY = this._dstAngleY - this._startAngleY
     if (locDiffAngleY > 180) locDiffAngleY -= 360
     if (locDiffAngleY < -180) locDiffAngleY += 360
@@ -185,8 +185,8 @@ export class RotateBy extends ActionInterval {
    */
   startWithTarget(target: any): void {
     super.startWithTarget(target)
-    this._startAngleX = target.rotationX
-    this._startAngleY = target.rotationY
+    this._startAngleX = target.getRotationX()
+    this._startAngleY = target.getRotationY()
   }
 
   /**

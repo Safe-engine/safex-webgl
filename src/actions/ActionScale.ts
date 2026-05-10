@@ -69,8 +69,8 @@ export class ScaleTo extends ActionInterval {
    */
   startWithTarget(target: any): void {
     super.startWithTarget(target)
-    this._startScaleX = target.scaleX
-    this._startScaleY = target.scaleY
+    this._startScaleX = target.getScaleX()
+    this._startScaleY = target.getScaleY()
     this._deltaX = this._endScaleX - this._startScaleX
     this._deltaY = this._endScaleY - this._startScaleY
   }

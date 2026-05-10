@@ -169,7 +169,7 @@ export class TintBy extends ActionInterval {
   startWithTarget(target: any): void {
     super.startWithTarget(target)
 
-    const color = target.color
+    const color = target.getColor()
     this._fromR = color.r
     this._fromG = color.g
     this._fromB = color.b

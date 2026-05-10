@@ -67,12 +67,12 @@ export class SkewTo extends ActionInterval {
   startWithTarget(target: any): void {
     super.startWithTarget(target)
 
-    this._startSkewX = target.skewX % 180
+    this._startSkewX = target.getSkewX() % 180
     this._deltaX = this._endSkewX - this._startSkewX
     if (this._deltaX > 180) this._deltaX -= 360
     if (this._deltaX < -180) this._deltaX += 360
 
-    this._startSkewY = target.skewY % 360
+    this._startSkewY = target.getSkewY() % 360
     this._deltaY = this._endSkewY - this._startSkewY
     if (this._deltaY > 180) this._deltaY -= 360
     if (this._deltaY < -180) this._deltaY += 360

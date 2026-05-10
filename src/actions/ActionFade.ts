@@ -64,7 +64,7 @@ export class FadeTo extends ActionInterval {
    */
   startWithTarget(target: any): void {
     super.startWithTarget(target)
-    this._fromOpacity = target.opacity
+    this._fromOpacity = target.getOpacity()
   }
 }
 
